@@ -1,0 +1,11 @@
+[2021-05-25 09:45:56] [INFO] 当前测试环境 huat
+[2021-05-25 09:45:56] [INFO] 数据库初始化.
+[2021-05-25 09:45:56] [INFO] 用户四要素信息 
+{'name': '谈子航', 'cer_no': '210802198905134284', 'bankid': '6217223655240556437', 'telephone': '16400008085'}
+[2021-05-25 09:45:56] [INFO] 开始支用申请...
+[2021-05-25 09:45:56] [INFO] data数据: {'prcid': '210802198905134284', 'bankcard': '6217223655240556437', 'name': '谈子航', 'phonenumber': '16400008085', 'timestamp': '20210525094556', 'reqSn': 'Loan_req16219071564441001', 'sessionId': 'Loan_sid16219071564441002', 'transactionId': 'Loan_tid16219071564441003', 'cashAmount': 60000, 'orderId': 'Ord1621907156444', 'term': 3, 'repayMode': '22'}
+[2021-05-25 09:45:56] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-05-25 09:45:56] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 308 171
+[2021-05-25 09:45:56] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-05-25 09:45:58] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 200 None
+[2021-05-25 09:45:58] [INFO] 业务请求响应：{'retCode': '0'}

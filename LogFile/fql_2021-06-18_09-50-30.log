@@ -1,0 +1,18 @@
+[2021-06-18 09:50:30] [INFO] 当前测试环境 huat
+[2021-06-18 09:50:30] [INFO] 数据库初始化.
+[2021-06-18 09:50:30] [INFO] 用户四要素信息 
+{'name': '伯心', 'cer_no': '620900198808267893', 'bankid': '6222003768714665349', 'telephone': '16300009000', 'applyId': 'applyId1623918185136'}
+[2021-06-18 09:50:30] [INFO] 开始支用申请...
+[2021-06-18 09:50:30] [INFO] data数据: {'requestSerialNo': 'SerialNo16239810306601', 'requestTime': '1623981030660', 'empNo': 'empNo1623981030660', 'merchantId': '000UC010000006268', 'managerId': '000UC010000006268', 'applyId': 'applyId1623918185136', 'sourceCode': '000UC010000006268', 'loanAmt': 600, 'loanTerm': 3, 'name': '伯心', 'mobileNo': '16300009000', 'debitAccountNo': '6222003768714665349', 'firstRepayDate': '2021-07-18', 'fixedRepayDay': '18', 'orderType': 2}
+[2021-06-18 09:50:30] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-18 09:50:30] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 308 171
+[2021-06-18 09:50:30] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-18 09:50:31] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 200 None
+[2021-06-18 09:50:31] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-18 09:50:31] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/loan/apply HTTP/1.1" 308 171
+[2021-06-18 09:50:31] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-18 09:50:32] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/loan/apply HTTP/1.1" 200 None
+[2021-06-18 09:50:32] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-18 09:50:32] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 308 171
+[2021-06-18 09:50:32] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-18 09:50:33] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 200 None

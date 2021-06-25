@@ -1,0 +1,12 @@
+[2021-03-29 15:54:47] [INFO] 当前测试环境 hdev
+[2021-03-29 15:54:47] [INFO] 数据库初始化.
+[2021-03-29 15:54:47] [DEBUG] Starting new HTTP connection (1): 10.10.61.77:8081
+[2021-03-29 15:54:47] [DEBUG] http://10.10.61.77:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-03-29 15:54:47] [INFO] 随机生成客户四要素信息 
+{'name': '爱聪', 'cer_no': '370785199805142740', 'bankid': '6222082144277315793', 'telephone': '16400006154'}
+[2021-03-29 15:54:47] [INFO] 开始授信申请!
+[2021-03-29 15:54:47] [DEBUG] Starting new HTTP connection (1): hapi-web-hdev.corp.jccfc.com:80
+[2021-03-29 15:54:47] [DEBUG] http://hapi-web-hdev.corp.jccfc.com:80 "POST /api/v1/meit/credit HTTP/1.1" 308 171
+[2021-03-29 15:54:47] [DEBUG] Starting new HTTPS connection (1): hapi-web-hdev.corp.jccfc.com:443
+[2021-03-29 15:54:48] [DEBUG] https://hapi-web-hdev.corp.jccfc.com:443 "POST /api/v1/meit/credit HTTP/1.1" 200 None
+[2021-03-29 15:54:48] [INFO] 业务请求响应：{'head': {'returnFlag': '1', 'returnCode': '000000', 'returnMessage': '成功', 'transTime': '20210329155448', 'tenantId': '000', 'deviceId': None, 'channelNo': '01', 'serialNo': '3C303D08826B416280E9F6349C456C39', 'requestSerialNo': 'SXSN16170044879301001', 'requestTime': '20210329155447', 'marketClue': None, 'empNo': None, 'merchantId': None, 'organId': '100000'}, 'body': {'APP_NO': 'SXAN16170044879301002'}}

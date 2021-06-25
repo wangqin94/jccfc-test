@@ -1,0 +1,11 @@
+[2021-04-26 17:41:05] [INFO] 当前测试环境 huat
+[2021-04-26 17:41:05] [INFO] 数据库初始化.
+[2021-04-26 17:41:05] [INFO] 用户四要素信息 
+{'name': '王玉梅', 'cer_no': '341203198406104527', 'bankid': '6217238848592138929', 'telephone': '14300001611'}
+[2021-04-26 17:41:05] [INFO] 开始授信申请...
+[2021-04-26 17:41:05] [INFO] data数据: {'prcid': '341203198406104527', 'bankcard': '6217238848592138929', 'name': '王玉梅', 'phonenumber': '14300001611', 'timestamp': '20210426174105', 'reqSn': 'Apply_req16194300654501001', 'sessionId': 'Apply_sid16194300654501002', 'transactionId': 'Apply_tid16194300654501003', 'initialAmount': 3000000}
+[2021-04-26 17:41:05] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-04-26 17:41:05] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 308 171
+[2021-04-26 17:41:05] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-04-26 17:41:09] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 200 None
+[2021-04-26 17:41:09] [INFO] 业务请求响应：{'retCode': '0'}

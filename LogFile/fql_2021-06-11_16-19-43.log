@@ -1,0 +1,20 @@
+[2021-06-11 16:19:43] [INFO] 当前测试环境 huat
+[2021-06-11 16:19:43] [INFO] 数据库初始化.
+[2021-06-11 16:19:43] [DEBUG] Starting new HTTP connection (1): 10.10.100.153:8081
+[2021-06-11 16:19:43] [DEBUG] http://10.10.100.153:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-06-11 16:19:43] [INFO] 用户四要素信息 
+{'name': '夹盛', 'cer_no': '431200201705046344', 'bankid': '6212268582688843233', 'telephone': '16400001377', 'applyId': 'applyId1623399583474'}
+[2021-06-11 16:19:43] [INFO] 开始授信申请...
+[2021-06-11 16:19:43] [INFO] data数据: {'head': {'requestSerialNo': 'SerialNo1623399583494', 'requestTime': '1623399583494', 'empNo': 'empNo1623399583494', 'merchantId': '000UC010000006268', 'managerId': '000UC010000006268'}, 'body': {'applyId': 'applyId1623399583474', 'sourceCode': '000UC010000006268', 'orderType': '1', 'loanAmount': 10000, 'creditAmount': 10000, 'loanTerm': 3, 'repayType': 1, 'firstOrderDate': '2021-06-11', 'idNo': '431200201705046344', 'userBankCardNo': '6212268582688843233', 'name': '夹盛', 'mobileNo': '16400001377'}, 'loanAmount': 10000}
+[2021-06-11 16:19:43] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-11 16:19:43] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 308 171
+[2021-06-11 16:19:43] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-11 16:19:44] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 200 None
+[2021-06-11 16:19:44] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-11 16:19:59] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/credit/apply HTTP/1.1" 308 171
+[2021-06-11 16:19:59] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-11 16:20:00] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/credit/apply HTTP/1.1" 200 None
+[2021-06-11 16:20:00] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-11 16:20:00] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 308 171
+[2021-06-11 16:20:00] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-11 16:20:00] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 200 None

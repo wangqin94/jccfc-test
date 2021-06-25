@@ -1,0 +1,18 @@
+[2021-06-07 10:09:56] [INFO] 当前测试环境 huat
+[2021-06-07 10:09:56] [INFO] 数据库初始化.
+[2021-06-07 10:09:56] [INFO] 自定义用户四要素信息 
+{'name': '谢楠', 'cer_no': '530800199103090634', 'bankid': '6222024904019431898', 'telephone': '16400007320'}
+[2021-06-07 10:09:56] [WARNING] 提示：用户已存在授信信息
+继续流程...
+[2021-06-07 10:09:56] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-07 10:09:56] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/secret/thirdEncryptData/MEIT HTTP/1.1" 308 171
+[2021-06-07 10:09:56] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-07 10:09:56] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/secret/thirdEncryptData/MEIT HTTP/1.1" 200 None
+[2021-06-07 10:09:57] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-07 10:09:57] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/meit/loan/apply HTTP/1.1" 308 171
+[2021-06-07 10:09:57] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-07 10:09:57] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/meit/loan/apply HTTP/1.1" 200 None
+[2021-06-07 10:09:57] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-07 10:09:57] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/secret/thirdDecryptData/MEIT HTTP/1.1" 308 171
+[2021-06-07 10:09:57] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-07 10:09:57] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/secret/thirdDecryptData/MEIT HTTP/1.1" 200 None

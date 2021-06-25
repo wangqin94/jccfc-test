@@ -1,0 +1,644 @@
+# # ---------------------------------------------------------
+# # - 项目特性配置文件
+# # - created time: 2021-03-06
+# # - version: 1.1
+# # ---------------------------------------------------------
+
+
+# -----------------------------------------------------------
+# 美团项目配置
+# -----------------------------------------------------------
+MeiTuan = {
+    'credit': {
+        'interface': '',
+        'payload': {},
+    },
+
+    'credit_query': {
+        'interface': '',
+        'payload': {},
+    },
+
+    'loan': {
+        'interface': '',
+        'payload': {},
+    },
+
+    'loan_query': {
+        'interface': '',
+        'payload': {},
+    },
+}
+
+# -----------------------------------------------------------
+# 百度(度小满)项目配置
+# -----------------------------------------------------------
+BaiDu = {
+    'credit': {
+        'interface': '/api/v1/baidu/demo/credit/apply',
+        'payload': {
+            "type": "async",
+            "reqSn": "credit_baidu502102002105001650",
+            "message": {
+                "sessionId": "credit_baidu502102002105001650",
+                "transactionType": "apply",
+                "transactionId": "502102002105001650wai",
+                "timestamp": "1616580987759",
+                "basicInfo": {
+                    "prcid": "420113199704275886",
+                    "bankcard": "6222001552388738497",
+                    "name": "司瑶",
+                    "phonenumber": "19208785619"
+                },
+                "expanding": {
+                    "reasonCode": '-9999',
+                    "reasonMsg": '-9999',
+                    "initialAmount": "100000",
+                    "creditValidityDays": "30",
+                    "risCode": "1000",
+                    "dxmAScore": "642",
+                    "preACustSeg": "A",
+                    "holmesBlackScore": "590",
+                    "holmesAgentScore": "59.48",
+                    "blackListType": "D1",
+                    "prcidNormalScoreExp3": "92",
+                    "bidNormalScoreExp3": "92",
+                    "phoneNormalScoreExp3": "92",
+                    "taxMonthlyIncomeSection": "-9999",
+                    "ocrExpdate": "20220203",
+                    # "r21P12FinallyInterest": "6.5",
+                    "r21P12FinallyInterest": "6.5",
+                    "dxmDScore": "575",
+                    "careerType": "-9999",
+                    "ocrAddress": "四川成都市武侯区府城大道中段81号",  # 身份地址
+                    "userHomeAddress": "四川成都市武侯区府城大道中段82号",  # 家庭地址
+                    "zxPermanentAddress": "四川成都市武侯区府城大道中段83号",  # 征信户籍地址
+                    "zxsDomicile": "四川成都市武侯区府城大道中段84号",   # 征信居住地址
+                    "zxMailingAddress": "四川成都市武侯区府城大道中段85号",  # 征信通讯地址
+                    "zxsCareer": "02",
+                    "zdV1Fico": "570"
+                }
+            }
+        },
+    },
+    'credit_query': {
+        'interface': '',
+        'payload': {},
+    },
+
+    'loan': {
+        'interface': '/api/v1/baidu/demo/loan/apply',
+        'payload': {
+            "type": "async",
+            "reqSn": '',
+            "message": {
+                "sessionId": '',
+                "transactionType": "transaction",
+                "transactionId": '',
+                "timestamp": '',
+                "basicInfo": {
+                    "prcid": '',
+                    "bankcard": '',
+                    "name": '',
+                    "phonenumber": ''
+                },
+                "expanding": {
+                    "cashAmount": '100000',
+                    "orderId": '',
+                    "reasonCode": '-9999',
+                    "reasonMsg": '-9999',
+                    "creditValidityDays": "30",
+                    "risCode": "10000",
+                    "dxmAScore": "642",
+                    "r21P12FinallyInterest": "6.5",
+                    "preACustSeg": "C",
+                    "holmesBlackScore": "59.48",
+                    "holmesAgentScore": "59.48",
+                    "blackListType": "D1",
+                    "prcidNormalScoreExp3": "92",
+                    "bidNormalScoreExp3": "92",
+                    "phoneNormalScoreExp3": "92",
+                    # "idpicture0": "0d352ebb0bece51df700d376d32b5281",
+                    # "idpicture1": "0d352ebb0bece51df700d376d32b5282",
+                    # "livingPhoto": "0d352ebb0bece51df700d376d32b5282",
+                    "unionLoanUsed": "01",
+                    "idpicture0": "/test/cqid1.png",
+                    "idpicture1": "/test/cqid2.png",
+                    "livingPhoto": "/test/cqid1",
+                    "loanUse": "1",
+                    "taxMonthlyIncomeSection": "01",
+                    "ocrExpdate": "20220506",
+                    "term": '3',
+                    "dailyInterestRate": "6.5000",
+                    "dailyPenaltyRate": "7.5000",
+                    "compreAnnualInterestRate": "2340",
+                    # "dailyInterestRate": "6.100",
+                    # "compreAnnualInterestRate": "2196",
+                    "violatePrepay": "200.0000",
+                    "violatePrepayRule": "1",
+                    "violatePrepayFlag": "0",
+                    "repayMode": "22",  # 32等额本息对应还款对账文件还款类型05，22随借随还对应还款类型02
+                    "dxmDScore": "575.24151",
+                    #"ocrAddress": "重庆市江北区府城大道中段87号",
+                    "careerType": "02",
+                    # "userHomeAddress": "重庆市江北区府城大道中段86号",
+                    "ocrAddress": "四川成都市武侯区府城大道中段81号",  # 身份地址
+                    "userHomeAddress": "四川成都市武侯区府城大道中段82号",  # 家庭地址
+                    "zxPermanentAddress": "四川成都市武侯区府城大道中段83号",  # 征信户籍地址
+                    "zxsDomicile": "四川成都市武侯区府城大道中段84号",   # 征信居住地址
+                    "zxMailingAddress": "四川成都市武侯区府城大道中段85号",  # 征信通讯地址
+                    "contactPhone": "张三",
+                    "contactName": "19982022546",
+                    "contactRalation": "父母"
+                },
+            },
+        },
+    },
+
+    'loan_query': {
+        'interface': '',
+        'payload': {},
+    },
+
+}
+
+# -----------------------------------------------------------
+# 携程项目配置
+# -----------------------------------------------------------
+XieCheng = {
+    'pre_credit': {
+        'interface': '/api/v1/ctrip/demo/trade',
+        'payload': {
+            "open_id": "6ReW_21${applyId}",
+            "user_name": "${姓名}",
+            "id_no": "${身份证号}",
+            "bank_bind_mobile": "${手机号}",
+            "card_no": "${银行卡号}",
+            "request_no": "REGISTER202011${applyId}",
+            "service_version": "1.0",
+            "product_no": "cash",
+            "partner": "JCXFCASH",
+            "advice_amount": "${advice_amount}",
+            "service": "PRE_CREDIT",
+            "id_type": "IDENTITYCARD",
+            "user_data": {
+                "Platform": {
+                    "id_no": "${身份证号}",
+                    "user_name": "${姓名}",
+                    "nationality": "Chinese",
+                    "mobile": "${手机号}",
+                    "RM0006": "0",
+                    "RM1018": "2",
+                    "RM0005": "0",
+                    "RM1017": "2",
+                    "RM0008": "A2",
+                    "RM0007": "A2",
+                    "RM1019": "2",
+                    "education": "0.1581,0.0862,0.7070,0.0487",
+                    "RM0009": "A3",
+                    "customerStickiness": "稳定",
+                    "institutionType": "microCredit",
+                    "loanAppRating2": "1",
+                    "loanAppRating": "优",
+                    "RM1021": "-9999",
+                    "RM1020": "2",
+                    "login_period": "0.1978,0.1626,0.1930,0.3240,0.1226",
+                    "rest_regular": "96.5241",
+                    "RM1023": "-9999",
+                    "RM0010": "A3",
+                    "RM1022": "-9999",
+                    "RM1025": "-9999",
+                    "RM1024": "-9999",
+                    "creditRating": "稳定",
+                    "flight_airport_tendency": "0.1429,0.1429,0.7143",
+                    "car_prob": "0.9122",
+                    "family_prob": None,
+                    "pbocQuery": "N",
+                    "city_stable": "0.3855",
+                    "house_prob": "0.6531",
+                    "odc_prob": "39",
+                    "student_prob": "0.3788",
+                    "order_platform": "0.0164,0.5410,0.0492",
+                    "vacation_day_desire": "13",
+                    "price_sensitive": "35",
+                    "card_no": "6212263803010024333",
+                    "RM1001": "0",
+                    "pay_type": "Q端其他:0.16,微信支付:0.11,常用卡借记卡:0.5,常用卡信用卡:0.16",
+                    "RM1003": "1",
+                    "RM1002": "0",
+                    "whole_power": "81",
+                    "RM1005": "0",
+                    "RM1004": "0",
+                    "RM1007": "0",
+                    "mobileInfo": "正常",
+                    "RM1006": "0",
+                    "RM1009": "9",
+                    "RM1008": "9",
+                    "destination_tendency": "0.1111,0.1111,0.4889,0.7111,0.5556,0.1333",
+                    "creditMode": "PA",
+                    "RM1010": "2",
+                    "RM1012": "4",
+                    "RM1011": "2",
+                    "plan_prob": "71",
+                    "RM0002": "L",
+                    "RM1014": "1",
+                    "RM0001": "0",
+                    "RM1013": "2",
+                    "consumer_stability": "82",
+                    "RM0004": "0",
+                    "RM1016": "0",
+                    "RM0003": "0",
+                    "RM1015": "1",
+                    "identity_card_image_1": "/xdgl/ctrip/test/cqid1.png",
+                    "identity_card_image_2": "/xdgl/ctrip/test/cqid2.png",
+                    "face_image": "/xdgl/ctrip/test/cqface.png"
+                }
+            },
+            "advice_rate_type": "${advice_rate_type}",
+            "advice_rate": {
+                "ECI": {
+                    "3": "0.36"
+                },
+            }
+        },
+    },
+    'credit': {
+        'interface': '/api/v1/ctrip/demo/trade',
+        'payload': {
+            "open_id": "6ReW_21${applyId}",
+            "user_name": "${姓名}",
+            "id_no": "${身份证号}",
+            "bank_bind_mobile": "${手机号}",
+            "card_no": "${银行卡号}",
+            "request_no": "REAct29${applyId}",
+            "service_version": "1.0",
+            "product_no": "cash",
+            "partner": "JCXFCASH",
+            "advice_amount": "${act_amount}",
+            "service": "CREDIT",
+            "id_type": "IDENTITYCARD",
+            "user_data": {
+                "Platform": {
+                    "RM0006": "0",
+                    "RM1018": "2",
+                    "RM0005": "0",
+                    "RM1017": "2",
+                    "RM0008": "A2",
+                    "RM0007": "A2",
+                    "RM1019": "2",
+                    "education": "0.1581,0.0862,0.7070,0.0487",
+                    "RM0009": "A3",
+                    "customerStickiness": "稳定",
+                    "institutionType": "microCredit",
+                    "loanAppRating2": "1",
+                    "loanAppRating": "优",
+                    "RM1021": "-9999",
+                    "RM1020": "2",
+                    "login_period": "0.1978,0.1626,0.1930,0.3240,0.1226",
+                    "rest_regular": "96.5241",
+                    "RM1023": "-9999",
+                    "RM0010": "A3",
+                    "RM1022": "-9999",
+                    "RM1025": "-9999",
+                    "RM1024": "-9999",
+                    "creditRating": "稳定",
+                    "flight_airport_tendency": "0.1429,0.1429,0.7143",
+                    "car_prob": "0.9122",
+                    "family_prob": None,
+                    "pbocQuery": "N",
+                    "city_stable": "0.3855",
+                    "house_prob": "0.6531",
+                    "odc_prob": "39",
+                    "student_prob": "0.3788",
+                    "order_platform": "0.0164,0.5410,0.0492",
+                    "vacation_day_desire": "13",
+                    "price_sensitive": "35",
+                    "card_no": "6212263803010024333",
+                    "RM1001": "0",
+                    "pay_type": "微信支付:0.05,支付宝支付:0.05,Q端其他:0.03,常用卡借记卡:0.81",
+                    "RM1003": "1",
+                    "RM1002": "0",
+                    "whole_power": "81",
+                    "RM1005": "0",
+                    "RM1004": "0",
+                    "RM1007": "0",
+                    "mobileInfo": "正常",
+                    "RM1006": "0",
+                    "RM1009": "9",
+                    "RM1008": "9",
+                    "destination_tendency": "0.1111,0.1111,0.4889,0.7111,0.5556,0.1333",
+                    "creditMode": "PA",
+                    "RM1010": "2",
+                    "RM1012": "4",
+                    "RM1011": "2",
+                    "plan_prob": "71",
+                    "RM0002": "L",
+                    "RM1014": "1",
+                    "RM0001": "0",
+                    "RM1013": "2",
+                    "consumer_stability": "82",
+                    "RM0004": "0",
+                    "RM1016": "0",
+                    "RM0003": "0",
+                    "RM1015": "1",
+                    "occupation": "生意人/个体户",
+                    "id_no": "${身份证号}",
+                    "personIncome": "10-20万元",
+                    # "idcard_ocr_addr": "成都市武侯区府城大道中段88号",
+                    "idcard_ocr_addr": "成都市武侯区府城大道中段88号",
+                    "idcard_ocr_gender": "M",
+                    # "identity_card_image_1": "5db0ea08059aa2955d005ac830510e6c",
+                    # "identity_card_image_2": "40d72516c9dd84bc75a0a73306250369",
+                    # "face_image": "62c2fbf32b931c0b62250c2beba18860",
+                    "nationality": "Chinese",
+                    "contact_relate": "配偶",
+                    "user_name": "${姓名}",
+                    "contacts_mobile": "15210120098",
+                    "id_type": "IDENTITYCARD",
+                    "idcard_ocr_validity": "2019.06.08-2029.06.08",
+                    "contact_name": "数据流二",
+                    "mobile": "${手机号}",
+                    "identity_card_image_1": "/xdgl/ctrip/test/cqid1.png",
+                    "identity_card_image_2": "/xdgl/ctrip/test/cqid2.png",
+                    "face_image": "/xdgl/ctrip/test/cqface.png"
+                }
+            },
+            "advice_rate_type": "${advice_rate_type}",
+            "advice_rate": {
+                "ECI": {
+                    "3": "0.36"
+                }
+            }
+
+        }
+    },
+
+    'loan': {
+        'interface': '/api/v1/ctrip/demo/trade',
+        'payload': {
+            "open_id": "6ReW_21${applyId}",
+            "request_no": "Loan_2021R${applyId}",
+            "loan_no": "Loan_2021L${applyId}",
+            "loan_amount": "${loan_amount}",
+            "service_version": "1.0",
+            "loan_user_type": "1",
+            "product_no": "cash",
+            "loan_purpose": "装修",
+            "loan_rate": "0.00035000",
+            "partner_id": None,
+            "partner": "ZY_SNCASH",
+            "card_no": "${银行卡号}",
+            "bank_no": "CCB",
+            "first_repay_date": "${__time(YMD,)}113538",
+            "service": "LOAN_CASH",
+            "term": "3",
+            "bank_bind_mobile": "${手机号}",
+            "repay_type": "ECI",
+            "extend_param": {
+                "idcard_ocr_validity": "2020.04.27-2040.04.27",
+                "idcard_ocr_addr": "成都市武侯区府城大道中段88号",
+                "idcard_ocr_gender": "M",
+                "pbocQuery": "N",
+                "RM0001": "0",
+                "RM0002": "0",
+                "RM0003": "0",
+                "RM0004": "0",
+                "RM0005": "0",
+                "RM0006": "0",
+                "RM0007": "0",
+                "RM0008": "0",
+                "RM0009": "0",
+                "RM0010": "0",
+                "identity_card_image_1": "5db0ea08059aa2955d005ac830510e6c",
+                "identity_card_image_2": "40d72516c9dd84bc75a0a73306250369",
+                "face_image": None,
+                "riskGrade": "-999"
+            }
+        }
+    },
+
+    'loan_repay_notice': {
+        'interface': '/api/v1/ctrip/demo/trade',
+        'payload': {
+            "open_id": "${openIdData_1}",
+            "loan_no": "${XC_loanNo_1}",
+            "repay_no": "Repay_20w${applyId}",
+            "repay_type": "1",
+            "repay_term_no": "${还款期序}",
+            "service": "LOAN_REPAY_NOTIFY",
+            "service_version": "1.0",
+            "product_no": "cash",
+            "finish_time": "${按期还款时间}50000",
+            "partner_id": "HRCASH",
+            "partner": "HRCASH",
+            "invest_repay_detail": {},
+            "repay_detail": {
+                "repay_principal": "${应还本金_1}",
+                "repay_interest": "${应还利息_1}",
+                "repay_penalty_amount": "${应还罚息_1}",
+                "actual_repay_amount": "${应还总额_1}",
+                "repay_fee": 0
+            }
+        }
+    }
+}
+
+# -----------------------------------------------------------
+# 分期乐项目配置
+# -----------------------------------------------------------
+fql = {
+    'credit': {
+        'interface': '/api/fql/v1/credit/apply',
+        'payload': {
+            "head": {
+                "tenantId": "000",
+                "channelNo": "01",
+                "requestSerialNo": "2020000009480719640001",
+                "marketClue": None,
+                "deviceId": None,
+                "longitude": None,
+                "latitude": None,
+                "requestTime": 20201623377322896,
+                "merchantId": "000UC010000006268",
+                "managerId": "000UC010000006268",
+                "empNo": "2019071623377322896",
+                "token": None,
+                "rebackUrl": None,
+                "notifyUrl": None
+            },
+            "body": {
+                "applyId": "202000000948071964",
+                "sourceCode": "000UC010000006268",
+                "orderType": "1",  # 订单类型
+                "loanAmount": 30000,
+                "creditAmount": 30000,
+                "loanTerm": "12",  # 借款期数
+                "repayType": "1",  # 还款方式 1:等额本息 2:等额本金 3:按天计息
+                "fixedBillDay": "10",
+                "fixedRepayDay": "27",
+                "interestRate": "30",  # 年利率
+                "annualRate": "20.36", # 实际利率（平台优惠后的利率
+                "name": "祖文策",
+                "age": "39",
+                "sex": "1",
+                "idType": "1",
+                "idNo": "232722200207072798",
+                "issuingAuth": "成都市双流县公安局",
+                "birthDay": "1984-11-23",
+                "nation": "汉族",
+                "mobileNo": "16400008192",
+                "reserveMobile": "16400008192",
+                "userBankCardNo": "6217228360087474548",
+                "national": "CHN",
+                "maritalStatus": "90",
+                "duties": "A",
+                "education": "1",
+                "companyName": "锦程消费金融有限公司",
+                "livingAddr": "北京市市辖区东城区测试路222号",
+                "contactName": "唐无名",
+                "contactMobile": "13708080125",
+                "contactRel": "5",
+                "contactName1": "唐海明",
+                "contactMobile1": "15908118645",
+                "contactRel1": "1",
+                "goodsName": "取现借款",
+                "loanUse": "5",
+                "firstRepayDate": "2021-06-11",
+                "schoolName": "四川音乐学院",
+                "schoolProvince": "510000",
+                "schoolCity": "510100",
+                "customerType": "2",
+                "enrolmentYear": "2009",
+                "graduationYear": "2013",
+                "companyAddress": "北京市市辖区东城区测试路223号",
+                "userOccupation": "0",
+                "userIndustryCategory": "2",
+                "registerMobileLocation": "成都",
+                "hasOverdueEver": "false",
+                "totalOverdueCount": "0",
+                "totalOverdueDays": "0",
+                "maxOverdueDays": "0",
+                "currentOverdueDays": "0",
+                "allOrderRepayed": "1",
+                "notRepayedOrderCount": "0",
+                "notRepayedOrderAmount": "0",
+                "totalOrderCount": "0",
+                "firstOrderDate": "2021-05-08",
+                "latestOrderDate": "2021-04-08",
+                "monthlyIncome": "10000",
+                "idCardExpireDate": "2025-3-30",
+                "idCardAddr": "北京市市辖区东城区测试路224号",
+                "manualApproval": "false",
+                "liveArea": "110000-110100-110101",
+                "companyArea": "110000-110100-110101",
+                "fileInfos": [{
+                    "fileType": "1",
+                    "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
+                    "fileName": "idcard_front_202000000948071964.jpg"
+                },
+                    {
+                        "fileType": "2",
+                        "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
+                        "fileName": "idcard_back_202000000948071964.jpg"
+                    },
+                    {
+                        "fileType": "3",
+                        "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
+                        "fileName": "face_distinguish_202000000948071964.jpg"
+                    },
+                    {
+                        "fileType": "4",
+                        "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
+                        "fileName": "JC_userauth_202000000948071964.pdf"
+                    }]
+            }
+        }
+
+    },
+    'credit_query': {
+        'interface': '/api/fql/v1/credit/resultQuery',
+        'payload': {
+            "body": {
+                "applyId": "${applyId}",
+                "sourceCode": "${sourceCode}"
+            },
+            "head": {
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "tenantId": "000",
+                "token": "resuiyfie59743949gjkfdk",
+                "merchantId": "58347954739",
+                "requestTime": "2019-05-29 21:00:00"
+            }
+        }
+    },
+
+    'loan': {
+        'interface': '/api/fql/v1/loan/apply',
+        'payload': {
+            "head": {
+                "tenantId": "000",
+                "channelNo": "01",
+                "requestSerialNo": "2020000012097038170002",
+                "marketClue": None,
+                "deviceId": None,
+                "longitude": None,
+                "latitude": None,
+                "requestTime": 20201623402451332,
+                "merchantId": "000UC010000006268",
+                "managerId": "000UC010000006268",
+                "empNo": "2019071623402451332",
+                "token": None,
+                "rebackUrl": None,
+                "notifyUrl": None
+            },
+            "body": {
+                "applyId": "202000001209703817",
+                "sourceCode": "000UC010000006268",
+                "name": "蓝安峰",
+                "fixedRepayDay": "27",
+                "firstRepayDate": "2021-06-11",
+                "loanAmt": "20000",
+                "loanTerm": "12",
+                "mobileNo": "16100007381",
+                "interestRate": "35.28",
+                "orderType": "1",
+                "repayType": "1",
+                "debitAccountName": "蓝安峰",
+                "debitOpenAccountBank": "中国银行",
+                "debitAccountNo": "6212268611367176969",
+                "debitOpenAccountBankCode": "121",
+                "fileInfos": [{
+                    "fileType": "5",
+                    "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_contract_202000001209703817.pdf",
+                    "fileName": "JC_contract_202000001209703817.pdf"
+                }]
+            }
+        }
+    },
+
+    'loan_query': {
+        'interface': '/api/v1/ctrip/demo/trade',
+        'payload': {
+            "open_id": "${openIdData_1}",
+            "loan_no": "${XC_loanNo_1}",
+            "repay_no": "Repay_20w${applyId}",
+            "repay_type": "1",
+            "repay_term_no": "${还款期序}",
+            "service": "LOAN_REPAY_NOTIFY",
+            "service_version": "1.0",
+            "product_no": "cash",
+            "finish_time": "${按期还款时间}50000",
+            "partner_id": "HRCASH",
+            "partner": "HRCASH",
+            "invest_repay_detail": {},
+            "repay_detail": {
+                "repay_principal": "${应还本金_1}",
+                "repay_interest": "${应还利息_1}",
+                "repay_penalty_amount": "${应还罚息_1}",
+                "actual_repay_amount": "${应还总额_1}",
+                "repay_fee": 0
+            }
+        }
+    }
+}

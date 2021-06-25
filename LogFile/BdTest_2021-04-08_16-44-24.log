@@ -1,0 +1,12 @@
+[2021-04-08 16:44:24] [INFO] 当前测试环境 hpre
+[2021-04-08 16:44:24] [INFO] 数据库初始化.
+[2021-04-08 16:44:24] [DEBUG] Starting new HTTP connection (1): 10.10.100.153:8081
+[2021-04-08 16:44:24] [DEBUG] http://10.10.100.153:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-04-08 16:44:24] [INFO] 用户四要素信息 
+{'name': '巫馥艳', 'cer_no': '522427198212305669', 'bankid': '6222020325166567124', 'telephone': '16400003663'}
+[2021-04-08 16:44:24] [INFO] 开始授信申请...
+[2021-04-08 16:44:24] [INFO] data数据: {'prcid': '522427198212305669', 'bankcard': '6222020325166567124', 'name': '巫馥艳', 'phonenumber': '16400003663', 'timestamp': '20210408164424', 'reqSn': 'Apply_req16178714643741001', 'sessionId': 'Apply_sid16178714643741002', 'transactionId': 'Apply_tid16178714643741003', 'initialAmount': 3000000}
+[2021-04-08 16:44:24] [DEBUG] Starting new HTTP connection (1): hapi-web-hpre.corp.jccfc.com:80
+[2021-04-08 16:44:24] [DEBUG] http://hapi-web-hpre.corp.jccfc.com:80 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 308 171
+[2021-04-08 16:44:24] [DEBUG] Starting new HTTPS connection (1): hapi-web-hpre.corp.jccfc.com:443
+[2021-04-08 16:44:28] [DEBUG] https://hapi-web-hpre.corp.jccfc.com:443 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 200 None

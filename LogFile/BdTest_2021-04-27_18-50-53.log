@@ -1,0 +1,11 @@
+[2021-04-27 18:50:53] [INFO] 当前测试环境 hsit
+[2021-04-27 18:50:53] [INFO] 数据库初始化.
+[2021-04-27 18:50:53] [INFO] 用户四要素信息 
+{'name': '延馥瑞', 'cer_no': '632321198710106170', 'bankid': '6212817600987478935', 'telephone': '16100005464'}
+[2021-04-27 18:50:53] [INFO] 开始支用申请...
+[2021-04-27 18:50:53] [INFO] data数据: {'prcid': '632321198710106170', 'bankcard': '6212817600987478935', 'name': '延馥瑞', 'phonenumber': '16100005464', 'timestamp': '20210427185053', 'reqSn': 'Loan_req16195206534321001', 'sessionId': 'Loan_sid16195206534321002', 'transactionId': 'Loan_tid16195206534321003', 'cashAmount': 60000, 'orderId': 'Ord1619520653432', 'term': 3, 'repayMode': '22'}
+[2021-04-27 18:50:53] [DEBUG] Starting new HTTP connection (1): hapi-web-hsit.corp.jccfc.com:80
+[2021-04-27 18:50:53] [DEBUG] http://hapi-web-hsit.corp.jccfc.com:80 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 308 171
+[2021-04-27 18:50:53] [DEBUG] Starting new HTTPS connection (1): hapi-web-hsit.corp.jccfc.com:443
+[2021-04-27 18:50:53] [DEBUG] https://hapi-web-hsit.corp.jccfc.com:443 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 200 None
+[2021-04-27 18:50:53] [INFO] 业务请求响应：{'icode': '0254', 'data': '1cZOxAhvDs3UYy0NHDoB10dJXHZUG1mnc3hjsogLAhk=', 'key': 'k12GXB2SasqrCwwFnNze9P3Q92QxFrY7OlOnE7/ZHIddOYETOhW+LwW+8H5LNKo89YJ1X3/IlxuDczAwF3BeZ7Nfv7njw5IFqCL+nWrHb9Qty7NsiNNlGzZKjxCVJu11OC4c9208OnMflvYXRB/piUCKBlwh6GqfKtFhaM7LH/iSDO/9KWQWR9vmhBHieXdNXfqX1hrGdZvqlZWFgNKpij319vYZW5E2fjd7R9J5HxO8xRpsa0kGLa8I/ym8mCbKWqib1pxtPrcirbjOCooq/K+WlK8oA9Ta+q2ZzAJMGjz55xVTF/Hy07uQRNh4a/DBCYnPqAT7NI6whFr+69qDyQ==', 'salt': 'Sn4/WxKds7VCtqGCe69oP/Gq5hpLMG8kHFGWaL0t3qrMmhskhqSsSGRkAyjdz7EXgpqdPgl6tZJa53C5KtHS0jng4ybE0YIxI6jlTWTszKg9sSgNJ4lIzgupvyqw5Az8Sb0tuv7GXtIGYmn3isaKMY5M5JDojGzCS6Au8Z8Uzum/4zgPyilIMgBNaH5Wat6SJaYgVW6wWu3HUP/Sy7MhbJazrGwgoFCHet+v5YxbDHh3cjUy9s5OstbWTqjz/41iI+Z1mkzOvLl7FBW6wSpZD7bNZaSu7M4Pdp8z2GV1cuQhfbZgs36GcHZ5/og49YD+bEGlRSzAdPGkjT+0EWJAew==', 'sign': 'Y86J7fPoG/8q5RfqSm3rVbVErKOfzlI0FcqJ+tggNs+QNQQF5QPDz1+vBoFG0gVE5KZMvkZfdwnYo8cC3A9XNUMrmW2bN3gpYFtDXVAWqrZjphpP7svyPZ+utQj/MH+x4V5lCZJuBxadeWbpAeKfrGaU8hCf46kkhSM/tt9YLaEOBXFJ/hT4TGhwB5SawW0orWEBgUSEcTxTW8LbTHUCKA6amXscdpw14Kus2gUUgg4GG6hQajq5lBvW7vqZTKBdn9/W0Y2qeTkKEdyM7vxMMcTjg2nX6wJCbTY2rP458ivo+7JUaPORkHAALkZN5AKRLjm+tAfQbQuLTABhgq+UGw==', 'version': None}

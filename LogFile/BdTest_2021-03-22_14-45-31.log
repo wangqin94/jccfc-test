@@ -1,0 +1,11 @@
+[2021-03-22 14:45:31] [INFO] 当前测试环境 hdev
+[2021-03-22 14:45:31] [INFO] 数据库初始化.
+[2021-03-22 14:45:31] [INFO] 自定义用户四要素信息 
+{'name': '师美嘉', 'cer_no': '632122200811095947', 'bankid': '6222081532551037565', 'telephone': '16300000069'}
+[2021-03-22 14:45:31] [INFO] data:{'name': '师美嘉', 'cer_no': '632122200811095947', 'bankid': '6222081532551037565', 'telephone': '16300000069', 'timestamp': '20210322144531', 'reqSn': '16163955317731001', 'sessionId': '16163955317731002', 'transactionId': '16163955317731003', 'loan_amount': 1000000}
+[2021-03-22 14:45:31] [INFO] 开始支用申请...
+[2021-03-22 14:45:31] [DEBUG] Starting new HTTP connection (1): hapi-web-hdev.corp.jccfc.com:80
+[2021-03-22 14:45:31] [DEBUG] http://hapi-web-hdev.corp.jccfc.com:80 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 308 171
+[2021-03-22 14:45:31] [DEBUG] Starting new HTTPS connection (1): hapi-web-hdev.corp.jccfc.com:443
+[2021-03-22 14:45:31] [DEBUG] https://hapi-web-hdev.corp.jccfc.com:443 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 200 None
+[2021-03-22 14:45:31] [INFO] 业务请求响应：{'head': {'returnFlag': '0', 'returnCode': '999999', 'returnMessage': '失败', 'transTime': None, 'tenantId': None, 'deviceId': None, 'channelNo': None, 'serialNo': None, 'requestSerialNo': None, 'requestTime': None, 'marketClue': None, 'empNo': None, 'merchantId': None, 'organId': None}, 'body': None}

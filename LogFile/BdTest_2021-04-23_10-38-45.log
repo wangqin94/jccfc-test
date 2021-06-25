@@ -1,0 +1,13 @@
+[2021-04-23 10:38:45] [INFO] 当前测试环境 hdev
+[2021-04-23 10:38:45] [INFO] 数据库初始化.
+[2021-04-23 10:38:45] [DEBUG] Starting new HTTP connection (1): 10.10.100.153:8081
+[2021-04-23 10:38:45] [DEBUG] http://10.10.100.153:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-04-23 10:38:45] [INFO] 用户四要素信息 
+{'name': '明锦', 'cer_no': '220421198110256703', 'bankid': '6212810421203407526', 'telephone': '16300002154'}
+[2021-04-23 10:38:45] [INFO] 开始授信申请...
+[2021-04-23 10:38:45] [INFO] data数据: {'prcid': '220421198110256703', 'bankcard': '6212810421203407526', 'name': '明锦', 'phonenumber': '16300002154', 'timestamp': '20210423103845', 'reqSn': 'Apply_req16191455255891001', 'sessionId': 'Apply_sid16191455255891002', 'transactionId': 'Apply_tid16191455255891003', 'initialAmount': 3000000}
+[2021-04-23 10:38:45] [DEBUG] Starting new HTTP connection (1): hapi-web-hdev.corp.jccfc.com:80
+[2021-04-23 10:38:45] [DEBUG] http://hapi-web-hdev.corp.jccfc.com:80 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 308 171
+[2021-04-23 10:38:45] [DEBUG] Starting new HTTPS connection (1): hapi-web-hdev.corp.jccfc.com:443
+[2021-04-23 10:38:54] [DEBUG] https://hapi-web-hdev.corp.jccfc.com:443 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 200 None
+[2021-04-23 10:38:54] [INFO] 业务请求响应：{'retCode': '0'}

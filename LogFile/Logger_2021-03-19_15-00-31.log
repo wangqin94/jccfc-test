@@ -1,0 +1,5 @@
+[2021-03-19 15:00:37] [INFO] info msg
+[2021-03-19 15:00:37] [DEBUG] debug msg
+[2021-03-19 15:00:37] [WARNING] warning msg
+[2021-03-19 15:00:37] [ERROR] error msg
+[2021-03-19 15:00:37] [CRITICAL] fatal

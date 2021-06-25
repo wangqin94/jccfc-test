@@ -1,0 +1,11 @@
+[2021-04-21 11:35:37] [INFO] 当前测试环境 hdev
+[2021-04-21 11:35:37] [INFO] 数据库初始化.
+[2021-04-21 11:35:38] [INFO] 用户四要素信息 
+{'name': '丘栋', 'cer_no': '341321200508186269', 'bankid': '6222023076292620967', 'telephone': '16400003059'}
+[2021-04-21 11:35:38] [INFO] 开始支用申请...
+[2021-04-21 11:35:38] [INFO] data数据: {'prcid': '341321200508186269', 'bankcard': '6222023076292620967', 'name': '丘栋', 'phonenumber': '16400003059', 'timestamp': '20210421113538', 'reqSn': 'Loan_req16189761380241001', 'sessionId': 'Loan_sid16189761380241002', 'transactionId': 'Loan_tid16189761380241003', 'cashAmount': 60000, 'orderId': 'Ord1618976138024', 'term': 3, 'repayMode': '32'}
+[2021-04-21 11:35:38] [DEBUG] Starting new HTTP connection (1): hapi-web-hdev.corp.jccfc.com:80
+[2021-04-21 11:35:38] [DEBUG] http://hapi-web-hdev.corp.jccfc.com:80 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 308 171
+[2021-04-21 11:35:38] [DEBUG] Starting new HTTPS connection (1): hapi-web-hdev.corp.jccfc.com:443
+[2021-04-21 11:35:39] [DEBUG] https://hapi-web-hdev.corp.jccfc.com:443 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 200 None
+[2021-04-21 11:35:39] [INFO] 业务请求响应：{'retCode': '0'}

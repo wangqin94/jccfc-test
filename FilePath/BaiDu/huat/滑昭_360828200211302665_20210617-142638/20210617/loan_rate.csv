@@ -1,0 +1,2 @@
+cur_date,loan_id,start_term,end_term,int_rate,int_rate_unit,ovd_rate,ovd_rate_unit,fund_fee_ratio,fund_fee_max,fund_fee_min,partner_loan_id,charges_rate,overdue_rate,repay_violate_rate,refund_violate_rate,service_rate
+20210617,LoanId1623911198962,1,3,6.5,D,9.8,D,0,0,0,,0,0,4,0,0

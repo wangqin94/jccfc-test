@@ -1,0 +1,11 @@
+[2021-03-26 17:39:50] [INFO] 当前测试环境 hsit
+[2021-03-26 17:39:50] [INFO] 数据库初始化.
+[2021-03-26 17:39:50] [INFO] 用户四要素信息 
+{'name': '杜星', 'cer_no': '141100200905221670', 'bankid': '6217851891001461306', 'telephone': '16100004510'}
+[2021-03-26 17:39:50] [INFO] 开始支用申请...
+[2021-03-26 17:39:50] [INFO] data数据: {'prcid': '141100200905221670', 'bankcard': '6217851891001461306', 'name': '杜星', 'phonenumber': '16100004510', 'timestamp': '20210326173950', 'reqSn': 'Loan_req16167515906581001', 'sessionId': 'Loan_sid16167515906581002', 'transactionId': 'Loan_tid16167515906581003', 'cashAmount': 60000, 'orderId': 'Ord1616751590658', 'term': 3}
+[2021-03-26 17:39:50] [DEBUG] Starting new HTTP connection (1): hapi-web-hsit.corp.jccfc.com:80
+[2021-03-26 17:39:50] [DEBUG] http://hapi-web-hsit.corp.jccfc.com:80 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 308 171
+[2021-03-26 17:39:50] [DEBUG] Starting new HTTPS connection (1): hapi-web-hsit.corp.jccfc.com:443
+[2021-03-26 17:39:53] [DEBUG] https://hapi-web-hsit.corp.jccfc.com:443 "POST /api/v1/baidu/demo/loan/apply HTTP/1.1" 200 None
+[2021-03-26 17:39:53] [INFO] 业务请求响应：{'retCode': '0'}

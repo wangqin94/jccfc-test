@@ -1,0 +1,13 @@
+[2021-03-22 16:19:26] [INFO] 当前测试环境 hdev
+[2021-03-22 16:19:26] [INFO] 数据库初始化.
+[2021-03-22 16:19:27] [DEBUG] Starting new HTTP connection (1): 10.10.61.77:8081
+[2021-03-22 16:19:27] [DEBUG] http://10.10.61.77:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-03-22 16:19:27] [INFO] 随机生成客户四要素信息 
+{'name': '乐心鹏', 'cer_no': '460200199001216127', 'bankid': '6217221540956076493', 'telephone': '16300002975'}
+[2021-03-22 16:19:27] [INFO] 开始授信申请...
+[2021-03-22 16:19:27] [INFO] data数据: {'prcid': '460200199001216127', 'bankcard': '6217221540956076493', 'name': '乐心鹏', 'phonenumber': '16300002975', 'timestamp': '20210322161927', 'reqSn': 'apply_req16164011670331001', 'sessionId': 'apply_sid16164011670331002', 'transactionId': 'apply_tid16164011670331003', 'initialAmount': 3000000}
+[2021-03-22 16:19:27] [DEBUG] Starting new HTTP connection (1): hapi-web-hdev.corp.jccfc.com:80
+[2021-03-22 16:19:27] [DEBUG] http://hapi-web-hdev.corp.jccfc.com:80 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 308 171
+[2021-03-22 16:19:27] [DEBUG] Starting new HTTPS connection (1): hapi-web-hdev.corp.jccfc.com:443
+[2021-03-22 16:19:27] [DEBUG] https://hapi-web-hdev.corp.jccfc.com:443 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 200 None
+[2021-03-22 16:19:27] [INFO] 业务请求响应：{'head': {'returnFlag': '0', 'returnCode': '999900', 'returnMessage': '姓名不能为空,时间戳为空,事务ID为空,会话ID不能为空,请求流水号不能为空,身份证号不能为空,手机号不能为空,银行卡号不能为空,授信额度不能为空,手机号不是合法长度', 'transTime': None, 'tenantId': None, 'deviceId': None, 'channelNo': None, 'serialNo': None, 'requestSerialNo': None, 'requestTime': None, 'marketClue': None, 'empNo': None, 'merchantId': None, 'organId': None}, 'body': None}

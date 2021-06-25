@@ -1,0 +1,20 @@
+[2021-05-18 09:21:36] [INFO] 当前测试环境 huat
+[2021-05-18 09:21:36] [INFO] 数据库初始化.
+[2021-05-18 09:21:36] [DEBUG] Starting new HTTP connection (1): 10.10.100.153:8081
+[2021-05-18 09:21:36] [DEBUG] http://10.10.100.153:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-05-18 09:21:36] [INFO] 用户四要素信息 
+{'name': '熊光', 'cer_no': '150222200910013432', 'bankid': '6217227595836188441', 'telephone': '16100002828', 'openId': 'open_id1621300896449'}
+[2021-05-18 09:21:36] [INFO] 开始授信申请...
+[2021-05-18 09:21:36] [INFO] data数据: {'user_data': {'Platform': {'id_no': '150222200910013432', 'user_name': '熊光'}}, 'id_no': '150222200910013432', 'card_no': '6217227595836188441', 'user_name': '熊光', 'bank_bind_mobile': '16100002828', 'open_id': 'open_id1621300896449', 'request_no': 'request_no16213008964491', 'advice_amount': 10000, 'mobile': '16100002828', 'advice_rate_type': 'Y'}
+[2021-05-18 09:21:36] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-05-18 09:21:36] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/ctrip/demo/trade HTTP/1.1" 308 171
+[2021-05-18 09:21:36] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-05-18 09:21:39] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/ctrip/demo/trade HTTP/1.1" 200 None
+[2021-05-18 09:21:39] [INFO] 业务请求响应：{'status': '1', 'fail_msg': None, 'open_id': 'open_id1621300896449', 'partner_id': '000UC020001413953', 'credit_start_date': '', 'credit_end_date': '', 'credit_amount': '10000.00', 'rate_type': 'Y', 'rate': {'ECI': {'3': 0.36}}, 'service': 'PRE_CREDIT', 'service_version': '1.0', 'partner': 'JCXFCASH', 'result_code': '000000', 'result_msg': None}
+[2021-05-18 09:21:39] [INFO] 开始授信申请...
+[2021-05-18 09:21:39] [INFO] data数据: {'user_data': {'Platform': {}}, 'id_no': '150222200910013432', 'card_no': '6217227595836188441', 'user_name': '熊光', 'bank_bind_mobile': '16100002828', 'open_id': 'open_id1621300896449', 'request_no': 'request_no16213008964492', 'advice_amount': 10000, 'mobile': '16100002828', 'advice_rate_type': 'Y'}
+[2021-05-18 09:21:39] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-05-18 09:21:39] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/ctrip/demo/trade HTTP/1.1" 308 171
+[2021-05-18 09:21:39] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-05-18 09:21:39] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/ctrip/demo/trade HTTP/1.1" 200 115
+[2021-05-18 09:21:39] [INFO] 业务请求响应：{'service': 'CREDIT', 'service_version': None, 'partner': 'JCXFCASH', 'result_code': '999999', 'result_msg': '系统异常'}

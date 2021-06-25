@@ -1,0 +1,2 @@
+cur_date,leader,parter,cust_name,cert_type,cert_no,loan_id,apply_date,start_date,end_date,seq_no,encash_amt,currency,repay_mode,repay_cycle,total_terms,grace_day,fund_status,fail_type,partner_loan_id,order_id,card_no
+20210617,BAIDU,0254,滑昭,01,360828200211302665,LoanId1623911198962,20210617,20210617,20210917,1623911198980,60000,156,05,M,3,4,2,,000LA2021060000000223,Ord1623909198959,6228483678288433774

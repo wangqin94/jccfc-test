@@ -1,0 +1,11 @@
+[2021-06-23 16:14:56] [INFO] 当前测试环境 huat
+[2021-06-23 16:14:56] [INFO] 数据库初始化.
+[2021-06-23 16:14:56] [INFO] 用户四要素信息 
+{'name': '周杨球', 'cer_no': '431028199510292436', 'bankid': '6212265137662312938', 'telephone': '19982567012', 'openId': 'open_id1623055080271'}
+[2021-06-23 16:14:56] [INFO] 开始支用申请...
+[2021-06-23 16:14:56] [INFO] data数据: {'id_no': '431028199510292436', 'card_no': '6212265137662312938', 'user_name': '周杨球', 'bank_bind_mobile': '19982567012', 'open_id': 'open_id1623055080271', 'loan_no': 'loan_no1624436096292', 'loan_amount': 600, 'request_no': 'request_no16244360962923', 'first_repay_date': '20210708111213'}
+[2021-06-23 16:14:56] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-23 16:14:56] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/ctrip/demo/trade HTTP/1.1" 308 171
+[2021-06-23 16:14:56] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-23 16:14:56] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/ctrip/demo/trade HTTP/1.1" 200 225
+[2021-06-23 16:14:56] [INFO] 业务请求响应：{'loan_status': '0', 'fail_msg': None, 'partner_trans_no': None, 'finish_time': None, 'invest_loan_detail': None, 'service': 'LOAN_CASH', 'service_version': '1.0', 'partner': 'JCXFCASH', 'result_code': '000000', 'result_msg': '打款处理中'}

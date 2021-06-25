@@ -1,0 +1,20 @@
+[2021-06-11 16:11:57] [INFO] 当前测试环境 huat
+[2021-06-11 16:11:57] [INFO] 数据库初始化.
+[2021-06-11 16:11:57] [DEBUG] Starting new HTTP connection (1): 10.10.100.153:8081
+[2021-06-11 16:11:57] [DEBUG] http://10.10.100.153:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-06-11 16:11:57] [INFO] 用户四要素信息 
+{'name': '裴中伟', 'cer_no': '360735199403175229', 'bankid': '6212818578032700736', 'telephone': '14300004454', 'applyId': 'applyId1623399117861'}
+[2021-06-11 16:11:57] [INFO] 开始授信申请...
+[2021-06-11 16:11:57] [INFO] data数据: {'head': {'requestSerialNo': 'SerialNo1623399117879', 'requestTime': '1623399117879', 'empNo': 'empNo1623399117879', 'merchantId': '000UC010000006268', 'managerId': '000UC010000006268'}, 'body': {'applyId': 'applyId1623399117861', 'sourceCode': '000UC010000006268', 'orderType': '1', 'loanAmount': 30000, 'creditAmount': 30000, 'loanTerm': 3, 'repayType': 1, 'firstOrderDate': '2021-06-11', 'idNo': '360735199403175229', 'userBankCardNo': '6212818578032700736', 'name': '裴中伟', 'mobileNo': '14300004454'}, 'loanAmount': 10000}
+[2021-06-11 16:11:57] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-11 16:11:57] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 308 171
+[2021-06-11 16:11:57] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-11 16:11:58] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 404 None
+[2021-06-11 16:11:58] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-11 16:11:58] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/credit/apply HTTP/1.1" 308 171
+[2021-06-11 16:11:58] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-11 16:11:58] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/credit/apply HTTP/1.1" 200 None
+[2021-06-11 16:11:58] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-11 16:11:58] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 308 171
+[2021-06-11 16:11:58] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-11 16:11:58] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 404 None

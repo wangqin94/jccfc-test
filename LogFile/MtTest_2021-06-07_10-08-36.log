@@ -1,0 +1,20 @@
+[2021-06-07 10:08:36] [INFO] 当前测试环境 huat
+[2021-06-07 10:08:36] [INFO] 数据库初始化.
+[2021-06-07 10:08:37] [DEBUG] Starting new HTTP connection (1): 10.10.100.153:8081
+[2021-06-07 10:08:37] [DEBUG] http://10.10.100.153:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-06-07 10:08:37] [INFO] 随机生成客户四要素信息 
+{'name': '谢楠', 'cer_no': '530800199103090634', 'bankid': '6222024904019431898', 'telephone': '16400007320'}
+[2021-06-07 10:08:37] [INFO] 开始授信申请!
+[2021-06-07 10:08:37] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-07 10:08:37] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/secret/thirdEncryptData/MEIT HTTP/1.1" 308 171
+[2021-06-07 10:08:37] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-07 10:08:37] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/secret/thirdEncryptData/MEIT HTTP/1.1" 200 None
+[2021-06-07 10:08:37] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-07 10:08:37] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/meit/credit HTTP/1.1" 308 171
+[2021-06-07 10:08:37] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-07 10:08:38] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/meit/credit HTTP/1.1" 200 None
+[2021-06-07 10:08:38] [INFO] 业务请求响应：{'data': 'N93hY7kshjg4j%2Bvt7dJ6qK9BzwyLDXNVcEUpDQac9TLkylgVepSesY9s2h8Np%2B944qM6YWtn4yDq%0AWjUFue7b6FAmmkFkjvwYsXfRDl4tOD62lzuQ30mREhAJZK6hI4BKOJDYGkdNME8xPjLvXcpSu3Ob%0A0meow0LQcrgQklLBEG6b9a0m%2Fmbd%2FI81vgtT3uT2OoMOtFmaY%2BSUWIZGNfgnqRdsANa61I50cijA%0AKjA4Q7j9MhVOIdWTxpGkcuAPBNO1K%2FGigyZ77ntoTSl5GA3QLund3TLvw8SYvQpN0Na9Lyt9tudT%0A4d6fPpsrSqMjx8im2%2BmBJvULIgWgVnoximYWwnAvD17BgIkQClmKAF3oOBpPBK91ccSnZbWkAmZ9%0AMA71uBZru%2Fho4B83QXuP%2FzUNdcCVldAB67rsH%2FMeMS8HiyTxWrTVrizb3Yg2UKYNPH6s%2BHZBGZlH%0AHdsnxma%2BkHdISLyYYeB%2BbwnjjTUoErwCHMUC28ilqsqQkJJrFo23qhNlwIjCEXXSh5X0gs9AFmRb%0AMNxVjXM04nSY%2F5%2BiBf6TUBI1rMgImpTLHMInzIaLdytSRyVBjJsEkvNjH%2F%2BWvJY8e2M33bOfVRwY%0A%2BQsoHyW4HPwnq%2BuMUl5uZo1J%2Fof2r3TjXryaZAJtZ3rRnBmeonm2kVKG3YctunYiq%2B4xTk4zXFMF%0Aconj%2BLb4XGUA2M7w8c7Ws2mls2LVzjj08kt2Oe6m91826RIXB%2BI%2FlvihHu11Fm%2BTeoWVyJQsBPGf%0ALmZQXqUs5iL5CrdSEJz8x4ZXuRQz6MEFFoDt7Ua1p1pRL26yP56kral7Balbv0LodIfAJJN3ZryB%0AfENyimHgHZsXzu0zCzbXYpRWnZxEPmaki5YF5U4N6vyGiAuRygyp65tN1bqRAavEskEBx6w5z285%0AVsgkNxP5XpwgidouTyUwDVT1rUi30CztSqJs%2BqHdSBPWPLKTO5hAQjIkzNyRdBW%2B9qRS%2FZ%2BnSqxC%0AfgZ0tbYSX9UCTW5yqnQskPDFVzfKG35erCN1%0A', 'sign': 'i00i9hjp0njGWa4qKGTKgqYzP6CKHJDDyNIja8aBr2ylNnnBtG4wV4FPQFp8o3I30CMlc4ADyO1W%0A4qk8CRDAYgUZMBYtc7YWVmftjLT9jpGo3fAQo3jnNSlyDLxUfmoQAQkecjF%2BJSnUH9ErvBCZyuKy%0AGEWtaFleoPPa7q%2Bwm0%2FwFFZxf6VcDmaYskk1uQ%2FhsXtL5fWCnBXlE71vv0IFFsygdhOy5xHElcr8%0ABW85bEtg%2FZCCIcYTfky91T8tOl%2BBtm77TOMiY%2FeQx3qLZyNlrVdIko4p7pDKsiKJFKvydIG32tU0%0AC5lO0UKTNsSS7ajMuUzFvka9PBLWQoCUFksBhg%3D%3D%0A'}
+[2021-06-07 10:08:38] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-06-07 10:08:38] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/secret/thirdDecryptData/MEIT HTTP/1.1" 308 171
+[2021-06-07 10:08:38] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-06-07 10:08:38] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/secret/thirdDecryptData/MEIT HTTP/1.1" 200 None

@@ -1,0 +1,11 @@
+[2021-05-17 14:35:40] [INFO] 当前测试环境 huat
+[2021-05-17 14:35:40] [INFO] 数据库初始化.
+[2021-05-17 14:35:40] [INFO] 用户四要素信息 
+{'name': '逯思', 'cer_no': '469027198804204851', 'bankid': '6216666846705696422', 'telephone': '16400008222'}
+[2021-05-17 14:35:40] [INFO] 开始授信申请...
+[2021-05-17 14:35:40] [INFO] data数据: {'id_no': '469027198804204851', 'card_no': '6216666846705696422', 'user_name': '逯思', 'bank_bind_mobile': '16400008222', 'open_id': 'open_id1621233340656', 'request_no': 'request_no16212333406562', 'advice_amount': 10000, 'mobile': '16400008222', 'advice_rate_type': 'Y'}
+[2021-05-17 14:35:40] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-05-17 14:35:40] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/ctrip/demo/trade HTTP/1.1" 308 171
+[2021-05-17 14:35:40] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-05-17 14:35:42] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/ctrip/demo/trade HTTP/1.1" 200 115
+[2021-05-17 14:35:42] [INFO] 业务请求响应：{'service': 'CREDIT', 'service_version': None, 'partner': 'JCXFCASH', 'result_code': '999999', 'result_msg': '系统异常'}

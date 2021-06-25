@@ -1,0 +1,18 @@
+[2021-06-21 15:28:33] [INFO] 当前测试环境 huat
+[2021-06-21 15:28:33] [INFO] 数据库初始化.
+[2021-06-21 15:28:33] [INFO] 用户四要素信息 
+{'name': '柯勤', 'cer_no': '130125199702113409', 'bankid': '6222007191787316748', 'telephone': '16300005350', 'applyId': 'applyId1624260494337'}
+[2021-06-21 15:28:33] [INFO] 开始支用申请...
+[2021-06-21 15:28:33] [INFO] payload数据: {'head': {'tenantId': '000', 'channelNo': '01', 'requestSerialNo': 'SerialNo16242605139323', 'marketClue': None, 'deviceId': None, 'longitude': None, 'latitude': None, 'requestTime': '1624260513932', 'merchantId': '000UC010000006268', 'managerId': '000UC010000006268', 'empNo': 'empNo1624260513932', 'token': None, 'rebackUrl': None, 'notifyUrl': None}, 'body': {'applyId': 'applyId1624260494337', 'sourceCode': '000UC010000006268', 'name': '柯勤', 'fixedRepayDay': '21', 'firstRepayDate': '2021-07-21', 'loanAmt': 800, 'loanTerm': 3, 'mobileNo': '16300005350', 'interestRate': '35.28', 'orderType': 1, 'repayType': '1', 'debitAccountName': '蓝安峰', 'debitOpenAccountBank': '中国银行', 'debitAccountNo': '6222007191787316748', 'debitOpenAccountBankCode': '121', 'fileInfos': [{'fileType': '5', 'fileUrl': 'http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_contract_202000001209703817.pdf', 'fileName': 'JC_contract_202000001209703817.pdf'}]}}
+[2021-06-21 15:28:33] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-21 15:28:33] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 308 171
+[2021-06-21 15:28:33] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-21 15:28:34] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 200 None
+[2021-06-21 15:28:34] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-21 15:28:34] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/loan/apply HTTP/1.1" 308 171
+[2021-06-21 15:28:34] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-21 15:28:35] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/loan/apply HTTP/1.1" 200 None
+[2021-06-21 15:28:35] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-21 15:28:35] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 308 171
+[2021-06-21 15:28:35] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-21 15:28:35] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 200 62

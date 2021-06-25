@@ -1,0 +1,20 @@
+[2021-06-24 16:28:01] [INFO] 当前测试环境 huat
+[2021-06-24 16:28:01] [INFO] 数据库初始化.
+[2021-06-24 16:28:01] [DEBUG] Starting new HTTP connection (1): 10.10.100.153:8081
+[2021-06-24 16:28:01] [DEBUG] http://10.10.100.153:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-06-24 16:28:01] [INFO] 用户四要素信息 
+{'name': '冀浩之', 'cer_no': '340403198107111647', 'bankid': '6216669819671364835', 'telephone': '14300001358', 'applyId': 'applyId1624523281309'}
+[2021-06-24 16:28:01] [INFO] 开始授信申请...
+[2021-06-24 16:28:01] [INFO] payload数据: {'type': 'async', 'reqSn': 'credit_baidu502102002105001650', 'message': {'sessionId': 'credit_baidu502102002105001650', 'transactionType': 'apply', 'transactionId': '502102002105001650wai', 'timestamp': '1616580987759', 'basicInfo': {'prcid': '420113199704275886', 'bankcard': '6222001552388738497', 'name': '冀浩之', 'phonenumber': '19208785619'}, 'expanding': {'reasonCode': '-9999', 'reasonMsg': '-9999', 'initialAmount': '100000', 'creditValidityDays': '30', 'risCode': '1000', 'dxmAScore': '642', 'preACustSeg': 'A', 'holmesBlackScore': '590', 'holmesAgentScore': '59.48', 'blackListType': 'D1', 'prcidNormalScoreExp3': '92', 'bidNormalScoreExp3': '92', 'phoneNormalScoreExp3': '92', 'taxMonthlyIncomeSection': '-9999', 'ocrExpdate': '20220203', 'r21P12FinallyInterest': '6.5', 'dxmDScore': '575', 'careerType': '-9999', 'ocrAddress': '四川成都市武侯区府城大道中段81号', 'userHomeAddress': '四川成都市武侯区府城大道中段82号', 'zxPermanentAddress': '四川成都市武侯区府城大道中段83号', 'zxsDomicile': '四川成都市武侯区府城大道中段84号', 'zxMailingAddress': '四川成都市武侯区府城大道中段85号', 'zxsCareer': '02', 'zdV1Fico': '570'}}}
+[2021-06-24 16:28:01] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-24 16:28:01] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 308 171
+[2021-06-24 16:28:01] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-24 16:28:01] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/encrypt/encryptData HTTP/1.1" 200 None
+[2021-06-24 16:28:01] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-24 16:28:02] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 308 171
+[2021-06-24 16:28:02] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-24 16:28:02] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 404 None
+[2021-06-24 16:28:02] [DEBUG] Starting new HTTP connection (1): api-web-huat.jccfc.com:80
+[2021-06-24 16:28:02] [DEBUG] http://api-web-huat.jccfc.com:80 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 308 171
+[2021-06-24 16:28:02] [DEBUG] Starting new HTTPS connection (1): api-web-huat.jccfc.com:443
+[2021-06-24 16:28:07] [DEBUG] https://api-web-huat.jccfc.com:443 "POST /api/fql/v1/encrypt/decryptData HTTP/1.1" 200 None

@@ -1,0 +1,18 @@
+[2021-04-27 11:09:36] [INFO] 当前测试环境 hsit
+[2021-04-27 11:09:36] [INFO] 数据库初始化.
+[2021-04-27 11:09:36] [INFO] 自定义用户四要素信息 
+{'name': '陈祺', 'cer_no': '43252219961102641X', 'bankid': '6217860318527297286', 'telephone': '16400000126'}
+[2021-04-27 11:09:36] [INFO] 开始授信申请!
+[2021-04-27 11:09:36] [DEBUG] Starting new HTTP connection (1): hapi-web-hsit.corp.jccfc.com:80
+[2021-04-27 11:09:36] [DEBUG] http://hapi-web-hsit.corp.jccfc.com:80 "POST /api/v1/secret/thirdEncryptData/MEIT HTTP/1.1" 308 171
+[2021-04-27 11:09:36] [DEBUG] Starting new HTTPS connection (1): hapi-web-hsit.corp.jccfc.com:443
+[2021-04-27 11:09:36] [DEBUG] https://hapi-web-hsit.corp.jccfc.com:443 "POST /api/v1/secret/thirdEncryptData/MEIT HTTP/1.1" 200 None
+[2021-04-27 11:09:36] [DEBUG] Starting new HTTP connection (1): hapi-web-hsit.corp.jccfc.com:80
+[2021-04-27 11:09:36] [DEBUG] http://hapi-web-hsit.corp.jccfc.com:80 "POST /api/v1/meit/credit HTTP/1.1" 308 171
+[2021-04-27 11:09:36] [DEBUG] Starting new HTTPS connection (1): hapi-web-hsit.corp.jccfc.com:443
+[2021-04-27 11:09:36] [DEBUG] https://hapi-web-hsit.corp.jccfc.com:443 "POST /api/v1/meit/credit HTTP/1.1" 200 None
+[2021-04-27 11:09:36] [INFO] 业务请求响应：{'data': 'QTTfVI%2BJgpVT6Mw4gLbnXalXw1rL8aFWRhtdZ8rl9jJO031vyXiQVDRlCGzjXghE3CS5dr5YHRwU%0AC%2BoaYrbBrI2QXCDPjMFpzq6ZJO7aA%2FHBD7yMwZNFRfEbiPksL7eIIRKHlExQoF1zbr%2BKdO6TM1oQ%0ALhHYXST4U%2FHd7ONlx0mYUgzA88ILBUHluJwnLu%2BJqtWwHRQ8ZJa1mxgx0QdEZisVOavk6On6G5pJ%0AzjFgp05SHDuv446f2xtKIqvpr%2FyO3RMs%2BfsOhqgrlpylFldV17yz3nbj%2BioI1%2Fy4sNvzEYrL4SIb%0AWmz%2BN5OAk4Z2F1xSMXEhAEY7BfpQpJv6PKDNbUmOAfm%2FUI2%2FD06zematATkgrozjK3uMoPnAHlQp%0AKEXOWgHHKnWveC9aI0Qpj3Ialz7OED8wHpJFJTeC%2B7E3WEsk9xHZE8jarpmJlxwk3AawFaWUTfbb%0ATPQ8CDURoPdkg%2BfIGERMZ2iD6rs2zkzl9qYMSr3kOi1lWpW8%2Bdd%2B77Ww3fRN0fyv4tWPxwMTFjCg%0AwrXVx5BI83ZcNXiu0AcTlnfTPXJOiyxlnCl6fbt0FKCyb01IjxsLUxdtmAXug8EtogkfSmNdX8Wq%0AmNnC0GfeYn2yJuMyBwCLDVRwjwBsNRSombxTqgl52EG64zVrMbRE%2BtP7Di3ED88VtDl2SwjTkDPY%0Aaj2uZrOwJLU5xI%2FFMmUaSEG%2BdUQP4Vb7Jz1zmZ01fMmD%2F2s%2BBUyLmbSAsHok4C3zF1vFGhEflQul%0ATbE9hkLi3n2E6hnRrdzSZeKBbIPRrZEPSvlLsLVmFQ15%2F7Re%2BY6ZSpaQ1E7QPZ2vmDFVmPPZ6m7X%0AqEC1h5K0nbghkjBDOo%2FmLh5yLeMQ9KtrGjVtGOWFBTvm1KRYA7O82pXY%2BMgAjd7PcoVi8Rr07jDb%0A4xAn%2BeWj5jIrulYxMzGo8DoGCKbe%2B736K9uUr7jWmbVuPaFj1YUNQV%2BnvvJBiQ5X3grYg8NJ9Qt4%0AHqlXzdfwc2jR9QrQmUrMudNQpfJ1baJ8T8EO%0A', 'sign': 'Vd3Qu%2BNxl8mPMN6ylQ5gRXqOgfivNxYOqv6qKKFJaiNepLsG9AuePG13sSLTdUAkxpLPhLJTNPSj%0A9qOHtxJYbS0lcc0AY6MaLZOZpT5MTXRZiL9QEu6xqzOCY%2FGWW0QW8mfVOSrBO05eheNxb%2FQTXhsU%0ARnV%2Fn09daju54WaoIP7NCXeJEPr93VZMlW1p8yHh0l4XnImJvvMLOCT2EHrGXlI9%2FiTtG69%2Bwbj3%0AJQ1Aomducjk%2F%2BXPm96Js3CSd8fOEkPwIPjtkxDbQMOsA9N0YmCsQcaExKzaH1zOHf976rcutOsOr%0AX3EDfCw9xRJ%2F00KBZ1bTXyw6%2FzOzIM3QgB%2FFwA%3D%3D%0A'}
+[2021-04-27 11:09:36] [DEBUG] Starting new HTTP connection (1): hapi-web-hsit.corp.jccfc.com:80
+[2021-04-27 11:09:36] [DEBUG] http://hapi-web-hsit.corp.jccfc.com:80 "POST /api/v1/secret/thirdDecryptData/MEIT HTTP/1.1" 308 171
+[2021-04-27 11:09:36] [DEBUG] Starting new HTTPS connection (1): hapi-web-hsit.corp.jccfc.com:443
+[2021-04-27 11:09:36] [DEBUG] https://hapi-web-hsit.corp.jccfc.com:443 "POST /api/v1/secret/thirdDecryptData/MEIT HTTP/1.1" 200 None

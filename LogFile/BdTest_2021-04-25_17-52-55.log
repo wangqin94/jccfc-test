@@ -1,0 +1,13 @@
+[2021-04-25 17:52:55] [INFO] 当前测试环境 huat
+[2021-04-25 17:52:55] [INFO] 数据库初始化.
+[2021-04-25 17:52:55] [DEBUG] Starting new HTTP connection (1): 10.10.100.153:8081
+[2021-04-25 17:52:55] [DEBUG] http://10.10.100.153:8081 "GET /getTestData HTTP/1.1" 200 None
+[2021-04-25 17:52:55] [INFO] 用户四要素信息 
+{'name': '蓬欢', 'cer_no': '320903198212079822', 'bankid': '6222020306161657367', 'telephone': '14300006600'}
+[2021-04-25 17:52:55] [INFO] 开始授信申请...
+[2021-04-25 17:52:55] [INFO] data数据: {'prcid': '320903198212079822', 'bankcard': '6222020306161657367', 'name': '蓬欢', 'phonenumber': '14300006600', 'timestamp': '20210425175255', 'reqSn': 'Apply_req16193443754701001', 'sessionId': 'Apply_sid16193443754701002', 'transactionId': 'Apply_tid16193443754701003', 'initialAmount': 3000000}
+[2021-04-25 17:52:55] [DEBUG] Starting new HTTP connection (1): hapi-web-huat.corp.jccfc.com:80
+[2021-04-25 17:52:55] [DEBUG] http://hapi-web-huat.corp.jccfc.com:80 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 308 171
+[2021-04-25 17:52:55] [DEBUG] Starting new HTTPS connection (1): hapi-web-huat.corp.jccfc.com:443
+[2021-04-25 17:52:55] [DEBUG] https://hapi-web-huat.corp.jccfc.com:443 "POST /api/v1/baidu/demo/credit/apply HTTP/1.1" 200 None
+[2021-04-25 17:52:55] [INFO] 业务请求响应：{'icode': '0254', 'data': 'b8/aNql5rIMm0kMQ/mAxGjhQ1LGh1RBTdj/PrLMGc6w=', 'key': 'iRNmXtBaI3acR4v3fjYCGZAFKrWfUup3JKGJtN0rP9F0xl1UI37GaAKJ6jD724l5lxqrSB48jRUIn6CozRbvCZPzA+t35ydAyca7lNM8Y95H85yAGCcHnxm+aYhRTKbt7IB7cHnmd9X/4kD97TBzz8AWoS5hf6r+6W2LnS+c7NV9O28Us0vDPfjCD3cwKi1uXL0gKucYYaRIbGpGFTgoBViWuBwSlUoFayrNZ4Ok0GFV5uJIcIBS37ZS12/nKUa+qnYxjHbsLPPHNpsPA84Ijtlvd8Khtj/nk2PJNghm1VbvIKSza/rIicad45zQ4QqM+ANwkVtyVuMvEgEPfs/CIg==', 'salt': 'lFSqo2l1LEyZnNXGsJ+m/qwpf3Cu4DuNXuqEj77NWAUTrV6hFbgTYC4BNT6Tf3eKzvMvBvjGdPErhdY3e8Wh/MiWnSSLBNZS9Cn+1UXSpRr5EnuZNLi3fI/o+Fcl6um6hf/ASXFgWf2WyGJXufg7iX0Ed8hH5qBorKs1odQqcJBTb3sbmcaX+AtTqlZ3jhq5GTi81eqwPiHPwBYUQLcli7pKAm+cvB88VhdZVyRMxOc5kgehmBJFpzlGlwn+vr+5YdBufr4eoHT7JjF3a3Riq0icjkntkmDxHHrwNJQvvNKgJ75ozvPl0SJwf2gg++l+Itu7C7JUSElfX/ft8d8LUg==', 'sign': 'Lqxip2dVsRcs7bPn/Qk1yPYdrk8mwZQpwX1J/4TCK72BBv0ByuPjN5P01uNDoHib7kkucpfGBgTtLe0rRlfiu7lx+yXG5wojTPB+tl+Nth5HtREFziPlqyMSERdJSohkdyWiLeIazqXFDq8AEhdIavewa5JB4oh8oPcxrq9ZAi8REC9NmaWhJqU17Vrsg/l8vI3ItVskHcQM/bgjxoBkZtQjf+PrZs7cHEE1cZwBS0SYmdLrvf4Vc6dTvGbCkEx8U5u0Ip3yqPGLOO6Z7ahVw76tAXnBAcr39Q21YbHUATdrBoQSk0hX6oNE2SMTGGmQZCMb7cid+AMD05kXY5VXMg==', 'version': None}
