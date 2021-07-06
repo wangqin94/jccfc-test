@@ -83,7 +83,7 @@ class PayloadGenerator(INIT):
         pre_credit_data['user_name'] = self.data['name']
         pre_credit_data['bank_bind_mobile'] = self.data['telephone']
 
-        pre_credit_data['open_id'] = self.data["openId"]
+        pre_credit_data['open_id'] = self.data["open_id"]
         pre_credit_data['request_no'] = 'request_no' + self.strings + "1"
         pre_credit_data['advice_amount'] = self.credit_amount
 
@@ -111,7 +111,7 @@ class PayloadGenerator(INIT):
         credit_data['user_name'] = self.data['name']
         credit_data['bank_bind_mobile'] = self.data['telephone']
 
-        credit_data['open_id'] = self.data["openId"]
+        credit_data['open_id'] = self.data["open_id"]
         credit_data['request_no'] = 'request_no' + self.strings + "2"
         credit_data['advice_amount'] = self.credit_amount
         credit_data["user_data"]["Platform"]['id_no'] = self.data['cer_no']

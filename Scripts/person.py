@@ -29,3 +29,7 @@ data = {'name': '孙芸', 'cer_no': '232700201705193214', 'bankid': '62172393808
 data = {'name': '房枝', 'cer_no': '460000201809185174', 'bankid': '6228489400665370311', 'telephone': '13985726149', ('applyId',): "('applyId',)1625481382004"}  # huat -> fql
 data = {'name': '温璧丹', 'cer_no': '533423198307209351', 'bankid': '6228489401646895632', 'telephone': '13205837294', ('applyId',): "('applyId',)1625481480159"}  # huat -> fql
 data = {'name': '蔚承', 'cer_no': '140431198406286402', 'bankid': '6212269404480699920', 'telephone': '14983105967', 'applyId': 'applyId1625481763543'}  # huat -> fql
+data = {'name': '充荔卿', 'cer_no': '440229198902161471', 'bankid': '6216660236619100917', 'telephone': '17648230967', 'open_id': 'open_id1625564977322'}  # hqas -> XieCheng
+data = {'name': '秋艳锦', 'cer_no': '469022201303063934', 'bankid': '6212260239326699000', 'telephone': '14549253601', 'open_id': 'open_id1625565248081'}  # hqas -> XieCheng
+data = {'name': '安影瑶', 'cer_no': '331024198905264129', 'bankid': '6217230239906105580', 'telephone': '18787401263', 'open_id': 'open_id1625565306022'}  # hqas -> XieCheng
+data = {'name': '贾震', 'cer_no': '450405198106122617', 'bankid': '6217230240558355804', 'telephone': '17535674081', 'open_id': 'open_id1625565371248'}  # hqas -> XieCheng
