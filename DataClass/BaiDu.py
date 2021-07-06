@@ -15,9 +15,9 @@ class PayloadGenerator(INIT):
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(self.project))
         self.log.info('用户四要素信息 \n%s', self.data)
 
-        self.credit_amount = 3000000    # 授信申请金额, 默认3000000  单位分
-        self.loan_amount = 1000000      # 支用申请金额, 默认1000000  单位分
-        self.period = 3                 # 借款期数, 默认3期
+        self.credit_amount = 3000000  # 授信申请金额, 默认3000000  单位分
+        self.loan_amount = 1000000  # 支用申请金额, 默认1000000  单位分
+        self.period = 3  # 借款期数, 默认3期
 
         # 初始化payload变量
         self.credit_payload = {}
@@ -40,7 +40,7 @@ class PayloadGenerator(INIT):
         credit_data['reqSn'] = 'Apply_req' + strings + "1001"
         credit_data['sessionId'] = 'Apply_sid' + strings + "1002"
         credit_data['transactionId'] = 'Apply_tid' + strings + "1003"
-        credit_data['initialAmount'] = self.credit_amount               # 授信申请金额, 默认3000000分
+        credit_data['initialAmount'] = self.credit_amount  # 授信申请金额, 默认3000000分
 
         credit_data.update(kwargs)
         self.log.info("data数据: %s", credit_data)
@@ -67,7 +67,7 @@ class PayloadGenerator(INIT):
         loan_data['reqSn'] = 'Loan_req' + strings + "1001"
         loan_data['sessionId'] = 'Loan_sid' + strings + "1002"
         loan_data['transactionId'] = 'Loan_tid' + strings + "1003"
-        loan_data['cashAmount'] = self.loan_amount                      # 支用申请金额, 默认1000000分
+        loan_data['cashAmount'] = self.loan_amount  # 支用申请金额, 默认1000000分
         loan_data['orderId'] = 'Ord' + strings
         loan_data['term'] = self.period
 

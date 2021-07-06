@@ -17,11 +17,11 @@ class TestCase(object):
         pass
 
     # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效]
-    def process(self, flag=2):
+    def process(self, flag=0):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
-            bd = Component(data=None)
+            bd = Component(data=data)
             bd.credit(initialAmount=3000000)
 
         # 授信查询

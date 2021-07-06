@@ -13,8 +13,11 @@ class Component(PayloadGenerator):
 
     # 百度授信申请
     def credit(self, **kwargs):
+        # 校验用户是否已存在
+        self.check_user_available(self.data)
         self.log.demsg('开始授信申请...')
         self.credit_msg(**kwargs)
+        print(self.cfg)
         url = self.host + self.cfg['credit']['interface']
         print(self.active_payload)
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)

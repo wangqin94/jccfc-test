@@ -13,25 +13,10 @@ from Component.XieCheng import *
 from Config.TestEnvInfo import *
 
 
-def write_data(env):
-    data = {}
-    strings = str(int(round(time.time() * 1000)))
-    res = requests.get('http://10.10.100.153:8081/getTestData')
-    data['name'] = eval(res.text)["姓名"]
-    data['cer_no'] = eval(res.text)["身份证号"]
-    data['bankid'] = eval(res.text)["银行卡号"]
-    data['telephone'] = eval(res.text)["手机号"]
-    data['openId'] = 'open_id' + strings
-    with open('person.py', 'a', encoding='utf-8') as f:
-        f.write('\n')
-        f.write('data = {}  # {}'.format(str(data), env))
-    return data
-
-
 class PayloadGenerator(INIT):
     def __init__(self, *, data=None, repay_term_no="1"):
         super().__init__()
-        self.data = data if data else write_data(str(self.env) + ' -> ' + str(self.project))
+        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(self.project), 'open_id')
         self.log.info('用户四要素信息 \n%s', self.data)
 
         self.strings = str(int(round(time.time() * 1000)))

@@ -208,7 +208,7 @@ class PayloadGenerator(INIT):
                     "ID_BACK_PIC_PATH": "/hj/xdgl/meituan/cqid2.png",     # /hj/xdgl/meituan/cqid2.png  /hj/xdgl/meituan/owxbackerror.jpg
                     # "ID_FACE_PIC_PATH": "/hj/xdgl/meituan/wymid1.png",
                     # "ID_BACK_PIC_PATH": "",
-                    #"ID_ADDRESS_OCR": "成都莆田街133号-4-5",    # 深圳莆田街133号-4-5
+                    "ID_ADDRESS_OCR": "成都莆田街133号-4-5",    # 深圳莆田街133号-4-5
                     "NATION": "回族",
                     "ISSUER": "四川省成都市"
                 },

@@ -13,6 +13,8 @@ class Component(PayloadGenerator):
 
     # 携程预授信申请
     def pre_credit(self, **kwargs):
+        # 校验用户是否在系统中已存在
+        self.check_user_available(self.data)
         self.log.demsg('开始授信申请...')
         self.pre_credit_msg(**kwargs)
         url = self.host + self.cfg['pre_credit']['interface']

@@ -13,6 +13,8 @@ class Component(PayloadGenerator):
 
     # 分期乐授信申请
     def credit(self, **kwargs):
+        # 校验用户是否在系统中已存在
+        self.check_user_available(self.data)
         self.log.demsg('开始授信申请...')
         self.credit_msg(**kwargs)
         url = self.host_fql + self.cfg['credit']['interface']

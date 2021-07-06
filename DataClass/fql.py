@@ -4,36 +4,18 @@
 # ------------------------------------------
 import json
 import time
-from datetime import datetime
-from pprint import pprint
 
-from ComLib import Mysql
 from Config.global_config import *
 from Engine.Base import INIT
 from Component.XieCheng import *
 from Config.TestEnvInfo import *
-
-
-def write_data(env):
-    data = {}
-    strings = str(int(round(time.time() * 1000)))
-    getTestData = CommonConfig["four_element_addr"]
-    res = requests.get(getTestData)
-    data['name'] = eval(res.text)["姓名"]
-    data['cer_no'] = eval(res.text)["身份证号"]
-    data['bankid'] = eval(res.text)["银行卡号"]
-    data['telephone'] = eval(res.text)["手机号"]
-    data['applyId'] = 'applyId' + strings
-    with open('person.py', 'a', encoding='utf-8') as f:
-        f.write('\n')
-        f.write('data = {}  # {}'.format(str(data), env))
-    return data
+from ComLib.Models import *
 
 
 class PayloadGenerator(INIT):
     def __init__(self, *, data=None, credit_amount=30000, loan_amount=600, loan_term=3):
         super().__init__()
-        self.data = data if data else write_data(str(self.env) + ' -> ' + str(self.project))
+        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(self.project), 'applyId')
         self.log.info('用户四要素信息 \n%s', self.data)
 
         self.strings = str(int(round(time.time() * 1000)))

@@ -3,13 +3,15 @@
 # # -----------------------------------------------------------
 # # - 公共模块函数变量
 # # -----------------------------------------------------------
+import random
+import string
 
 from Engine.Logger import Logs, getcallargs, wraps, requests, json, time
 
 _log = Logs()
 __all__ = ['output_format', 'wait_time', 'get_base_data',
            'loan_and_period_date_parser', 'ciphertext',
-           'encrypt', 'decrypt', 'DataUpdate']
+           'encrypt', 'decrypt', 'DataUpdate', 'get_telephone']
 
 
 # # -----------------------------------------------------------
@@ -21,6 +23,7 @@ def output_format(func):
         print("# --------------------- Divide Line --------------------------- #")
         func(*args, **kwargs)
         print("# --------------------- Divide Line --------------------------- #")
+
     return wrapper
 
 
@@ -35,13 +38,22 @@ def wait_time(sec):
 # # -----------------------------------------------------------
 # # - 用户四要素生成
 # # -----------------------------------------------------------
-def get_base_data(env):
+def get_base_data(env, *project):
+    strings = str(int(round(time.time() * 1000)))
     data = {}
     res = requests.get('http://10.10.100.153:8081/getTestData')
     data['name'] = eval(res.text)["姓名"]
     data['cer_no'] = eval(res.text)["身份证号"]
     data['bankid'] = eval(res.text)["银行卡号"]
-    data['telephone'] = eval(res.text)["手机号"]
+    # 获取随机生成的手机号
+    data['telephone'] = get_telephone()
+
+    # project赋值后天从到data中
+    print(project)
+    if project:
+        for item in project:
+            data[item] = str(item) + strings
+
     with open('person.py', 'a', encoding='utf-8') as f:
         f.write('\n')
         f.write('data = {}  # {}'.format(str(data), env))
@@ -166,6 +178,7 @@ def ciphertext(func):
             _log.info("报文解密操作结束！status code: %s", response.status_code)
             res = str(response.json()).replace("'", '''"''').replace(" ", "")
             _log.info(f"解密后的报文：\n{res}")
+
     return inner
 
 
@@ -199,8 +212,8 @@ class DataUpdate(object):
                 child_dict = data[child_key]
                 self._update_data(child_dict, key, value)
                 data[child_key] = child_dict
-        elif isinstance(data, list):    # list
-            for element in data:        # 遍历list元素，以下重复上面的操作
+        elif isinstance(data, list):  # list
+            for element in data:  # 遍历list元素，以下重复上面的操作
                 if isinstance(element, dict):
                     if key in element.keys():
                         element[key] = value
@@ -211,6 +224,29 @@ class DataUpdate(object):
                         self._update_data(child_dict, key, value)
                         element[child_key] = child_dict
         return data
+
+
+# # -----------------------------------------------------------
+# # - 生成随机手机号
+# # -----------------------------------------------------------
+
+# 运营商的号码前缀
+prefix = [
+    '130', '131', '132', '133', '134', '135', '136', '137', '138', '139',
+    '145', '147', '149', '150', '151', '152', '153', '155', '156', '157',
+    '158', '159', '165', '171', '172', '173', '174', '175', '176', '177',
+    '178', '180', '181', '182', '183', '184', '185', '186', '187', '188',
+    '189', '191'
+]
+
+
+def get_telephone():
+    # 随机取一个手机号前缀
+    pos = random.randint(0, len(prefix) - 1)
+    # 随机生成后8位数字，string.digits是数字0到9，可以参考源码
+    suffix = ''.join(random.sample(string.digits, 8))
+    # 拼接返回11位手机号
+    return prefix[pos] + suffix
 
 
 if __name__ == "__main__":

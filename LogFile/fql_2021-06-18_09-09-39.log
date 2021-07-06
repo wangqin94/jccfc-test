@@ -1,6 +1,0 @@
-[2021-06-18 09:09:39] [INFO] 当前测试环境 huat
-[2021-06-18 09:09:39] [INFO] 数据库初始化.
-[2021-06-18 09:09:39] [INFO] 用户四要素信息 
-{'name': '伯心', 'cer_no': '620900198808267893', 'bankid': '6222003768714665349', 'telephone': '16300009000', 'applyId': 'applyId1623918185136'}
-[2021-06-18 09:09:39] [INFO] 开始支用申请...
-[2021-06-18 09:09:39] [INFO] data数据: {'requestSerialNo': 'SerialNo16239785794131', 'requestTime': '1623978579413', 'empNo': 'empNo1623978579413', 'merchantId': '000UC010000006268', 'managerId': '000UC010000006268', 'applyId': 'applyId1623918185136', 'sourceCode': '000UC010000006268', 'loanAmt': 600, 'loanTerm': 3, 'name': '伯心', 'mobileNo': '16300009000', 'debitAccountNo': '6222003768714665349', 'firstRepayDate': '2021-07-18', 'fixedRepayDay': '18', 'orderType': 2}
