@@ -33,7 +33,7 @@ class MyTestCase(unittest.TestCase):
     """ 测试步骤 """
     def test_one(self):
         YingJiZF = Component(data=data)
-        self.jsonData = YingJiZF.query_user_list_by_page(channelNo=self.channelNo)
+        self.jsonData = YingJiZF.query_user_list_by_page(channelNo="F20B02XIEC")
 
 
 if __name__ == '__main__':

@@ -60,9 +60,9 @@ class PayloadGenerator(INIT):
         self.log.info("payload数据: %s", self.active_payload)
         self.set_active_payload(self.active_payload)
 
-    # 获取用户列表payload
-    def query_user_list_by_page_msg(self, **kwargs):
-        """ # 获取用户列表payload字段装填
+    # 批量查询客户借据信息payload
+    def query_invoice_list_msg(self, **kwargs):
+        """ # 批量查询客户借据信息payload字段装填
         注意：键名必须与接口原始数据的键名一致
         :param kwargs: 需要临时装填的字段以及值 eg: key=value
         :return: None
@@ -76,7 +76,7 @@ class PayloadGenerator(INIT):
 
         data.update(kwargs)
         # 更新 payload 字段值
-        parser = DataUpdate(self.cfg['queryUserListByPage']['payload'], **data)
+        parser = DataUpdate(self.cfg['queryInvoiceListByPage']['payload'], **data)
         self.active_payload = parser.parser
         self.active_payload["head"]["channelNo"] = "21"
         self.log.info("payload数据: %s", self.active_payload)

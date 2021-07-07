@@ -26,7 +26,8 @@ class MyTestCase(unittest.TestCase):
     def test_one(self):
         print('execute test_one')
         YingJiZF = Component(data=data)
-        YingJiZF.query_channel(channelName='度小满科技（北京）有限公司')
+        # YingJiZF.query_channel(channelName='度小满科技（北京）有限公司')
+        YingJiZF.query_channel()
 
 
 if __name__ == '__main__':

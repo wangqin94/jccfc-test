@@ -2,6 +2,8 @@
 # -------------------------------------------
 # 应急支付业务类
 # -------------------------------------------
+import json
+
 import requests
 from DataClass.YingJiZF import PayloadGenerator
 
@@ -17,15 +19,17 @@ class Component(PayloadGenerator):
         self.query_channel_msg(**kwargs)
         url = self.host + self.cfg['queryChannel']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def query_user_list_by_page(self, **kwargs):
-        self.log.demsg('获取用户列表查询...')
-        self.query_user_list_by_page_msg(**kwargs)
-        url = self.host + self.cfg['queryUserListByPage']['interface']
+        self.log.demsg('批量查询客户借据信息查询...')
+        self.query_invoice_list_msg(**kwargs)
+        url = self.host + self.cfg['queryInvoiceListByPage']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def loan_bill(self, **kwargs):
@@ -33,7 +37,8 @@ class Component(PayloadGenerator):
         self.loan_bill_msg(**kwargs)
         url = self.host + self.cfg['loan_bill']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def loan_query(self, **kwargs):
@@ -41,7 +46,8 @@ class Component(PayloadGenerator):
         self.loan_query_msg(**kwargs)
         url = self.host + self.cfg['loan_query']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def loan_details(self, **kwargs):
@@ -49,7 +55,8 @@ class Component(PayloadGenerator):
         self.loan_details_msg(**kwargs)
         url = self.host + self.cfg['loan_details']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def repay_query(self, **kwargs):
@@ -57,7 +64,8 @@ class Component(PayloadGenerator):
         self.repay_query_msg(**kwargs)
         url = self.host + self.cfg['repay_query']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def plan_query(self, **kwargs):
@@ -65,7 +73,8 @@ class Component(PayloadGenerator):
         self.plan_query_msg(**kwargs)
         url = self.host + self.cfg['plan_query']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def payment_result(self, **kwargs):
@@ -73,7 +82,8 @@ class Component(PayloadGenerator):
         self.payment_result_msg(**kwargs)
         url = self.host + self.cfg['payment_result']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def bankcard_bind(self, **kwargs):
@@ -81,7 +91,8 @@ class Component(PayloadGenerator):
         self.bankcard_bind_msg(**kwargs)
         url = self.host + self.cfg['bankcard_bind']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def bankcard_modify(self, **kwargs):
@@ -89,7 +100,8 @@ class Component(PayloadGenerator):
         self.bankcard_modify_msg(**kwargs)
         url = self.host + self.cfg['bankcard_modify']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
     def payment(self, **kwargs):
@@ -97,5 +109,6 @@ class Component(PayloadGenerator):
         self.payment_msg(**kwargs)
         url = self.host + self.cfg['payment']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
-        self.log.info('业务请求响应：%s', str(response.json()))
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()

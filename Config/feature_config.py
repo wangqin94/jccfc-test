@@ -658,13 +658,13 @@ YingJiZF = {
                 "requestSerialNo": "202=182714511036848",
             },
             "body": {
-                "channelName": "商户",
+                "channelName": "度",
             }
         }
 
     },
-    'queryUserListByPage': {
-        'interface': '/api/v1/emergency/queryUserListByPage',
+    'queryInvoiceListByPage': {
+        'interface': '/api/v1/emergency/queryInvoiceListByPage',
         'payload': {
             "head": {
                 "jcSystemEncry": "2582a6b723486da364ada1af2c00f115",
@@ -679,9 +679,11 @@ YingJiZF = {
                 "channelNo": "F21C02BAID",  # 渠道号
                 "loanStatus": "1",  # EnumLoanInvoiceStatus 借据状态 枚举类型NORMAL("1", "正常"),OVERDUE("2", "逾期"),SETTLE(
                 # "3", "结清");
+                "noticeType": "0",   # 通知类型（0-无条件、1-账单日通知、2-逾期通知）
+                "userIdList": [],  # 客户ID集合 list
                 "pageNum": 1,
                 "pageSize": 20,
-                "settleFlag": "1",  # 结清标识 EnumBool 0-否，1-是
+                "settleFlag": "0",  # 结清标识 EnumBool 0-否，1-是
                 "userTel": "",  # 电话号码
             }
         }
