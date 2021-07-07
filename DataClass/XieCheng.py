@@ -73,9 +73,6 @@ class PayloadGenerator(INIT):
     # 预授信申请payload
     def pre_credit_msg(self, **kwargs):
         pre_credit_data = dict()
-        pre_credit_data["user_data"] = {}
-        pre_credit_data["user_data"]["Platform"] = {}
-        pre_credit_data["user_data"]["Platform"] = self.cfg['pre_credit']['payload']["user_data"]["Platform"]
 
         # 四要素
         pre_credit_data['id_no'] = self.data['cer_no']
@@ -87,24 +84,21 @@ class PayloadGenerator(INIT):
         pre_credit_data['request_no'] = 'request_no' + self.strings + "1"
         pre_credit_data['advice_amount'] = self.credit_amount
 
-        pre_credit_data["user_data"]["Platform"]['id_no'] = self.data['cer_no']
-        pre_credit_data["user_data"]["Platform"]['user_name'] = self.data['name']
+        pre_credit_data['id_no'] = self.data['cer_no']
+        pre_credit_data['user_name'] = self.data['name']
         pre_credit_data['mobile'] = self.data['telephone']
         pre_credit_data['advice_rate_type'] = "Y"
 
         pre_credit_data.update(kwargs)
-        self.log.info("data数据: %s", pre_credit_data)
         # 更新 payload 字段值
         parser = DataUpdate(self.cfg['pre_credit']['payload'], **pre_credit_data)
         self.pre_credit_payload = parser.parser
+        self.log.info("payload数据: %s", self.pre_credit_payload)
         self.set_active_payload(self.pre_credit_payload)
 
     # 授信payload
     def credit_msg(self, **kwargs):
         credit_data = dict()
-        credit_data["user_data"] = {}
-        credit_data["user_data"]["Platform"] = {}
-        credit_data["user_data"]["Platform"] = self.cfg['credit']['payload']["user_data"]["Platform"]
         # 四要素
         credit_data['id_no'] = self.data['cer_no']
         credit_data['card_no'] = self.data['bankid']
@@ -114,16 +108,16 @@ class PayloadGenerator(INIT):
         credit_data['open_id'] = self.data["open_id"]
         credit_data['request_no'] = 'request_no' + self.strings + "2"
         credit_data['advice_amount'] = self.credit_amount
-        credit_data["user_data"]["Platform"]['id_no'] = self.data['cer_no']
-        credit_data["user_data"]["Platform"]['user_name'] = self.data['name']
-        credit_data["user_data"]["Platform"]['mobile'] = self.data['telephone']
+        credit_data['id_no'] = self.data['cer_no']
+        credit_data['user_name'] = self.data['name']
+        credit_data['mobile'] = self.data['telephone']
         credit_data['advice_rate_type'] = "Y"
 
         credit_data.update(kwargs)
-        self.log.info("data数据: %s", credit_data)
         # 更新 payload 字段值
         parser = DataUpdate(self.cfg['credit']['payload'], **credit_data)
         self.credit_payload = parser.parser
+        self.log.info("payload数据: %s", self.credit_payload)
         self.set_active_payload(self.credit_payload)
 
     # 支用申请payload
@@ -140,17 +134,17 @@ class PayloadGenerator(INIT):
         loan_data['user_name'] = self.data['name']
         loan_data['bank_bind_mobile'] = self.data['telephone']
 
-        loan_data['open_id'] = self.data["openId"]
+        loan_data['open_id'] = self.data["open_id"]
         loan_data['loan_no'] = 'loan_no' + self.strings
         loan_data['loan_amount'] = self.loan_amount
         loan_data['request_no'] = 'request_no' + self.strings + "3"
         loan_data['first_repay_date'] = datetime.now().strftime('%Y%m%d%H%M%S')
 
         loan_data.update(kwargs)
-        self.log.info("data数据: %s", loan_data)
 
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.loan_payload = parser.parser
+        self.log.info("payload数据: %s", self.loan_payload)
         self.set_active_payload(self.loan_payload)
 
     # 还款通知payload
@@ -162,7 +156,7 @@ class PayloadGenerator(INIT):
         """
         repay_notice = dict()
         # 根据openId查询支用信息
-        key1 = "thirdpart_user_id = '{}'".format(self.data['openId'])
+        key1 = "thirdpart_user_id = '{}'".format(self.data['open_id'])
         credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
 
         # 根据支用申请单号查询借据信息
@@ -176,7 +170,7 @@ class PayloadGenerator(INIT):
         asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
 
         # 通知payload
-        repay_notice['open_id'] = self.data['openId']
+        repay_notice['open_id'] = self.data['open_id']
         repay_notice['loan_no'] = credit_loan_apply['third_loan_invoice_id']
         repay_notice['repay_no'] = 'repay_no' + self.strings + "1"
         repay_notice['repay_type'] = "1"
@@ -184,20 +178,17 @@ class PayloadGenerator(INIT):
         repay_notice['repay_term_no'] = "1"
         repay_notice['finish_time'] = time.strftime('%Y%m%d%H%M%S', time.localtime())
 
-        repay_notice["repay_detail"] = {}
-        repay_notice["repay_detail"] = self.cfg['loan_repay_notice']['payload']["repay_detail"]
-
-        repay_notice["repay_detail"]["actual_repay_amount"] = float(asset_repay_plan['pre_repay_amount'])
-        repay_notice["repay_detail"]["repay_principal"] = float(asset_repay_plan['pre_repay_principal'])
-        repay_notice["repay_detail"]["repay_interest"] = float(asset_repay_plan['pre_repay_interest'])
-        repay_notice["repay_detail"]["repay_penalty_amount"] = float(asset_repay_plan['pre_repay_overdue_fee'])
-        repay_notice["repay_detail"]["repay_fee"] = float(asset_repay_plan['pre_repay_fee'])
+        repay_notice["actual_repay_amount"] = float(asset_repay_plan['pre_repay_amount'])
+        repay_notice["repay_principal"] = float(asset_repay_plan['pre_repay_principal'])
+        repay_notice["repay_interest"] = float(asset_repay_plan['pre_repay_interest'])
+        repay_notice["repay_penalty_amount"] = float(asset_repay_plan['pre_repay_overdue_fee'])
+        repay_notice["repay_fee"] = float(asset_repay_plan['pre_repay_fee'])
 
         repay_notice.update(kwargs)
-        self.log.info("data数据: %s", repay_notice)
 
         parser = DataUpdate(self.cfg['loan_repay_notice']['payload'], **repay_notice)
         self.repay_notice_payload = parser.parser
+        self.log.info("payload数据: %s", self.repay_notice_payload)
         self.set_active_payload(self.repay_notice_payload)
 
 

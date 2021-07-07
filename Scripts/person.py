@@ -33,3 +33,4 @@ data = {'name': '充荔卿', 'cer_no': '440229198902161471', 'bankid': '62166602
 data = {'name': '秋艳锦', 'cer_no': '469022201303063934', 'bankid': '6212260239326699000', 'telephone': '14549253601', 'open_id': 'open_id1625565248081'}  # hqas -> XieCheng
 data = {'name': '安影瑶', 'cer_no': '331024198905264129', 'bankid': '6217230239906105580', 'telephone': '18787401263', 'open_id': 'open_id1625565306022'}  # hqas -> XieCheng
 data = {'name': '贾震', 'cer_no': '450405198106122617', 'bankid': '6217230240558355804', 'telephone': '17535674081', 'open_id': 'open_id1625565371248'}  # hqas -> XieCheng
+data = {'name': '从飞', 'cer_no': '451102201105011798', 'bankid': '6222080242898595405', 'telephone': '14549687023', 'open_id': 'open_id1625565605273'}  # hqas -> XieCheng
