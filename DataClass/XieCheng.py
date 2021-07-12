@@ -5,12 +5,10 @@
 
 import time
 from datetime import datetime
-from pprint import pprint
 
-from ComLib import Mysql
 from Engine.Base import INIT
-from Component.XieCheng import *
 from Config.TestEnvInfo import *
+from ComLib.Models import *
 
 
 class PayloadGenerator(INIT):

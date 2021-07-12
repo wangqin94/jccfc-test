@@ -607,7 +607,7 @@ fql = {
                 "loanTerm": "12",
                 "mobileNo": "16100007381",
                 "interestRate": "35.28",
-                "orderType": "1",
+                "orderType": "2",  # 1、取现 2、赊销（分期购物） 3、信用卡还款 4、账单分期 5、微信、银联消费资产（二类户资产）
                 "repayType": "1",
                 "debitAccountName": "蓝安峰",
                 "debitOpenAccountBank": "中国银行",
@@ -867,22 +867,23 @@ YingJiZF = {
             },
             "body": {
                 "loanInvoiceId": "000LI5538514397462145161272",  # 借据号
-                "channelNo": "F20B02XIEC",  # 主动还款渠道
+                "channelNo": "2",  # 主动还款渠道
                 "repayType": "0",  # 还款方式 0-按期还款   1-提前还款
                 "paymentType": "5",  # 支付类型1-支付宝-主动还款 2-支付宝-代扣 3-微信-主动还款 4-微信-代扣 5-银行卡-主动还款 6-银行卡-代扣   7-云闪付-主动还款
-                "periods": "1",  # 还款期数 多期以,分隔
-                "repayAmt": 200,  # 还款金额
+                "periods": "3",  # 还款期数 多期以,分隔
+                "repayAmt": 199.87,  # 还款金额
                 "appOrderNo": "",  # 还款订单流水号
                 "settleStatus": "0",  # 结清标识 EnumBool 0 未结清  1 结清
-                "payPlatformCode": "",  # 支付平台编号
-                "idNo": "",  # 身份证号（银行卡还款必须）
-                "phoneNum": "",  # 用户银行卡绑定手机号（银行卡还款必须）
-                "bankAcctName": "",  # 还款人姓名（银行卡还款必须）
-                "bankName": "",  # 银行编号（银行卡还款必须）
-                "bankAcctNo": "",  # 还款人银行卡卡号（银行卡还款必须）
+                "payPlatformCode": "zhifubianhao",  # 支付平台编号
+                "aliPayViewUrl": "https://www.baidu.com/",  # 支付平台编号
+                "idNo": "451123198311190587",  # 身份证号（银行卡还款必须）
+                "phoneNum": "18908989867",  # 用户银行卡绑定手机号（银行卡还款必须）
+                "bankAcctName": "楚东进",  # 还款人姓名（银行卡还款必须）
+                "bankName": "0102",  # 银行编号（银行卡还款必须）
+                "bankAcctNo": "6212810833868379081",  # 还款人银行卡卡号（银行卡还款必须）
                 "deviceInfo": "",  # 设备信息（微信还款必须）
                 "wxPayViewUrl": "",  # 传值外网可以访问的地址（微信还款必须）
-                "createIp": "",  #  ip（微信还款必须）
+                "createIp": "",  # ip（微信还款必须）
             }
         }
     },

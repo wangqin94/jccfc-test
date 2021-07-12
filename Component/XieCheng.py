@@ -3,7 +3,6 @@
 # 携程借贷业务类
 # -------------------------------------------
 import requests
-from ComLib.Models import *
 from DataClass.XieCheng import PayloadGenerator
 
 
