@@ -1,2 +1,0 @@
-cur_date,loan_id,tran_date,tran_time,seq_no,term_no,event,total_reduced_amt_manual,prin_reduced_amt_manual,int_reduced_amt_manual,pnlt_reduced_amt_manual,fund_fee_reduced_amt_manual,charges_reduced_amt_manual,overdue_reduced_amt_manual,repay_violate_reduced_amt_manual,refund_violate_reduced_amt_manual,service_reduced_amt_manual,partner_loan_id
-20210619,LoanId1623911198962,20210619,180910,seqNo1623911199205,2,03,1555,0,0,0,0,0,0,1555,0,0,
