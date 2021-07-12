@@ -69,6 +69,7 @@ class PayloadGenerator(INIT):
 
     def set_active_payload(self, payload):
         self.active_payload = payload
+        self.log.info(self.active_payload)
 
     # 预授信申请payload
     def pre_credit_msg(self, **kwargs):

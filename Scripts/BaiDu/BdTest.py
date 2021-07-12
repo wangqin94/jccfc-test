@@ -21,7 +21,7 @@ class TestCase(object):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
-            bd = Component(data=data)
+            bd = Component(data=None)
             bd.credit(initialAmount=3000000)
 
         # 授信查询

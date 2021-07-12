@@ -307,7 +307,9 @@ class MtFile(Mysql):
         }
 
         # 获取每期应还本金和利息
-        self.amount = self.get_repay_period_amount()
+        # self.amount = self.get_repay_period_amount()
+        info = self.get_user_data_info()[0]
+        self.amount = loanByAvgAmt(info['apply_amount'], info['apply_term'], info['apply_rate'])
 
         # 执行
         self.start()
@@ -514,4 +516,4 @@ if __name__ == '__main__':
     # 美团按期还款、提前结清，按日收息
     card_id = data['cer_no']
     user_name = data['name']
-    t = MtFile(certificate_no=card_id, user_name=user_name, loan_record=1)
+    t = MtFile(certificate_no=card_id, user_name=user_name, loan_record=2, apply_date='20210630')

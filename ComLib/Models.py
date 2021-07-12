@@ -11,7 +11,7 @@ from Engine.Logger import Logs, getcallargs, wraps, requests, json, time
 _log = Logs()
 __all__ = ['output_format', 'wait_time', 'get_base_data',
            'loan_and_period_date_parser', 'ciphertext',
-           'encrypt', 'decrypt', 'DataUpdate', 'get_telephone']
+           'encrypt', 'decrypt', 'DataUpdate', 'loanByAvgAmt', 'get_telephone']
 
 
 # # -----------------------------------------------------------
@@ -54,7 +54,7 @@ def get_base_data(env, *project):
         for item in project:
             data[item] = str(item) + strings
 
-    with open('person.py', 'a', encoding='utf-8') as f:
+    with open('..\person.py', 'a', encoding='utf-8') as f:
         f.write('\n')
         f.write('data = {}  # {}'.format(str(data), env))
     return data
@@ -78,6 +78,29 @@ def get_sql_qurey_str(table, db=None, attr=None, **kwargs):
         filters = 'where' + 'and'.join(["%s='%s'" % (k, v) for k, v in kwargs.items()]) + ';'
         sql_str.append(filters)
     return ' '.join(sql_str)
+
+# # -----------------------------------------------------------
+# # - 等额本息计算
+# # -----------------------------------------------------------
+def loanByAvgAmt(loanamt,term,year_rate):
+    repayment_plan = []
+    # 月利率
+    month_rate = year_rate/1200
+    # 每月还款总额
+    amtpermonth = loanamt * month_rate * pow((1 + month_rate), term) / (pow((1 + month_rate), term) - 1)
+    for i in range(1, term + 1):
+        if i == 1:
+            # 第一个月还款利息
+            month_interest = loanamt * month_rate
+        else:
+            # 第2-n个月还款利息
+            month_interest = (loanamt * month_rate - amtpermonth) * pow((1 + month_rate), (i - 1)) + amtpermonth
+        # 应还本金
+        month_principal = amtpermonth - month_interest
+        month_principal = round(month_principal, 2)
+        month_interest = round(month_interest, 2)
+        repayment_plan.append((int(month_principal*100), int(month_interest*100)))
+    return repayment_plan
 
 
 # # -----------------------------------------------------------

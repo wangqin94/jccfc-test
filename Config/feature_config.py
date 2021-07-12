@@ -147,8 +147,8 @@ BaiDu = {
                     "zxPermanentAddress": "四川成都市武侯区府城大道中段83号",  # 征信户籍地址
                     "zxsDomicile": "四川成都市武侯区府城大道中段84号",   # 征信居住地址
                     "zxMailingAddress": "四川成都市武侯区府城大道中段85号",  # 征信通讯地址
-                    "contactPhone": "张三",
-                    "contactName": "19982022546",
+                    "contactPhone": "19982022546",
+                    "contactName": "张三",
                     "contactRalation": "父母"
                 },
             },
@@ -342,6 +342,7 @@ XieCheng = {
                     "RM0003": "0",
                     "RM1015": "1",
                     "occupation": "生意人/个体户",
+                    "qualification": "大学本科",
                     "id_no": "${身份证号}",
                     "personIncome": "10-20万元",
                     # "idcard_ocr_addr": "成都市武侯区府城大道中段88号",
@@ -398,6 +399,10 @@ XieCheng = {
                 "idcard_ocr_validity": "2020.04.27-2040.04.27",
                 "idcard_ocr_addr": "成都市武侯区府城大道中段88号",
                 "idcard_ocr_gender": "M",
+                "occupation": "1",
+                "contact_relate": "同学",
+                "contact_name": "测试二",
+                "contacts_mobile": "15210120098",
                 "pbocQuery": "N",
                 "RM0001": "0",
                 "RM0002": "0",

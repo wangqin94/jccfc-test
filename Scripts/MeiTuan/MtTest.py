@@ -30,7 +30,7 @@ class TestCase(object):
         for _ in range(m):
 
             if flag == 0:
-                mt = Component(data=data)
+                mt = Component(data=None)
 
                 mt.mt_credit_msg(loan_amount=3000000)
                 mt.mt_credit_test()
