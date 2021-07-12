@@ -54,7 +54,7 @@ def get_base_data(env, *project):
         for item in project:
             data[item] = str(item) + strings
 
-    with open('..\person.py', 'a', encoding='utf-8') as f:
+    with open('person.py', 'a', encoding='utf-8') as f:
         f.write('\n')
         f.write('data = {}  # {}'.format(str(data), env))
     return data
