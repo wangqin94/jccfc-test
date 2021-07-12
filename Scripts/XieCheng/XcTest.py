@@ -5,8 +5,7 @@ test case script
 
 import time
 from Component.XieCheng import Component
-from Scripts.XieCheng.person import *
-
+from person import *
 
 class TestCase(object):
     def __init__(self):

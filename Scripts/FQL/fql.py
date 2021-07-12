@@ -5,7 +5,7 @@ test case script
 
 import time
 from Component.fql import Component
-from Scripts.FQL.person import *
+from person import *
 
 
 class TestCase(object):

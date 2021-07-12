@@ -1,6 +1,6 @@
 import unittest
 from Component.YingJiZF import Component
-from Scripts.YingJiZF.person import *
+from person import *
 
 
 class MyTestCase(unittest.TestCase):
