@@ -1,7 +1,7 @@
 import json
 import unittest
 from Component.YingJiZF import Component
-from Scripts.person import *
+from Scripts.YingJiZF.person import *
 
 
 class MyTestCase(unittest.TestCase):

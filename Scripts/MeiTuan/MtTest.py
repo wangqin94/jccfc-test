@@ -6,7 +6,7 @@ test case script
 import threading
 import time
 from Component.MeiTuan import Component
-from Scripts.person import data
+from Scripts.MeiTuan.person import data
 
 
 class TestCase(object):

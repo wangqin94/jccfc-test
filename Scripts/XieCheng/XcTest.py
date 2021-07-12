@@ -5,8 +5,7 @@ test case script
 
 import time
 from Component.XieCheng import Component
-from Scripts.person import *
-from ComLib.Mysql import *
+from Scripts.XieCheng.person import *
 
 
 class TestCase(object):
@@ -57,7 +56,7 @@ class TestCase(object):
                 "actual_repay_amount": 600.600,
                 "repay_fee": 0
             }
-            #xc.notice(repay_type="2", repay_detail=repay_detail, finish_time="20210609111213")  # finish_time=实际还款时间
+            # xc.notice(repay_type="2", repay_detail=repay_detail, finish_time="20210609111213")  # finish_time=实际还款时间
             # 按期还款
             xc.notice(repay_term_no="1", finish_time="20210806121311")  # finish_time=实际还款时间
 

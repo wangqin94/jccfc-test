@@ -5,7 +5,7 @@ test case script
 
 import time
 from Component.BaiDu import Component
-from Scripts.person import *
+from Scripts.BaiDu.person import *
 
 
 class TestCase(object):
