@@ -49,7 +49,6 @@ def get_base_data(env, *project):
     data['telephone'] = get_telephone()
 
     # project赋值后天从到data中
-    print(project)
     if project:
         for item in project:
             data[item] = str(item) + strings

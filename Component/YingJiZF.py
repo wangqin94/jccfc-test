@@ -9,8 +9,8 @@ from DataClass.YingJiZF import PayloadGenerator
 
 
 class Component(PayloadGenerator):
-    def __init__(self, *, data=None, credit_amount=30000, loan_amount=600, loan_term=3):
-        super().__init__(data=data, credit_amount=credit_amount, loan_amount=loan_amount, loan_term=loan_term)
+    def __init__(self, *, data=None):
+        super().__init__(data=data)
 
     # 应急支付渠道查询
     def query_channel(self, **kwargs):

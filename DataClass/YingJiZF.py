@@ -4,8 +4,9 @@
 # ------------------------------------------
 import hashlib
 import time
+
+from ComLib.Models import *
 from Engine.Base import INIT
-from Component.XieCheng import *
 from Config.TestEnvInfo import *
 
 
@@ -20,7 +21,7 @@ def encrypt_md5(data):
 
 
 class PayloadGenerator(INIT):
-    def __init__(self, *, data=None, credit_amount=30000, loan_amount=600, loan_term=3):
+    def __init__(self, *, data=None, payment_type="5"):
         super().__init__()
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(self.project))
         self.log.info('用户四要素信息 \n%s', self.data)
@@ -28,6 +29,7 @@ class PayloadGenerator(INIT):
         self.strings = str(int(round(time.time() * 1000)))
         self.times = time.strftime('%Y-%m-%d', time.localtime())
         self.jcSystemCode = 'loan-web'
+        self.paymentType = payment_type
 
         # 初始化payload变量
         self.active_payload = {}
@@ -51,7 +53,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "1"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         data.update(kwargs)
         # 更新 payload 字段值
@@ -72,7 +74,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         data.update(kwargs)
         # 更新 payload 字段值
@@ -94,7 +96,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -116,7 +118,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -137,7 +139,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -158,7 +160,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -179,7 +181,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -200,7 +202,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -221,7 +223,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -242,7 +244,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -263,7 +265,7 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -284,14 +286,28 @@ class PayloadGenerator(INIT):
         requestSerialNo = 'SerialNo' + self.strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
-        data['jcSystemEncry'] = encrypt_md5(requestSerialNo+self.jcSystemCode)
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # body
+        # 根据用户名称查询借据信息
+        key1 = "user_name = '{}'".format(self.data['name'])
+        credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key1)
+        loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
+        data['loanInvoiceId'] = loan_invoice_id
+        data['paymentType'] = self.paymentType
+
         data['appOrderNo'] = 'appOrderNo' + self.strings + "3"
+        if self.paymentType == "5":
+            data['idNo'] = self.data['cer_no']
+            data['bankAcctNo'] = self.data['bankid']
+            data['bankAcctName'] = self.data['name']
+            data['phoneNum'] = self.data['telephone']
+
         # 更新 payload 字段值
         data.update(kwargs)
         parser = DataUpdate(self.cfg['payment']['payload'], **data)
         self.active_payload = parser.parser
+        self.active_payload["head"]["channelNo"] = "21"
         self.log.info("payload数据: %s", self.active_payload)
         self.set_active_payload(self.active_payload)
 
