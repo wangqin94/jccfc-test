@@ -119,6 +119,7 @@ class PayloadGenerator(INIT):
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
         data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
+        data['idNo'] = self.data['cer_no']
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -140,6 +141,7 @@ class PayloadGenerator(INIT):
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
         data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
+        data['idNo'] = self.data['cer_no']
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -300,7 +302,7 @@ class PayloadGenerator(INIT):
         if self.paymentType == "5":
             data['idNo'] = self.data['cer_no']
             data['bankAcctNo'] = self.data['bankid']
-            data['bankAcctName'] = self.data['name']
+            data['bankAcctName'] = '{}_{}_1009'.format(self.data['name'], "SUCCESS")
             data['phoneNum'] = self.data['telephone']
 
         # 更新 payload 字段值

@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
     """ 测试步骤 """
     def test_one(self):
         YingJiZF = Component(data=data)
-        self.jsonData = YingJiZF.loan_details()
+        self.jsonData = YingJiZF.loan_details(applyNo='000LI5538514397462145166275')
 
 
 if __name__ == '__main__':

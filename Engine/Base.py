@@ -70,9 +70,12 @@ class INIT(object):
         keys = self.mysql.select_table_column(table_name=table, database=self.credit_database_name)
         # 获取查询内容
         values = self.mysql.select(sql)
-        # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-        data = [dict(zip(keys, item)) for item in values][0]
-        return data
+        try:
+            # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
+            data = [dict(zip(keys, item)) for item in values][0]
+            return data
+        except (IndexError, Exception):
+            print("SQL查询结果为空，查询条件异常，请排查")
 
     def get_asset_data_info(self, table='asset_loan_apply', key="查询条件"):
         """
@@ -85,9 +88,12 @@ class INIT(object):
         keys = self.mysql_asset.select_table_column(table_name=table, database=self.asset_database_name)
         # 获取查询内容
         values = self.mysql_asset.select(sql)
-        # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-        data = [dict(zip(keys, item)) for item in values][0]
-        return data
+        try:
+            # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
+            data = [dict(zip(keys, item)) for item in values][0]
+            return data
+        except (IndexError, Exception):
+            print("SQL查询结果为空，查询条件异常，请排查")
 
 
 class DataGenerator(object):

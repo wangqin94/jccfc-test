@@ -16,11 +16,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 预置条件处理 """
     def setUp(self):
-        YingJiZF = Component(data=data)
-        jsonData = YingJiZF.query_channel(channelName='度小满科技（北京）有限公司')
-
-        # 获取应急支付渠道号
-        self.channelNo = jsonData.get("body")[0].get("channelNo")
+        print("execute setUp")
 
     """ 后置条件处理 """
     def tearDown(self):
@@ -32,7 +28,7 @@ class MyTestCase(unittest.TestCase):
     """ 测试步骤 """
     def test_one(self):
         YingJiZF = Component(data=data)
-        self.jsonData = YingJiZF.loan_query(channelCode=self.channelNo)
+        self.jsonData = YingJiZF.loan_query(channelCode='F20B02XIEC', idNo='640100198209035003')
 
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ import pymysql
 from ComLib.Models import *
 from Engine.Logger import Logs
 from Config.global_config import *
-from Scripts.person import data
+from person import data
 
 _log = Logs()
 _ProjectPath = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]  # 项目根目录

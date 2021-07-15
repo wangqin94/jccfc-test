@@ -53,7 +53,7 @@ class TestCase(object):
                 mt.update_credit_app_no()
             # # mt.get_user_apply_info()
             # # mt.mt_credit_result()
-                mt.mt_loan_msg(TRADE_AMOUNT=60000, TRADE_PERIOD='3')
+                mt.mt_loan_msg(TRADE_AMOUNT=600000, TRADE_PERIOD='6')
                 mt.mt_loan_test()
             #     threads = []
             #     for _ in range(5):

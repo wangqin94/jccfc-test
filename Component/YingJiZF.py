@@ -86,6 +86,15 @@ class Component(PayloadGenerator):
         self.log.info('字典格式业务请求响应：%s', response.json())
         return response.json()
 
+    def payment_query(self, **kwargs):
+        self.log.demsg('查询订单支付结果...')
+        self.payment_query_msg(**kwargs)
+        url = self.host + self.cfg['payment_query']['interface']
+        response = requests.post(url=url, headers=self.headers, json=self.active_payload)
+        self.log.info('json格式业务请求响应：%s', json.dumps(response.json()))
+        self.log.info('字典格式业务请求响应：%s', response.json())
+        return response.json()
+
     def bankcard_bind(self, **kwargs):
         self.log.demsg('绑定银行卡...')
         self.bankcard_bind_msg(**kwargs)

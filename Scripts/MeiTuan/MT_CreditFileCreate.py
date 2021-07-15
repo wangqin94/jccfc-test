@@ -11,7 +11,7 @@ import pymysql
 from ComLib.Models import *
 from Engine.Logger import Logs
 from Config.global_config import *
-from Scripts.person import data
+from person import data
 
 _log = Logs()
 _ProjectPath = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]  # 项目根目录
@@ -516,4 +516,4 @@ if __name__ == '__main__':
     # 美团按期还款、提前结清，按日收息
     card_id = data['cer_no']
     user_name = data['name']
-    t = MtFile(certificate_no=card_id, user_name=user_name, loan_record=2, apply_date='20210630')
+    t = MtFile(certificate_no=card_id, user_name=user_name, loan_record=2, apply_date='2021-06-30')
