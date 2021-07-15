@@ -133,7 +133,7 @@ class FQL(INIT):
         data_save_path = os.path.join(_FilePath, data_save_path)
         os.mkdir(data_save_path)
         # 借据文件名
-        repayment_acct = os.path.join(data_save_path,  'JC_repyment_acct_%s.txt' % (repay_date.replace('-', '')))
+        repayment_acct = os.path.join(data_save_path,  'JC_repayment_acct_%s.txt' % (repay_date.replace('-', '')))
         return data_save_path, repayment_acct
 
     # 还款文件生成
@@ -165,20 +165,20 @@ class FQL(INIT):
         temple['paid_int_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_fee"]))
         # 按期还款
         if self.repay_mode == "1":
-            temple['repay_date'] = asset_repay_plan["pre_repay_date"]
+            temple['repay_date'] = str(asset_repay_plan["pre_repay_date"]).replace("-", "")
             self.repay_date = asset_repay_plan["pre_repay_date"]
             # 获取文件名及存放路径
             self.repay_filename = self.get_filename(str(self.repay_date))[1]
 
         # 逾期还款
         elif self.repay_mode == "5":
-            temple['repay_date'] = asset_repay_plan["calc_overdue_fee_date"]
+            temple['repay_date'] = str(asset_repay_plan["calc_overdue_fee_date"]).replace("-", "")
             self.repay_date = asset_repay_plan["calc_overdue_fee_date"]
             self.repay_filename = self.get_filename(str(self.repay_date))[1]
 
         # 提前结清
         elif self.repay_mode == "3":
-            temple['repay_date'] = self.repay_date
+            temple['repay_date'] = self.repay_date.replace("-", "")
             self.repay_filename = self.get_filename(str(self.repay_date))[1]
             temple['repay_amt'] = str("{:.2f}".format(asset_repay_plan["before_calc_principal"]))  # 剩余应还本金
             # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
@@ -199,4 +199,4 @@ class FQL(INIT):
 if __name__ == '__main__':
     # 按期还款，提前结清（按日计息），提前结清
     # repay_mode:  还款模式，1：按期还款；3：提前结清；5；逾期还款
-    t = FQL(data, repay_date='2021-06-22', term_no="1", repay_mode='3')
+    t = FQL(data, repay_date='2021-06-22', term_no="1", repay_mode='1')

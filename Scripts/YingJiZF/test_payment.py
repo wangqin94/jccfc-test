@@ -33,7 +33,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_one(self):
         YingJiZF = Component(data=data)
-        self.jsonData = YingJiZF.payment(paymentType='5', repayType="1", periods="1", repayAmt=222.46)
+        self.jsonData = YingJiZF.payment(paymentType='5', repayType="0", periods="1", repayAmt=212.46)
 
 
 if __name__ == '__main__':

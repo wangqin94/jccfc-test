@@ -75,7 +75,7 @@ class MtFile(Mysql):
         """
         :param certificate_no:  用户身份证号
         :param user_name:       用户姓名
-        :param apply_date:      放贷日期, 为None时，取当前系统时间
+        :param apply_date:      放贷日期'2021-06-30', 为None时，取当前系统时间
         :param delay:           逾期数据, (逾期期数, 逾期天数)
         :param loan_record:     用户第几笔去用申请，0为第一笔，1为第二笔
         """
@@ -516,4 +516,4 @@ if __name__ == '__main__':
     # 美团按期还款、提前结清，按日收息
     card_id = data['cer_no']
     user_name = data['name']
-    t = MtFile(certificate_no=card_id, user_name=user_name, loan_record=2, apply_date='2021-06-30')
+    t = MtFile(certificate_no=card_id, user_name=user_name, loan_record=0, apply_date='2021-06-30')
