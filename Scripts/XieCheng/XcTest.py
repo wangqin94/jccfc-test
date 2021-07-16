@@ -7,6 +7,7 @@ import time
 from Component.XieCheng import Component
 from person import *
 
+
 class TestCase(object):
     def __init__(self):
         self.process()
@@ -46,18 +47,10 @@ class TestCase(object):
 
         # 还款通知
         elif flag == 4:
-            xc = Component(data=data, repay_term_no="1")
-            # 提前结清
-            repay_detail = {
-                "repay_principal": 600,
-                "repay_interest": 0.60,
-                "repay_penalty_amount": 0,
-                "actual_repay_amount": 600.600,
-                "repay_fee": 0
-            }
-            # xc.notice(repay_type="2", repay_detail=repay_detail, finish_time="20210609111213")  # finish_time=实际还款时间
-            # 按期还款
-            xc.notice(repay_term_no="1", finish_time="20210806121311")  # finish_time=实际还款时间
+            # repay_mode=还款类型: 必填参数 :1按期还款；2提前结清；3逾期还款
+            # finish_time=实际还款时间： 提前结清必填参数"20210806"
+            xc = Component(data=data, repay_mode="2", repay_term_no="1")
+            xc.notice()
 
         return self
 

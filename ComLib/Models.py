@@ -9,7 +9,7 @@ import string
 from Engine.Logger import Logs, getcallargs, wraps, requests, json, time
 
 _log = Logs()
-__all__ = ['output_format', 'wait_time', 'get_base_data',
+__all__ = ['output_format', 'wait_time', 'get_day', 'get_base_data',
            'loan_and_period_date_parser', 'ciphertext',
            'encrypt', 'decrypt', 'DataUpdate', 'loanByAvgAmt', 'get_telephone']
 
@@ -59,6 +59,22 @@ def get_base_data(env, *project):
     return data
 
 
+# 计算还款时间和放款时间差，天为单位
+def get_day(time1, time2):
+    """
+    :param time1: 时间1
+    :param time2: 时间2
+    :return: 差异天数
+    """
+    try:
+        day1 = time.strptime(str(time1), '%Y-%m-%d')
+        day2 = time.strptime(str(time2), '%Y-%m-%d')
+        day_num = (int(time.mktime(day2)) - int(time.mktime(day1))) / (24 * 60 * 60)
+        return abs(int(day_num))
+    except Exception:
+        print("Error: 系统错误")
+
+
 # # -----------------------------------------------------------
 # # - 数据库查询语句组装
 # # -----------------------------------------------------------
@@ -78,13 +94,14 @@ def get_sql_qurey_str(table, db=None, attr=None, **kwargs):
         sql_str.append(filters)
     return ' '.join(sql_str)
 
+
 # # -----------------------------------------------------------
 # # - 等额本息计算
 # # -----------------------------------------------------------
-def loanByAvgAmt(loanamt,term,year_rate):
+def loanByAvgAmt(loanamt, term, year_rate):
     repayment_plan = []
     # 月利率
-    month_rate = year_rate/1200
+    month_rate = year_rate / 1200
     # 每月还款总额
     amtpermonth = loanamt * month_rate * pow((1 + month_rate), term) / (pow((1 + month_rate), term) - 1)
     for i in range(1, term + 1):
@@ -98,7 +115,7 @@ def loanByAvgAmt(loanamt,term,year_rate):
         month_principal = amtpermonth - month_interest
         month_principal = round(month_principal, 2)
         month_interest = round(month_interest, 2)
-        repayment_plan.append((int(month_principal*100), int(month_interest*100)))
+        repayment_plan.append((int(month_principal * 100), int(month_interest * 100)))
     return repayment_plan
 
 

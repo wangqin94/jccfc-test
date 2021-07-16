@@ -12,7 +12,14 @@ from ComLib.Models import *
 
 
 class PayloadGenerator(INIT):
-    def __init__(self, *, data=None, repay_term_no="1"):
+    def __init__(self, *, data=None, repay_term_no="1", repay_mode="1", loan_invoice_id=None, repay_date='2021-08-09'):
+        """
+        :param data:  四要素
+        :param repay_term_no:   还款期次
+        :param repay_mode:      还款类型:1 按期还款；2 提前结清；3逾期还款
+        :param loan_invoice_id: 借据号为None取用户第一笔借据，否则取自定义值
+        :param repay_date:      实际还款时间
+        """
         super().__init__()
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(self.project), 'open_id')
         self.log.info('用户四要素信息 \n%s', self.data)
@@ -23,6 +30,9 @@ class PayloadGenerator(INIT):
         self.loan_amount = 60000  # 支用申请金额, 默认1000000  单位分
         self.period = 3  # 借款期数, 默认3期
         self.repay_term_no = repay_term_no
+        self.repay_mode = repay_mode
+        self.loan_invoice_id = loan_invoice_id
+        self.repay_date = repay_date
 
         # 初始化payload变量
         self.pre_credit_payload = {}
@@ -157,12 +167,16 @@ class PayloadGenerator(INIT):
         # 根据openId查询支用信息
         key1 = "thirdpart_user_id = '{}'".format(self.data['open_id'])
         credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+        apply_rate = credit_loan_apply["apply_rate"]
 
         # 根据支用申请单号查询借据信息
-        loan_apply_id = credit_loan_apply["loan_apply_id"]
-        key2 = "loan_apply_id = '{}'".format(loan_apply_id)
-        credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key2)
-        loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
+        if self.loan_invoice_id:
+            loan_invoice_id = self.loan_invoice_id
+        else:
+            loan_apply_id = credit_loan_apply["loan_apply_id"]
+            key2 = "loan_apply_id = '{}'".format(loan_apply_id)
+            credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
 
         # 根据借据Id和期次获取还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, self.repay_term_no)
@@ -177,11 +191,37 @@ class PayloadGenerator(INIT):
         repay_notice['repay_term_no'] = "1"
         repay_notice['finish_time'] = time.strftime('%Y%m%d%H%M%S', time.localtime())
 
-        repay_notice["actual_repay_amount"] = float(asset_repay_plan['pre_repay_amount'])
-        repay_notice["repay_principal"] = float(asset_repay_plan['pre_repay_principal'])
-        repay_notice["repay_interest"] = float(asset_repay_plan['pre_repay_interest'])
-        repay_notice["repay_penalty_amount"] = float(asset_repay_plan['pre_repay_overdue_fee'])
-        repay_notice["repay_fee"] = float(asset_repay_plan['pre_repay_fee'])
+        repay_notice["actual_repay_amount"] = float(asset_repay_plan['pre_repay_amount'])  # 总金额
+        repay_notice["repay_principal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
+        repay_notice["repay_interest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
+        repay_notice["repay_penalty_amount"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
+        repay_notice["repay_fee"] = float(asset_repay_plan['pre_repay_fee'])  # 手续费
+
+        # 按期还款
+        if self.repay_mode == "1":
+            repay_notice['repay_type'] = self.repay_mode
+            repay_notice['finish_time'] = str(asset_repay_plan["pre_repay_date"]).replace("-", "") + "112233"
+
+        # 逾期还款
+        elif self.repay_mode == "3":
+            repay_notice['repay_type'] = "1"
+            repay_notice['finish_time'] = str(asset_repay_plan["calc_overdue_fee_date"]).replace("-", "") + "112233"
+
+        # 提前结清
+        elif self.repay_mode == "2":
+            repay_notice['repay_type'] = self.repay_mode
+            repay_notice['finish_time'] = str(self.repay_date.replace("-", "")) + "112233"
+            repay_notice["repay_principal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
+            # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
+            days = get_day(asset_repay_plan["start_date"], self.repay_date)
+            paid_prin_amt = asset_repay_plan["left_principal"] * days * apply_rate / (100 * 360)
+            repay_notice["repay_interest"] = float('{:.2f}'.format(paid_prin_amt))  # 利息
+            repay_notice["repay_penalty_amount"] = 0
+            repay_notice["repay_fee"] = 0
+            repay_notice["actual_repay_amount"] = repay_notice["repay_principal"] + repay_notice[
+                "repay_interest"]  # 总金额
+            print("总金额：{}，本金：{}，利息{}".format(repay_notice["actual_repay_amount"], repay_notice["repay_principal"],
+                                             repay_notice["repay_interest"]))
 
         repay_notice.update(kwargs)
 

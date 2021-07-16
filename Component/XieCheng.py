@@ -7,8 +7,9 @@ from DataClass.XieCheng import PayloadGenerator
 
 
 class Component(PayloadGenerator):
-    def __init__(self, *, data=None, repay_term_no="1"):
-        super().__init__(data=data, repay_term_no=repay_term_no)
+    def __init__(self, *, repay_mode='1', data=None, repay_term_no="1", loan_invoice_id=None, repay_date='2021-08-09'):
+        super().__init__(data=data, repay_term_no=repay_term_no, repay_mode=repay_mode, loan_invoice_id=loan_invoice_id,
+                         repay_date=repay_date)
 
     # 携程预授信申请
     def pre_credit(self, **kwargs):
