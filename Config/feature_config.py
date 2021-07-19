@@ -69,12 +69,12 @@ BaiDu = {
                     # "r21P12FinallyInterest": "6.5",
                     "r21P12FinallyInterest": "6.5",
                     "dxmDScore": "575",
-                    "careerType": "-9999",
-                    "ocrAddress": "四川成都市武侯区府城大道中段81号",  # 身份地址
-                    "userHomeAddress": "四川成都市武侯区府城大道中段82号",  # 家庭地址
-                    "zxPermanentAddress": "四川成都市武侯区府城大道中段83号",  # 征信户籍地址
-                    "zxsDomicile": "四川成都市武侯区府城大道中段84号",   # 征信居住地址
-                    "zxMailingAddress": "四川成都市武侯区府城大道中段85号",  # 征信通讯地址
+                    "careerType": "02",
+                    "ocrAddress": "成都市武侯区府城大道中段85号",  # 身份地址
+                    "userHomeAddress": "成都市武侯区府城大道中段85号",  # 家庭地址
+                    "zxPermanentAddress": "成都市武侯区府城大道中段85号",  # 征信户籍地址
+                    "zxsDomicile": "成都市武侯区府城大道中段85号",   # 征信居住地址
+                    "zxMailingAddress": "成都市武侯区府城大道中段85号",  # 征信通讯地址
                     "zxsCareer": "02",
                     "zdV1Fico": "570"
                 }
@@ -140,13 +140,13 @@ BaiDu = {
                     "repayMode": "22",  # 32等额本息对应还款对账文件还款类型05，22随借随还对应还款类型02
                     "dxmDScore": "575.24151",
                     #"ocrAddress": "重庆市江北区府城大道中段87号",
-                    "careerType": "02",
-                    # "userHomeAddress": "重庆市江北区府城大道中段86号",
-                    "ocrAddress": "四川成都市武侯区府城大道中段81号",  # 身份地址
-                    "userHomeAddress": "四川成都市武侯区府城大道中段82号",  # 家庭地址
-                    "zxPermanentAddress": "四川成都市武侯区府城大道中段83号",  # 征信户籍地址
-                    "zxsDomicile": "四川成都市武侯区府城大道中段84号",   # 征信居住地址
-                    "zxMailingAddress": "四川成都市武侯区府城大道中段85号",  # 征信通讯地址
+                    "careerType": "",
+                    "ocrAddress": "",  # 身份地址
+                    "userHomeAddress": "",  # 家庭地址
+                    "zxPermanentAddress": "",  # 征信户籍地址
+                    "zxsDomicile": "",   # 征信居住地址
+                    "zxMailingAddress": "",  # 征信通讯地址
+                    "zxsCareer": "",
                     "contactPhone": "19982022546",
                     "contactName": "张三",
                     "contactRalation": "父母"
@@ -499,7 +499,7 @@ fql = {
                 "duties": "A",
                 "education": "1",
                 "companyName": "锦程消费金融有限公司",
-                "livingAddr": "北京市市辖区东城区测试路222号",
+                "livingAddr": "成都市武侯区府城大道中段85号",
                 "contactName": "唐无名",
                 "contactMobile": "13708080125",
                 "contactRel": "5",
@@ -515,7 +515,7 @@ fql = {
                 "customerType": "2",
                 "enrolmentYear": "2009",
                 "graduationYear": "2013",
-                "companyAddress": "北京市市辖区东城区测试路223号",
+                "companyAddress": "成都市武侯区府城大道中段85号",
                 "userOccupation": "0",
                 "userIndustryCategory": "2",
                 "registerMobileLocation": "成都",
@@ -532,16 +532,17 @@ fql = {
                 "latestOrderDate": "2021-04-08",
                 "monthlyIncome": "10000",
                 "idCardExpireDate": "2025-3-30",
-                "idCardAddr": "北京市市辖区东城区测试路224号",
+                "idCardAddr": "510000-510100-510107",
+                "idCardDetailAddr": "成都市武侯区府城大道中段85号",
                 "manualApproval": "false",
-                "liveArea": "110000-110100-110101",
-                "companyArea": "110000-110100-110101",
+                "liveArea": "510000-510100-510107",
+                "companyArea": "510000-510100-510107",
                 "idCardDetailAddr": "北京市市辖区东城区测试路666号",
                 "fileInfos": [{
                     "fileType": "1",
                     "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
                     "fileName": "idcard_front_202000000948071964.jpg"
-                },
+                    },
                     {
                         "fileType": "2",
                         "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
@@ -556,7 +557,14 @@ fql = {
                         "fileType": "4",
                         "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
                         "fileName": "JC_userauth_202000000948071964.pdf"
-                    }]
+                    },
+                    {
+                        "fileType": "6",
+                        "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
+                        "fileName": "JC_non_student_202000000948071964.pdf"
+                    }
+
+                ]
             }
         }
 
