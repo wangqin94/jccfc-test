@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
     """ 测试步骤 """
     def test_one(self):
         YingJiZF = Component(data=data)
-        self.jsonData = YingJiZF.loan_query(channelCode='F20B02XIEC', idNo='640100198209035003')
+        self.jsonData = YingJiZF.loan_query(idNo='361024200303288460')
 
 
 if __name__ == '__main__':

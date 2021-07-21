@@ -17,9 +17,7 @@ class Component(PayloadGenerator):
         self.check_user_available(self.data)
         self.log.demsg('开始授信申请...')
         self.credit_msg(**kwargs)
-        print(self.cfg)
         url = self.host + self.cfg['credit']['interface']
-        print(self.active_payload)
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
         self.log.info('业务请求响应：%s', str(response.json()))
         return response.json()

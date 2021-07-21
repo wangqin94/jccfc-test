@@ -17,7 +17,7 @@ class TestCase(object):
         pass
 
     # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效]
-    def process(self, flag=5):
+    def process(self, flag=2):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
@@ -38,7 +38,7 @@ class TestCase(object):
         # 支用申请
         elif flag == 2:
             xc = Component(data=data)
-            xc.loan(loan_amount=600, first_repay_date="20210806121311")  # first_repay_date=首期还款时间
+            xc.loan(loan_amount=600, first_repay_date="20210710121311")  # first_repay_date=首期还款时间
 
         # 支用查询
         elif flag == 3:

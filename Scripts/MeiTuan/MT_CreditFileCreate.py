@@ -14,7 +14,7 @@ from Config.global_config import *
 from person import data
 
 _log = Logs()
-_ProjectPath = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]  # 项目根目录
+_ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # 项目根目录
 _FilePath = os.path.join(_ProjectPath, 'FilePath', PROJECT, TEST_ENV_INFO)  # 文件存放目录
 if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)

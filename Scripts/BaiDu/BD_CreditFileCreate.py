@@ -14,8 +14,9 @@ from Config.global_config import *
 from person import data
 
 _log = Logs()
-_ProjectPath = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]  # 项目根目录
+_ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # 项目根目录
 _FilePath = os.path.join(_ProjectPath, 'FilePath', PROJECT, TEST_ENV_INFO)  # 文件存放目录
+print("文件存放目录:{}".format(_FilePath))
 if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)
 
@@ -545,4 +546,4 @@ class BaiduFile(Mysql):
 if __name__ == '__main__':
     # 等额本息按期还款、提前结清收取违约金（4%）、提前结清按期收息；随借随还按期还款、部分还款（重算还款计划）、提前结清按日计息
     # repay_mode='02'随借随还，repay_mode='05'等额本息
-    t = BaiduFile(data, cur_date='20210617', loan_record=0, repay_mode='05')
+    t = BaiduFile(data, cur_date='20210411', loan_record=0, repay_mode='02')

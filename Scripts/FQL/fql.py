@@ -32,7 +32,7 @@ class TestCase(object):
         # 支用申请
         elif flag == 2:
             fql = Component(data=data, loan_amount=600)
-            fql.loan(orderType=2)
+            fql.loan(orderType=1, firstRepayDate='2021-07-10')
 
         # 支用查询
         elif flag == 3:

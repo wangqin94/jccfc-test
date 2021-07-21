@@ -10,12 +10,14 @@ from datetime import date, timedelta, datetime
 from Engine.Base import INIT
 from ComLib.Mysql import Mysql
 from Engine.Logger import Logs
+from ComLib.Models import *
 from Config.global_config import *
 from person import data
 
 _log = Logs()
-_ProjectPath = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]  # 项目根目录
+_ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # 项目根目录
 _FilePath = os.path.join(_ProjectPath, 'FilePath', PROJECT, TEST_ENV_INFO)  # 文件存放目录
+print("文件存放目录:{}".format(_FilePath))
 if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)
 
@@ -182,7 +184,7 @@ class FQL(INIT):
             self.repay_filename = self.get_filename(str(self.repay_date))[1]
             temple['repay_amt'] = str("{:.2f}".format(asset_repay_plan["before_calc_principal"]))  # 剩余应还本金
             # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
-            days = self.get_day(asset_repay_plan["start_date"], self.repay_date)
+            days = get_day(asset_repay_plan["start_date"], self.repay_date)
             # 利息
             paid_prin_amt = asset_repay_plan["left_principal"] * days * apply_rate / (100 * 360)
             temple['paid_prin_amt'] = str('{:.2f}'.format(paid_prin_amt))
@@ -199,4 +201,4 @@ class FQL(INIT):
 if __name__ == '__main__':
     # 按期还款，提前结清（按日计息），提前结清
     # repay_mode:  还款模式，1：按期还款；3：提前结清；5；逾期还款
-    t = FQL(data, repay_date='2021-06-22', term_no="1", repay_mode='1')
+    t = FQL(data, repay_date='2021-07-21', term_no="2", repay_mode='3')
