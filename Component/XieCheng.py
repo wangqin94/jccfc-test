@@ -5,7 +5,6 @@
 import requests
 from DataClass.XieCheng import PayloadGenerator
 
-
 class Component(PayloadGenerator):
     def __init__(self, *, repay_mode='1', data=None, repay_term_no="1", loan_invoice_id=None, repay_date='2021-08-09'):
         super().__init__(data=data, repay_term_no=repay_term_no, repay_mode=repay_mode, loan_invoice_id=loan_invoice_id,
@@ -28,13 +27,15 @@ class Component(PayloadGenerator):
         self.log.demsg('开始授信激活...')
         self.credit_msg(**kwargs)
         url = self.host + self.cfg['credit']['interface']
-        print(self.active_payload)
+        self.log.info(self.active_payload)
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
         self.log.info('业务请求响应：%s', str(response.json()))
         return response.json()
 
     def credit_query(self):
-        pass
+        key = "certificate_no = '" + self.data['cer_no'] + "'"
+        info = self.get_credit_data_info(table="credit_apply", key=key)
+        return info['status']
 
     def loan(self, **kwargs):
         self.log.demsg('开始支用申请...')
