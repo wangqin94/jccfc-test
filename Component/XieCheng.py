@@ -17,7 +17,7 @@ class Component(PayloadGenerator):
         self.log.demsg('开始授信申请...')
         self.pre_credit_msg(**kwargs)
         url = self.host + self.cfg['pre_credit']['interface']
-        print(self.active_payload)
+        self.log.info(self.active_payload)
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
         self.log.info('业务请求响应：%s', str(response.json()))
         return response.json()
@@ -35,7 +35,12 @@ class Component(PayloadGenerator):
     def credit_query(self):
         key = "certificate_no = '" + self.data['cer_no'] + "'"
         info = self.get_credit_data_info(table="credit_apply", key=key)
-        return info['status']
+        try:
+            status = info['status']
+        except (IndexError, Exception):
+            status = "x"
+            self.log.info("未查询到数据")
+        return status
 
     def loan(self, **kwargs):
         self.log.demsg('开始支用申请...')
