@@ -12,7 +12,7 @@ PROJECT = 'MeiTuan'
 # 测试环境列表
 EnvList = ['hsit', 'huat', 'hdev', 'hqas', 'uat', 'hpre']
 # TEST_ENV_INFO = 'huat'
-# TEST_ENV_INFO = 'hdev'
+TEST_ENV_INFO = 'hdev'
 # TEST_ENV_INFO = 'hsit'
-TEST_ENV_INFO = 'hpre'
+# TEST_ENV_INFO = 'hpre'
 # TEST_ENV_INFO = 'hqas'

@@ -104,12 +104,12 @@ ENV = {
     'hdev': {
         'database': {
             'hdev_mysql': {
-                'host': 'mysql01-hdev.jccfc.io',
+                'host': 'mysql03-dev.jccfc.io',
                 'port': 3313,
                 'username': 'hdev',
                 'password': 'f8FHhqJZlLfWTKkk'},
             'hdev_credit': {
-                "host": "mysql01-hdev.jccfc.io",
+                "host": "mysql03-dev.jccfc.io",
                 "port": 3313,
                 "databaseName": "hdev_credit",
                 "username": "credit",
@@ -123,7 +123,7 @@ ENV = {
                 "password": "i7OeSO5241JRMKQR"
             },
             'hdev_user': {
-                "host": "mysql01-hdev.jccfc.io",
+                "host": "mysql03-dev.jccfc.io",
                 "port": 3313,
                 "databaseName": "hdev_user",
                 "username": "user",
