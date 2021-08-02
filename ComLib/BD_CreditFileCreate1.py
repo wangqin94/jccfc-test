@@ -8,9 +8,11 @@ import sys
 import time
 from Engine.Base import INIT
 from ComLib.Mysql import Mysql
+from ComLib.Models import *
 from Engine.Logger import Logs
 from Config.global_config import *
-from Scripts.person import data
+from person import data
+from datetime import datetime
 
 _log = Logs()
 _ProjectPath = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]  # 项目根目录
@@ -349,8 +351,6 @@ class BaiduFile(INIT):
         for amt in self.amount:
             # period_id = strings + "%03d" % syb
             self.get_repay_plan_csv(self.repay_plan_csv_template, amt)
-            self.get_repay_item_csv(self.repay_item_csv_template, amt)
-            self.get_reduce_csv(self.reduce_csv_template, amt)
 
     def get_bill_day(self):
         """
@@ -463,11 +463,12 @@ class BaiduFile(INIT):
 
 
 class BaiduRepayFile(BaiduFile):
-    def __init__(self, repay_mode='02', repay_date="20210806", repay_term_no=0, repay_type='02'):
+    def __init__(self, repay_mode='02', repay_date="2021-08-06", repay_term_no=0, repay_type='02', loan_invoice_id=None):
         """ # 百度还款对账文件
         :param data:                用户四要素
         :param cur_date:            账务日期，默认None 为当前日期
         :param loan_record:         用户成功支用笔数，默认为0 为第1笔
+        :param loan_invoice_id:     借据号为None取用户第一笔借据，否则取自定义值
         """
         super(BaiduFile, self).__init__()
         self.repay_mode = repay_mode
@@ -475,97 +476,74 @@ class BaiduRepayFile(BaiduFile):
         self.repay_term_no = repay_term_no
         self.repay_type = repay_type
         self.repay_file_path = ''
-
-    def get_asset_data_info(self, table='asset_loan_apply', key="查询条件"):
-        """
-        :function: 获取asset数据库表中信息
-        table : 表名
-        key ： 查询关键字
-        """
-        sql = "select * from {}.{} where {};".format(self.asset_database_name, table, key)
-        # 获取表属性字段名
-        keys = self.mysql_asset.select_table_column(table_name=table, database=self.asset_database_name)
-        # 获取查询内容
-        values = self.mysql_asset.select(sql)
-        # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-        data = [dict(zip(keys, item)) for item in values][0]
-        return data
-
-    # 计算还款时间和放款时间差，天为单位
-    def get_day(self, time1, time2):
-        """
-        :param time1: 时间1
-        :param time2: 时间2
-        :return: 差异天数
-        """
-        try:
-            day_num = 0
-            day1 = time.strptime(str(time1), '%Y-%m-%d')
-            day2 = time.strptime(str(time2), '%Y-%m-%d')
-            if type == 'day':
-                day_num = (int(time.mktime(day2)) - int(time.mktime(day1))) / (24 * 60 * 60)
-            return abs(int(day_num))
-        except Exception:
-            print("Error: 系统错误")
-
-    def get_credit_data_info(self, table='credit_loan_apply', key="查询条件"):
-        """
-        :function: 获取credit数据库表中信息
-        table : 表名
-        key ： 查询关键字
-        """
-        sql = "select * from {}.{} where {};".format(self.credit_database_name, table, key)
-        # 获取表属性字段名
-        keys = self.credit.select_table_column(table_name=table, database=self.credit_database_name)
-        # 获取查询内容
-        values = self.credit.select(sql)
-        # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-        data = [dict(zip(keys, item)) for item in values][0]
-        return data
+        self.loan_invoice_id = loan_invoice_id
 
     # 文件生成入口
     def start(self):
-        # 开始写入借据文件
-        self.get_repay_item(self.open_csv_template)
-        self.get_loan_rate_csv(self.loan_rate_csv_template)
         # 开始写入还款计划/还款 文件
-        for amt in self.amount:
-            # period_id = strings + "%03d" % syb
-            self.get_repay_plan_csv(self.repay_plan_csv_template, amt)
-            self.get_reduce_csv(self.reduce_csv_template, amt)
+        self.get_repay_item(self.open_csv_template)
+        self.get_new_repay_plan_csv(self.repay_plan_csv_template)
+        self.get_reduce_csv(self.reduce_csv_template)
+
+    def get_invoice_info(self):
+        """
+        return: 期次 total_term, 借据 loan_invoice_id
+        """
+        # self.loan_invoice_id 为none 按照用户名取第一条借据信息，否则取当条借据信息
+        if not self.loan_invoice_id:
+            loan_invoice_id = self.loan_invoice_id
+            key1 = "loan_invoice_id = '{}'".format(loan_invoice_id)
+            credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key1)
+            total_term = int(credit_loan_invoice["installment_num"])
+        else:
+            key2 = "user_name = '{}'".format(self.user_name)
+            credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            total_term = int(credit_loan_invoice["installment_num"])
+            loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
+
+        return total_term, loan_invoice_id
 
     # 还款计划文件生成
-    def get_repay_plan_csv(self, temple, amount_tuple):
-        term = self.amount.index(amount_tuple) + 1
-        temple['loan_id'] = self.loan_id
-        temple['prin_total'] = str(amount_tuple[0])
-        temple['int_total'] = str(amount_tuple[1])
-        temple['cur_date'] = self.cur_date
-        temple['term_no'] = str(term)
-        temple['end_date'] = self.period_date_list[term - 1]
-        if term == 1:
-            temple['start_date'] = self.apply_date
-            table_head = ','.join(self.repay_plan_csv_keys)
-            with open(self.repay_plan, 'w', encoding='utf-8') as f:
-                f.write(table_head)
-                f.write('\n')
-        else:
-            temple['start_date'] = self.period_date_list[term - 2]
-        val_list = map(str, [self.repay_plan_csv_template[key] for key in self.repay_plan_csv_keys])
-        strings = ','.join(val_list)
-        with open(self.repay_plan, 'a+', encoding='utf-8') as f:
-            f.write(strings)
+    def get_new_repay_plan_csv(self, temple):
+        # 写入头信息
+        repay_plan = os.path.join(self.loan_file_path, 'repay_plan.csv')
+        table_head = ','.join(self.repay_plan_csv_keys)
+        with open(repay_plan, 'w', encoding='utf-8') as f:
+            f.write(table_head)
             f.write('\n')
+
+        # 根据借据Id和期次获取还款计划并写入
+        total_term, loan_invoice_id = self.get_invoice_info()
+        for term in range(total_term):
+            key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, str(term + 1))
+            asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
+
+            temple['start_date'] = str(asset_repay_plan["start_date"])  # 开始时间
+            temple['end_date'] = str(asset_repay_plan["pre_repay_date"])  # 结束时间
+            temple['prin_total'] = float('{:.2f}'.format(asset_repay_plan["pre_repay_principal"]))  # 应还本金
+            left_repay_principal = float('{:.2f}'.format(asset_repay_plan["left_repay_principal"]))  # 剩余应还本金
+            temple['prin_repay'] = temple['prin_total'] - left_repay_principal  # 已还本金
+            temple['int_total'] = float('{:.2f}'.format(asset_repay_plan["pre_repay_interest"]))  # 应还利息
+            temple['int_bal'] = float('{:.2f}'.format(asset_repay_plan["left_repay_interest"]))  # 剩余应还利息
+            temple['int_repay'] = temple['int_total'] - temple['int_bal']  # 已还利息
+            temple['pnlt_int_total'] = float('{:.2f}'.format(asset_repay_plan["pre_repay_fee"]))  # 应还罚息
+            left_repay_fee = float('{:.2f}'.format(asset_repay_plan["left_repay_fee"]))  # 剩余应还罚息
+            temple['pnlt_int_repay'] = temple['pnlt_int_total'] - left_repay_fee  # 已还罚息
+
+            temple['cur_date'] = self.cur_date
+            temple['loan_id'] = self.loan_id
+            temple['term_no'] = term+1
+            # 获取当前期次还款计划数据并写入
+            val_list = map(str, [self.repay_plan_csv_template[key] for key in self.repay_plan_csv_keys])
+            strings = ','.join(val_list)
+            with open(repay_plan, 'a+', encoding='utf-8') as f:
+                f.write(strings)
+                f.write('\n')
 
     def get_repay_item(self, temple):
         temple['term_no'] = int(self.repay_term_no)
         temple['loan_id'] = self.loan_id
         temple['seq_no'] = 'seq_no' + str(int(round(time.time() * 1000)))
-
-        # 根据loan_id查询三方借据表中的借据号
-        key1 = "third_loan_no = '{}'".format(self.loan_id)
-        credit_third_wait_loan_deal_info = self.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key1)
-        loan_invoice_id = credit_third_wait_loan_deal_info["loan_invoice_id"]
 
         # 根据loan_id查询还款计划中的借据号
         key2 = "third_loan_invoice_id = '{}'".format(self.loan_id)
@@ -573,13 +551,14 @@ class BaiduRepayFile(BaiduFile):
         apply_rate = credit_loan_apply["apply_rate"]
 
         # 根据借据Id和期次获取资产侧还款计划
+        total_term, loan_invoice_id = self.get_invoice_info()
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, self.repay_term_no)
         asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
-        temple['total_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_amount"]))  # 总金额
-        temple['income_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_amount"]))  # 不含优惠券总金额
-        temple['prin_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_principal"]))  # 本金
-        temple['int_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_interest"]))  # 利息
-        temple['pnlt_int_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_fee"]))  # 费用
+        temple['total_amt'] = float('{:.2f}'.format(asset_repay_plan["pre_repay_amount"]))  # 总金额
+        temple['income_amt'] = float('{:.2f}'.format(asset_repay_plan["pre_repay_amount"]))  # 不含优惠券总金额
+        temple['prin_amt'] = float('{:.2f}'.format(asset_repay_plan["pre_repay_principal"]))  # 本金
+        temple['int_amt'] = float('{:.2f}'.format(asset_repay_plan["pre_repay_interest"]))  # 利息
+        temple['pnlt_int_amt'] = float('{:.2f}'.format(asset_repay_plan["pre_repay_fee"]))  # 费用
 
         # 按期还款
         if self.repay_type == "1":
@@ -599,19 +578,30 @@ class BaiduRepayFile(BaiduFile):
             temple['tran_date'] = self.repay_date
             temple['cur_date'] = self.repay_date
             self.repay_file_path = self.get_filename(asset_repay_plan["calc_overdue_fee_date"])
-            temple['prin_amt'] = str("{:.2f}".format(asset_repay_plan["before_calc_principal"]))  # 剩余应还本金
+            temple['prin_amt'] = float("{:.2f}".format(asset_repay_plan["before_calc_principal"]))  # 剩余应还本金
             # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
-            days = self.get_day(asset_repay_plan["start_date"], self.repay_date)
+            days = get_day(asset_repay_plan["start_date"], self.repay_date)
+
+            pre_repay_date = str('{:.2f}'.format(asset_repay_plan["pre_repay_date"]))
+            pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
+            repay_date = datetime.strptime(self.repay_date, "%Y-%m-%d").date()
 
             if self.repay_mode == '02':
                 # 利息\罚息,随借随还按日计息
-                paid_prin_amt = asset_repay_plan["left_principal"] * days * apply_rate / (100 * 360)
-                temple['int_amt'] = str('{:.2f}'.format(paid_prin_amt))
+                if pre_repay_date > repay_date:
+                    temple['int_amt'] = 0  # 如果还款时间小于账单日，利息应该为0
+                else:
+                    paid_prin_amt = asset_repay_plan["left_principal"] * days * apply_rate / (100 * 360)
+                    temple['int_amt'] = float('{:.2f}'.format(paid_prin_amt))
                 temple['pnlt_int_amt'] = 0
             else:
                 # 利息\罚息，等额本息按期收息包含4%违约金
-                temple['int_amt'] = str('{:.2f}'.format(paid_prin_amt))
+                if pre_repay_date > repay_date:
+                    temple['int_amt'] = 0  # 如果还款时间小于账单日，利息应该为0
+                else:
+                    temple['int_amt'] = float("{:.2f}".format(asset_repay_plan["pre_repay_interest"]))
                 temple['pnlt_int_amt'] = 0
+                temple['repay_violate_amt'] = temple['prin_amt'] * 0.04
 
         repay_item = os.path.join(self.repay_file_path, 'repay_item.csv')
         table_head = ','.join(self.repay_item_csv_keys)
@@ -625,23 +615,31 @@ class BaiduRepayFile(BaiduFile):
             f.write('\n')
 
     # 手工减免息费明细文件
-    def get_reduce_csv(self, temple, amount_tuple):
-        term = self.amount.index(amount_tuple) + 1
-        temple['loan_id'] = self.loan_id
-        temple['tran_date'] = str(self.cur_date)
-        temple['cur_date'] = str(self.cur_date)
-        temple['seq_no'] = 'seqNo' + str(int(round(time.time() * 1000)))
-        temple['term_no'] = int(term)
-        if term == 1:
-            table_head = ','.join(self.reduce_csv_keys)
-            with open(self.reduce_csv, 'w', encoding='utf-8') as f:
-                f.write(table_head)
-                f.write('\n')
-        val_list = map(str, [self.reduce_csv_template[key] for key in self.reduce_csv_keys])
-        strings = ','.join(val_list)
-        with open(self.reduce_csv, 'a+', encoding='utf-8') as f:
-            f.write(strings)
+    def get_reduce_csv(self, temple):
+        # 写入头信息
+        reduce_csv = os.path.join(self.loan_file_path, 'reduce.csv')
+        table_head = ','.join(self.reduce_csv_keys)
+        with open(reduce_csv, 'w', encoding='utf-8') as f:
+            f.write(table_head)
             f.write('\n')
+        # 获取借据以及对应期次
+        total_term, loan_invoice_id = self.get_invoice_info()
+
+        # 根据借据Id和期次获取还款计划并写入
+        for term in range(total_term):
+            key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, str(term + 1))
+            asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
+            temple['loan_id'] = self.loan_id
+            temple['tran_date'] = asset_repay_plan["pre_repay_date"]
+            temple['cur_date'] = asset_repay_plan["pre_repay_date"]
+            temple['seq_no'] = 'seqNo' + str(int(round(time.time() * 1000)))
+            temple['term_no'] = int(term)
+            # 获取当前期次还款计划数据并写入
+            val_list = map(str, [self.repay_plan_csv_template[key] for key in self.reduce_csv_keys])
+            strings = ','.join(val_list)
+            with open(reduce_csv, 'a+', encoding='utf-8') as f:
+                f.write(strings)
+                f.write('\n')
 
 
 if __name__ == '__main__':
