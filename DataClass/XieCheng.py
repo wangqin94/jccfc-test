@@ -18,7 +18,7 @@ class PayloadGenerator(INIT):
         :param repay_term_no:   还款期次
         :param repay_mode:      还款类型:1 按期还款；2 提前结清；3逾期还款
         :param loan_invoice_id: 借据号为None取用户第一笔借据，否则取自定义值
-        :param repay_date:      实际还款时间
+        :param repay_date:      实际还款时间'2021-08-09'
         """
         super().__init__()
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(self.project), 'open_id')
@@ -44,7 +44,6 @@ class PayloadGenerator(INIT):
         # 初始数据库变量
         self.credit_database_name = '%s_credit' % TEST_ENV_INFO.lower()
         self.asset_database_name = '%s_asset' % TEST_ENV_INFO.lower()
-
 
     def set_active_payload(self, payload):
         self.active_payload = payload
@@ -183,10 +182,18 @@ class PayloadGenerator(INIT):
             repay_notice['repay_type'] = self.repay_mode
             repay_notice['finish_time'] = str(self.repay_date.replace("-", "")) + "112233"
             repay_notice["repay_principal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-            # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
-            days = get_day(asset_repay_plan["start_date"], self.repay_date)
-            paid_prin_amt = asset_repay_plan["left_principal"] * days * apply_rate / (100 * 360)
-            repay_notice["repay_interest"] = float('{:.2f}'.format(paid_prin_amt))  # 利息
+
+            pre_repay_date = str('{:.2f}'.format(asset_repay_plan["pre_repay_date"]))
+            pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
+            repay_date = datetime.strptime(self.repay_date, "%Y-%m-%d").date()
+            if pre_repay_date > repay_date:
+                repay_notice["repay_interest"] = 0  # 如果还款时间小于账单日，利息应该为0
+            else:
+                # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
+                days = get_day(asset_repay_plan["start_date"], self.repay_date)
+                paid_prin_amt = asset_repay_plan["left_principal"] * days * apply_rate / (100 * 360)
+                repay_notice["repay_interest"] = float('{:.2f}'.format(paid_prin_amt))  # 利息
+
             repay_notice["repay_penalty_amount"] = 0
             repay_notice["repay_fee"] = 0
             repay_notice["actual_repay_amount"] = repay_notice["repay_principal"] + repay_notice[

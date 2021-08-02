@@ -8,6 +8,7 @@ import time
 from Component.MeiTuan import Component
 from person import *
 
+
 class TestCase(object):
     def __init__(self):
         # threads = []
@@ -23,7 +24,7 @@ class TestCase(object):
         pass
 
     #   [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效]
-    def process(self, flag=2):
+    def process(self, flag=0):
         """测试步骤"""
         m = 1
         for _ in range(m):
@@ -31,7 +32,7 @@ class TestCase(object):
             if flag == 0:
                 mt = Component(data=None)
 
-                mt.mt_credit_msg(loan_amount=3000000)
+                mt.mt_credit_msg(APPLY_AMT=1000000)
                 mt.mt_credit_test()
                 # mt.mt_credit_result()
 
@@ -51,9 +52,9 @@ class TestCase(object):
                 print(mt.user_credit_apply_info)
                 mt.update_bank_contract_no()
                 mt.update_credit_app_no()
-            # # mt.get_user_apply_info()
-            # # mt.mt_credit_result()
-                mt.mt_loan_msg(TRADE_AMOUNT=600000, TRADE_PERIOD='6')
+                # # mt.get_user_apply_info()
+                # # mt.mt_credit_result()
+                mt.mt_loan_msg(TRADE_AMOUNT=60000, TRADE_PERIOD='3')
                 mt.mt_loan_test()
             #     threads = []
             #     for _ in range(5):

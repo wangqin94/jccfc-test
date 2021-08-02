@@ -59,11 +59,12 @@ class INIT(object):
             else:
                 self.log.warning('提示：用户已存在授信信息\n继续流程...')
 
-    def get_credit_data_info(self, table='credit_loan_apply', key="查询条件"):
+    def get_credit_data_info(self, table='credit_loan_apply', key="查询条件", record=0):
         """
         :function: 获取credit数据库表中信息
         table : 表名
         key ： 查询关键字
+        record ： 根据列表指定序列返回查询数据
         """
         sql = "select * from {}.{} where {};".format(self.credit_database_name, table, key)
         # 获取表属性字段名
@@ -72,16 +73,17 @@ class INIT(object):
         values = self.mysql.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][0]
+            data = [dict(zip(keys, item)) for item in values][record]
             return data
         except (IndexError, Exception):
-            print("SQL查询结果为空，查询条件异常，请排查")
+            print("SQL查询结果为空，借据不存在，请排查")
 
-    def get_asset_data_info(self, table='asset_loan_apply', key="查询条件"):
+    def get_asset_data_info(self, table='asset_loan_apply', key="查询条件", record=0):
         """
         :function: 获取asset数据库表中信息
         table : 表名
         key ： 查询关键字
+        record ： 根据列表指定序列返回查询数据
         """
         sql = "select * from {}.{} where {};".format(self.asset_database_name, table, key)
         # 获取表属性字段名
@@ -90,7 +92,7 @@ class INIT(object):
         values = self.mysql_asset.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][0]
+            data = [dict(zip(keys, item)) for item in values][record]
             return data
         except (IndexError, Exception):
             print("SQL查询结果为空，查询条件异常，请排查")
