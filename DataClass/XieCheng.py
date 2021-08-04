@@ -142,6 +142,11 @@ class PayloadGenerator(INIT):
         # 根据支用申请单号查询借据信息
         if self.loan_invoice_id:
             loan_invoice_id = self.loan_invoice_id
+            key2 = "loan_invoice_id = '{}'".format(loan_invoice_id)
+            credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            loan_apply_id = credit_loan_invoice["loan_apply_id"]
+            key21 = "loan_apply_id = '{}'".format(loan_apply_id)
+            credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key21)
         else:
             loan_apply_id = credit_loan_apply["loan_apply_id"]
             key2 = "loan_apply_id = '{}'".format(loan_apply_id)

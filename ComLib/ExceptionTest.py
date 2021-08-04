@@ -43,10 +43,10 @@ def payconvert(instance):
     # 使user服务宕机
     # url = 'https://eureka-hsit.corp.jccfc.com/eureka/apps/LOANV2-PAYCONVERT/'
     # + instance + '/status?value=OUT_OF_SERVICE'
-    url = 'https://eureka-qas.corp.jccfc.com/eureka/apps/LOANV2-PAYCONVERT/' + instance + '/status?value=OUT_OF_SERVICE'
-    url = 'https://eureka-hsit.corp.jccfc.com/eureka/apps/LOANV2-PAYCONVERT/' + instance + '/status?value=OUT_OF_SERVICE'
+    # url = 'https://eureka-qas.corp.jccfc.com/eureka/apps/LOANV2-PAYCONVERT/' + instance + '/status?value=OUT_OF_SERVICE'
+    # url = 'https://eureka-hqas.corp.jccfc.com/eureka/apps/LOANV2-PAYCONVERT/' + instance + '/status?value=OUT_OF_SERVICE'
     # 启动asset服务
-    url = 'https://eureka-hsit.corp.jccfc.com/eureka/apps/LOANV2-PAYCONVERT/' + instance + '/status?value=UP'
+    url = 'https://eureka-hqas.corp.jccfc.com/eureka/apps/LOANV2-PAYCONVERT/' + instance + '/status?value=UP'
     # url = 'https://eureka-qas.corp.jccfc.com/eureka/apps/LOANV2-PAYCONVERT/' + instance + '/status?value=UP'
     print("url:{}".format(url))
     res = requests.put(url=url)
@@ -65,9 +65,19 @@ def exception_service(api, instance):
     print("res.text:{}".format(res.text))
 
 
+def cc_service(api, instance):
+    # 使服务宕机
+    # url = 'https://eureka-hqas.corp.jccfc.com/eureka/apps/' + api + instance + '/status?value=OUT_OF_SERVICE'
+    # 启动服务
+    url = 'https://eureka-hqas.corp.jccfc.com/eureka/apps/' + api + instance + '/status?value=UP'
+    print("url:{}".format(url))
+    res = requests.put(url=url)
+    print(res.status_code)
+    print("res.text:{}".format(res.text))
+
+
 if __name__ == '__main__':
     # asset_put('10.233.68.181:8080:loanV2-asset:asset-869b5c84bb-vgc4m')
     # user_put('10.233.73.151:8080:loanV2-user:user-69c899cdc-tlljg')
     # payconvert('10.233.76.223:8080:loanV2-payConvert:convert-6975dd9c8f-tdq62')
-    # payconvert('10.233.75.98:8080:loanV2-payConvert:convert-786ddf7dd9-nh2qn')
-    exception_service("LOANV2-HAPI-WEB/", "10.233.76.89:8080:loanV2-hapi-web:hapi-web-6ff7888b6d-6xps2")
+    payconvert('10.233.78.185:8080:loanV2-payConvert:convert-77db7445fb-kr9c2')
