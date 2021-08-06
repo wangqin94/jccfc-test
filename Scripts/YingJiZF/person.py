@@ -10,7 +10,6 @@ data = {'name': '慎霄荔', 'cer_no': '130827201805084576', 'bankid': '62166602
 data = {'name': '辕政', 'cer_no': '140200201608059856', 'bankid': '6222020239764383224', 'telephone': '18900008861', 'openId': 'open_id1625565304730'}  # hqas -> XieCheng
 data = {'name': '广颖叶', 'cer_no': '632522200812265399', 'bankid': '6212810242141612948', 'telephone': '18900009861', 'openId': 'open_id1625565542457'}  # hqas -> XieCheng
 data = {'name': '祁娴滢', 'cer_no': '421127201510034354', 'bankid': '6228480242273848299', 'telephone': '18900019861', 'openId': 'open_id1625565555679'}  # hqas -> XieCheng
-data = {'name': '仰邦', 'cer_no': '340221198511255740', 'bankid': '6222080242395324150', 'telephone': '18900029861', 'openId': 'open_id1625565567824'}  # hqas -> XieCheng
 data = {'name': '翟宏江', 'cer_no': '441422199811052204', 'bankid': '6217230792834019794', 'telephone': '18900399861', 'openId': 'open_id1625620612409'}  # hqas -> XieCheng
 data = {'name': '迟生震', 'cer_no': '370832201104204569', 'bankid': '6228480793431500008', 'telephone': '18900499861', 'openId': 'open_id1625620672172'}  # hqas -> XieCheng
 data = {'name': '姓育', 'cer_no': '150581199905170063', 'bankid': '6212810793854499253', 'telephone': '18900599861', 'openId': 'open_id1625620714454'}  # hqas -> XieCheng
@@ -28,7 +27,6 @@ data = {'name': '山羽', 'cer_no': '411403198605024473', 'bankid': '62220808235
 data = {'name': '门成克', 'cer_no': '522630198808190793', 'bankid': '6212260824789147694', 'telephone': '18901989861', 'openId': 'open_id1625623807945'}  # hqas -> XieCheng
 data = {'name': '幸瑶', 'cer_no': '513327201108103133', 'bankid': '6217850825754292550', 'telephone': '18902989861', 'openId': 'open_id1625623904460'}  # hqas -> XieCheng
 data = {'name': '宦永鹏', 'cer_no': '210411201406018245', 'bankid': '6216660825826017227', 'telephone': '18903989861', 'openId': 'open_id1625623911631'}  # hqas -> XieCheng
-data = {'name': '刘媛贞', 'cer_no': '610427198906114074', 'bankid': '6222000827329359970', 'telephone': '18904989861', 'openId': 'open_id1625624061967'}  # hqas -> XieCheng
 
 
 # 提前结清
@@ -59,3 +57,8 @@ data = {'name': '全军超', 'cer_no': '130725198406024661', 'bankid': '62178608
 data = {'name': '谷伟', 'cer_no': '220200198108201890', 'bankid': '6222080831780449992', 'telephone': '18907989861', 'openId': 'open_id1625624507077'}  # hqas -> XieCheng
 data = {'name': '闻馨', 'cer_no': '350105198404148161', 'bankid': '6222080831700330488', 'telephone': '18906989861', 'openId': 'open_id1625624499063'}  # hqas -> XieCheng
 data = {'name': '戴海新', 'cer_no': '430104200702012741', 'bankid': '6212810832439109902', 'telephone': '18908989862', 'openId': 'open_id1625624572940'}  # hqas -> XieCheng
+data = {'name': '刘媛贞', 'cer_no': '610427198906114074', 'bankid': '6222000827329359970', 'telephone': '18904989861', 'openId': 'open_id1625624061967'}  # hqas -> XieCheng
+data = {'name': '仰邦', 'cer_no': '340221198511255740', 'bankid': '6222080242395324150', 'telephone': '18900029861', 'openId': 'open_id1625565567824'}  # hqas -> XieCheng
+
+
+data = {'name': '楚香瑾', 'cer_no': '540000199808087054', 'bankid': '6228483146405855261', 'telephone': '15513048957', 'open_id': 'open_id1626855956894'}  # hqas -> XieCheng

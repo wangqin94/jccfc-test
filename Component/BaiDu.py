@@ -8,8 +8,10 @@ from DataClass.BaiDu import PayloadGenerator
 
 
 class Component(PayloadGenerator):
-    def __init__(self, *, data=None, app_no=None):
+    def __init__(self, *, data=None, app_no=None, type=1, loan_no=None):
         super().__init__(data=data, app_no=app_no)
+        self.loan_no = loan_no
+        self.type = type
 
     # 百度授信申请
     def credit(self, **kwargs):
@@ -29,6 +31,14 @@ class Component(PayloadGenerator):
         self.log.demsg('开始支用申请...')
         self.loan_msg(**kwargs)
         url = self.host + self.cfg['loan']['interface']
+        response = requests.post(url=url, headers=self.headers, json=self.active_payload)
+        self.log.info('业务请求响应：%s', response.json())
+        return response.json()
+
+    def notice(self, **kwargs):
+        self.log.demsg('开始通知申请...')
+        self.notice_msg(**kwargs)
+        url = self.host + self.cfg['notice']['interface']
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
         self.log.info('业务请求响应：%s', response.json())
         return response.json()

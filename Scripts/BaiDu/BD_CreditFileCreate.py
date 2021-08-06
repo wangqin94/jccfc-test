@@ -330,9 +330,6 @@ class BaiduFile(INIT):
         # 获取数据库表用户信息
         self.data_info = self.get_user_data_info()
 
-        # 文件生成入口
-        self.start()
-
     # 文件生成入口
     def start(self):
         # 开始写入借据文件
@@ -369,7 +366,6 @@ class BaiduFile(INIT):
     # 获取每期应还本金利息数据
     def get_repay_period_amount(self):
         flag = "%s_%s" % (str(int(self.info['apply_amount'])), str(int(self.info['apply_term'])))
-        print(flag)
         if flag not in self.amount_dict:
             print("################ 放款金额或还款期数不支持, 请联系管理员... ###################")
             sys.exit()
@@ -469,6 +465,7 @@ class BaiduRepayFile(BaiduFile):
         self.repay_type = repay_type
         self.repay_file_path = ''
         self.loan_invoice_id = loan_invoice_id
+        self.loan_no = self.get_loan_id()
 
         # 文件生成入口
         self.start_repay_file()
@@ -498,6 +495,22 @@ class BaiduRepayFile(BaiduFile):
 
         return total_term, loan_invoice_id
 
+    def get_loan_id(self):
+        """
+        return: 三方借据号 loan_no
+        """
+        if self.loan_invoice_id:
+            loan_invoice_id = self.loan_invoice_id
+            key1 = "loan_invoice_id = '{}'".format(loan_invoice_id)
+            mysql = self.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key1)
+            loan_no = str(mysql["third_loan_no"])
+        else:
+            key2 = "user_name = '{}'".format(self.user_name)
+            mysql = self.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key2)
+            loan_no = str(mysql["third_loan_no"])
+
+        return loan_no
+
     # 还款计划文件生成
     def get_new_repay_plan_csv(self, temple):
         # 写入头信息
@@ -526,7 +539,7 @@ class BaiduRepayFile(BaiduFile):
             temple['pnlt_int_repay'] = temple['pnlt_int_total'] - left_repay_fee  # 已还罚息
 
             temple['cur_date'] = self.repay_date.replace("-", "")
-            temple['loan_id'] = self.loan_id
+            temple['loan_id'] = self.loan_no
             temple['term_no'] = term + 1
             # 获取当前期次还款计划数据并写入
             val_list = map(str, [self.repay_plan_csv_template[key] for key in self.repay_plan_csv_keys])
@@ -537,7 +550,7 @@ class BaiduRepayFile(BaiduFile):
 
     def get_repay_item(self, temple):
         temple['term_no'] = int(self.repay_term_no)
-        temple['loan_id'] = self.loan_id
+        temple['loan_id'] = self.loan_no
         temple['seq_no'] = 'seq_no' + str(int(round(time.time() * 1000)))
 
         # 获取用户借据信息
@@ -627,12 +640,10 @@ class BaiduRepayFile(BaiduFile):
 
         # 根据借据Id和期次获取还款计划并写入
         for term in range(total_term):
-            key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, str(term + 1))
-            asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
-            temple['loan_id'] = self.loan_id
-            temple['tran_date'] = str(asset_repay_plan["pre_repay_date"]).replace("-", "")
-            temple['cur_date'] = str(asset_repay_plan["pre_repay_date"]).replace("-", "")
-            temple['seq_no'] = 'seqNo' + str(int(round(time.time() * 1000)))
+            temple['loan_id'] = self.loan_no
+            temple['tran_date'] = str(self.repay_date).replace("-", "")
+            temple['cur_date'] = str(self.repay_date).replace("-", "")
+            temple['seq_no'] = 'seqNo' + str(int(round(time.time() * 1000))) + str(term)
             temple['term_no'] = int(term) + 1
             # 获取当前期次还款计划数据并写入
             val_list = map(str, [self.reduce_csv_template[key] for key in self.reduce_csv_keys])

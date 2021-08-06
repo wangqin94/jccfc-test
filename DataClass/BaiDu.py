@@ -4,13 +4,12 @@
 # ------------------------------------------
 
 import time
-from pprint import pprint
 from ComLib.Models import *
 from Engine.Base import INIT
 
 
 class PayloadGenerator(INIT):
-    def __init__(self, *, data=None, app_no=None):
+    def __init__(self, *, data=None, app_no=None, type=1, loan_no=None):
         super().__init__()
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(self.project))
         self.log.info('用户四要素信息 \n%s', self.data)
@@ -18,6 +17,8 @@ class PayloadGenerator(INIT):
         self.credit_amount = 3000000  # 授信申请金额, 默认3000000  单位分
         self.loan_amount = 1000000  # 支用申请金额, 默认1000000  单位分
         self.period = 3  # 借款期数, 默认3期
+        self.loan_no = loan_no
+        self.type = type
 
         # 初始化payload变量
         self.credit_payload = {}
@@ -75,5 +76,40 @@ class PayloadGenerator(INIT):
         self.log.info("data数据: %s", loan_data)
 
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
+        self.loan_payload = parser.parser
+        self.set_active_payload(self.loan_payload)
+
+    # 支用申请payload
+    def notice_msg(self, **kwargs):
+        """ # 额度恢复payload字段装填
+        注意：键名必须与接口原始数据的键名一致
+        :param kwargs: 需要临时装填的字段以及值 eg: key=value
+        :return: None
+        """
+        strings = str(int(round(time.time() * 1000)))
+        notice_data = dict()
+        comment = dict()
+        notice_data['order_id'] = "order_id" + strings
+        notice_data['seq_no'] = "seq_no" + strings
+        notice_data['cur_date'] = time.strftime("%Y%m%d", time.localtime())
+        notice_data['tran_time'] = time.strftime("%Y%m%d%H%M%S", time.localtime())
+        notice_data['type'] = int(self.type)
+
+        # 根据姓名查询支用信息
+        key1 = "user_name = '{}'".format(self.data['name'])
+        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+
+        # 借据号默认为空取当前用户第一笔借据号，否则取赋值借据号
+        loan_no = self.loan_no if self.loan_no else credit_loan_apply["third_loan_invoice_id"]
+        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+        notice_data['loan_id'] = loan_no
+        comment['amount_total'] = str(int(credit_loan_apply["apply_amount"]) * 100)
+        comment['loan_order_id'] = str(credit_loan_apply["thirdpart_order_id"])
+        notice_data["comment"] = str(comment)
+
+        notice_data.update(kwargs)
+        self.log.info("data数据: %s", notice_data)
+
+        parser = DataUpdate(self.cfg['notice']['payload'], **notice_data)
         self.loan_payload = parser.parser
         self.set_active_payload(self.loan_payload)

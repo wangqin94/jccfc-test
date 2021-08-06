@@ -17,7 +17,7 @@ class TestCase(object):
         pass
 
     # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效]
-    def process(self, flag=2):
+    def process(self, flag=0):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
@@ -38,7 +38,7 @@ class TestCase(object):
         # 支用申请
         elif flag == 2:
             xc = Component(data=data)
-            xc.loan(loan_amount=600, first_repay_date="20210710121311")  # first_repay_date=首期还款时间
+            xc.loan(loan_amount=600, first_repay_date="20210904121311")  # first_repay_date=首期还款时间
 
         # 支用查询
         elif flag == 3:
@@ -49,7 +49,11 @@ class TestCase(object):
         elif flag == 4:
             # repay_mode=还款类型: 必填参数 :1按期还款；2提前结清；3逾期还款
             # finish_time=实际还款时间： 提前结清必填参数"20210806"
-            xc = Component(data=data, repay_mode="2", repay_term_no="1")
+            # 指定借据号
+            # xc = Component(data=data, repay_mode="1", repay_term_no="1", loan_invoice_id="000LI5630561765575680768626")
+
+            # 默认取当前用户第一笔借据还款
+            xc = Component(data=data, repay_mode="1", repay_term_no="1")
             xc.notice()
 
         elif flag == 5:

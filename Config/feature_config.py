@@ -28,6 +28,74 @@ MeiTuan = {
         'interface': '',
         'payload': {},
     },
+
+    'repay_notice': {
+        'interface': '/api/v1/meit/notice/repayNotice',
+        'payload': {
+            "head": {
+                "channelNo": "07",
+                "requestSerialNo": "${requestSerialNo}",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000",
+                "merchantId": "F21C01MEIT"
+            },
+            "body": {
+                "CONTRACT_NO": "${CONTRACT_NO}",
+                "BIZ_SERIAL_NO": "${BIZ_SERIAL_NO}",
+                "LOAN_NO": "${LOAN_NO}",
+                "REPAYMENT_AMOUNT": "${REPAYMENT_AMOUNT}",
+                "PRINCIPAL": "${PRINCIPAL}",
+                "INTEREST": "${INTEREST}",
+                "D_INTEREST": "${D_INTEREST}",
+                "REPAY_TYPE": "${REPAY_TYPE}",
+                "PERIOD_NOW": "${PERIOD_NOW}",
+                "TRADE_PERIOD": "${TRADE_PERIOD}",
+                "RATE": "${RATE}",
+                "PAY_CHANNEL": "QDB",
+                "REPAY_STATUE": "S",  # 还款状态S-成功 F-失败
+                "REPAYMENT_DATE": "${REPAYMENT_DATE}",
+                "APP_ID": "MTSHF",
+                "CUSTOMER_NO": "1000000151909810",
+                "REPAYMENT_NAME": "${REPAYMENT_NAME}",
+                "REPAYMENT_CARD": "${REPAYMENT_CARD}",
+                "REPAYMENT_TIME": "${REPAYMENT_TIME}",
+                "CREDIT_LIMIT": "${CREDIT_LIMIT}",
+                "AVALIABLE_LIMIT": "${AVALIABLE_LIMIT}",
+                "USED_LIMIT": "${USED_LIMIT}",
+                "MINI_REPAYMENT_AMOUNT": "100",  # 二期字段
+                "DPD": "0",  # 二期字段
+                "ALL_DEBT_AMOUNT": "100000"  # 二期字段
+            }
+        },
+    },
+
+    'loan_notice': {
+        'interface': '/api/v1/meit/notice/loanNotice',
+        'payload': {
+            "head": {
+                "channelNo": "07",
+                "requestSerialNo": "${requestSerialNo}",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000",
+                "merchantId": "F21C01MEIT"
+            },
+            "body": {
+                "CONTRACT_NO": "${CONTRACT_NO}",
+                "PURPOSE": "DAILY_CONSUMPTION",
+                # DAILY_CONSUMPTION(0,"日常消费"),DECORATION(1,"装修"),TOURISM(2,"旅游"),EDUCATION(3,"教育"),MEDICAL_TREATMENT(4,"医疗");
+                "LOAN_NO": "${LOAN_NO}",
+                "PAY_STATUE": "S",  # 放款状态S-成功 F-失败
+                "PAYMENT_CONFIRM_TIME": "2021-06-21 11:42:30",
+                "TRADE_PERIOD": "${TRADE_PERIOD}",
+                "LOAN_AMOUNT": "${LOAN_AMOUNT}",
+                "RATE": "${RATE}",
+                "PAY_CHANNEL": "TLZF",
+                "REPAYMENT_DATE": "2021-06-21 11:42:30",
+                "APP_ID": "MTSHF",
+                "CUSTOMER_NO": "1000000151909810",
+            }
+        },
+    },
 }
 
 # -----------------------------------------------------------
@@ -73,7 +141,7 @@ BaiDu = {
                     "ocrAddress": "成都市武侯区府城大道中段85号",  # 身份地址
                     "userHomeAddress": "成都市武侯区府城大道中段85号",  # 家庭地址
                     "zxPermanentAddress": "成都市武侯区府城大道中段85号",  # 征信户籍地址
-                    "zxsDomicile": "成都市武侯区府城大道中段85号",   # 征信居住地址
+                    "zxsDomicile": "成都市武侯区府城大道中段85号",  # 征信居住地址
                     "zxMailingAddress": "成都市武侯区府城大道中段85号",  # 征信通讯地址
                     "zxsCareer": "02",
                     "zdV1Fico": "570"
@@ -139,12 +207,12 @@ BaiDu = {
                     "violatePrepayFlag": "0",
                     "repayMode": "22",  # 32等额本息对应还款对账文件还款类型05，22随借随还对应还款类型02
                     "dxmDScore": "575.24151",
-                    #"ocrAddress": "重庆市江北区府城大道中段87号",
+                    # "ocrAddress": "重庆市江北区府城大道中段87号",
                     "careerType": "",
                     "ocrAddress": "",  # 身份地址
                     "userHomeAddress": "",  # 家庭地址
                     "zxPermanentAddress": "",  # 征信户籍地址
-                    "zxsDomicile": "",   # 征信居住地址
+                    "zxsDomicile": "",  # 征信居住地址
                     "zxMailingAddress": "",  # 征信通讯地址
                     "zxsCareer": "",
                     "contactPhone": "19982022546",
@@ -158,6 +226,21 @@ BaiDu = {
     'loan_query': {
         'interface': '',
         'payload': {},
+    },
+
+    'notice': {
+        'interface': '/api/v1/baidu/demo/limit/restore',
+        'payload': {
+            "type": 3,
+            "order_id": "${order_id}",
+            "loan_id": "",
+            "cur_date": "20210402",
+            "tran_time": "20210328191516",
+            "seq_no": "seq_random_baidu${CUSTOMER_NO}",
+            "amount": 60000,
+            "version": 1,
+            "comment": "{\"amount_total\": 60000,\"loan_order_id\": \"${order_id}\"}"
+        },
     },
 
 }
@@ -482,7 +565,7 @@ fql = {
                 "fixedBillDay": "10",
                 "fixedRepayDay": "27",
                 "interestRate": "30",  # 年利率
-                "annualRate": "20.36", # 实际利率（平台优惠后的利率
+                "annualRate": "20.36",  # 实际利率（平台优惠后的利率
                 "name": "祖文策",
                 "age": "39",
                 "sex": "1",
@@ -533,7 +616,7 @@ fql = {
                 "monthlyIncome": "10000",
                 "idCardExpireDate": "2025-3-30",
                 "idCardAddr": "510000-510100-510107",
-                "idCardDetailAddr": "成都市武侯区府城大道中段85号",
+                # "idCardDetailAddr": "成都市武侯区府城大道中段85号",
                 "manualApproval": "false",
                 "liveArea": "510000-510100-510107",
                 "companyArea": "510000-510100-510107",
@@ -542,7 +625,7 @@ fql = {
                     "fileType": "1",
                     "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
                     "fileName": "idcard_front_202000000948071964.jpg"
-                    },
+                },
                     {
                         "fileType": "2",
                         "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
@@ -693,7 +776,7 @@ YingJiZF = {
                 "channelNo": "F21C02BAID",  # 渠道号
                 "loanStatus": "1",  # EnumLoanInvoiceStatus 借据状态 枚举类型NORMAL("1", "正常"),OVERDUE("2", "逾期"),SETTLE(
                 # "3", "结清");
-                "noticeType": "0",   # 通知类型（0-无条件、1-账单日通知、2-逾期通知）
+                "noticeType": "0",  # 通知类型（0-无条件、1-账单日通知、2-逾期通知）
                 "userIdList": [],  # 客户ID集合 list
                 "pageNum": 1,
                 "pageSize": 20,
@@ -798,6 +881,7 @@ YingJiZF = {
             },
             "body": {
                 "applyNo": "000LA2021060000004557",  # 支用申请号：000LA2021050000000020
+                "channelCodes": ["F20B02XIEC"]
             }
         }
     },

@@ -10,8 +10,12 @@ from DataClass.MeiTuan import PayloadGenerator
 
 
 class Component(PayloadGenerator):
-    def __init__(self, *, data=None, app_no=None):
-        super().__init__(data=data, app_no=app_no)
+    def __init__(self, *, data=None, app_no=None, encrypt_flag=True, loan_no=None, term="1"):
+        super(Component, self).__init__(data=data, app_no=app_no)
+
+        self.encrypt_flag = encrypt_flag
+        self.loan_no = loan_no
+        self.term = term
 
     # 美团授信申请
     @ciphertext
@@ -69,7 +73,6 @@ class Component(PayloadGenerator):
         # 加密
         encrypt_payload = self.encrypt(self.loan_payload)
         #encrypt_payload = self.loan_payload
-        print(encrypt_payload)
         response = requests.post(url=url, headers=self.headers, json=encrypt_payload)
         print(u'接口返回: ', response)
         # 解密
@@ -97,3 +100,39 @@ class Component(PayloadGenerator):
         response = requests.post(url=url, headers=self.headers, json=self.credit_invalid_payload)
         print(u'接口返回: ', response)
         print(f"响应报文如下：\n{response}")
+
+    def mt_repay_notice_test(self, **kwargs):
+        self.log.demsg('还款通知...')
+        self.mt_repay_notice_msg(**kwargs)
+        url = self.host + self.cfg['repay_notice']['interface']
+        if self.encrypt_flag:
+            # 加密
+            encrypt_payload = self.encrypt(self.active_payload)
+            response = requests.post(url=url, headers=self.headers, json=encrypt_payload)
+            print(u'接口返回: ', response)
+            # 解密
+            res = self.decrypt(response.json())
+            print(f"响应报文如下：\n{res}")
+        else:
+            response = requests.post(url=url, headers=self.headers, json=self.active_payload)
+            res = self.decrypt(response.json())
+            print(f"响应报文如下：\n{res}")
+        return response.json()
+
+    def mt_loan_notice_test(self, **kwargs):
+        self.log.demsg('还款通知...')
+        self.mt_loan_notice_msg(**kwargs)
+        url = self.host + self.cfg['loan_notice']['interface']
+        if self.encrypt_flag:
+            # 加密
+            encrypt_payload = self.encrypt(self.active_payload)
+            response = requests.post(url=url, headers=self.headers, json=encrypt_payload)
+            print(u'接口返回: ', response)
+            # 解密
+            res = self.decrypt(response.json())
+            print(f"响应报文如下：\n{res}")
+        else:
+            response = requests.post(url=url, headers=self.headers, json=self.active_payload)
+            res = self.decrypt(response.json())
+            print(f"响应报文如下：\n{res}")
+        return response.json()

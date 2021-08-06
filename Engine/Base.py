@@ -97,6 +97,19 @@ class INIT(object):
         except (IndexError, Exception):
             print("SQL查询结果为空，查询条件异常，请排查")
 
+    def credit_query(self, data):
+        """ # 接口数据payload解密
+            :return:                查询状态
+            """
+        key = "certificate_no = '{}'".format(data['cer_no'])
+        info = self.get_credit_data_info(table="credit_apply", key=key)
+        try:
+            status = info['status']
+        except (IndexError, Exception):
+            status = "x"
+            self.log.info("未查询到数据")
+        return status
+
 
 class DataGenerator(object):
     pass
