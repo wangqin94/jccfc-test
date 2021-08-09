@@ -163,7 +163,6 @@ class PayloadGenerator(INIT):
         repay_notice['repay_no'] = 'repay_no' + self.strings + "1"
         repay_notice['repay_type'] = "1"
         repay_notice['repay_term_no'] = self.repay_term_no
-        repay_notice['repay_term_no'] = "1"
         repay_notice['finish_time'] = time.strftime('%Y%m%d%H%M%S', time.localtime())
 
         repay_notice["actual_repay_amount"] = float(asset_repay_plan['pre_repay_amount'])  # 总金额
