@@ -29,17 +29,19 @@ class INIT(object):
         self.project = PROJECT
         self.host = ENV[self.env]['request_host']
         self.host_fql = ENV[self.env]['request_host_fql']
-        self.mysql_database_name = '%s_mysql' % self.env.lower()
-        self.credit_database_name = '%s_credit' % self.env.lower()
-        self.asset_database_name = '%s_asset' % self.env.lower()
-        self.general_database = ENV[self.env]['database'][self.mysql_database_name]
-        self.credit_database = ENV[self.env]['database'][self.credit_database_name]
-        self.asset_database = ENV[self.env]['database'][self.asset_database_name]
+        self.mysql_data = '%s_mysql' % self.env.lower()
+        self.credit_data = '%s_credit' % self.env.lower()
+        self.asset_data = '%s_asset' % self.env.lower()
+        self.general_database = ENV[self.env]['database'][self.mysql_data]
+        self.credit_database = ENV[self.env]['database'][self.credit_data]
+        self.asset_database = ENV[self.env]['database'][self.asset_data]
+        self.credit_database_name = ENV[self.env]['database'][self.credit_data]['databaseName']
+        self.asset_database_name = ENV[self.env]['database'][self.asset_data]['databaseName']
         self.headers = headers
 
         self.log.demsg('数据库初始化.')
         self.mysql = Mysql(self.general_database, self.credit_database)
-        self.mysql_asset = Mysql(self.general_database, self.asset_database)
+        self.mysql_asset = Mysql(self.general_database, self.credit_database)
 
     def _function_init(self):
         for item in Models.__all__:
@@ -67,6 +69,7 @@ class INIT(object):
         record ： 根据列表指定序列返回查询数据
         """
         sql = "select * from {}.{} where {};".format(self.credit_database_name, table, key)
+        self.log.info(sql)
         # 获取表属性字段名
         keys = self.mysql.select_table_column(table_name=table, database=self.credit_database_name)
         # 获取查询内容

@@ -202,6 +202,39 @@ ENV = {
         'request_host_fql': "http://api-web-hqas.jccfc.com",
         'eureka_host': 'https://eureka-hqas.corp.jccfc.com/eureka/apps/',
     },
+    'uat': {
+        'database': {
+            'uat_mysql': {
+                'host': 'mysql03-dev.jccfc.io',
+                'port': 3308,
+                'username': 'uat_loan2',
+                'password': 'dciMdbcFiX6n'},
+            'uat_credit': {
+                "host": "mysql03-dev.jccfc.io",
+                "port": 3308,
+                "databaseName": "uat_credit_safe2",
+                "username": "uat_loan2",
+                "password": "dciMdbcFiX6n"
+            },
+            'uat_asset': {
+                "host": "mysql03-dev.jccfc.io",
+                "port": 3308,
+                "databaseName": "uat_asset_safe2",
+                "username": "uat_loan2",
+                "password": "dciMdbcFiX6n"
+            },
+            'uat_user': {
+                "host": "mysql03-dev.jccfc.io",
+                "port": 3308,
+                "databaseName": "uat_user_safe2",
+                "username": "uat_loan2",
+                "password": "dciMdbcFiX6n"
+            },
+        },
+        'request_host': "http://hapi-web-uat.corp.jccfc.com",
+        'request_host_fql': "http://api-web-uat.jccfc.com",
+        'eureka_host': 'https://eureka-uat.corp.jccfc.com/eureka/apps/',
+    },
 }
 
 Env = {
