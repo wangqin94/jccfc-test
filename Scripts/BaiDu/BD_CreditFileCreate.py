@@ -528,14 +528,14 @@ class BaiduRepayFile(BaiduFile):
 
             temple['start_date'] = str(asset_repay_plan["start_date"]).replace("-", "")  # 开始时间
             temple['end_date'] = str(asset_repay_plan["pre_repay_date"]).replace("-", "")  # 结束时间
-            temple['prin_total'] = int(asset_repay_plan["pre_repay_principal"])*100  # 应还本金
-            left_repay_principal = int(asset_repay_plan["left_repay_principal"])*100  # 剩余应还本金
+            temple['prin_total'] = int(float(asset_repay_plan["pre_repay_principal"])*100)  # 应还本金
+            left_repay_principal = int(float(asset_repay_plan["left_repay_principal"])*100)  # 剩余应还本金
             temple['prin_repay'] = temple['prin_total'] - left_repay_principal  # 已还本金
-            temple['int_total'] = int(asset_repay_plan["pre_repay_interest"])*100  # 应还利息
-            temple['int_bal'] = int(asset_repay_plan["left_repay_interest"])*100  # 剩余应还利息
+            temple['int_total'] = int(float(asset_repay_plan["pre_repay_interest"])*100)  # 应还利息
+            temple['int_bal'] = int(float(asset_repay_plan["left_repay_interest"])*100)  # 剩余应还利息
             temple['int_repay'] = temple['int_total'] - temple['int_bal']  # 已还利息
-            temple['pnlt_int_total'] = int(asset_repay_plan["pre_repay_fee"])*100  # 应还罚息
-            left_repay_fee = int(asset_repay_plan["left_repay_fee"])*100  # 剩余应还罚息
+            temple['pnlt_int_total'] = int(float(asset_repay_plan["pre_repay_fee"])*100)  # 应还罚息
+            left_repay_fee = int(float(asset_repay_plan["left_repay_fee"])*100)  # 剩余应还罚息
             temple['pnlt_int_repay'] = temple['pnlt_int_total'] - left_repay_fee  # 已还罚息
 
             temple['cur_date'] = self.repay_date.replace("-", "")
@@ -563,11 +563,11 @@ class BaiduRepayFile(BaiduFile):
         # 根据借据Id和期次获取资产侧还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, self.repay_term_no)
         asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
-        temple['total_amt'] = int(asset_repay_plan["pre_repay_amount"])*100  # 总金额
-        temple['income_amt'] = int(asset_repay_plan["pre_repay_amount"])*100  # 不含优惠券总金额
-        temple['prin_amt'] = int(asset_repay_plan["pre_repay_principal"])*100  # 本金
-        temple['int_amt'] = int(asset_repay_plan["pre_repay_interest"])*100  # 利息
-        temple['pnlt_int_amt'] = int(asset_repay_plan["pre_repay_fee"])*100  # 费用
+        temple['total_amt'] = int(float(asset_repay_plan["pre_repay_amount"])*100)  # 总金额
+        temple['income_amt'] = int(float(asset_repay_plan["pre_repay_amount"])*100)  # 不含优惠券总金额
+        temple['prin_amt'] = int(float(asset_repay_plan["pre_repay_principal"])*100)  # 本金
+        temple['int_amt'] = int(float(asset_repay_plan["pre_repay_interest"])*100)  # 利息
+        temple['pnlt_int_amt'] = int(float(asset_repay_plan["pre_repay_fee"])*100)  # 费用
 
         # 按期还款
         if self.repay_type == "01":
@@ -583,7 +583,7 @@ class BaiduRepayFile(BaiduFile):
         elif self.repay_type == "02":
             temple['tran_date'] = self.repay_date.replace("-", "")
             temple['cur_date'] = self.repay_date.replace("-", "")
-            temple['prin_amt'] = int(asset_repay_plan["before_calc_principal"])*100  # 剩余应还本金
+            temple['prin_amt'] = int(float(asset_repay_plan["before_calc_principal"])*100)  # 剩余应还本金
             # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
             days = get_day(asset_repay_plan["start_date"], self.repay_date)
 
@@ -609,7 +609,7 @@ class BaiduRepayFile(BaiduFile):
                 if repay_plan_status == "3":
                     temple['int_amt'] = 0  # 如果当前期次已还款，利息应该为0
                 else:
-                    temple['int_amt'] = int(asset_repay_plan["pre_repay_interest"])*100
+                    temple['int_amt'] = int(float(asset_repay_plan["pre_repay_interest"])*100)
                 temple['pnlt_int_amt'] = 0
                 temple['repay_violate_amt'] = int(temple['prin_amt'] * 0.04)
                 temple['income_amt'] = temple['prin_amt'] + temple['repay_violate_amt'] + temple['int_amt']  # 不含优惠卷总金额
@@ -656,4 +656,4 @@ class BaiduRepayFile(BaiduFile):
 if __name__ == '__main__':
     # 等额本息按期还款、提前结清收取违约金（4%）、提前结清按期收息；随借随还按期还款、部分还款（重算还款计划）、提前结清按日计息
     # repay_mode='02'随借随还，repay_mode='05'等额本息
-    t = BaiduFile(data, cur_date='20210729', loan_record=0, repay_mode='02')
+    t = BaiduFile(data, cur_date='20210812', loan_record=0, repay_mode='05')
