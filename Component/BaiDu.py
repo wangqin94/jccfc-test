@@ -45,3 +45,11 @@ class Component(PayloadGenerator):
 
     def loan_query(self):
         pass
+
+    def limitrestore(self, **kwargs):
+        self.log.demsg('开始额度恢复...')
+        self.limit_msg(**kwargs)
+        url = self.host + self.cfg['limitrestore']['interface']
+        response = requests.post(url=url, headers=self.headers, json=self.active_payload)
+        self.log.info('业务请求响应：%s', response.json())
+        return response.json()

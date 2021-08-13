@@ -41,7 +41,7 @@ class INIT(object):
 
         self.log.demsg('数据库初始化.')
         self.mysql = Mysql(self.general_database, self.credit_database)
-        self.mysql_asset = Mysql(self.general_database, self.credit_database)
+        self.mysql_asset = Mysql(self.general_database, self.asset_database)
 
     def _function_init(self):
         for item in Models.__all__:
