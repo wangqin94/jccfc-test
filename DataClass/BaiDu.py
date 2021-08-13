@@ -79,6 +79,19 @@ class PayloadGenerator(INIT):
         self.loan_payload = parser.parser
         self.set_active_payload(self.loan_payload)
 
+    def limit_msg(self, **kwargs):
+        strings = str(int(round(time.time() * 1000)))
+        limit_data = dict()
+        limit_data['seq_no'] = 'seq_no' + strings
+        limit_data['cur_date'] = time.strftime('%Y%m%d')
+        limit_data['tran_time'] = time.strftime('%Y%m%d%H%M%S')
+        limit_data.update(kwargs)
+        self.log.info("data数据: %s", limit_data)
+
+        parser = DataUpdate(self.cfg['limitrestore']['payload'], **limit_data)
+        self.loan_payload = parser.parser
+        self.set_active_payload(self.loan_payload)
+
     # 支用申请payload
     def notice_msg(self, **kwargs):
         """ # 额度恢复payload字段装填

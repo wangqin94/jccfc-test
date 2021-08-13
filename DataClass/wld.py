@@ -13,18 +13,16 @@ from ComLib.Models import *
 
 
 class PayloadGenerator(INIT):
-    def __init__(self, *, data=None, repay_term_no='1', credit_amount=1000, loan_amount=1000, loan_term=1,repay_type=1):
+    def __init__(self, *, data=None, repay_term_no='1', repay_type="1", loan_invoice_id=""):
         super().__init__()
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(self.project), "applyid")
         self.log.info('用户四要素信息 \n%s', self.data)
 
         self.strings = str(int(round(time.time() * 1000)))
         self.times = time.strftime('%Y-%m-%d', time.localtime())
-        self.loanAmount = loan_amount
-        self.credit_amount = credit_amount
-        self.loanTerm = loan_term
         self.repay_term_no = repay_term_no
         self.repay_type = repay_type
+        self.loan_invoice_id = loan_invoice_id
 
         self.encrypt_url = self.host + "/api/v1/secret/thirdEncryptData/WLD"
         self.decrypt_url = self.host + "/api/v1/secret/thirdDecryptData/WLD"
@@ -186,6 +184,7 @@ class PayloadGenerator(INIT):
         key = "thirdpart_apply_id = '" + self.data['applyid'] + "'"
         content = self.get_credit_data_info(table="credit_apply", key=key)
         loan_data['loanAmt'] = float(content['apply_amount'])
+        loan_data['loanTerm'] = str(content['apply_term'])
         loan_data.update(kwargs)
         # 更新 payload 字段值
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
@@ -231,19 +230,22 @@ class PayloadGenerator(INIT):
         repay_data['requestTime'] = self.strings
         # body
         repay_data['repayApplySerialNo'] = 'repay' + self.strings + "5"
-        key2 = "certificate_no = '" + self.data['cer_no'] + "'"
-        content = self.get_credit_data_info(table="credit_loan_invoice", key=key2)
-        repay_data['loanInvoiceId'] = content['loan_invoice_id']
-        repay_data['repaymentAccountNo'] = self.data['bankid']
-        key3 = "loan_invoice_id = '" + content['loan_invoice_id'] + "' and current_num = '" + self.repay_term_no + "'"
-        content1 = self.get_asset_data_info(table="asset_repay_plan", key=key3)
+        repay_data['repayType'] = self.repay_type
+        repay_data['repayNum'] = self.repay_term_no
+        repay_data['loanInvoiceId'] = self.loan_invoice_id
+        key = "user_id in (select user_id from credit_loan_invoice where loan_invoice_id = '" \
+              + self.loan_invoice_id + "')"
+        content = self.get_credit_data_info(table="credit_bind_card_info", key=key)
+        repay_data['repaymentAccountNo'] = content['bank_card_no']
+        key1 = "loan_invoice_id = '" + self.loan_invoice_id + "' and current_num = '" + self.repay_term_no + "'"
+        content1 = self.get_asset_data_info(table="asset_repay_plan", key=key1)
         print(content1)
         if self.repay_type == "1" or self.repay_type == "4":
             repay_data['repayAmount'] = float(content1['pre_repay_amount'])
+            repay_data['repayPrincipal'] = float(content1['pre_repay_principal'])
         elif self.repay_type == "2":
             repay_data['repayAmount'] = float(content1['before_calc_principal']) + float(content1['pre_repay_interest'])
-
-        repay_data['repayPrincipal'] = float(content1['pre_repay_principal'])
+            repay_data['repayPrincipal'] = float(content1['before_calc_principal'])
         repay_data['repayInterest'] = float(content1['pre_repay_interest'])
         repay_data['repayFee'] = float(content1['pre_repay_fee'])
         repay_data['repayOverdueFee'] = float(content1['pre_repay_overdue_fee'])

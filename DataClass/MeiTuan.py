@@ -13,7 +13,7 @@ from Engine.Base import INIT
 
 
 class PayloadGenerator(INIT):
-    def __init__(self, *, data=None, app_no=None, loan_no=None, term="1"):
+    def __init__(self, *, data=None, app_no=None):
         super().__init__()
         if not data:
             self.data = get_base_data(TEST_ENV_INFO)
@@ -35,16 +35,12 @@ class PayloadGenerator(INIT):
         # 初始化授信合同号
         self.BANK_CONTRACT_NO = None
 
-        # 初始借据号,期次
-        self.loan_no = loan_no
-        self.term = term
-
         # 初始化定义部分数据值
         self.encrypt_url = self.host + "/api/v1/secret/thirdEncryptData/MEIT"
         self.decrypt_url = self.host + "/api/v1/secret/thirdDecryptData/MEIT"
-        self.credit_amount = 3000000  # 授信申请额度 单位分
-        self.loan_amount = 100000  # 支用申请额度 单位分
-        self.rate = 980  # 利息 万分之
+        self.credit_amount = 3000000    # 授信申请额度 单位分
+        self.loan_amount = 100000       # 支用申请额度 单位分
+        self.rate = 980                 # 利息 万分之
         self.base_data = data
         self.loan_no = str(int(round(time.time() * 1000))) + "1001"
 
@@ -64,7 +60,7 @@ class PayloadGenerator(INIT):
         print("加密status_code:", response.status_code)
         res = response.json()
         res = str(res).replace("'", '''"''').replace(" ", "")
-        # print(f"加密响应报文如下：\n{res}")
+        print(f"加密响应报文如下：\n{res}")
         return json.loads(res)
 
     def decrypt(self, decrypt_payload):
@@ -74,7 +70,7 @@ class PayloadGenerator(INIT):
         print("解密status_code:", response.status_code)
         res = response.json()
         res = str(res).replace("'", '''"''').replace(" ", "")
-        # print(f"解密响应报文如下：\n{res}")
+        print(f"解密响应报文如下：\n{res}")
         return res
 
     @staticmethod
@@ -101,7 +97,7 @@ class PayloadGenerator(INIT):
         :param force: 是否为强制更新， 默认False
         :return: None
         """
-        if force:  # 强制模式
+        if force:   # 强制模式
             print('---强制替换刷新授信申请号---')
             if src:
                 if self.credit_payload and 'APP_NO' in self.credit_payload['body']:
@@ -109,7 +105,7 @@ class PayloadGenerator(INIT):
             else:
                 if self.user_credit_apply_info and 'thirdpart_apply_id' in self.user_credit_apply_info[0]:
                     self.app_no = self.user_credit_apply_info[0]['thirdpart_apply_id']
-        else:  # 非强制模式
+        else:   # 非强制模式
             if self.app_no:
                 self.log.info('授信申请号存在，本次操作不做替换刷新，若需要强制替换，请置force=True')
             else:
@@ -189,10 +185,10 @@ class PayloadGenerator(INIT):
                 "BANK_NO": "MT",
                 "CER_TYPE": "01",
                 "CER_NO": credit_data["cer_no"],
-                "CERT_VALID_START_DATE": "20160225",
-                "CERT_VALID_END_DATE": "20260225",
+                "CERT_VALID_START_DATE": "20140212",
+                "CERT_VALID_END_DATE": "20340212",
                 "NAME": credit_data['name'],
-                # "NAME": "陈祺",
+                #"NAME": "陈祺",
                 "MOBILE_NO": credit_data["telephone"],
                 "CARD_NO": credit_data["bankid"],
                 "ZM_AUTH_FLAG": "Y",
@@ -206,14 +202,13 @@ class PayloadGenerator(INIT):
                 "OCR": {
                     "ID_NO_OCR": credit_data["cer_no"],
                     "ID_NAME_OCR": credit_data["name"],
-                    # "ID_NAME_OCR": "陈祺",
-                    "ID_VALIDITY_OCR": "20160225-20260225",
-                    "ID_FACE_PIC_PATH": "/hj/xdgl/meituan/cqid1.png",  # /hj/xdgl/meituan/cqid1
-                    "ID_BACK_PIC_PATH": "/hj/xdgl/meituan/cqid2.png",
-                    # /hj/xdgl/meituan/cqid2.png  /hj/xdgl/meituan/owxbackerror.jpg
+                    #"ID_NAME_OCR": "陈祺",
+                    "ID_VALIDITY_OCR": "20140212-20240212",
+                    "ID_FACE_PIC_PATH": "/hj/xdgl/meituan/cqid1.png",     # /hj/xdgl/meituan/cqid1
+                    "ID_BACK_PIC_PATH": "/hj/xdgl/meituan/cqid2.png",     # /hj/xdgl/meituan/cqid2.png  /hj/xdgl/meituan/owxbackerror.jpg
                     # "ID_FACE_PIC_PATH": "/hj/xdgl/meituan/wymid1.png",
                     # "ID_BACK_PIC_PATH": "",
-                    "ID_ADDRESS_OCR": "成都莆田街133号-4-5",  # 深圳莆田街133号-4-5
+                    "ID_ADDRESS_OCR": "成都市武侯区府城大道中段85号",    # 深圳莆田街133号-4-5
                     "NATION": "回族",
                     "ISSUER": "四川省成都市"
                 },
@@ -259,7 +254,7 @@ class PayloadGenerator(INIT):
                 },
                 "Signature_date": "20160225",
                 # "FACE_PIC_PATH": "/hj/xdgl/meituan/wymface.png",
-                "FACE_PIC_PATH": "/hj/xdgl/meituan/cqface",  # /hj/xdgl/meituan/cqface.png
+                "FACE_PIC_PATH": "/hj/xdgl/meituan/cqface",    # /hj/xdgl/meituan/cqface.png
             }
         }
         self.credit_payload = payload
@@ -274,7 +269,7 @@ class PayloadGenerator(INIT):
         credit_query_data = self.data
         credit_query_data['reqsn'] = str(int(round(time.time() * 1000))) + "1001"
         if not self.app_no:
-            self.update_credit_app_no()  # 获取授信申请号
+            self.update_credit_app_no()    # 获取授信申请号
         payload = {
             "head": {
                 "merchantId": "F21C01MEIT",
@@ -304,9 +299,9 @@ class PayloadGenerator(INIT):
         loan_data['loanNo'] = strings + "1003"
         loan_data["contractno"] = self.BANK_CONTRACT_NO
         loan_data['TRADE_AMOUNT'] = self.loan_amount
-        loan_data["TRADE_PERIOD"] = 3  # 默认3期
-        loan_data["CREDIT_LIMIT"] = 30000  # 单位元
-        loan_data["AVAILABLE_LIMIT"] = 30000  # 单位元
+        loan_data["TRADE_PERIOD"] = 3           # 默认3期
+        loan_data["CREDIT_LIMIT"] = 30000       # 单位元
+        loan_data["AVAILABLE_LIMIT"] = 30000    # 单位元
         loan_data["USED_LIMIT"] = 0
         payload = {
             "head": {
@@ -317,12 +312,12 @@ class PayloadGenerator(INIT):
                 "tenantId": "000"
             },
             "body": {
-                "APP_NO": 'appNo' + loan_data['reqsn'],  # self.app_no,
-                "LOAN_NO": 'loanNo' + loan_data['loanNo'],
+                "APP_NO": 'ZYAN' + loan_data['reqsn'],    # self.app_no,
+                "LOAN_NO": 'ZYLN' + loan_data['loanNo'],
                 "APP_ID": "MT",
                 "CARD_NO": loan_data["bankid"],
                 "NAME": loan_data['name'],
-                # "NAME": "陈祺",
+                #"NAME": "陈祺",
                 "CAREER_TYPE": "",
                 "ID_TYPE": "01",
                 "ID_NO": loan_data["cer_no"],
@@ -428,9 +423,9 @@ class PayloadGenerator(INIT):
     # 用户额度失效payload
     def mt_credit_invalid_msg(self, **kwargs):
         payload = {
-            "productId": "F21C011",  # F20B021
+            "productId": "F21C011",     # F20B021
             "certificateNo": self.data['cer_no'],  # '210900198109124838',
-            "userName": self.data['name'],  # '郝健翔',
+            "userName": self.data['name'],   # '郝健翔',
             "reason": "1",
             "remark": "测试操作",
             "limitId": "",
@@ -441,78 +436,6 @@ class PayloadGenerator(INIT):
             parser = DataUpdate(payload, **kwargs)
             self.credit_invalid_payload = parser.parser
         self.set_active_payload(self.credit_invalid_payload)
-
-    def mt_repay_notice_msg(self, **kwargs):
-        strings = str(int(round(time.time() * 1000)))
-        repay_notice = dict()
-        repay_notice['requestSerialNo'] = "reqNo" + strings
-        repay_notice['CONTRACT_NO'] = "CONTRACT_NO" + strings
-        repay_notice['BIZ_SERIAL_NO'] = "BIZ_SERIAL_NO" + strings
-
-        # 根据姓名查询支用信息
-        key1 = "user_name = '{}'".format(self.data['name'])
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
-        repay_notice['RATE'] = str(int(credit_loan_apply["apply_rate"]) / 36000)
-        repay_notice['TRADE_PERIOD'] = credit_loan_apply["apply_term"]
-
-        # 借据号默认为空取当前用户第一笔借据号，否则取赋值借据号
-        loan_no = self.loan_no if self.loan_no else credit_loan_apply["third_loan_invoice_id"]
-
-        key2 = "third_loan_no = '{}' and repay_term_no = '{}'".format(loan_no, self.term)
-        credit_ctrip_repay_notice_info = self.get_credit_data_info(table="credit_ctrip_repay_notice_info", key=key2)
-
-        key3 = "certificate_no = '{}'".format(self.data['cer_no'])
-        credit_personal_limit_detail = self.get_credit_data_info(table="credit_personal_limit_detail", key=key3)
-        repay_notice['CREDIT_LIMIT'] = str(int(credit_personal_limit_detail["total_amount"]))
-        repay_notice['AVALIABLE_LIMIT'] = str(int(credit_personal_limit_detail["total_amount"]) * 100)
-        repay_notice['USED_LIMIT'] = str(int(credit_personal_limit_detail["total_amount"]) * 100 - int(
-            credit_personal_limit_detail["total_amount"]) * 100)
-
-        repay_notice['LOAN_NO'] = loan_no
-        repay_notice['REPAYMENT_AMOUNT'] = str(int(credit_ctrip_repay_notice_info["actual_repay_amount"]) * 100)
-        repay_notice['PRINCIPAL'] = str(int(credit_ctrip_repay_notice_info["repay_principal"]) * 100)
-        repay_notice['INTEREST'] = str(int(credit_ctrip_repay_notice_info["repay_interest"]) * 100)
-        repay_notice['D_INTEREST'] = str(int(credit_ctrip_repay_notice_info["repay_penalty_amount"]) * 100)
-        repay_notice['REPAY_TYPE'] = int(credit_ctrip_repay_notice_info["repay_type"])
-        repay_notice['PERIOD_NOW'] = str(credit_ctrip_repay_notice_info["repay_term_no"])
-        repay_notice['REPAYMENT_DATE'] = str(credit_ctrip_repay_notice_info["finish_time"])
-
-        repay_notice['REPAYMENT_NAME'] = self.data['name']
-        repay_notice['REPAYMENT_CARD'] = self.data['bankid']
-        repay_notice['REPAYMENT_TIME'] = str(credit_ctrip_repay_notice_info["finish_time"])
-
-        repay_notice.update(kwargs)
-
-        parser = DataUpdate(self.cfg['repay_notice']['payload'], **repay_notice)
-        self.active_payload = parser.parser
-        self.log.info("payload数据: %s", json.dumps(self.active_payload))
-        self.set_active_payload(self.active_payload)
-
-    def mt_loan_notice_msg(self, **kwargs):
-        strings = str(int(round(time.time() * 1000)))
-        loan_notice = dict()
-        loan_notice['requestSerialNo'] = "reqNo" + strings
-        loan_notice['CONTRACT_NO'] = "CONTRACT_NO" + strings
-
-        # 根据姓名查询支用信息
-        key1 = "user_name = '{}'".format(self.data['name'])
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
-        loan_notice['RATE'] = str(int(credit_loan_apply["apply_rate"]) / 36000)
-        loan_notice['TRADE_PERIOD'] = str(credit_loan_apply["apply_term"])
-        loan_notice['PAYMENT_CONFIRM_TIME'] = str(credit_loan_apply["loan_pay_time"])
-        loan_notice['LOAN_AMOUNT'] = str(int(credit_loan_apply["apply_amount"]) * 100)
-        loan_notice['REPAYMENT_DATE'] = str(credit_loan_apply["repay_day"])
-
-        # 借据号默认为空取当前用户第一笔借据号，否则取赋值借据号
-        loan_no = self.loan_no if self.loan_no else credit_loan_apply["third_loan_invoice_id"]
-        loan_notice['LOAN_NO'] = loan_no
-
-        loan_notice.update(kwargs)
-
-        parser = DataUpdate(self.cfg['loan_notice']['payload'], **loan_notice)
-        self.active_payload = parser.parser
-        self.log.info("payload数据: %s", json.dumps(self.active_payload))
-        self.set_active_payload(self.active_payload)
 
 
 if __name__ == '__main__':

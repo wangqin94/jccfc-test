@@ -163,6 +163,7 @@ class PayloadGenerator(INIT):
         repay_notice['repay_no'] = 'repay_no' + self.strings + "1"
         repay_notice['repay_type'] = "1"
         repay_notice['repay_term_no'] = self.repay_term_no
+        repay_notice['repay_term_no'] = "1"
         repay_notice['finish_time'] = time.strftime('%Y%m%d%H%M%S', time.localtime())
 
         repay_notice["actual_repay_amount"] = float(asset_repay_plan['pre_repay_amount'])  # 总金额
@@ -185,12 +186,12 @@ class PayloadGenerator(INIT):
         elif self.repay_mode == "2":
             repay_notice['repay_type'] = self.repay_mode
             repay_notice['finish_time'] = str(self.repay_date.replace("-", "")) + "112233"
-            repay_notice["repay_principal"] = float(asset_repay_plan['before_calc_principal'])  # 剩余应还本金
+            repay_notice["repay_principal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
 
-            # 当期还款状态
-            repay_plan_status = str(asset_repay_plan["repay_plan_status"])
-            # 如果当期已还款，提前结清利息应该为0，否则按日计息
-            if repay_plan_status == "3":
+            pre_repay_date = str(asset_repay_plan["pre_repay_date"])
+            pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
+            repay_date = datetime.strptime(self.repay_date, "%Y-%m-%d").date()
+            if pre_repay_date > repay_date:
                 repay_notice["repay_interest"] = 0  # 如果还款时间小于账单日，利息应该为0
             else:
                 # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率

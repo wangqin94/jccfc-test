@@ -39,6 +39,15 @@ class Component(PayloadGenerator):
             status = info['status']
         except (IndexError, Exception):
             status = "x"
+        return status
+
+    def credit_to_loan(self):
+        key = "certificate_no = '" + self.data['cer_no'] + "'"
+        info = self.get_credit_data_info(table="credit_apply", key=key)
+        try:
+            status = info['status']
+        except (IndexError, Exception):
+            status = "x"
             self.log.info("未查询到数据")
         return status
 

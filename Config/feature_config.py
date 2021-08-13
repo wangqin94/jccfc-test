@@ -1142,22 +1142,22 @@ wld = {
                     {
                         "fileType": "1",
                         "fileName": "idcard_front.jpg",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/idcard_front.jpg"
+                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/idz-1.jpg"
                     },
                     {
                         "fileType": "2",
                         "fileName": "idcard_back.jpg",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/idcard_back.jpg"
+                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/idf-1.jpg"
                     },
                     {
                         "fileType": "3",
                         "fileName": "face_distinguish.jpg",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/face_distinguish.jpg"
+                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/face_distinguish.jpg"
                     },
                     {
                         "fileType": "4",
                         "fileName": "JC_userauth.pdf",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/JC_userauth.pdf"
+                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/授权书.pdf"
                     }
                 ]
             }

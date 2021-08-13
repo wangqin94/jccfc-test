@@ -7,10 +7,8 @@ from DataClass.wld import PayloadGenerator
 
 
 class Component(PayloadGenerator):
-    def __init__(self, *, repay_type='1', data=None, repay_term_no="1"):
-        super().__init__(data=data, repay_term_no=repay_term_no, repay_type=repay_type)
-        self.repay_term_no = repay_term_no
-        self.repay_type = repay_type
+    def __init__(self, *, data=None, repay_term_no="1", repay_type="1", loan_invoice_id=""):
+        super().__init__(data=data, repay_term_no=repay_term_no, repay_type=repay_type, loan_invoice_id=loan_invoice_id)
 
     # 绑卡
     def bind_card(self, **kwargs):
@@ -92,6 +90,16 @@ class Component(PayloadGenerator):
         response = self.decrypt(response.json())
         self.log.info('业务请求响应：%s', response)
         return response
+
+    # 查询数据库的授信状态
+    def creditdata_query(self):
+        key = "certificate_no = '" + self.data['cer_no'] + "'"
+        info = self.get_credit_data_info(table="credit_apply", key=key)
+        try:
+            status = info['status']
+        except (IndexError, Exception):
+            status = "x"
+        return status
 
     # 支用申请
     def loan(self, **kwargs):

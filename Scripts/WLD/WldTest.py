@@ -16,12 +16,12 @@ class TestCase(object):
         """ 预置条件处理 """
         pass
 
-    # # [0: 绑卡, 3: 授信, 5: 支用, 6: 还款]
-    def process(self, flag=3):
+    # # [0: 绑卡, 3: 授信, 5: 支用, 6: 还款, 7: 绑卡&授信&支用]
+    def process(self, flag=7):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            wld = Component(data=None)
+            wld = Component(data=data)
             wld.bind_card()
             wld.confirm_bind_card()
 
@@ -38,7 +38,7 @@ class TestCase(object):
         # 授信
         elif flag == 3:
             wld = Component(data=data)
-            wld.credit(applyAmount=20000)
+            wld.credit(loanTerm=3, applyAmount=1000)
 
         # 授信查询
         elif flag == 4:
@@ -55,18 +55,26 @@ class TestCase(object):
             wld = Component(data=data)
             wld.loan_query()
 
-        # 还款
+        # 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
         elif flag == 6:
-            wld = Component(data=data)
-            wld.repay(repay_term_no=1)
+            wld = Component(repay_term_no="1", repay_type="2", loan_invoice_id="000LI5674979767597940738332")
+            wld.repay()
 
+        # 批量造数
         elif flag == 7:
-            wld = Component(data=None)
-            wld.bind_card()
-            wld.confirm_bind_card()
-            wld.credit()
-            time.sleep(12)
-            wld.loan()
+            for i in range(1):
+                wld = Component(data=None)
+                wld.bind_card()
+                wld.confirm_bind_card()
+                wld.credit(loanTerm=6, applyAmount=5000)
+                for n in range(10):
+                    status = wld.creditdata_query()
+                    if status == '03':
+                        wld.loan()
+                        break
+                    else:
+                        time.sleep(5)
+                        print("授信审批状态未通过，请等待....")
 
         return self
 

@@ -4,6 +4,7 @@ test case script
 """
 
 import time
+import threading
 from Component.XieCheng import Component
 from person import *
 
@@ -23,7 +24,7 @@ class TestCase(object):
         if flag == 0:
             xc = Component(data=None)
             xc.pre_credit(advice_amount=10000)
-            time.sleep(5)
+            time.sleep(2)
             xc.credit(advice_amount=10000)
 
         if flag == 11:
@@ -38,7 +39,7 @@ class TestCase(object):
         # 支用申请
         elif flag == 2:
             xc = Component(data=data)
-            xc.loan(loan_amount=600, first_repay_date="20210904121311")  # first_repay_date=首期还款时间
+            xc.loan(loan_amount=600, first_repay_date="20210725121311")  # first_repay_date=首期还款时间
 
         # 支用查询
         elif flag == 3:
@@ -49,29 +50,33 @@ class TestCase(object):
         elif flag == 4:
             # repay_mode=还款类型: 必填参数 :1按期还款；2提前结清；3逾期还款
             # finish_time=实际还款时间： 提前结清必填参数"20210806"
-            # 指定借据号
-            # xc = Component(data=data, repay_mode="1", repay_term_no="1", loan_invoice_id="000LI5630561765575680768626")
-
-            # 默认取当前用户第一笔借据还款
-            xc = Component(data=data, repay_mode="1", repay_term_no="1")
+            xc = Component(data=data, repay_mode="2", repay_term_no="1", loan_invoice_id="000LI5630561765575680365380")
             xc.notice()
 
         elif flag == 5:
-            num = 1000
+            num = 1
             for i in range(0, num):
                 xc = Component(data=None)
                 xc.pre_credit(advice_amount=10000)
-                time.sleep(5)
                 xc.credit(advice_amount=10000)
                 for n in range(10):
                     status = xc.credit_query()
                     if status == '03':
-                        xc.loan(loan_amount=1000, first_repay_date="20210722121311")
+                        xc.loan(loan_amount=600, first_repay_date="20210725121311")
+                        break
                     else:
                         time.sleep(5)
                         print("授信审批状态未通过，请等待....")
 
         return self
+
+    def manythread(self):
+        threads = []
+        for x in range(5):  # 循环创建10个线程
+            t = threading.Thread(target=self.process)
+            threads.append(t)
+        for t in threads:  # 循环启动10个线程
+            t.start()
 
     def postprocess(self):
         """ 后置条件处理 """
