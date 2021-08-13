@@ -41,7 +41,7 @@ class INIT(object):
 
         self.log.demsg('数据库初始化.')
         self.mysql = Mysql(self.general_database, self.credit_database)
-        self.mysql_asset = Mysql(self.general_database, self.asset_database)
+        self.mysql_asset = Mysql(self.general_database, self.credit_database)
 
     def _function_init(self):
         for item in Models.__all__:
@@ -79,7 +79,7 @@ class INIT(object):
             data = [dict(zip(keys, item)) for item in values][record]
             return data
         except (IndexError, Exception):
-            self.log.info("SQL查询结果为空，借据不存在，请排查")
+            print("SQL查询结果为空，借据不存在，请排查")
 
     def get_asset_data_info(self, table='asset_loan_apply', key="查询条件", record=0):
         """
@@ -89,7 +89,6 @@ class INIT(object):
         record ： 根据列表指定序列返回查询数据
         """
         sql = "select * from {}.{} where {};".format(self.asset_database_name, table, key)
-        self.log.info(sql)
         # 获取表属性字段名
         keys = self.mysql_asset.select_table_column(table_name=table, database=self.asset_database_name)
         # 获取查询内容
@@ -99,7 +98,7 @@ class INIT(object):
             data = [dict(zip(keys, item)) for item in values][record]
             return data
         except (IndexError, Exception):
-            self.log.info("SQL查询结果为空，查询条件异常，请排查")
+            print("SQL查询结果为空，查询条件异常，请排查")
 
     def credit_query(self, data):
         """ # 接口数据payload解密
