@@ -17,7 +17,6 @@ class Component(PayloadGenerator):
         self.log.demsg('开始授信申请...')
         self.pre_credit_msg(**kwargs)
         url = self.host + self.cfg['pre_credit']['interface']
-        self.log.info(self.active_payload)
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
         self.log.info('业务请求响应：%s', str(response.json()))
         return response.json()
@@ -27,7 +26,6 @@ class Component(PayloadGenerator):
         self.log.demsg('开始授信激活...')
         self.credit_msg(**kwargs)
         url = self.host + self.cfg['credit']['interface']
-        self.log.info(self.active_payload)
         response = requests.post(url=url, headers=self.headers, json=self.active_payload)
         self.log.info('业务请求响应：%s', str(response.json()))
         return response.json()

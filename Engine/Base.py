@@ -89,6 +89,7 @@ class INIT(object):
         record ： 根据列表指定序列返回查询数据
         """
         sql = "select * from {}.{} where {};".format(self.asset_database_name, table, key)
+        self.log.info(sql)
         # 获取表属性字段名
         keys = self.mysql_asset.select_table_column(table_name=table, database=self.asset_database_name)
         # 获取查询内容
