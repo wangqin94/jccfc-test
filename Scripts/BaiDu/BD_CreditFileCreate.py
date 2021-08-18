@@ -567,7 +567,7 @@ class BaiduRepayFile(BaiduFile):
         temple['income_amt'] = int(float(asset_repay_plan["pre_repay_amount"])*100)  # 不含优惠券总金额
         temple['prin_amt'] = int(float(asset_repay_plan["pre_repay_principal"])*100)  # 本金
         temple['int_amt'] = int(float(asset_repay_plan["pre_repay_interest"])*100)  # 利息
-        temple['pnlt_int_amt'] = int(float(asset_repay_plan["pre_repay_fee"])*100)  # 费用
+        temple['pnlt_int_amt'] = int(float(asset_repay_plan["left_repay_overdue_fee"])*100)  # 费用
 
         # 按期还款
         if self.repay_type == "01":
@@ -588,16 +588,16 @@ class BaiduRepayFile(BaiduFile):
             days = get_day(asset_repay_plan["start_date"], self.repay_date)
 
             # 字符串转为日期格式
-            pre_repay_date = str(asset_repay_plan["pre_repay_date"])
-            pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
+            start_date = str(asset_repay_plan["start_date"])
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
             repay_date = datetime.strptime(self.repay_date, "%Y-%m-%d").date()
 
             # 当期还款状态
-            repay_plan_status = str(asset_repay_plan["repay_plan_status"])
+            # repay_plan_status = str(asset_repay_plan["repay_plan_status"])
 
             if self.repay_mode == '02':
                 # 利息\罚息,随借随还按日计息
-                if repay_plan_status == "3":
+                if repay_date < start_date:
                     temple['int_amt'] = 0  # 如果当前期次已还款，利息应该为0
                 else:
                     temple['int_amt'] = int(temple['prin_amt'] * days * interest_rate / (100 * 360))
@@ -606,7 +606,7 @@ class BaiduRepayFile(BaiduFile):
                 temple['total_amt'] = temple['income_amt']  # 总金额
             else:
                 # 利息\罚息，等额本息按期收息包含4%违约金
-                if repay_plan_status == "3":
+                if repay_date < start_date:
                     temple['int_amt'] = 0  # 如果当前期次已还款，利息应该为0
                 else:
                     temple['int_amt'] = int(float(asset_repay_plan["pre_repay_interest"])*100)
