@@ -630,7 +630,7 @@ fql = {
                 "monthlyIncome": "10000",
                 "idCardExpireDate": "2025-3-30",
                 "idCardAddr": "510000-510100-510107",
-                # "idCardDetailAddr": "成都市武侯区府城大道中段85号",
+                "idCardDetailAddr": "成都市武侯区府城大道中段85号",
                 "manualApproval": "false",
                 "liveArea": "510000-510100-510107",
                 "companyArea": "510000-510100-510107",

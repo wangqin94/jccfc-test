@@ -79,7 +79,7 @@ class INIT(object):
             data = [dict(zip(keys, item)) for item in values][record]
             return data
         except (IndexError, Exception):
-            print("SQL查询结果为空，借据不存在，请排查")
+            self.log.info("SQL查询结果为空，借据不存在，请排查")
 
     def get_asset_data_info(self, table='asset_loan_apply', key="查询条件", record=0):
         """
@@ -99,7 +99,7 @@ class INIT(object):
             data = [dict(zip(keys, item)) for item in values][record]
             return data
         except (IndexError, Exception):
-            print("SQL查询结果为空，查询条件异常，请排查")
+            self.log.info("SQL查询结果为空，查询条件异常，请排查")
 
     def credit_query(self, data):
         """ # 接口数据payload解密

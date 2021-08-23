@@ -5,6 +5,7 @@ test case script
 
 import time
 from Component.wld import Component
+from Engine.Logger import Logs
 from person import *
 
 
@@ -33,7 +34,7 @@ class TestCase(object):
         # 换卡
         elif flag == 2:
             wld = Component(data=data)
-            wld.update_card()
+            wld.update_card(loanInvoiceId='000LI5669354082158501976569', idNo='320723198806148818', repaymentAccountNo='6217220211797716769')
 
         # 授信
         elif flag == 3:
@@ -57,8 +58,9 @@ class TestCase(object):
 
         # 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
         elif flag == 6:
-            wld = Component(repay_term_no="1", repay_type="2", loan_invoice_id="000LI5674979767597940738332")
+            wld = Component(data=data, repay_term_no="3", repay_type="4", loan_invoice_id="000LI5669354082158502004590")
             wld.repay()
+            # wld.repay(repayAmount=685.90, repayPrincipal=685.90, repayInterest=0)
 
         # 批量造数
         elif flag == 7:
@@ -66,7 +68,7 @@ class TestCase(object):
                 wld = Component(data=None)
                 wld.bind_card()
                 wld.confirm_bind_card()
-                wld.credit(loanTerm=6, applyAmount=5000)
+                wld.credit(loanTerm=6, applyAmount=1000)
                 for n in range(10):
                     status = wld.creditdata_query()
                     if status == '03':
@@ -75,6 +77,7 @@ class TestCase(object):
                     else:
                         time.sleep(5)
                         print("授信审批状态未通过，请等待....")
+
 
         return self
 

@@ -19,7 +19,7 @@ class PayloadGenerator(INIT):
         self.log.info('用户四要素信息 \n%s', self.data)
 
         self.strings = str(int(round(time.time() * 1000)))
-        self.times = time.strftime('%Y-%m-%d', time.localtime())
+        self.times = time.strftime('%Y%m%d%H%M%S', time.localtime())
         self.repay_term_no = repay_term_no
         self.repay_type = repay_type
         self.loan_invoice_id = loan_invoice_id
@@ -65,7 +65,7 @@ class PayloadGenerator(INIT):
         bind_card_data = dict()
         # head
         bind_card_data['requestSerialNo'] = 'SerialNo' + self.strings + "1"
-        bind_card_data['requestTime'] = self.strings
+        bind_card_data['requestTime'] = self.times
         # body
         bind_card_data['payer'] = self.data['name']
         bind_card_data['payerIdNum'] = self.data['cer_no']
@@ -84,7 +84,7 @@ class PayloadGenerator(INIT):
         confirm_bind_card_data = dict()
         # head
         confirm_bind_card_data['requestSerialNo'] = 'SerialNo' + self.strings + "2"
-        confirm_bind_card_data['requestTime'] = self.strings
+        confirm_bind_card_data['requestTime'] = self.times
         # body
         key = "id_card_no = '" + self.data['cer_no'] + "' order by create_time desc"
         content = self.get_credit_data_info(table="credit_bind_card_info", key=key)
@@ -101,7 +101,7 @@ class PayloadGenerator(INIT):
         query_bind_card_data = dict()
         # head
         query_bind_card_data['requestSerialNo'] = 'SerialNo' + self.strings + "3"
-        query_bind_card_data['requestTime'] = self.strings
+        query_bind_card_data['requestTime'] = self.times
         # body
         key = "id_card_no = '" + self.data['cer_no'] + "' order by create_time desc"
         content = self.get_credit_data_info(table="credit_bind_card_info", key=key)
@@ -119,7 +119,7 @@ class PayloadGenerator(INIT):
         update_card_data = dict()
         # head
         update_card_data['requestSerialNo'] = 'SerialNo' + self.strings + "4"
-        update_card_data['requestTime'] = self.strings
+        update_card_data['requestTime'] = self.times
         # body
         key = "certificate_no = '" + self.data['cer_no'] + "' order by create_time desc"
         content = self.get_credit_data_info(table="credit_loan_invoice", key=key)
@@ -139,7 +139,7 @@ class PayloadGenerator(INIT):
         credit_data = dict()
         # head
         credit_data['requestSerialNo'] = 'SerialNo' + self.strings + "5"
-        credit_data['requestTime'] = self.strings
+        credit_data['requestTime'] = self.times
         # body
         credit_data['thirdApplyId'] = self.data['applyid']
         credit_data['userBankCardNo'] = self.data['bankid']
@@ -159,7 +159,7 @@ class PayloadGenerator(INIT):
         creditquery_data = dict()
         # head
         creditquery_data['requestSerialNo'] = 'SerialNo' + self.strings + "6"
-        creditquery_data['requestTime'] = self.strings
+        creditquery_data['requestTime'] = self.times
         # body
         creditquery_data['thirdApplyId'] = self.data['applyid']
         creditquery_data.update(kwargs)
@@ -174,7 +174,7 @@ class PayloadGenerator(INIT):
         loan_data = dict()
         # head
         loan_data['requestSerialNo'] = 'SerialNo' + self.strings + "7"
-        loan_data['requestTime'] = self.strings
+        loan_data['requestTime'] = self.times
         # body
         loan_data['thirdApplyId'] = self.data['applyid']
         loan_data['accountNo'] = self.data['bankid']
@@ -197,7 +197,7 @@ class PayloadGenerator(INIT):
         loanquery_data = dict()
         # head
         loanquery_data['requestSerialNo'] = 'SerialNo' + self.strings + "8"
-        loanquery_data['requestTime'] = self.strings
+        loanquery_data['requestTime'] = self.times
         # body
         loanquery_data['thirdApplyId'] = self.data['applyid']
         # 更新 payload 字段值
@@ -211,7 +211,7 @@ class PayloadGenerator(INIT):
         repay_plan_data = dict()
         # head
         repay_plan_data['requestSerialNo'] = 'SerialNo' + self.strings + "9"
-        repay_plan_data['requestTime'] = self.strings
+        repay_plan_data['requestTime'] = self.times
         # body
         key = "certificate_no = '" + self.data['cer_no'] + "' order by create_time desc"
         content = self.get_credit_data_info(table="credit_loan_invoice", key=key)
@@ -227,7 +227,7 @@ class PayloadGenerator(INIT):
         repay_data = dict()
         # head
         repay_data['requestSerialNo'] = 'SerialNo' + self.strings + "10"
-        repay_data['requestTime'] = self.strings
+        repay_data['requestTime'] = self.times
         # body
         repay_data['repayApplySerialNo'] = 'repay' + self.strings + "5"
         repay_data['repayType'] = self.repay_type
@@ -239,7 +239,7 @@ class PayloadGenerator(INIT):
         repay_data['repaymentAccountNo'] = content['bank_card_no']
         key1 = "loan_invoice_id = '" + self.loan_invoice_id + "' and current_num = '" + self.repay_term_no + "'"
         content1 = self.get_asset_data_info(table="asset_repay_plan", key=key1)
-        print(content1)
+        self.log.info(content1)
         if self.repay_type == "1" or self.repay_type == "4":
             repay_data['repayAmount'] = float(content1['pre_repay_amount'])
             repay_data['repayPrincipal'] = float(content1['pre_repay_principal'])
