@@ -49,7 +49,6 @@ class PayloadGenerator(INIT):
         self.loan_amount = 100000  # 支用申请额度 单位分
         self.rate = 980  # 利息 万分之
         self.base_data = data
-        self.loan_no = str(int(round(time.time() * 1000))) + "1001"
 
         # 初始化定义所有接口的payload
         self.credit_payload = {}
