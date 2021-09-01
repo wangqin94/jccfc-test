@@ -48,20 +48,6 @@ class BaiduFile(INIT):
         self.apply_date = self.info['apply_time'].strftime('%Y%m%d')
         self.period_list, self.bill_day = self.get_bill_day()
 
-        self.amount_dict = {
-            '500_3': [(19385, 1823), (20014, 1194), (20601, 606)],
-            '600_3': [(19615, 1170), (19971, 814), (20414, 411)],
-            '800_3': [(25847, 2430), (26685, 1592), (27468, 808)],
-            '1000_3': [(32308, 3038), (33356, 1990), (34336, 1009)],
-            '2000_6': [(32308, 3038), (33356, 1990), (34336, 1009), (32308, 3038), (33356, 1990), (34336, 1009)],
-            '2000_3': [(32308, 3038), (33356, 1990), (34336, 1009)],
-            '10000_3': [(325231, 27440), (332172, 20499), (342597, 10072)],
-            '10000_12': [(325231, 27440), (332172, 20499), (342597, 10072), (325231, 27440), (332172, 20499),
-                         (342597, 10072), (325231, 27440), (332172, 20499), (342597, 10072), (325231, 27440),
-                         (332172, 20499), (342597, 10072)],
-            '20000_3': [(650461, 54880), (664342, 40999), (685197, 20145)],
-            '30000_3': [(975692, 82320), (996514, 61498), (1027794, 30217)],
-        }
         self.open_csv_keys = [
             'cur_date', 'leader', 'parter', 'cust_name', 'cert_type', 'cert_no', 'loan_id',
             'apply_date', 'start_date', 'end_date', 'seq_no', 'encash_amt', 'currency',
@@ -322,7 +308,7 @@ class BaiduFile(INIT):
         }
 
         # 获取每期应还本金和利息
-        self.amount = self.get_repay_period_amount()
+        self.amount = loanByAvgAmt(self.info['apply_amount'], self.info['apply_term'], self.info['apply_rate'])
 
         # 根据生息日获取对应的账单日和还款日列表
         self.period_date_list, self.bill_day = self.get_bill_day()
@@ -362,16 +348,6 @@ class BaiduFile(INIT):
         if not os.path.exists(data_save_path):
             os.makedirs(data_save_path)
         return data_save_path
-
-    # 获取每期应还本金利息数据
-    def get_repay_period_amount(self):
-        flag = "%s_%s" % (str(int(self.info['apply_amount'])), str(int(self.info['apply_term'])))
-        if flag not in self.amount_dict:
-            print("################ 放款金额或还款期数不支持, 请联系管理员... ###################")
-            sys.exit()
-        # 获取每期应还本金和利息
-        return self.amount_dict[
-            '%s_%s' % (str(int(self.info['apply_amount'])), str(int(self.info['apply_term'])))]
 
     def get_user_data_info(self):
         """

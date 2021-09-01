@@ -47,7 +47,6 @@ class PayloadGenerator(INIT):
 
     def set_active_payload(self, payload):
         self.active_payload = payload
-        self.log.info(self.active_payload)
 
     # 预授信申请payload
     def pre_credit_msg(self, **kwargs):
@@ -62,16 +61,15 @@ class PayloadGenerator(INIT):
         pre_credit_data['open_id'] = self.data["open_id"]
         pre_credit_data['request_no'] = 'request_no' + self.strings + "1"
         pre_credit_data['advice_amount'] = self.credit_amount
-
-        pre_credit_data['id_no'] = self.data['cer_no']
-        pre_credit_data['user_name'] = self.data['name']
-        pre_credit_data['mobile'] = self.data['telephone']
         pre_credit_data['advice_rate_type'] = "Y"
 
         pre_credit_data.update(kwargs)
         # 更新 payload 字段值
         parser = DataUpdate(self.cfg['pre_credit']['payload'], **pre_credit_data)
         self.pre_credit_payload = parser.parser
+        self.pre_credit_payload['user_data']['Platform']['id_no'] = self.data['cer_no']
+        self.pre_credit_payload['user_data']['Platform']['user_name'] = self.data['name']
+        self.pre_credit_payload['user_data']['Platform']['mobile'] = self.data['telephone']
         self.log.info("payload数据: %s", self.pre_credit_payload)
         self.set_active_payload(self.pre_credit_payload)
 
@@ -96,6 +94,9 @@ class PayloadGenerator(INIT):
         # 更新 payload 字段值
         parser = DataUpdate(self.cfg['credit']['payload'], **credit_data)
         self.credit_payload = parser.parser
+        self.credit_payload['user_data']['Platform']['id_no'] = self.data['cer_no']
+        self.credit_payload['user_data']['Platform']['user_name'] = self.data['name']
+        self.credit_payload['user_data']['Platform']['mobile'] = self.data['telephone']
         self.log.info("payload数据: %s", self.credit_payload)
         self.set_active_payload(self.credit_payload)
 
