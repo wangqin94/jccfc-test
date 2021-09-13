@@ -1,5 +1,0 @@
-data = {'name': '隆菁寒', 'cer_no': '469022200107021732', 'bankid': '6217220123112311939', 'telephone': '18686513209', 'applyid': 'applyid1628664428840'}  # hsit -> wld
-data = {'name': '伍薇', 'cer_no': '411622199504013251', 'bankid': '6217860123136312504', 'telephone': '19135296417', 'applyid': 'applyid1628664428850'}  # hsit -> wld
-# data = {'name': '苏朋庆', 'cer_no': '542624199107231426', 'bankid': '6222020125337704469', 'telephone': '17751289763', 'applyid': 'applyid1628666654251'}  # uat -> wld
-# data = {'name': '康哲', 'cer_no': '512000200402190504', 'bankid': '6222080125791533377', 'telephone': '14536729051', 'applyid': 'applyid1628667108074'}  # uat -> wld
-data = {'name': '余颖', 'cer_no': '522625198105235165', 'bankid': '6222000127621255434', 'telephone': '15625016348', 'applyid': 'applyid1628668937816'}  # hsit -> wld
