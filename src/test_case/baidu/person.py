@@ -20,3 +20,4 @@ data = {'name': '宁融', 'cer_no': '610631201607102380', 'bankid': '62172329816
 data = {'name': '别真', 'cer_no': '321011201605058850', 'bankid': '6222002981754583865', 'telephone': '13186105427'}  # hpre -> BaiDu
 data = {'name': '乔雪茗', 'cer_no': '653124200801026128', 'bankid': '6222082982175861610', 'telephone': '15191506237'}  # hpre -> BaiDu
 data = {'name': '叶光谦', 'cer_no': '513437199605316015', 'bankid': '6217852982669383541', 'telephone': '17148732509'}  # hpre -> BaiDu
+data = {'name': '屠霭馨', 'cer_no': '451100200205212813', 'bankid': '6217853068048266166', 'telephone': '14996043128'}  # hqas -> BaiDu

@@ -363,7 +363,7 @@ class BeautifulReport(ReportTestResult, PATH):
         self.stopTestRun(self.title)
         self.output_report()
         text = '\n测试已全部完成, 可前往{}查询测试报告'.format(self.log_path)
-        print(text)
+        # print(text)
     
     def output_report(self):
         """

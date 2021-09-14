@@ -83,7 +83,7 @@ class CommonHttp:
         """
         if filename != '':
             project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            file_dir = os.path.join(project_path, r"test_case_data\\img\\testfile")
+            file_dir = os.path.join(project_path, r"src\test_case_data\\img\\testfile")
             file_path = os.path.join(file_dir, filename)
             self.files = {'file': open(file_path, 'rb')}
 

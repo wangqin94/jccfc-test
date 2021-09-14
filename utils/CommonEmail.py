@@ -38,7 +38,7 @@ class Email:
         for n in str(self.value).split(","):
             self.receiver.append(n)
 
-        date = datetime.now().strftime("%Y-%m-%d %H:%M")
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         self.subject = date + " " + title
 
         self.msg = MIMEMultipart('related')
@@ -58,7 +58,7 @@ class Email:
         write the content of email 自定义HTML文件内容
         :return:
         """
-        f = open(os.path.join(project_dir(), r'test_case_data\\config\\emailStyle.txt'))
+        f = open(os.path.join(project_dir(), r'config\\emailConfig\\emailStyle.txt'))
         content = f.read()
         f.close()
         content_plain = MIMEText(content, 'html', 'UTF-8')
@@ -71,7 +71,7 @@ class Email:
         :return:
         """
         # defined image path(个人头像)
-        image1_path = os.path.join(project_dir(), r'test_case_data\\config\\title.jpg')
+        image1_path = os.path.join(project_dir(), r'config\\emailConfig\\title.jpg')
         fp1 = open(image1_path, 'rb')
         msgImage1 = MIMEImage(fp1.read())
         fp1.close()
@@ -80,7 +80,7 @@ class Email:
         self.msg.attach(msgImage1)
 
         # defined image path（公司logo标签）
-        image2_path = os.path.join(project_dir(), r'test_case_data\\config\\logo.jpg')
+        image2_path = os.path.join(project_dir(), r'config\\emailConfig\\logo.jpg')
         fp2 = open(image2_path, 'rb')
         msgImage2 = MIMEImage(fp2.read())
         fp2.close()

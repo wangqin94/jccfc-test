@@ -13,7 +13,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_loan_loan(self):
+    def test_loan(self):
         """ 测试步骤 """
         # 授信-授信校验-放款-放款校验
         fql = FqlBizImpl(data=None)

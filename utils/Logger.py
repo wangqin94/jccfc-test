@@ -232,7 +232,7 @@ class DeleteLog:
     def delete_file(self):
         try:
             if self.delList:
-                print("日志文件夹中存在文件或文件夹")
+                self.logger.debug("日志文件夹中存在文件或文件夹")
         except Exception as e:
             print('Error:', e)
         else:

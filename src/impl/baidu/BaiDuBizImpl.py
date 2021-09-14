@@ -6,7 +6,7 @@ from src.impl.common.CommonUtils import post_with_encrypt
 from utils.Models import *
 from engine.Base import INIT
 from src.enums.EnumsCommon import *
-from src.test_data.moduleData import BaiDu
+from src.test_data.module_data import BaiDu
 
 
 class BaiDuBizImpl(INIT):

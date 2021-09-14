@@ -1,7 +1,7 @@
 import unittest
 from src.impl.common.CommonCheckBizImpl import *
 from src.impl.baidu.BaiDuBizImpl import *
-from person import *
+# from person import *
 
 
 class MyTestCase(unittest.TestCase):
@@ -12,7 +12,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_loan_loan(self):
+    def test_loan(self):
         """ 测试步骤 """
         # 授信-授信校验-放款-放款校验
         baidu = BaiDuBizImpl(data=None)
