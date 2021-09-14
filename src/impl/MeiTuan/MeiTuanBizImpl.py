@@ -4,7 +4,7 @@
 # ------------------------------------------
 
 from config.TestEnvInfo import *
-from src.testData.moduleData import MeiTuan
+from src.test_data.module_data import MeiTuan
 from src.enums.EnumMeiTuan import *
 from src.impl.common.CommonUtils import *
 from src.enums.EnumsCommon import *

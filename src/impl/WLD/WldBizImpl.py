@@ -6,7 +6,7 @@ from src.impl.common.CommonUtils import *
 from utils.Models import *
 from src.enums.EnumsCommon import *
 from src.enums.EnumWld import *
-from src.testData.moduleData import wld
+from src.test_data.module_data import wld
 
 
 class WldBizImpl(INIT):

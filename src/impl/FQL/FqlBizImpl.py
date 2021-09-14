@@ -8,7 +8,7 @@ from src.impl.common.CommonUtils import *
 from src.enums.EnumsCommon import *
 from src.enums.EnumFql import *
 from utils.Models import *
-from src.testData.moduleData import fql
+from src.test_data.module_data import fql
 
 
 class FqlBizImpl(INIT):

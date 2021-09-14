@@ -8,7 +8,7 @@
 from engine.Base import INIT
 from utils.Models import *
 from config.globalConfig import *
-from src.testData.moduleData.common import *
+from src.test_data.module_data.common import *
 
 log = MyLog.get_log()
 

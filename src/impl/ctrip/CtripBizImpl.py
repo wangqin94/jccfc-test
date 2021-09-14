@@ -8,7 +8,7 @@ from src.enums.EnumsCommon import *
 from engine.Base import INIT
 from config.TestEnvInfo import *
 from utils.Models import *
-from src.testData.moduleData import ctrip
+from src.test_data.module_data import ctrip
 
 
 class CtripBizImpl(INIT):

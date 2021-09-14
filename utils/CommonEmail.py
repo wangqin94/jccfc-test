@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -11,35 +10,40 @@ import glob
 from utils.Models import *
 from requests_html import HTMLSession
 from requests_file import FileAdapter
-from config.global_config import *
-from utils.Logger import Logs
+
+# 配置文件初始化
+from utils.ReadConfig import Config
+
+_config = Config()
+
 
 class Email:
     def __init__(self):
         global host, user, password, port, sender, title
 
         # 初始化邮件配置参数
-        host = EMAIL["mail_host"]
-        user = EMAIL["mail_user"]
-        password = EMAIL["mail_pass"]
-        port = EMAIL["mail_port"]
-        sender = EMAIL["sender"]
-        title = EMAIL["subject"]
-        self.value = EMAIL["receiver"]
+        host = _config.get_email("mail_host")
+        user = _config.get_email("mail_user")
+        password = _config.get_email("mail_pass")
+        port = _config.get_email("mail_port")
+        sender = _config.get_email("sender")
+        title = _config.get_email("subject")
+        self.value = _config.get_email("receiver")
         self.receiver = []
         self.session = HTMLSession()
 
         # 初始化日志引擎模块
-        self.log = Logs()
+        self.log = MyLog.get_log()
 
         for n in str(self.value).split(","):
             self.receiver.append(n)
 
         date = datetime.now().strftime("%Y-%m-%d %H:%M")
-        self.subject = date+" "+title
+        self.subject = date + " " + title
 
         self.msg = MIMEMultipart('related')
-        self.report_path = os.path.join(, "report.html")
+        self.report_path = os.path.join(self.log.get_result_path(), "report.html")
+
     def config_header(self):
         """
         defined emial header include subject, sender and receiver
@@ -103,19 +107,19 @@ class Email:
             f.close()
 
             report_file = open(zip_path, 'rb').read()
-            file_html = MIMEText(report_file, 'base64', 'utf-8')
+            file_html = MIMEText(str(report_file), 'base64', 'utf-8')
             file_html['Content-Type'] = 'application/octet-stream'
             file_html['Content-Disposition'] = 'attachment; filename="log_report.zip"'
             self.msg.attach(file_html)
         else:
-            self.logger.error("report日志文件不存在或为空，异常返回结果")
+            self.log.error("report日志文件不存在或为空，异常返回结果")
 
     def check_file(self):
         """
         check test report
         :return:
         """
-        report_path = os.path.join(self.log.get_report_path(),"report.html")
+        report_path = os.path.join(self.log.get_report_path(), "report.html")
         if os.path.isfile(report_path) and not os.stat(report_path) == 0:
             return True
         else:
@@ -135,9 +139,9 @@ class Email:
             smtp.login(user, password)
             smtp.sendmail(sender, self.receiver, self.msg.as_string())
             smtp.quit()
-            self.logger.info("The test report has send to developer by email.")
+            self.log.info("The test report has send to developer by email.")
         except Exception as ex:
-            self.logger.error(str(ex))
+            self.log.error(str(ex))
 
     def send_mail_text(self):
         '''正文形式发送邮件'''
@@ -147,35 +151,35 @@ class Email:
             with open(self.report_path, "r", encoding="utf-8") as fp:
                 f = fp.read()
             fp.close()
-            content_plain=MIMEText(f,_subtype='html',_charset='utf-8')
+            content_plain = MIMEText(f, _subtype='html', _charset='utf-8')
             self.msg.attach(content_plain)
-            smtp=smtplib.SMTP()
+            smtp = smtplib.SMTP()
             smtp.connect(host)
-            smtp.login(user,password)
-            smtp.sendmail(sender,self.receiver,self.msg.as_string())
+            smtp.login(user, password)
+            smtp.sendmail(sender, self.receiver, self.msg.as_string())
             smtp.quit()
-            self.logger.info("测试报告已发送")
+            self.log.info("测试报告已发送")
         except Exception as ex:
-            self.logger.error(str(ex))
+            self.log.error(str(ex))
 
     def Judge_Report_Failure(self):
-        '''
+        """
         判定测试报告是否包含失败的用例，如果有返回TRUE，没有返回FALSE
         :return:
-        '''
+        """
         try:
-            self.session.mount("file://",FileAdapter())
+            self.session.mount("file://", FileAdapter())
             pwd = self.report_path.replace("\\", "/")
-            path = "file:///"+pwd
+            path = "file:///" + pwd
         except:
             print("测试报告内容读取异常")
         from selenium import webdriver
         webdriver = webdriver.Chrome()
         webdriver.get(path)
-        #time.sleep(5)
+        # time.sleep(5)
         text = webdriver.find_element_by_id("testFail").text
         webdriver.close()
-        if int(text) >0:
+        if int(text) > 0:
             return True
         else:
             return False
