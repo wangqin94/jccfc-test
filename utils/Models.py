@@ -3,6 +3,7 @@
 # # -----------------------------------------------------------
 # # - 公共模块函数变量
 # # -----------------------------------------------------------
+import datetime as datetimes
 import os
 import random
 import string
@@ -12,7 +13,7 @@ import requests
 from inspect import getcallargs
 from functools import wraps
 from utils.Logger import MyLog
-import datetime
+
 from dateutil.relativedelta import relativedelta
 
 _log = MyLog.get_log()
@@ -328,7 +329,7 @@ def get_read_json(json_file_name):
 # # - 获取当前时间的后N月
 # # -----------------------------------------------------------
 def get_next_month_today(n):
-    today = datetime.date.today()
+    today = datetimes.date.today()
     next_month_today = today - relativedelta(months=-int(n))
     return next_month_today
 
@@ -337,7 +338,7 @@ def get_next_month_today(n):
 # # - 获取当前时间的后N月
 # # -----------------------------------------------------------
 def get_before_month_today(n):
-    today = datetime.date.today()
+    today = datetimes.date.today()
     before_month_today = today - relativedelta(months=+int(n))
     return before_month_today
 

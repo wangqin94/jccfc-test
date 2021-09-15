@@ -19,16 +19,17 @@ class CheckBizImpl(INIT):
         @param kwargs: 查询条件
         @return:
         """
+        self.log.demsg('支用结果校验...')
         flag = 10
         for n in range(flag):
             info = self.getSqlData.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == EnumLoanStatus.ON_USE.value:
                 self.log.demsg('支用成功')
-                break
+                return status
             elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
                 self.log.error('支用失败,状态：{}'.format(status))
-                break
+                return status
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
                 time.sleep(5)
@@ -40,16 +41,17 @@ class CheckBizImpl(INIT):
         @param kwargs: 查询条件
         @return:
         """
+        self.log.demsg('文件放款支用结果校验...')
         flag = 10
         for n in range(flag):
             info = self.getSqlData.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == EnumLoanStatus.TO_LOAN.value:
                 self.log.demsg('支用成功')
-                break
+                return status
             elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
                 self.log.error('支用失败,状态：{}'.format(status))
-                break
+                return status
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
                 time.sleep(5)
@@ -61,16 +63,17 @@ class CheckBizImpl(INIT):
         @param kwargs: 查询条件
         @return:
         """
+        self.log.demsg('授信结果校验...')
         flag = 10
         for n in range(10):
             info = self.getSqlData.get_credit_apply_info(**kwargs)
             status = info['status']
             if status == EnumCreditStatus.SUCCESS.value:
                 self.log.demsg('授信成功')
-                break
+                return status
             elif status == EnumCreditStatus.FAIL.value:
                 self.log.error('授信失败,状态：{}'.format(status))
-                break
+                return status
             else:
                 self.log.demsg("授信审批状态处理中，请等待....")
                 time.sleep(5)

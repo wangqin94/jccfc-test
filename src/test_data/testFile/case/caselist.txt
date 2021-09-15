@@ -1,2 +1,2 @@
-baidu/test_loan
+baidu/test_baidu_loan
 # /fql/test_loan2

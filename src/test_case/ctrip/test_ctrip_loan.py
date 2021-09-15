@@ -7,7 +7,7 @@ import threading
 
 from src.impl.ctrip.CtripBizImpl import CtripBizImpl
 from src.impl.common.CommonCheckBizImpl import *
-from person import *
+# from person import *
 from utils.Models import *
 
 CheckBizImpl = CheckBizImpl()
@@ -25,7 +25,7 @@ class TestCase(object):
         # 发起授信申请
         open_id = ctrip.credit(advice_amount=10000)['open_id']
         # 检查授信状态
-        time.sleep(5)
+        time.sleep(10)
         CheckBizImpl.check_credit_apply_status(thirdpart_user_id=open_id)
         # 发起支用刚申请
         ctrip.loan(loan_amount=600, first_repay_date=self.cur_time)

@@ -1,7 +1,6 @@
 # ------------------------------------------
 # 携程接口数据封装类
 # ------------------------------------------
-
 from datetime import datetime
 from src.impl.common.CommonUtils import *
 from src.enums.EnumsCommon import *
@@ -131,7 +130,7 @@ class CtripBizImpl(INIT):
         loan_data['loan_no'] = 'loan_no' + self.strings
         loan_data['loan_amount'] = self.loan_amount
         loan_data['request_no'] = 'request_no' + self.strings + "3"
-        loan_data['first_repay_date'] = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        loan_data['first_repay_date'] = datetime.now().strftime('%Y%m%d%H%M%S')
 
         loan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
@@ -194,7 +193,7 @@ class CtripBizImpl(INIT):
 
         # 提前当期还款
         if self.repay_mode == "4":
-            repay_notice['repay_type'] = self.repay_mode
+            repay_notice['repay_type'] = '1'
             repay_notice['finish_time'] = str(self.repay_date.replace("-", "")) + "112233"
 
         # 逾期还款
@@ -208,7 +207,7 @@ class CtripBizImpl(INIT):
             repay_notice['finish_time'] = str(self.repay_date.replace("-", "")) + "112233"
             repay_notice["repay_principal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
 
-            pre_repay_date = str(asset_repay_plan["pre_repay_date"])
+            pre_repay_date = str(asset_repay_plan["start_date"])
             pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
             repay_date = datetime.strptime(self.repay_date, "%Y-%m-%d").date()
             if pre_repay_date > repay_date:

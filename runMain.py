@@ -1,7 +1,6 @@
 #!python3
 # -*- coding: utf-8 -*-
 import os, sys
-from datetime import datetime
 from utils import ReadConfig, Logger
 from utils.Logger import MyLog
 from utils.Models import project_dir
@@ -10,9 +9,6 @@ from package.BeautifulReport import BeautifulReport
 from utils.CommonEmail import MyEmail
 from tomorrow import threads
 
-logPath = os.path.join(os.path.join(project_dir(), "results"), str(datetime.now().strftime("%Y%m%d%H%M")))
-if not os.path.exists(logPath):
-    os.mkdir(logPath)
 sys.path.append('..')
 
 
@@ -54,8 +50,9 @@ class AllTest():
         test_suite = unittest.TestSuite()
         suite_module = []
         case_name = case.split("/")[-1]
-        log.info("此次执行的测试文件清单" + case_name + ".py")
-        discover = unittest.defaultTestLoader.discover(self.caseFile, pattern=case_name + '.py', top_level_dir=None)
+        log.info("此次执行的测试文件清单:" + case_name + ".py")
+        pattern = case_name + ".py"
+        discover = unittest.defaultTestLoader.discover(self.caseFile, pattern=pattern, top_level_dir=None)
         suite_module.append(discover)
 
         if len(suite_module) > 0:

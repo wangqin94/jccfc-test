@@ -50,11 +50,15 @@ _config = Config()
 
 # 初始化根路径
 project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 resultPath = os.path.join(project_dir, "results")  # 日志目录
 log_file_name = _config.get_log('file_name') if _config.get_log('file_name') else 'output.log'  # 日志文件
 
 
 def get_log_filepath():
+    # 初始化日志目录，不存在则创建
+    if not os.path.exists(resultPath):
+        os.mkdir(resultPath)
     # 设置控制台日志目录
     listdir = [d for d in os.listdir(resultPath)]
     # 如果日志文件目录不存在则创建
