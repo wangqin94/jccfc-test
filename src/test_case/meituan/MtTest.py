@@ -60,4 +60,4 @@ if __name__ == '__main__':
     start = TestCase()
     total = time.time() - start_time
     log = MyLog.get_log()
-    log.info('程序运行时间：'.format(total))
+    log.info('程序运行时间：'.format(round(total)))

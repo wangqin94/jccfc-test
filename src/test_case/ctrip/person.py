@@ -34,3 +34,4 @@ data = {'name': '乔毓', 'cer_no': '441826201503078637', 'bankid': '62220831482
 data = {'name': '弓融英', 'cer_no': '632821200901152898', 'bankid': '6212813149543753625', 'telephone': '15995618472', 'open_id': 'open_id1631690859373'}  # hsit -> ctrip
 data = {'name': '诸进', 'cer_no': '632621200103050909', 'bankid': '6212263150554686139', 'telephone': '15231728564', 'open_id': 'open_id1631691870304'}  # hsit -> ctrip
 data = {'name': '太晨浩', 'cer_no': '450802200912163264', 'bankid': '6222023152874875897', 'telephone': '14702674851', 'open_id': 'open_id1631694190507'}  # hsit -> ctrip
+data = {'name': '督竹红', 'cer_no': '469005198208053892', 'bankid': '6217222631433246392', 'telephone': '13775852678', 'open_id': 'open_id1625550495568'}  # hsit -> ctrip
