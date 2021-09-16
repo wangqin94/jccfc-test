@@ -20,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         # 发起授信申请
         self.applyId = fql.credit(creditAmount=2000)['applyId']
         # 检查授信状态
-        time.sleep(5)
+        time.sleep(10)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.applyId)
         # 发起支用刚申请
         # orderType: 订单类型 1取现；2赊销

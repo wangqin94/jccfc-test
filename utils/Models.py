@@ -343,5 +343,23 @@ def get_before_month_today(n):
     return before_month_today
 
 
+# # -----------------------------------------------------------
+# # - 获取当前时间的后N天
+# # -----------------------------------------------------------
+def get_next_day(n):
+    today = datetimes.date.today()
+    next_month_today = today - relativedelta(days=-int(n))
+    return next_month_today
+
+
+# # -----------------------------------------------------------
+# # - 获取当前时间的后N天
+# # -----------------------------------------------------------
+def get_before_day(n):
+    today = datetimes.date.today()
+    before_month_today = today - relativedelta(days=+int(n))
+    return before_month_today
+
+
 if __name__ == "__main__":
-    pass
+    print(get_before_day(1))

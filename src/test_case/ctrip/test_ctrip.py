@@ -23,7 +23,7 @@ class TestCase(object):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
-            xc = CtripBizImpl(data=data)
+            xc = CtripBizImpl(data=None)
             xc.credit(advice_amount=12000)
 
         if flag == 10:
@@ -89,4 +89,4 @@ if __name__ == '__main__':
     start = TestCase()
     total = time.time() - start_time
     log = MyLog.get_log()
-    log.info('程序运行时间：'.format(round(total)))
+    log.info('程序运行时间：{}'.format(round(total)))

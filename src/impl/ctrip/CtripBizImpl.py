@@ -72,10 +72,10 @@ class CtripBizImpl(INIT):
         pre_credit_data.update(kwargs)
         # 更新 payload 字段值
         parser = DataUpdate(self.cfg['pre_credit']['payload'], **pre_credit_data)
-        self.pre_credit_payload = parser.parser
-        self.pre_credit_payload['user_data']['Platform']['id_no'] = self.data['cer_no']
-        self.pre_credit_payload['user_data']['Platform']['user_name'] = self.data['name']
-        self.pre_credit_payload['user_data']['Platform']['mobile'] = self.data['telephone']
+        self.active_payload = parser.parser
+        self.active_payload['user_data']['Platform']['id_no'] = self.data['cer_no']
+        self.active_payload['user_data']['Platform']['user_name'] = self.data['name']
+        self.active_payload['user_data']['Platform']['mobile'] = self.data['telephone']
 
         self.log.demsg('预授信申请...')
         url = self.host + self.cfg['pre_credit']['interface']
@@ -199,7 +199,8 @@ class CtripBizImpl(INIT):
         # 逾期还款
         elif self.repay_mode == "3":
             repay_notice['repay_type'] = "1"
-            repay_notice['finish_time'] = str(asset_repay_plan["calc_overdue_fee_date"]).replace("-", "") + "112233"
+            finish_time = asset_repay_plan["calc_overdue_fee_date"] - relativedelta(days=-int(1))
+            repay_notice['finish_time'] = str(finish_time).replace("-", "") + "112233"
 
         # 提前结清
         elif self.repay_mode == "2":
