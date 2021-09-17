@@ -204,7 +204,17 @@ class MeiTuanBizImpl(INIT):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def repay_notice(self, **kwargs):
+    def repay_notice(self, principal, initerest, diniterest, type="1", termNo="1", finish_time="2021-11-10", **kwargs):
+        """
+        @param principal: 本金
+        @param initerest: 利息
+        @param diniterest: 罚息
+        @param type: 还款类型
+        @param termNo: 期次
+        @param finish_time: 还款时间
+        @param kwargs:
+        @return:
+        """
         strings = str(int(round(time.time() * 1000)))
         repay_notice = dict()
         repay_notice['requestSerialNo'] = "reqNo" + strings
@@ -220,9 +230,6 @@ class MeiTuanBizImpl(INIT):
         # 借据号默认为空取当前用户第一笔借据号，否则取赋值借据号
         loan_no = self.loan_no if self.loan_no else credit_loan_apply["third_loan_invoice_id"]
 
-        key2 = "third_loan_no = '{}' and repay_term_no = '{}'".format(loan_no, self.term)
-        credit_ctrip_repay_notice_info = self.get_credit_data_info(table="credit_ctrip_repay_notice_info", key=key2)
-
         key3 = "certificate_no = '{}'".format(self.data['cer_no'])
         credit_personal_limit_detail = self.get_credit_data_info(table="credit_personal_limit_detail", key=key3)
         repay_notice['CREDIT_LIMIT'] = str(int(credit_personal_limit_detail["total_amount"]))
@@ -231,17 +238,17 @@ class MeiTuanBizImpl(INIT):
             credit_personal_limit_detail["total_amount"]) * 100)
 
         repay_notice['LOAN_NO'] = loan_no
-        repay_notice['REPAYMENT_AMOUNT'] = str(int(credit_ctrip_repay_notice_info["actual_repay_amount"]) * 100)
-        repay_notice['PRINCIPAL'] = str(int(credit_ctrip_repay_notice_info["repay_principal"]) * 100)
-        repay_notice['INTEREST'] = str(int(credit_ctrip_repay_notice_info["repay_interest"]) * 100)
-        repay_notice['D_INTEREST'] = str(int(credit_ctrip_repay_notice_info["repay_penalty_amount"]) * 100)
-        repay_notice['REPAY_TYPE'] = int(credit_ctrip_repay_notice_info["repay_type"])
-        repay_notice['PERIOD_NOW'] = str(credit_ctrip_repay_notice_info["repay_term_no"])
-        repay_notice['REPAYMENT_DATE'] = str(credit_ctrip_repay_notice_info["finish_time"])
+        repay_notice['REPAYMENT_AMOUNT'] = str(int(principal)+int(initerest)+int(diniterest))
+        repay_notice['PRINCIPAL'] = str(principal)  # "本金"
+        repay_notice['INTEREST'] = str(initerest)  # "利息"
+        repay_notice['D_INTEREST'] = str(diniterest)  # "罚息"
+        repay_notice['REPAY_TYPE'] = int(type)  # 类型
+        repay_notice['PERIOD_NOW'] = termNo  # 期次
+        repay_notice['REPAYMENT_DATE'] = finish_time + " 02:00:00"
 
         repay_notice['REPAYMENT_NAME'] = self.data['name']
         repay_notice['REPAYMENT_CARD'] = self.data['bankid']
-        repay_notice['REPAYMENT_TIME'] = str(credit_ctrip_repay_notice_info["finish_time"])
+        repay_notice['REPAYMENT_TIME'] = finish_time + " 02:00:00"
 
         repay_notice.update(kwargs)
         parser = DataUpdate(self.cfg['repay_notice']['payload'], **repay_notice)
