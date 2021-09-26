@@ -2,6 +2,7 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
+from config.TestEnvInfo import TEST_ENV_INFO
 from src.impl.common.CommonUtils import post_with_encrypt
 from utils.Models import *
 from engine.Base import INIT
@@ -12,6 +13,7 @@ from src.test_data.module_data import BaiDu
 class BaiDuBizImpl(INIT):
     def __init__(self, *, data=None, type=1, loan_no=None, encrypt_flag=False):
         super().__init__()
+        self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
 
         # 解析项目特性配置
         self.cfg = BaiDu.BaiDu

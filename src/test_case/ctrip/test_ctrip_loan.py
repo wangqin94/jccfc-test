@@ -22,8 +22,8 @@ class TestCase(object):
         """ 测试步骤 """
         ctrip = CtripBizImpl(data=None)
 
-        # 预授信
-        ctrip.pre_credit(advice_amount=12000)
+        # # 预授信
+        # ctrip.pre_credit(advice_amount=12000)
         # 发起授信申请
         open_id = ctrip.credit(advice_amount=10000)['open_id']
         # 检查授信状态
