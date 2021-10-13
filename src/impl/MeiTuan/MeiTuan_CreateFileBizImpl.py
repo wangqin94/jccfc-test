@@ -283,6 +283,7 @@ class MtFile(INIT):
             syb += 1  # period_id 尾部标记，区分每期的ID
         # 生成提前结清文件
         self.repay_all()
+        self.log.demsg("还款文件生成路径：{}".format(_FilePath))
 
     # 获取文件存放路径，借据文件名，还款计划文件名
     def get_filename(self):

@@ -107,7 +107,7 @@ class BaiDuBizImpl(INIT):
         strings = str(int(round(time.time() * 1000)))
         notice_data = dict()
         comment = dict()
-        notice_data['order_id'] = "order_id" + strings
+        # notice_data['order_id'] = "order_id" + strings
         notice_data['seq_no'] = "seq_no" + strings
         notice_data['cur_date'] = time.strftime("%Y%m%d", time.localtime())
         notice_data['tran_time'] = time.strftime("%Y%m%d%H%M%S", time.localtime())
@@ -121,6 +121,7 @@ class BaiDuBizImpl(INIT):
         loan_no = self.loan_no if self.loan_no else credit_loan_apply["third_loan_invoice_id"]
         credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
         notice_data['loan_id'] = loan_no
+        notice_data['order_id'] = loan_no
         comment['amount_total'] = str(int(credit_loan_apply["apply_amount"]) * 100)
         comment['loan_order_id'] = str(credit_loan_apply["thirdpart_order_id"])
         notice_data["comment"] = str(comment)

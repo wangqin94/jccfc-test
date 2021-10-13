@@ -322,6 +322,8 @@ class BaiduFile(INIT):
             # period_id = strings + "%03d" % syb
             self.get_repay_plan_csv(self.repay_plan_csv_template, amt)
 
+        self.log.demsg("还款文件生成路径：{}".format(_FilePath))
+
     def get_bill_day(self):
         """
         :return: 返回还款日期，账单日
@@ -352,8 +354,6 @@ class BaiduFile(INIT):
         # 查询的数据库表
         table = 'credit_loan_apply'
         # 查询sql语句
-        # sql = "select * from {}.credit_loan_apply where certificate_no='{}' and fail_reason IS null and status = '15';".format(
-        #     self.credit_database_name, self.cer_no)
         sql = "select * from {}.credit_loan_apply where certificate_no='{}';".format(
             self.credit_database_name, self.cer_no)
         # 获取表属性字段名
@@ -408,6 +408,8 @@ class BaiduFile(INIT):
         temple['loan_id'] = self.loan_id
         temple['cur_date'] = self.cur_date
         temple['end_term'] = int(self.info["apply_term"])
+        # 借据申请表提取年华利率转化为日利率
+        temple['int_rate'] = float(self.info['apply_rate'])/360*100
         loan_rate = os.path.join(self.loan_file_path, 'loan_rate.csv')
         if self.repay_mode == "05":
             temple['repay_violate_rate'] = "4"
@@ -455,6 +457,7 @@ class BaiduRepayFile(BaiduFile):
         self.get_repay_item(self.repay_item_csv_template)
         self.get_new_repay_plan_csv(self.repay_plan_csv_template)
         self.get_reduce_csv(self.reduce_csv_template)
+        self.log.demsg("还款文件生成路径：{}".format(_FilePath))
 
     def get_invoice_info(self):
         """
