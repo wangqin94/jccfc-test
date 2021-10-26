@@ -2,6 +2,8 @@
 # ------------------------------------------
 # 我来贷接口数据封装类
 # ------------------------------------------
+from datetime import datetime
+
 from src.impl.common.CommonUtils import *
 from utils.Models import *
 from src.enums.EnumsCommon import *
@@ -256,12 +258,13 @@ class WldBizImpl(INIT):
         return response
 
     # 还款
-    def repay(self, **kwargs):
+    def repay(self, repay_date=None, **kwargs):
         repay_data = dict()
         # head
         repay_data['requestSerialNo'] = 'SerialNo' + self.strings + "10"
         repay_data['requestTime'] = self.times
         # body
+
         repay_data['repayApplySerialNo'] = 'repay' + self.strings + "5"
         repay_data['repayType'] = self.repay_type
         repay_data['repayNum'] = self.repay_term_no
@@ -273,16 +276,27 @@ class WldBizImpl(INIT):
         key1 = "loan_invoice_id = '" + self.loan_invoice_id + "' and current_num = '" + self.repay_term_no + "'"
         content1 = self.get_asset_data_info(table="asset_repay_plan", key=key1)
         self.log.info(content1)
-        if self.repay_type == "1" or self.repay_type == "4":
-            repay_data['repayAmount'] = float(content1['pre_repay_amount'])
-            repay_data['repayPrincipal'] = float(content1['pre_repay_principal'])
-        elif self.repay_type == "2":
-            repay_data['repayAmount'] = float(content1['before_calc_principal']) + float(content1['pre_repay_interest'])
-            repay_data['repayPrincipal'] = float(content1['before_calc_principal'])
         repay_data['repayInterest'] = float(content1['pre_repay_interest'])
         repay_data['repayFee'] = float(content1['pre_repay_fee'])
         repay_data['repayOverdueFee'] = float(content1['pre_repay_overdue_fee'])
         repay_data['repayCompoundInterest'] = float(content1['pre_repay_compound_interest'])
+        # 按期还款/逾期还款
+        if self.repay_type == "1" or self.repay_type == "4":
+            repay_data['repayAmount'] = float(content1['pre_repay_amount'])
+            repay_data['repayPrincipal'] = float(content1['pre_repay_principal'])
+
+        # 提前结清
+        elif self.repay_type == "2":
+            pre_repay_date = str(content1["start_date"])
+            pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
+            repay_date = datetime.strptime(repay_date, "%Y-%m-%d").date()
+            if pre_repay_date > repay_date:
+                repay_data["repay_interest"] = 0  # 如果还款时间小于账单日，利息应该为0
+            else:
+                # 计算提前结清利息:按期收利息
+                repay_data['repayInterest'] = float(content1['pre_repay_interest'])
+                repay_data['repayPrincipal'] = float(content1['before_calc_principal'])  # 还款总本金
+                repay_data['repayAmount'] = repay_data['repayPrincipal'] + repay_data["repayInterest"]  # 总金额
 
         # 更新 payload 字段值
         repay_data.update(kwargs)
