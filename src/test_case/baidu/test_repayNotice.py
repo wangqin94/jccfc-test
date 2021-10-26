@@ -13,7 +13,7 @@ class MyTestCase(unittest.TestCase):
         # 借据号默认为空取当前用户第一笔借据号，否则取赋值借据号
         # type额度恢复类型:1-部分还款;2-借据结清;3-放款失败;4-银行退票
         bd = BaiDuBizImpl(data=data, loan_no=None, type="2")
-        bd.notice(amount="100")
+        bd.notice(amount="20577")
 
 
 if __name__ == '__main__':

@@ -322,7 +322,7 @@ class BaiduFile(INIT):
             # period_id = strings + "%03d" % syb
             self.get_repay_plan_csv(self.repay_plan_csv_template, amt)
 
-        self.log.demsg("还款文件生成路径：{}".format(_FilePath))
+        self.log.demsg("借据文件生成路径：{}".format(_FilePath))
 
     def get_bill_day(self):
         """
@@ -579,7 +579,7 @@ class BaiduRepayFile(BaiduFile):
 
             if self.repay_mode == '02':
                 # 利息\罚息,随借随还按日计息
-                if repay_date < start_date:
+                if repay_date <= start_date:
                     temple['int_amt'] = 0  # 如果当前期次已还款，利息应该为0
                 else:
                     temple['int_amt'] = int(temple['prin_amt'] * days * interest_rate / (100 * 360))
@@ -588,7 +588,7 @@ class BaiduRepayFile(BaiduFile):
                 temple['total_amt'] = temple['income_amt']  # 总金额
             else:
                 # 利息\罚息，等额本息按期收息包含4%违约金
-                if repay_date < start_date:
+                if repay_date <= start_date:
                     temple['int_amt'] = 0  # 如果当前期次已还款，利息应该为0
                 else:
                     temple['int_amt'] = int(float(asset_repay_plan["pre_repay_interest"])*100)
