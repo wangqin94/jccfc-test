@@ -48,7 +48,7 @@ class ZhiXinBizImpl(INIT):
         # body
         data['requestNo'] = 'requestNo' + self.strings + "_1541"
         data['requestTime'] = self.times
-        data['md5'] = computeMD5(id_card+iphone)
+        data['md5'] = computeMD5(iphone+id_card)
 
         # 更新 payload 字段值
         data.update(kwargs)
