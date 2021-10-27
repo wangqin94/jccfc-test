@@ -2,6 +2,7 @@
 """
 test case script
 """
+import json
 import time
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 from person import *
@@ -16,14 +17,13 @@ class TestCase(object):
         """ 预置条件处理 """
         pass
 
-    # # [0: 绑卡, 3: 授信, 5: 支用, 6: 还款, 7: 绑卡&授信&支用]
+    # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     def process(self, flag=0):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
             zhixin = ZhiXinBizImpl(data=None)
-            res = zhixin.applyCertification().get('output')
-            print(res)
+            res = json.loads(zhixin.applyCertification().get('output'))
             zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'], cdKey=res['cdKey'])
 
         # 撞库
