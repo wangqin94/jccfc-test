@@ -22,7 +22,8 @@ class TestCase(object):
         # 绑卡
         if flag == 0:
             zhixin = ZhiXinBizImpl(data=None)
-            res = zhixin.applyCertification()
+            res = zhixin.applyCertification().get('output')
+            print(res)
             zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'], cdKey=res['cdKey'])
 
         # 撞库

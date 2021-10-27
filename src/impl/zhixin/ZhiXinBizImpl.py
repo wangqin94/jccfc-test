@@ -44,15 +44,16 @@ class ZhiXinBizImpl(INIT):
 
     # 客户撞库校验
     def checkUser(self, id_card, iphone, **kwargs):
-        data = dict()
+        checkUser_data = dict()
         # body
-        data['requestNo'] = 'requestNo' + self.strings + "_1541"
-        data['requestTime'] = self.times
-        data['md5'] = computeMD5(iphone+id_card)
+        checkUser_data['requestNo'] = 'requestNo' + self.strings + "_1541"
+        checkUser_data['requestTime'] = self.times
+        checkUser_data['md5'] = computeMD5(iphone+id_card)
+        checkUser_data['ct'] = self.times
 
         # 更新 payload 字段值
-        data.update(kwargs)
-        parser = DataUpdate(self.cfg['checkUser']['payload'], **data)
+        checkUser_data.update(kwargs)
+        parser = DataUpdate(self.cfg['checkUser']['payload'], **checkUser_data)
         self.active_payload = parser.parser
 
         self.log.demsg('发起客户撞库校验...')
@@ -63,39 +64,42 @@ class ZhiXinBizImpl(INIT):
 
     # 发起绑卡申请payload
     def applyCertification(self, **kwargs):
-        data = dict()
+        applyCertification_data = dict()
         # body
-        data['requestNo'] = 'requestNo' + self.strings + "_1541"
-        data['requestTime'] = self.times
-        data['userId'] = 'userId' + self.strings
-        data['certificationApplyNo'] = 'certNo' + self.strings
-        data['idCardNo'] = self.data['cer_no']
-        data['userName'] = self.data['name']
-        data['bankCardNo'] = self.data['bankid']
-        data['userMobile'] = self.data['telephone']
-        data['agreementTime'] = self.date
+        applyCertification_data['requestNo'] = 'requestNo' + self.strings + "_1541"
+        applyCertification_data['requestTime'] = self.times
+
+        applyCertification_data['userId'] = 'userId' + self.strings
+        applyCertification_data['certificationApplyNo'] = 'certNo' + self.strings
+        applyCertification_data['idCardNo'] = self.data['cer_no']
+        applyCertification_data['userName'] = self.data['name']
+        applyCertification_data['bankCardNo'] = self.data['bankid']
+        applyCertification_data['userMobile'] = self.data['telephone']
+        applyCertification_data['agreementTime'] = self.date
+        applyCertification_data['ct'] = self.times
 
         # 更新 payload 字段值
-        data.update(kwargs)
-        parser = DataUpdate(self.cfg['bind_card']['payload'], **data)
+        applyCertification_data.update(kwargs)
+        parser = DataUpdate(self.cfg['applyCertification']['payload'], **applyCertification_data)
         self.active_payload = parser.parser
 
         self.log.demsg('发起绑卡请求...')
-        url = self.host + self.cfg['bind_card']['interface']
+        url = self.host + self.cfg['applyCertification']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
     # 确认绑卡申请payload
     def verifyCode(self, **kwargs):
-        data = dict()
+        verifyCode_data = dict()
         # body
-        data['requestNo'] = 'requestNo' + self.strings + "_1541"
-        data['requestTime'] = self.times
+        verifyCode_data['requestNo'] = 'requestNo' + self.strings + "_1541"
+        verifyCode_data['requestTime'] = self.times
+        verifyCode_data['ct'] = self.times
 
         # 更新 payload 字段值
-        data.update(kwargs)
-        parser = DataUpdate(self.cfg['verifyCode']['payload'], **data)
+        verifyCode_data.update(kwargs)
+        parser = DataUpdate(self.cfg['verifyCode']['payload'], **verifyCode_data)
         self.active_payload = parser.parser
 
         self.log.demsg('确认绑卡请求...')
@@ -106,45 +110,41 @@ class ZhiXinBizImpl(INIT):
 
     # 授信申请
     def credit(self, **kwargs):
-        strings = str(int(round(time.time() * 1000)))
-        data = dict()
+        credit_data = dict()
         # body
-        data['requestNo'] = 'requestNo' + self.strings + "_1541"
-        data['requestTime'] = self.times
-        data['userId'] = 'userId' + self.strings
-        data['creditApplyNo'] = 'creditApplyNo' + self.strings
-        data['applyTime'] = self.date
-        data['agreementTime'] = self.date
+        credit_data['requestNo'] = 'requestNo' + self.strings + "_1541"
+        credit_data['requestTime'] = self.times
+        credit_data['userId'] = 'userId' + self.strings
+        credit_data['creditApplyNo'] = 'creditApplyNo' + self.strings
+        credit_data['applyTime'] = self.date
+        credit_data['agreementTime'] = self.date
 
         # 用户信息
         userInfo = dict()
-        userInfo['idCardNo'] = self.data['cer_no']
-        userInfo['name'] = self.data['name']
-        userInfo['mobile'] = self.data['telephone']
-        data['userInfo'] = userInfo
+        credit_data['idCardNo'] = self.data['cer_no']
+        credit_data['name'] = self.data['name']
+        credit_data['mobile'] = self.data['telephone']
 
         # ocr信息
         idCardOcrInfo = dict()
-        idCardOcrInfo['nameOCR'] = self.data['name']
-        idCardOcrInfo['idCardNoOCR'] = self.data['cer_no']
-        data['idCardOcrInfo'] = idCardOcrInfo
+        credit_data['nameOCR'] = self.data['name']
+        credit_data['idCardNoOCR'] = self.data['cer_no']
 
         # 活体图信息
-        faceInfo = dict()
-        faceInfo['assayTime'] = self.date
-        data['faceInfo'] = faceInfo
+        credit_data['assayTime'] = self.date
 
         # 银行卡信息
         bankCardInfo = dict()
-        bankCardInfo['idCardNo'] = self.data['cer_no']
-        bankCardInfo['userMobile'] = self.data['telephone']
-        bankCardInfo['userName'] = self.data['name']
-        bankCardInfo['bankCardNo'] = self.data['bankid']
-        data['bankCardInfo'] = bankCardInfo
+        credit_data['idCardNo'] = self.data['cer_no']
+        credit_data['userMobile'] = self.data['telephone']
+        credit_data['userName'] = self.data['name']
+        credit_data['bankCardNo'] = self.data['bankid']
+
+        credit_data['ct'] = self.times
 
         # 更新 payload 字段值
-        data.update(kwargs)
-        parser = DataUpdate(self.cfg['applyCredit']['payload'], **data)
+        credit_data.update(kwargs)
+        parser = DataUpdate(self.cfg['applyCredit']['payload'], **credit_data)
         self.active_payload = parser.parser
 
         # 校验用户是否已存在
