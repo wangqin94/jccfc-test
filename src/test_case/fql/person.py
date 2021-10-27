@@ -1,0 +1,20 @@
+
+data = {'name': '徒敬', 'cer_no': '410303199403269040', 'bankid': '6217865192012536283', 'telephone': '17307529164', 'applyId': 'applyId1626060516959'}  # huat -> fql
+data = {'name': '于以壮', 'cer_no': '640400198112013146', 'bankid': '6212810564123633927', 'telephone': '17752763149', 'applyId': 'applyId1629105440147'}  # huat -> fql
+data = {'name': '徐融薇', 'cer_no': '320804199701020624', 'bankid': '6217860816422715344', 'telephone': '15574218305', 'applyId': 'applyId1629357738783'}  # huat -> fql
+data = {'name': '鲜洁艳', 'cer_no': '632626201312158533', 'bankid': '6216660884495448809', 'telephone': '18618725630', 'applyId': 'applyId1629425811402'}  # huat -> fql
+data = {'name': '梁伯', 'cer_no': '410225200101126894', 'bankid': '6216660886772760236', 'telephone': '18018650472', 'applyId': 'applyId1629428088717'}  # huat -> fql
+data = {'name': '任娅', 'cer_no': '420205200302035717', 'bankid': '6217860886846831688', 'telephone': '18345179362', 'applyId': 'applyId1629428162790'}  # huat -> fql
+data = {'name': '任娅', 'cer_no': '420205200302035717', 'bankid': '6217860886846831688', 'telephone': '18345179362', 'applyId': 'applyId1629428162791'}  # huat -> fql
+data = {'name': '鱼翰涛', 'cer_no': '320321200410072760', 'bankid': '6228480888212348385', 'telephone': '13536190584', 'applyId': 'applyId1629429528314'}  # huat -> fql
+data = {'name': '费勇心', 'cer_no': '610622198711159802', 'bankid': '6217860900772783308', 'telephone': '13415970286', 'applyId': 'applyId1629442088228'}  # huat -> fql
+data = {'name': '毕利', 'cer_no': '130425200603200103', 'bankid': '6222021233380222659', 'telephone': '17246273059', 'applyId': 'applyId1629774696044'}  # huat -> fql
+data = {'name': '万磊梁', 'cer_no': '140923199412247129', 'bankid': '6228482455870013145', 'telephone': '19132698741', 'applyId': 'applyId1630997186362'}  # hpre -> fql
+data = {'name': '五艺冰', 'cer_no': '512022201801210771', 'bankid': '6212812456106592865', 'telephone': '17889736452', 'applyId': 'applyId1630997422949'}  # hpre -> fql
+data = {'name': '支君', 'cer_no': '500224199411138655', 'bankid': '6222082456350021563', 'telephone': '13316492350', 'applyId': 'applyId1630997666383'}  # hpre -> fql
+data = {'name': '侯栋泰', 'cer_no': '430406198603300894', 'bankid': '6222002459683275663', 'telephone': '17574091263', 'applyId': 'applyId1631000999651'}  # hpre -> fql
+data = {'name': '邹栋时', 'cer_no': '430300201012219403', 'bankid': '6217222545790323539', 'telephone': '14581537026', 'applyId': 'applyId1631087106939'}  # hsit -> fql
+data = {'name': '漆嘉素', 'cer_no': '622922198808294381', 'bankid': '6222002978622916483', 'telephone': '17460217495', 'applyId': 'applyId1631519940239'}  # hpre -> fql
+data = {'name': '訾维政', 'cer_no': '445281198611154423', 'bankid': '6222022978937278245', 'telephone': '14576403928', 'applyId': 'applyId1631520254600'}  # hpre -> fql
+data = {'name': '巢慧凝', 'cer_no': '532329200304140397', 'bankid': '6217862979158687943', 'telephone': '13965841702', 'applyId': 'applyId1631520476008'}  # hpre -> fql
+data = {'name': '葛树祥', 'cer_no': '610203200511157836', 'bankid': '6216662981178915076', 'telephone': '18368154329', 'applyId': 'applyId1631522496237'}  # hpre -> fql
