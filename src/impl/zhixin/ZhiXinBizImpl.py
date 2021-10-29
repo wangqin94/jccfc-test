@@ -66,11 +66,11 @@ class ZhiXinBizImpl(INIT):
     def applyCertification(self, **kwargs):
         applyCertification_data = dict()
         # body
-        applyCertification_data['requestNo'] = 'requestNo' + self.strings + "_1541"
+        applyCertification_data['requestNo'] = 'requestNo' + self.strings + "_1000"
         applyCertification_data['requestTime'] = self.times
 
         applyCertification_data['userId'] = 'userId' + self.strings
-        applyCertification_data['certificationApplyNo'] = 'certNo' + self.strings
+        applyCertification_data['certificationApplyNo'] = 'ZHIXIN' + self.strings
         applyCertification_data['idCardNo'] = self.data['cer_no']
         applyCertification_data['userName'] = self.data['name']
         applyCertification_data['bankCardNo'] = self.data['bankid']
@@ -93,7 +93,7 @@ class ZhiXinBizImpl(INIT):
     def verifyCode(self, **kwargs):
         verifyCode_data = dict()
         # body
-        verifyCode_data['requestNo'] = 'requestNo' + self.strings + "_1541"
+        verifyCode_data['requestNo'] = 'requestNo' + self.strings + "_2000"
         verifyCode_data['requestTime'] = self.times
         verifyCode_data['ct'] = self.times
 
@@ -112,29 +112,41 @@ class ZhiXinBizImpl(INIT):
     def credit(self, **kwargs):
         credit_data = dict()
         # body
-        credit_data['requestNo'] = 'requestNo' + self.strings + "_1541"
+        credit_data['requestNo'] = 'requestNo' + self.strings + "_3000"
         credit_data['requestTime'] = self.times
         credit_data['userId'] = 'userId' + self.strings
         credit_data['creditApplyNo'] = 'creditApplyNo' + self.strings
         credit_data['applyTime'] = self.date
         credit_data['agreementTime'] = self.date
 
+        # 设备信息
+        credit_data['factoryTime'] = self.times
+
         # 用户信息
-        userInfo = dict()
         credit_data['idCardNo'] = self.data['cer_no']
         credit_data['name'] = self.data['name']
         credit_data['mobile'] = self.data['telephone']
 
         # ocr信息
-        idCardOcrInfo = dict()
         credit_data['nameOCR'] = self.data['name']
         credit_data['idCardNoOCR'] = self.data['cer_no']
+        positive = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid1.png'))
+        credit_data['positive'] = positive  # 身份证正面base64字符串
+        negative = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png'))
+        credit_data['negative'] = negative  # 身份证反面base64字符串
 
         # 活体图信息
         credit_data['assayTime'] = self.date
+        best = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqface.png'))
+        credit_data['best'] = best  # 人脸base64字符串
+        action1 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action1.jpg'))
+        # credit_data['action1'] = action1  # 身份证反面base64字符串
+        action2 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action2.jpg'))
+        # credit_data['action2'] = action2  # 身份证反面base64字符串
+        action3 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action3.jpg'))
+        # credit_data['action3'] = action3  # 身份证反面base64字符串
 
         # 银行卡信息
-        bankCardInfo = dict()
         credit_data['idCardNo'] = self.data['cer_no']
         credit_data['userMobile'] = self.data['telephone']
         credit_data['userName'] = self.data['name']
