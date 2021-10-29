@@ -23,7 +23,7 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
     @param encrypt_flag: 加密标识默认true
     @return: 
     """
-    log.info("payload数据: %s", payload)
+    log.info("payload数据: {}".format(payload))
 
     if encrypt_flag:
         encrypt_payload = encrypt(encrypt_url, headers, payload)

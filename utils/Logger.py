@@ -5,6 +5,7 @@
 
 import os
 import logging
+from logging.handlers import RotatingFileHandler
 import threading
 from datetime import datetime
 import datetime as dt
@@ -103,7 +104,9 @@ class Logs(object):
 
         if not logger.handlers:  # 避免重复日志
             # 初始文件日志句柄
-            file_handler = logging.FileHandler(os.path.join(self.logPath, log_file_name))
+            # file_handler = logging.FileHandler(os.path.join(self.logPath, log_file_name))
+            # 写入文件，如果文件超过100个Bytes，仅保留5个文件。
+            file_handler = RotatingFileHandler(os.path.join(self.logPath, log_file_name), maxBytes=100*1024, backupCount=3)
             formatter = logging.Formatter(_config.get_log('pattern'))
             file_handler.setFormatter(formatter)
             # 设置文件日志级别
@@ -188,31 +191,43 @@ class Logs(object):
 
     def debug(self, msg, *args, **kwargs):
         self.__log_style(color=WHITE, bgd=BGD_RESET)
+        if len(msg) > 1024:
+            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
         self.__logger.debug(msg, *args, **kwargs)
         self._log_style_reset()
 
     def info(self, msg, *args, **kwargs):
         self.__log_style(color=1)
+        if len(msg) > 1024:
+            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
         self.__logger.info(msg, *args, **kwargs)
         self._log_style_reset()
 
     def demsg(self, msg, *args, **kwargs):
         self.__log_style(color=DARK_GREEN, bgd=1)
+        if len(msg) > 1024:
+            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
         self.__logger.info(msg, *args, **kwargs)
         self._log_style_reset()
 
     def warning(self, msg, *args, **kwargs):
         self.__log_style(color=YELLOW)
+        if len(msg) > 1024:
+            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
         self.__logger.warning(msg, *args, **kwargs)
         self._log_style_reset()
 
     def error(self, msg, *args, **kwargs):
         self.__log_style(color=RED, bgd=Underline)
+        if len(msg) > 1024:
+            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
         self.__logger.error(msg, *args, **kwargs)
         self._log_style_reset()
 
     def fatal(self, msg, *args, **kwargs):
         self.__log_style(color=RED, bgd=strikethrough)
+        if len(msg) > 1024:
+            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
         self.__logger.critical(msg, *args, **kwargs)
         self._log_style_reset()
 

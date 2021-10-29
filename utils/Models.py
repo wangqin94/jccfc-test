@@ -3,6 +3,7 @@
 # # -----------------------------------------------------------
 # # - 公共模块函数变量
 # # -----------------------------------------------------------
+import base64
 import datetime as datetimes
 import os
 import random
@@ -361,5 +362,20 @@ def get_before_day(n):
     return before_month_today
 
 
+# # -----------------------------------------------------------
+# # - 图片转为base64字符串
+# # -----------------------------------------------------------
+def get_base64_from_img(img_path):
+    """
+    @param img_path: 图片存储路径
+    @return:
+    """
+    with open(img_path, "rb") as f:  # 转为二进制格式
+        base64_data = base64.b64encode(f.read())  # 使用base64进行加密
+        return base64_data.decode()
+
+
 if __name__ == "__main__":
-    print(get_before_day(1))
+    img_path = os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png')
+    r = get_base64_from_img(img_path)
+    print(r)
