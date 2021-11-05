@@ -43,12 +43,12 @@ class ZhiXinBizImpl(INIT):
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
 
     # 客户撞库校验
-    def checkUser(self, id_card, iphone, **kwargs):
+    def checkUser(self, iphone, **kwargs):
         checkUser_data = dict()
         # body
         checkUser_data['requestNo'] = 'requestNo' + self.strings + "_1541"
         checkUser_data['requestTime'] = self.times
-        checkUser_data['md5'] = computeMD5(iphone+id_card)
+        checkUser_data['md5'] = computeMD5(iphone)
         checkUser_data['ct'] = self.times
 
         # 更新 payload 字段值
@@ -164,6 +164,22 @@ class ZhiXinBizImpl(INIT):
 
         self.log.demsg('开始授信申请...')
         url = self.host + self.cfg['applyCredit']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 授信查询payload
+    def queryCreditResult(self, **kwargs):
+        queryCreditResult_data = dict()
+        # body
+
+        # 更新 payload 字段值
+        queryCreditResult_data.update(kwargs)
+        parser = DataUpdate(self.cfg['queryCreditResult']['payload'], **queryCreditResult_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('确认绑卡请求...')
+        url = self.host + self.cfg['queryCreditResult']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
