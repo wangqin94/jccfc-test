@@ -99,6 +99,7 @@ MeiTuan = {
                     "mt_creditscore_level_v4_0_1": "1002"
                 },
                 "Signature_date": "20160225",
+                "Family_Address": "成都市武侯区府城大道中段85号",
                 # "FACE_PIC_PATH": "/hj/xdgl/meituan/wymface.png",
                 "FACE_PIC_PATH": "/hj/xdgl/meituan/cqface",    # /hj/xdgl/meituan/cqface.png
             }
