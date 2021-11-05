@@ -126,26 +126,6 @@ zhixin = {
                         "workUnit": "工作单位地址成都莆田街133号-4-5",  # 工作单位地址
                         "addrDetail": "家庭地址成都莆田街133号-4-5"  # 家庭地址
                     },
-                    "idCardOcrInfo": {
-                        "positive": "身份证正面Base64字符串",  # 身份证正面照片：图片文件转 Base64 字符串
-                        "negative": "身份证反面Base64字符串",  # 身份证反面照片：图片文件转 Base64 字符串
-                        "nameOCR": "姓名（OCR）",  # 姓名（OCR）
-                        "idCardNoOCR": "20",  # 身份证号码（OCR）
-                        "beginTimeOCR": "19900101",  # 身份证有效期开始时间（OCR）yyyyMMdd
-                        "duetimeOCR": "20300101",  # 身 份 证 有 效 期（OCR）  有效期最后一天，如 20200921或长期
-                        "addressOCR": "身份证地址成都莆田街133号-4-5",  # 身份证地址（OCR）
-                        "sexOCR": "1",  # 性别（OCR）
-                        "ethnicOCR": "汉",  # 民族（OCR）
-                        "issueOrgOCR": "乌兹别克族"  # 签发机关（OCR）
-                    },
-                    "faceInfo": {
-                        "assayTime": "yyyyMMddHHmmss",  # 活体信息采集时间：yyyyMMddHHmmss
-                        "assayType": "FACEAA",  # 活体来源  采集 SDK，为 face++或商汤FACEAA:face++SENSETIME:商汤
-                        "best": "活体图Base64 字符串",  # 最佳照片  图片文件转 Base64 字符串
-                        "action1": "动作图1Base64字符串",  # 每个动作截取的照片
-                        "action2": "动作图2Base64字符串",  # 身每个动作截取的照片
-                        "action3": "动作图3Base64字符串",  # 每个动作截取的照片
-                    },
                     "linkmanInfo": {
                         "relationshipA": "10",  # 紧急联系人A关系 枚举值见RelationshipEnum
                         "nameA": "联系人张三",  # 直接取自用户通讯录，可能出现数字，字母及特殊字符
@@ -183,10 +163,30 @@ zhixin = {
                         "latitude": "46.82745798052434",  # 维度
                         "longitude": "127.12782734275143"  # 经度
                     },
+                    "idCardOcrInfo": {
+                        "nameOCR": "姓名（OCR）",  # 姓名（OCR）
+                        "idCardNoOCR": "20",  # 身份证号码（OCR）
+                        "beginTimeOCR": "19900101",  # 身份证有效期开始时间（OCR）yyyyMMdd
+                        "duetimeOCR": "20300101",  # 身 份 证 有 效 期（OCR）  有效期最后一天，如 20200921或长期
+                        "addressOCR": "身份证地址成都莆田街133号-4-5",  # 身份证地址（OCR）
+                        "sexOCR": "M",  # 性别（OCR）
+                        "ethnicOCR": "汉",  # 民族（OCR）
+                        "issueOrgOCR": "乌兹别克族",  # 签发机关（OCR）
+                        "positive": "身份证正面Base64字符串",  # 身份证正面照片：图片文件转 Base64 字符串
+                        "negative": "身份证反面Base64字符串"  # 身份证反面照片：图片文件转 Base64 字符串
+                    },
+                    "faceInfo": {
+                        "assayTime": "yyyyMMddHHmmss",  # 活体信息采集时间：yyyyMMddHHmmss
+                        "assayType": "FACEAA",  # 活体来源  采集 SDK，为 face++或商汤FACEAA:face++SENSETIME:商汤
+                        "best": "活体图Base64 字符串",  # 最佳照片  图片文件转 Base64 字符串
+                        "action1": "动作图1Base64字符串",  # 每个动作截取的照片
+                        "action2": "动作图2Base64字符串",  # 身每个动作截取的照片
+                        "action3": "动作图3Base64字符串",  # 每个动作截取的照片
+                    },
                     "agreementTime": "yyyyMMddHHmmss",  # 借款相关协议签署时间 yyyyMMddHHmmss
                 }
             },
-            "method": "verifyCode",
+            "method": "applyCredit",
             "partner": "ICE_JCXJ",
             "encFlag": "Y",
             "encType": "DES",
