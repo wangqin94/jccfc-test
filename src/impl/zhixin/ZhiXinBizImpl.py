@@ -172,6 +172,9 @@ class ZhiXinBizImpl(INIT):
     def queryCreditResult(self, **kwargs):
         queryCreditResult_data = dict()
         # body
+        queryCreditResult_data['requestNo'] = 'requestNo' + self.strings + "_4000"
+        queryCreditResult_data['requestTime'] = self.times
+        queryCreditResult_data['ct'] = self.times
 
         # 更新 payload 字段值
         queryCreditResult_data.update(kwargs)
