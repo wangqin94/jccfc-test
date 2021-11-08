@@ -3,14 +3,11 @@
 # 应急支付接口数据封装类
 # ------------------------------------------
 import hashlib
-import time
 
-from utils.Models import *
-from engine.Base import INIT
 from config.TestEnvInfo import *
-from src.testData.moduleData import YingJiZF
+from src.test_data.module_data import YingJiZF
 from src.enums.EnumsCommon import *
-from src.impl.common.common import *
+from src.impl.common.CommonUtils import *
 
 
 def encrypt_md5(data):

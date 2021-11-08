@@ -64,11 +64,11 @@ zhixin = {
                     "certificationCode": ""  # 鉴权代码:授信环节为空借款环节回传 3.3.1 借款试算 输出参数鉴权代码还款环节回传 3.4.1 还款试算 输出参数鉴权代码
                 }
             },
-            "method": "checkUser",
+            "method": "applyCertification",
             "partner": "ICE_JCXJ",
             "encFlag": "Y",
             "encType": "DES",
-            "cmp": "N",
+            "cmp": "Y",
             "ct": "1523619204809"
         }
     },
@@ -123,7 +123,8 @@ zhixin = {
                         "province": "510000",  # 省份代码
                         "city": "510100",  # 城市代码
                         "district": "510107",  # 区代码
-                        "workUnit": "工作单位地址成都莆田街133号-4-5",  # 工作单位地址
+                        "workUnit": "华西精神病研究研究",  # 工作单位
+                        "workAddr": "工作单位地址成都莆田街133号-4-5",  # 工作单位地址
                         "addrDetail": "家庭地址成都莆田街133号-4-5"  # 家庭地址
                     },
                     "linkmanInfo": {
@@ -190,7 +191,7 @@ zhixin = {
             "partner": "ICE_JCXJ",
             "encFlag": "Y",
             "encType": "DES",
-            "cmp": "N",
+            "cmp": "Y",
             "ct": "1523619204809"
         }
     },
@@ -222,14 +223,22 @@ zhixin = {
     'queryCreditResult': {
         'interface': '/api/v1/zhixin/credit/queryCreditResult',
         'payload': {
-            "requestNo": "361920480915sssss",
-            "requestTime": "1523619204809",
+            'data': {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",  # 用户ID： 必填
+                    "creditApplyNo": "${creditApplyNo}"  # 申请单号  必填
+                }
+            },
+            "method": "queryCreditResult",
             "partner": "ICE_JCXJ",
-            "version": "1.0",
-            "input": {
-                "userId": "${userId}",  # 用户ID： 必填
-                "creditApplyNo": "${creditApplyNo}"  # 申请单号  必填
-            }
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
         }
     },
 }
