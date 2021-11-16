@@ -125,7 +125,7 @@ zhixin = {
                         "district": "510107",  # 区代码
                         "workUnit": "华西精神病研究研究",  # 工作单位
                         "workAddr": "工作单位地址成都莆田街133号-4-5",  # 工作单位地址
-                        "addrDetail": "家庭地址成都莆田街133号-4-5"  # 家庭地址
+                        "addrDetail": "家庭地址广西壮族自治区莆田街133号-4-5"  # 家庭地址
                     },
                     "linkmanInfo": {
                         "relationshipA": "10",  # 紧急联系人A关系 枚举值见RelationshipEnum
@@ -148,9 +148,9 @@ zhixin = {
                         "deviceOsVersion": "iPhone OS 3.0（build 7a341）",  # 操作系统版本
                         "deviceIp": "101.101.101.101.1",  # 终端 IP
                         "imsi": "imsi354717043143933",  # IMSI( 国 际 移 动 用户识别码)  ios 拿不到用的 idfa安卓 Q 拿不到，异常时默认为空(null 或"")
-                        "isRoot": "Y",  # 是否 root Y:是 N：否 或空
-                        "isEmulator": "Y",  # 是否模拟器 Y:是 N：否 或空
-                        "networkType": "wifi",  # 网络状态  wifi/4g/3g/2g
+                        "isRoot": "N",  # 是否 root Y:是 N：否 或空
+                        "isEmulator": "N",  # 是否模拟器 Y:是 N：否 或空
+                        "networkType": "4g",  # 网络状态  wifi/4g/3g/2g
                         "wifiMac": "03:03:30:3A:3B:3C",  # 手机 mac
                         "wifiName": "WIFI 名称",  # WIFI 名称
                         "bssid": "B3:93:9D:36:48:5E",  # 路由 MAC
@@ -234,6 +234,93 @@ zhixin = {
                 }
             },
             "method": "queryCreditResult",
+            "partner": "ICE_JCXJ",
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
+        }
+    },
+
+    # 还款试算
+    'repayTrial': {
+        'interface': '/api/v1/zhixin/credit/repayTrial',
+        'payload': {
+            'data': {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",  # 用户ID： 必填
+                    "creditApplyNo": "${creditApplyNo}",  # 申请单号  必填
+                    "loanApplyNo": "${loanApplyNo}",  # 智信引擎借款申请单号  必填
+                    "partnerLoanNo": "${partnerLoanNo}",  # 合作方内部借款申请单号  必填
+                    "repayType": "${repayType}",  # 还款类型 1 按期还款 2 提前结清3 按金额还款按期还款时，需合作方自行计算还款期次。用户无法在前端选择特定期次还款。  必填
+                    "repayTime": "${repayTime}",  # 还款时间 格式：yyyyMMddHHmmss  必填
+                    "repayAmt": "${repayAmt}",  # 还款金额  按金额还款时有值,其他还款类型没有还款金额 选填
+                }
+            },
+            "method": "repayTrial",
+            "partner": "ICE_JCXJ",
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
+        }
+    },
+
+    # 还款申请
+    'applyRepayment': {
+        'interface': '/api/v1/zhixin/credit/applyRepayment',
+        'payload': {
+            'data': {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",  # 用户ID： 必填
+                    "creditApplyNo": "${creditApplyNo}",  # 申请单号  必填
+                    "loanApplyNo": "${loanApplyNo}",  # 智信引擎借款申请单号  必填
+                    "partnerLoanNo": "${partnerLoanNo}",  # 合作方内部借款申请单号  必填
+                    "repayType": "${repayType}",  # 还款类型 1 按期还款 2 提前结清3 按金额还款按期还款时，需合作方自行计算还款期次。用户无法在前端选择特定期次还款。  必填
+                    "repayTime": "${repayTime}",  # 还款时间 格式：yyyyMMddHHmmss  必填
+                    "repayAmt": "${repayAmt}",  # 还款金额  按金额还款时有值,其他还款类型没有还款金额 选填
+                    "withholdFlag": "Y",  # Y:合作方扣款N:合作方不扣款，由智信引擎代扣 必填
+                    "bankCardInfo": {
+                        "bankCode": "0001",  # 银行编码 枚举值见BankCodeEnum
+                        "idCardNo": "身份证号",  # 身份证号
+                        "userMobile": "手机号",  # 银行预留手机号
+                        "userName": "姓名",  # 姓名
+                        "bankCardNo": "银行卡号"  # 银行卡号
+                    },
+                }
+            },
+            "method": "applyRepayment",
+            "partner": "ICE_JCXJ",
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
+        }
+    },
+
+    # 还款结果查询
+    'queryRepayResult': {
+        'interface': '/api/v1/zhixin/credit/queryRepayResult',
+        'payload': {
+            'data': {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",  # 用户ID： 必填
+                    "repayApplyNo": "${repayApplyNo}"  # 申请单号  必填
+                }
+            },
+            "method": "queryRepayResult",
             "partner": "ICE_JCXJ",
             "encFlag": "Y",
             "encType": "DES",

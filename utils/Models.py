@@ -48,7 +48,7 @@ def wait_time(sec):
 # # -----------------------------------------------------------
 # # - 用户四要素生成
 # # -----------------------------------------------------------
-def get_base_data(env, *project, **kwargs):
+def get_base_data(env, *project, back=20, **kwargs):
     strings = str(int(round(time.time() * 1000)))
     data = {}
     res = requests.get('http://10.10.100.153:8081/getTestData')
@@ -57,6 +57,17 @@ def get_base_data(env, *project, **kwargs):
     data['bankid'] = eval(res.text)["银行卡号"]
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
+
+    # 读取文件行数，超过20行删除历史数据
+    with open('person.py', "r", encoding='utf-8') as f:  # 打开文件
+        back_data = f.readlines()  # 读取文件
+        count = len(back_data)    # 获取txt文件的行数
+        if count > back:
+            start = count-back
+            back_data = back_data[start:count]  # 只读取最后20行的内容
+            f = open('person.py', "w", encoding='utf-8')  # 以写入的形式打开txt文件
+            f.writelines(back_data)  # 将修改后的文本内容写入
+            f.close()  # 关闭文件
 
     # project赋值后天从到data中
     if project:

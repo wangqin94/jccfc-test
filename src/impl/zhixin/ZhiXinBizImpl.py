@@ -181,7 +181,7 @@ class ZhiXinBizImpl(INIT):
         parser = DataUpdate(self.cfg['queryCreditResult']['payload'], **queryCreditResult_data)
         self.active_payload = parser.parser
 
-        self.log.demsg('确认绑卡请求...')
+        self.log.demsg('授信查询请求...')
         url = self.host + self.cfg['queryCreditResult']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
@@ -219,40 +219,81 @@ class ZhiXinBizImpl(INIT):
         response['orderId'] = loan_data['orderId']
         return response
 
-    # 还款通知申请
-    def notice(self, **kwargs):
-        """ # 还款通知payload字段装填
+    # 还款试算申请
+    def repayTrial(self, **kwargs):
+        """ # 还款试算payload字段装填
         注意：键名必须与接口原始数据的键名一致
         :param kwargs: 需要临时装填的字段以及值 eg: key=value
         :return: None
         """
-        strings = str(int(round(time.time() * 1000)))
-        notice_data = dict()
-        comment = dict()
-        # notice_data['order_id'] = "order_id" + strings
-        notice_data['seq_no'] = "seq_no" + strings
-        notice_data['cur_date'] = time.strftime("%Y%m%d", time.localtime())
-        notice_data['tran_time'] = time.strftime("%Y%m%d%H%M%S", time.localtime())
-        notice_data['type'] = int(self.type)
+        repayTrial_data = dict()
+        # body
+        repayTrial_data['requestNo'] = 'requestNo' + self.strings + "_8000"
+        repayTrial_data['requestTime'] = self.times
+        repayTrial_data['ct'] = self.times
 
-        # 根据姓名查询支用信息
-        key1 = "user_name = '{}'".format(self.data['name'])
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+        # 还款时间默认当前系统时间
+        repayTrial_data['repayTime'] = self.date
 
-        # 借据号默认为空取当前用户第一笔借据号，否则取赋值借据号
-        loan_no = self.loan_no if self.loan_no else credit_loan_apply["third_loan_invoice_id"]
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
-        notice_data['loan_id'] = loan_no
-        notice_data['order_id'] = loan_no
-        comment['amount_total'] = str(int(credit_loan_apply["apply_amount"]) * 100)
-        comment['loan_order_id'] = str(credit_loan_apply["thirdpart_order_id"])
-        notice_data["comment"] = str(comment)
-
-        notice_data.update(kwargs)
-        parser = DataUpdate(self.cfg['notice']['payload'], **notice_data)
+        # 更新 payload 字段值
+        repayTrial_data.update(kwargs)
+        parser = DataUpdate(self.cfg['repayTrial']['payload'], **repayTrial_data)
         self.active_payload = parser.parser
 
-        self.log.demsg('开始通知申请...')
-        url = self.host + self.cfg['notice']['interface']
-        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
+        self.log.demsg('发起还款试算请求...')
+        url = self.host + self.cfg['repayTrial']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 还款申请
+    def applyRepayment(self, **kwargs):
+        """ # 还款申请payload字段装填
+        注意：键名必须与接口原始数据的键名一致
+        :param kwargs: 需要临时装填的字段以及值 eg: key=value
+        :return: None
+        """
+        applyRepayment_data = dict()
+        # body
+        applyRepayment_data['requestNo'] = 'requestNo' + self.strings + "_8000"
+        applyRepayment_data['requestTime'] = self.times
+        applyRepayment_data['ct'] = self.times
+
+        # 还款时间默认当前系统时间
+        applyRepayment_data['repayTime'] = self.date
+
+        # 银行卡信息
+        applyRepayment_data['idCardNo'] = self.data['cer_no']
+        applyRepayment_data['userMobile'] = self.data['telephone']
+        applyRepayment_data['userName'] = self.data['name']
+        applyRepayment_data['bankCardNo'] = self.data['bankid']
+
+        # 更新 payload 字段值
+        applyRepayment_data.update(kwargs)
+        parser = DataUpdate(self.cfg['applyRepayment']['payload'], **applyRepayment_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('发起还款请求...')
+        url = self.host + self.cfg['applyRepayment']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 授信查询payload
+    def queryRepayResult(self, **kwargs):
+        queryRepayResult_data = dict()
+        # body
+        queryRepayResult_data['requestNo'] = 'requestNo' + self.strings + "_4000"
+        queryRepayResult_data['requestTime'] = self.times
+        queryRepayResult_data['ct'] = self.times
+
+        # 更新 payload 字段值
+        queryRepayResult_data.update(kwargs)
+        parser = DataUpdate(self.cfg['queryRepayResult']['payload'], **queryRepayResult_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('还款查询请求...')
+        url = self.host + self.cfg['queryRepayResult']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
         return response
