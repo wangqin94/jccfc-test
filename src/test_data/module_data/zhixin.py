@@ -242,6 +242,121 @@ zhixin = {
         }
     },
 
+    # 借款试算
+    'loanTrial': {
+        'interface': '/api/v1/zhixin/loan/loanTrial',
+        'payload': {
+            "data": {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",  # 用户ID： 必填
+                    "loanApplyNo": "${loanApplyNo}",  # 申请单号  必填
+                    "loanTime": "yyyyMMddHHmmss",  # 提现时间 格式：yyyyMMddHHmmss
+                    "partnerCreditNo": "${partnerCreditNo}",  # 合作方内部授信申请单号
+                    "productCode": "F21E041",
+                    "loanAmt": "3000",  # 提现金额
+                    "loanPurpose": "05",  # 贷款用途
+                    "term": "6",  # 贷款周期
+                    "repayMethod": "01",
+                },
+                "bankCardInfo": {
+                    "bankCode": "0001",  # 银行编号
+                    "idCardNo": "身份证号",  # 身份证号
+                    "userMobile": "手机号",  # 手机号
+                    "userName": "姓名",  # 姓名
+                    "bankCardNo": "银行卡号"  # 银行卡号
+                },
+            },
+            "method": "loanTrial",
+            "partner": "ICE_JCXJ",
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
+
+        }
+    },
+
+    # 借款申请
+    'applyLoan': {
+        'interface': '/api/v1/zhixin/loan/applyLoan',
+        'payload': {
+            "data": {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",  # 用户ID
+                    "loanApplyNo": "${loanApplyNo}",  # 申请单号
+                    "loanTime": "${loanTime}",
+                    "partnerCreditNo": "${partnerCreditNo}",  # 授信号
+                    "productCode": "F21E041",
+                    "loanAmt": "3000",  # 提现金额
+                    "loanPurpose": "02",
+                    "term": "6",
+                    "repayMethod": "01",
+                    "agreementTime": "yyyyMMddHHmmss",
+                    "bankCardInfo": {
+                        "bankCode": "0001",  # 银行编号
+                        "idCardNo": "身份证",  # 身份证号
+                        "userMobile": "手机号",  # 手机号
+                        "userName": "姓名",  # 姓名
+                        "bankCardNo": "银行卡号",  # 银行卡号
+                    },
+                    "idCardOcrInfo": {
+                        "nameOCR": "姓名（OCR）",  # 姓名（OCR）
+                        "idCardNoOCR": "20",  # 身份证号码（OCR）
+                        "beginTimeOCR": "20140212",  # 身份证有效期开始时间（OCR）yyyyMMdd
+                        "duetimeOCR": "20240212",  # 身 份 证 有 效 期（OCR）  有效期最后一天，如 20200921或长期
+                        "addressOCR": "身份证地址成都莆田街133号-4-5",  # 身份证地址（OCR）
+                        "sexOCR": "M",  # 性别（OCR）
+                        "ethnicOCR": "汉",  # 民族（OCR）
+                        "issueOrgOCR": "乌兹别克族",  # 签发机关（OCR）
+                        "positive": "身份证正面Base64字符串",  # 身份证正面照片：图片文件转 Base64 字符串
+                        "negative": "身份证反面Base64字符串",  # 身份证反面照片：图片文件转 Base64 字符串
+                    },
+                    "geoInfo": {
+                        "latitude": "17.0914633",
+                        "longitude": "21.150069",
+                    },
+                },
+            },
+            "method": "applyLoan",
+            "partner": "ICE_JCXJ",
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
+        },
+    },
+
+    # 借款结果查询
+    "queryLoanResult": {
+        'interface': '/api/v1/zhixin/loan/queryLoanResult',
+        'payload': {
+            "data": {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",
+                    "loanApplyNo": "${loanApplyNo}",
+                },
+            },
+            "method": "checkUser",
+            "partner": "ICE_JCXJ",
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
+        },
+    },
+
     # 还款试算
     'repayTrial': {
         'interface': '/api/v1/zhixin/credit/repayTrial',
