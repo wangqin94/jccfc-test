@@ -5,11 +5,9 @@
 import hashlib
 
 from config.TestEnvInfo import TEST_ENV_INFO
-from src.impl.common.CommonUtils import post_with_encrypt
-from utils.Models import *
-from engine.Base import INIT
 from src.enums.EnumsCommon import *
 from src.test_data.module_data import zhixin
+from src.impl.common.CommonUtils import *
 
 
 def computeMD5(message):
@@ -21,16 +19,16 @@ def computeMD5(message):
 class ZhiXinBizImpl(INIT):
     def __init__(self, data=None, encrypt_flag=True):
         super().__init__()
-        self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
+        self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
 
         # 解析项目特性配置
         self.cfg = zhixin.zhixin
 
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ZHIXIN.value))
-        self.log.info('用户四要素信息 \n%s', self.data)
+        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ZHIXIN.value), 'userId')
+        self.log.info('用户四要素信息 {}'.format(self.data))
 
-        self.loan_amount = 1000000  # 支用申请金额, 默认1000000  单位分
-        self.period = 3  # 借款期数, 默认3期
+        self.loanAmt = 1000  # 支用申请金额, 默认1000 单位元
+        self.term = 3  # 借款期数, 默认3期
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
@@ -41,6 +39,8 @@ class ZhiXinBizImpl(INIT):
 
         self.encrypt_url = self.host + self.cfg['encrypt']['interface']
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
+
+        self.getSqlData = GetSqlData()
 
     # 客户撞库校验
     def checkUser(self, iphone, **kwargs):
@@ -114,7 +114,7 @@ class ZhiXinBizImpl(INIT):
         # body
         credit_data['requestNo'] = 'requestNo' + self.strings + "_3000"
         credit_data['requestTime'] = self.times
-        credit_data['userId'] = 'userId' + self.strings
+        credit_data['userId'] = self.data['userId']
         credit_data['creditApplyNo'] = 'creditApplyNo' + self.strings
         credit_data['applyTime'] = self.date
         credit_data['agreementTime'] = self.date
@@ -170,11 +170,20 @@ class ZhiXinBizImpl(INIT):
 
     # 授信查询payload
     def queryCreditResult(self, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        :param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return:
+        """
         queryCreditResult_data = dict()
         # body
         queryCreditResult_data['requestNo'] = 'requestNo' + self.strings + "_4000"
         queryCreditResult_data['requestTime'] = self.times
         queryCreditResult_data['ct'] = self.times
+
+        credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        queryCreditResult_data['userId'] = self.data['userId']
+        queryCreditResult_data['creditApplyNo'] = credit_apply_info['credit_apply_id']
 
         # 更新 payload 字段值
         queryCreditResult_data.update(kwargs)
@@ -187,36 +196,149 @@ class ZhiXinBizImpl(INIT):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
+    # 借款还算
+    def loanTrial(self, **kwargs):
+        """ # 借款试算payload字段装填
+        注意：键名必须与接口原始数据的键名一致
+        :param kwargs: 需要临时装填的字段以及值 eg: key=value
+        :return: None
+        """
+        loanTrial_data = dict()
+        # body
+        loanTrial_data['requestNo'] = 'requestNo' + self.strings + "_5000"
+        loanTrial_data['requestTime'] = self.times
+        loanTrial_data['ct'] = self.times
+
+        loanTrial_data['loanApplyNo'] = 'loanApplyNo' + self.strings
+        loanTrial_data['userId'] = self.data['userId']
+        loanTrial_data['loanTime'] = self.date
+        credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        loanTrial_data['partnerCreditNo'] = credit_apply_info['credit_apply_id']
+        loanTrial_data['loanAmt'] = self.loanAmt
+        loanTrial_data['term'] = self.term
+
+        # 银行卡信息
+        loanTrial_data['idCardNo'] = self.data['cer_no']
+        loanTrial_data['userMobile'] = self.data['telephone']
+        loanTrial_data['userName'] = self.data['name']
+        loanTrial_data['bankCardNo'] = self.data['bankid']
+
+        # 更新 payload 字段值
+        loanTrial_data.update(kwargs)
+        parser = DataUpdate(self.cfg['loanTrial']['payload'], **loanTrial_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('发起借款试算请求...')
+        url = self.host + self.cfg['loanTrial']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
     # 支用申请
-    def loan(self, **kwargs):
+    def applyLoan(self, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         :param kwargs: 需要临时装填的字段以及值 eg: key=value
         :return: None
         """
-        strings = str(int(round(time.time() * 1000)))
-        loan_data = dict()
-        loan_data['prcid'] = self.data['cer_no']
-        loan_data['bankcard'] = self.data['bankid']
-        loan_data['name'] = self.data['name']
-        loan_data['phonenumber'] = self.data['telephone']
+        applyLoan_data = dict()
+        # body
+        applyLoan_data['requestNo'] = 'requestNo' + self.strings + "_6000"
+        applyLoan_data['requestTime'] = self.times
+        applyLoan_data['ct'] = self.times
 
-        loan_data['timestamp'] = time.strftime('%Y%m%d%H%M%S')
-        loan_data['reqSn'] = 'Loan_req' + strings + "1001"
-        loan_data['sessionId'] = 'Loan_sid' + strings + "1002"
-        loan_data['transactionId'] = 'Loan_tid' + strings + "1003"
-        loan_data['cashAmount'] = self.loan_amount  # 支用申请金额, 默认1000000分
-        loan_data['orderId'] = 'orderId' + strings
-        loan_data['term'] = self.period
+        applyLoan_data['loanApplyNo'] = 'loanApplyNo' + self.strings
+        applyLoan_data['userId'] = self.data['userId']
+        applyLoan_data['loanTime'] = self.date
+        credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        applyLoan_data['partnerCreditNo'] = credit_apply_info['credit_apply_id']
+        applyLoan_data['loanAmt'] = self.loanAmt
+        applyLoan_data['term'] = self.term
 
-        loan_data.update(kwargs)
-        parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
+        # ocr信息
+        applyLoan_data['nameOCR'] = self.data['name']
+        applyLoan_data['idCardNoOCR'] = self.data['cer_no']
+        positive = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid1.png'))
+        applyLoan_data['positive'] = positive  # 身份证正面base64字符串
+        negative = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png'))
+        applyLoan_data['negative'] = negative  # 身份证反面base64字符串
+
+        # 银行卡信息
+        applyLoan_data['idCardNo'] = self.data['cer_no']
+        applyLoan_data['userMobile'] = self.data['telephone']
+        applyLoan_data['userName'] = self.data['name']
+        applyLoan_data['bankCardNo'] = self.data['bankid']
+
+        applyLoan_data['agreementTime'] = self.date
+
+        # 更新 payload 字段值
+        applyLoan_data.update(kwargs)
+        parser = DataUpdate(self.cfg['applyLoan']['payload'], **applyLoan_data)
         self.active_payload = parser.parser
 
-        self.log.demsg('开始支用申请...')
-        url = self.host + self.cfg['loan']['interface']
-        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
-        response['orderId'] = loan_data['orderId']
+        self.log.demsg('发起支用请求...')
+        url = self.host + self.cfg['applyLoan']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 借款查询payload
+    def queryLoanResult(self, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        :param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return:
+        """
+        queryLoanResult_data = dict()
+        # body
+        queryLoanResult_data['requestNo'] = 'requestNo' + self.strings + "_7000"
+        queryLoanResult_data['requestTime'] = self.times
+        queryLoanResult_data['ct'] = self.times
+
+        loan_apply_info = self.getSqlData.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
+        queryLoanResult_data['userId'] = self.data['userId']
+        queryLoanResult_data['loanApplyNo'] = loan_apply_info['loan_apply_id']
+
+        # 更新 payload 字段值
+        queryLoanResult_data.update(kwargs)
+        parser = DataUpdate(self.cfg['queryLoanResult']['payload'], **queryLoanResult_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('借款查询请求...')
+        url = self.host + self.cfg['queryLoanResult']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 借款&还款计划查询payload
+    def queryLoanPlan(self, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        :param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return:
+        """
+        queryLoanPlan_data = dict()
+        # body
+        queryLoanPlan_data['requestNo'] = 'requestNo' + self.strings + "_8000"
+        queryLoanPlan_data['requestTime'] = self.times
+        queryLoanPlan_data['ct'] = self.times
+
+        loan_apply_info = self.getSqlData.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
+        queryLoanPlan_data['userId'] = self.data['userId']
+        queryLoanPlan_data['loanApplyNo'] = loan_apply_info['loan_apply_id']
+        credit_loan_invoice = self.getSqlData.get_credit_database_info('credit_loan_invoice',
+                                                                       loan_apply_id=queryLoanPlan_data['loanApplyNo'])
+        queryLoanPlan_data['partnerLoanNo'] = credit_loan_invoice['loan_invoice_id']
+
+        # 更新 payload 字段值
+        queryLoanPlan_data.update(kwargs)
+        parser = DataUpdate(self.cfg['queryLoanPlan']['payload'], **queryLoanPlan_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('借款&还款计划查询请求...')
+        url = self.host + self.cfg['queryLoanPlan']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
         return response
 
     # 还款试算申请
@@ -228,7 +350,7 @@ class ZhiXinBizImpl(INIT):
         """
         repayTrial_data = dict()
         # body
-        repayTrial_data['requestNo'] = 'requestNo' + self.strings + "_8000"
+        repayTrial_data['requestNo'] = 'requestNo' + self.strings + "_9000"
         repayTrial_data['requestTime'] = self.times
         repayTrial_data['ct'] = self.times
 
@@ -255,7 +377,7 @@ class ZhiXinBizImpl(INIT):
         """
         applyRepayment_data = dict()
         # body
-        applyRepayment_data['requestNo'] = 'requestNo' + self.strings + "_8000"
+        applyRepayment_data['requestNo'] = 'requestNo' + self.strings + "_1100"
         applyRepayment_data['requestTime'] = self.times
         applyRepayment_data['ct'] = self.times
 
@@ -279,11 +401,16 @@ class ZhiXinBizImpl(INIT):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    # 授信查询payload
+    # 还款查询payload
     def queryRepayResult(self, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        :param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return:
+        """
         queryRepayResult_data = dict()
         # body
-        queryRepayResult_data['requestNo'] = 'requestNo' + self.strings + "_4000"
+        queryRepayResult_data['requestNo'] = 'requestNo' + self.strings + "_1200"
         queryRepayResult_data['requestTime'] = self.times
         queryRepayResult_data['ct'] = self.times
 

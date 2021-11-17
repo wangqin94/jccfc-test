@@ -11,6 +11,12 @@ from enum import Enum
 
 
 # @unique
+class ZhiXinApiStatusEnum(Enum):
+    SUCCESS = 'S'  # 成功
+    TO_DOING = 'P'  # 处理中
+    FAIL = 'F'
+
+# @unique
 class JopEnum(Enum):
     JOP0 = "0"  # 国家机关、党群组织、企业、事业单位负责人
     JOP1 = "1"  # 专业技术人员

@@ -315,7 +315,7 @@ zhixin = {
                         "addressOCR": "身份证地址成都莆田街133号-4-5",  # 身份证地址（OCR）
                         "sexOCR": "M",  # 性别（OCR）
                         "ethnicOCR": "汉",  # 民族（OCR）
-                        "issueOrgOCR": "乌兹别克族",  # 签发机关（OCR）
+                        "issueOrgOCR": "发证机关：国务院999号",  # 签发机关（OCR）
                         "positive": "身份证正面Base64字符串",  # 身份证正面照片：图片文件转 Base64 字符串
                         "negative": "身份证反面Base64字符串",  # 身份证反面照片：图片文件转 Base64 字符串
                     },
@@ -345,10 +345,34 @@ zhixin = {
                 "version": "1.0",
                 "input": {
                     "userId": "${userId}",
-                    "loanApplyNo": "${loanApplyNo}",
+                    "loanApplyNo": "${loanApplyNo}"
                 },
             },
-            "method": "checkUser",
+            "method": "queryLoanResult",
+            "partner": "ICE_JCXJ",
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
+        },
+    },
+
+    # 借据&还款计划查询
+    "queryLoanPlan": {
+        'interface': '/api/v1/zhixin/repay/queryLoanPlan',
+        'payload': {
+            "data": {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",
+                    "loanApplyNo": "${loanApplyNo}",
+                    "partnerLoanNo": "${partnerLoanNo}",  # 合作方借据呈
+                },
+            },
+            "method": "queryLoanPlan",
             "partner": "ICE_JCXJ",
             "encFlag": "Y",
             "encType": "DES",

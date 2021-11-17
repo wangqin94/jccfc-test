@@ -21,7 +21,7 @@ class MyTestCase(unittest.TestCase):
         zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                           cdKey=res['cdKey'])
         # 发起授信申请
-        self.creditApplyNo = json.loads(zhixin.credit(job='1').get('output'))['creditApplyNo']
+        self.creditApplyNo = json.loads(zhixin.credit(userMobile='13999999999').get('output'))['creditApplyNo']
 
     """ 后置条件处理 """
 
