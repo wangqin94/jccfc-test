@@ -1,6 +1,5 @@
 import unittest
 
-from config.TestEnvInfo import TEST_ENV_INFO
 from src.impl.common.CommonCheckBizImpl import *
 import time
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
@@ -31,11 +30,11 @@ class MyTestCase(unittest.TestCase):
         creditRes = json.loads(zhixin.credit().get('output'))
         self.creditApplyNo = creditRes['creditApplyNo']
 
-        # 接口层校验授信结果是否符合预期
-        time.sleep(5)
-        self.ZhiXinCheckBizImpl.check_credit_apply_status(self.data, creditRes['userId'], creditRes['creditApplyNo'])
         # 数据库陈校验授信结果是否符合预期
+        time.sleep(5)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.creditApplyNo)
+        # 接口层校验授信结果是否符合预期
+        self.ZhiXinCheckBizImpl.check_credit_apply_status(self.data, creditRes['userId'], creditRes['creditApplyNo'])
 
         # 发起支用申请
         self.loanRes = json.loads(zhixin.applyLoan(loanAmt='1000', term='6').get('output'))
@@ -44,11 +43,11 @@ class MyTestCase(unittest.TestCase):
     """ 后置条件处理 """
 
     def tearDown(self):
-        # 接口层校验授信结果是否符合预期
         time.sleep(5)
-        self.ZhiXinCheckBizImpl.check_loan_apply_status(self.data, self.loanRes['userId'], self.loanRes['loanApplyNo'])
         # 数据库陈校验授信结果是否符合预期
         self.CheckBizImpl.check_loan_apply_status(thirdpart_order_id=self.loanApplyNo)
+        # 接口层校验授信结果是否符合预期
+        self.ZhiXinCheckBizImpl.check_loan_apply_status(self.data, self.loanRes['userId'], self.loanRes['loanApplyNo'])
 
 
 if __name__ == '__main__':

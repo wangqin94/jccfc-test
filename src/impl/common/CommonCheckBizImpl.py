@@ -63,16 +63,16 @@ class CheckBizImpl(INIT):
         @param kwargs: 查询条件
         @return:
         """
-        self.log.demsg('授信结果校验...')
+        self.log.demsg('数据库授信结果校验...')
         flag = 10
         for n in range(10):
             info = self.getSqlData.get_credit_apply_info(**kwargs)
             status = info['status']
             if status == EnumCreditStatus.SUCCESS.value:
-                self.log.demsg('授信成功')
+                self.log.demsg('数据库层授信查询成功')
                 return status
             elif status == EnumCreditStatus.FAIL.value:
-                self.log.error('授信失败,状态：{}'.format(status))
+                self.log.error('数据库层授信查询结果失败,状态：{}'.format(status))
                 return status
             else:
                 self.log.demsg("授信审批状态处理中，请等待....")
