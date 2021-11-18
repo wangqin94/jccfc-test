@@ -5,7 +5,7 @@
 @Author  ：jccfc
 @Date    ：2021/11/17 15:55
 """
-from src.enums.EnumZhiXin import *
+from src.enums.EnumZhiXin import ZhiXinApiStatusEnum
 from src.impl.common.CommonUtils import *
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 
@@ -22,21 +22,21 @@ class ZhiXinCheckBizImpl(INIT):
         @param credit_apply_no:  授信申请单号
         @return:
         """
-        self.log.demsg('授信结果校验...')
-        flag = 10
+        self.log.demsg('接口层授信结果校验...')
+        flag = 6
         for n in range(flag):
             zhixin = ZhiXinBizImpl(data=data)
             res = json.loads(zhixin.queryCreditResult(userId=userid, creditApplyNo=credit_apply_no).get('output'))
             status = res['status']
             if status == ZhiXinApiStatusEnum.SUCCESS.value:
-                self.log.demsg('授信成功')
+                self.log.demsg('接口层查询：授信成功')
                 break
             elif status == ZhiXinApiStatusEnum.FAIL.value:
-                self.log.error('授信失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
+                self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
                 break
             elif status == ZhiXinApiStatusEnum.TO_DOING.value:
                 self.log.demsg("授信审批状态处理中，请等待....")
-                time.sleep(5)
+                time.sleep(15)
                 if n == flag-1:
                     self.log.warning("超过当前系统设置等待时间，请手动查看结果....")
 
@@ -48,11 +48,11 @@ class ZhiXinCheckBizImpl(INIT):
         @return:
         """
         self.log.demsg('支用结果校验...')
-        flag = 10
+        flag = 6
         for n in range(flag):
             zhixin = ZhiXinBizImpl(data=data)
             res = json.loads(zhixin.queryLoanResult(userId=userid, loanApplyNo=loan_apply_no).get('output'))
-            status = res['status']
+            status = res['loanStatus']
             if status == ZhiXinApiStatusEnum.SUCCESS.value:
                 self.log.demsg('支用成功')
                 break
@@ -61,6 +61,6 @@ class ZhiXinCheckBizImpl(INIT):
                 break
             elif status == ZhiXinApiStatusEnum.TO_DOING.value:
                 self.log.demsg("支用审批状态处理中，请等待....")
-                time.sleep(5)
+                time.sleep(15)
                 if n == flag-1:
                     self.log.warning("超过当前系统设置等待时间，请手动查看结果....")
