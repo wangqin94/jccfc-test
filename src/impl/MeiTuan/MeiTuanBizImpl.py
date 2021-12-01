@@ -213,7 +213,7 @@ class MeiTuanBizImpl(INIT):
         @param termNo: 期次
         @param finish_time: 还款时间
         @param kwargs:
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         strings = str(int(round(time.time() * 1000)))
         repay_notice = dict()

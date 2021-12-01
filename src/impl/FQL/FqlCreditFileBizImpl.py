@@ -19,10 +19,10 @@ if not os.path.exists(_FilePath):
 class FQL(INIT):
     def __init__(self, data, repay_mode='1', term_no='1', repay_date='2021-08-09'):
         """
-        :param data:  四要素
-        :param repay_mode:  还款模式，1：按期还款；3：提前结清；5；逾期还款
-        :param term_no:     还款期数
-        :param repay_date:    还款时间
+        @param data:  四要素
+        @param repay_mode:  还款模式，1：按期还款；3：提前结清；5；逾期还款
+        @param term_no:     还款期数
+        @param repay_date:    还款时间
         """
         super().__init__()
         self.credit_database_name = '%s_credit' % TEST_ENV_INFO.lower()
@@ -73,8 +73,8 @@ class FQL(INIT):
     # 计算还款时间和放款时间差，天为单位
     def get_day(self, time1, time2):
         """
-        :param time1: 时间1
-        :param time2: 时间2
+        @param time1: 时间1
+        @param time2: 时间2
         :return: 差异天数
         """
         try:
@@ -102,7 +102,7 @@ class FQL(INIT):
     # 还款文件生成
     def repayment_acct_period(self, temple):
         """
-        :param temple: 还款字段字典模板
+        @param temple: 还款字段字典模板
         :return:
         """
         temple['applyId'] = self.applyId

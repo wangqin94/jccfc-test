@@ -28,7 +28,8 @@ class MyTestCase(unittest.TestCase):
     def tearDown(self):
         # 检查授信状态
         time.sleep(10)
-        self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.creditApplyNo)
+        status = self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.creditApplyNo)
+        self.assertEqual(EnumCreditStatus.SUCCESS.value, status, '授信失败')
 
 
 if __name__ == '__main__':

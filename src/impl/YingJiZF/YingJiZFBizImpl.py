@@ -49,8 +49,8 @@ class YingJiZFBizImpl(INIT):
     def query_channel(self, **kwargs):
         """ # 应急支付渠道查询payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -73,8 +73,8 @@ class YingJiZFBizImpl(INIT):
     def query_invoice_list(self, **kwargs):
         """ # 批量查询客户借据信息payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # header
@@ -98,8 +98,8 @@ class YingJiZFBizImpl(INIT):
     def loan_bill(self, **kwargs):
         """ # 我的账单查询payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -123,8 +123,8 @@ class YingJiZFBizImpl(INIT):
     def payment_query(self, **kwargs):
         """ # 支付记录查询payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -148,8 +148,8 @@ class YingJiZFBizImpl(INIT):
     def loan_query(self, **kwargs):
         """ # 贷款列表查询payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -173,8 +173,8 @@ class YingJiZFBizImpl(INIT):
     def loan_details(self, **kwargs):
         """ # 贷款详情查询payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -197,8 +197,8 @@ class YingJiZFBizImpl(INIT):
     def repay_query(self, **kwargs):
         """ # 还款记录查询payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -221,8 +221,8 @@ class YingJiZFBizImpl(INIT):
     def plan_query(self, **kwargs):
         """ # 待还款计划查询payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -245,8 +245,8 @@ class YingJiZFBizImpl(INIT):
     def payment_result(self, **kwargs):
         """ # 查询订单支付结果payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -269,8 +269,8 @@ class YingJiZFBizImpl(INIT):
     def bankcard_bind(self, **kwargs):
         """ # 绑定银行卡payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -293,8 +293,8 @@ class YingJiZFBizImpl(INIT):
     def bankcard_modify(self, **kwargs):
         """ # 更换银行卡payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
@@ -317,8 +317,8 @@ class YingJiZFBizImpl(INIT):
     def payment(self, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head

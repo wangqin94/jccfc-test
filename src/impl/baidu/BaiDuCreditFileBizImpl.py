@@ -20,9 +20,9 @@ if not os.path.exists(_FilePath):
 class BaiduFile(INIT):
     def __init__(self, data, cur_date=None, loan_record=0, repay_mode='02'):
         """ # 百度对账文件
-        :param data:                用户四要素
-        :param cur_date:            账务日期，默认None 为当前日期
-        :param loan_record:         用户成功支用笔数，默认为0 为第1笔
+        @param data:                用户四要素
+        @param cur_date:            账务日期，默认None 为当前日期
+        @param loan_record:         用户成功支用笔数，默认为0 为第1笔
         """
         super(BaiduFile, self).__init__()
         self.user_name = data['name']
@@ -425,15 +425,15 @@ class BaiduRepayFile(BaiduFile):
     def __init__(self, data, repay_mode='02', repay_date="2021-08-06", repay_term_no=1, repay_type='01',
                  loan_invoice_id=None, prin_amt=100, int_amt=0, pnlt_int_amt=0):
         """ # 百度还款对账文件
-        :param data:                四要素
-        :param repay_mode:          还款方式，02：随借随还；05：等额本息
-        :param repay_date:          账务日期"2021-08-06"，提前结清必填
-        :param repay_term_no:       还款期次
-        :param repay_type:          还款类型，01：按期还款；02：提前结清；03：逾期还款
-        :param loan_invoice_id:     借据号为None取用户第一笔借据，否则取自定义值
-        :param prin_amt:            还款本金，随借随还部分还款必填
-        :param int_amt:             还款利息，随借随还部分还款必填
-        :param pnlt_int_amt:        还款罚息，随借随还部分还款必填
+        @param data:                四要素
+        @param repay_mode:          还款方式，02：随借随还；05：等额本息
+        @param repay_date:          账务日期"2021-08-06"，提前结清必填
+        @param repay_term_no:       还款期次
+        @param repay_type:          还款类型，01：按期还款；02：提前结清；03：逾期还款
+        @param loan_invoice_id:     借据号为None取用户第一笔借据，否则取自定义值
+        @param prin_amt:            还款本金，随借随还部分还款必填
+        @param int_amt:             还款利息，随借随还部分还款必填
+        @param pnlt_int_amt:        还款罚息，随借随还部分还款必填
         """
 
         super(BaiduRepayFile, self).__init__(data)

@@ -111,8 +111,8 @@ class FqlBizImpl(INIT):
     def loan(self, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         loan_data = dict()
         # head

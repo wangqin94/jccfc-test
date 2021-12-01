@@ -21,11 +21,11 @@ if not os.path.exists(_FilePath):
 class MtFile(INIT):
     def __init__(self, certificate_no, user_name, apply_date=None, delay=(0, 0), loan_record=0):
         """
-        :param certificate_no:  用户身份证号
-        :param user_name:       用户姓名
-        :param apply_date:      放贷日期'2021-06-30', 为None时，取当前系统时间
-        :param delay:           逾期数据, (逾期期数, 逾期天数)
-        :param loan_record:     用户第几笔去用申请，0为第一笔，1为第二笔
+        @param certificate_no:  用户身份证号
+        @param user_name:       用户姓名
+        @param apply_date:      放贷日期'2021-06-30', 为None时，取当前系统时间
+        @param delay:           逾期数据, (逾期期数, 逾期天数)
+        @param loan_record:     用户第几笔去用申请，0为第一笔，1为第二笔
         """
         super().__init__()
         self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
@@ -302,9 +302,9 @@ class MtFile(INIT):
     @staticmethod
     def loan_and_period_date_parser(date_str, period, flag=True):
         """
-        :param date_str: (str)借款日期  eg: '2020-01-09'
-        :param period: (int)分期数  eg: 3
-        :param flag:
+        @param date_str: (str)借款日期  eg: '2020-01-09'
+        @param period: (int)分期数  eg: 3
+        @param flag:
         :return:
         """
         date_list = date_str.split('-')
@@ -369,11 +369,11 @@ class MtFile(INIT):
     # 还款文件生成
     def bank_repay_period(self, temple, amount_tuple, plan_repay_date, period_id):
         """
-        :param temple: 还款字段字典模板
-        :param amount_tuple: 当前期应还本金和利息
-        :param plan_repay_date: 计划还款日
-        :param period_id: 还款期ID与还款计划相对应
-        :param delay: 逾期天数
+        @param temple: 还款字段字典模板
+        @param amount_tuple: 当前期应还本金和利息
+        @param plan_repay_date: 计划还款日
+        @param period_id: 还款期ID与还款计划相对应
+        @param delay: 逾期天数
         :return:
         """
         times = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
