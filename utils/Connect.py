@@ -36,9 +36,9 @@ class SFTP(object):
 
     def upload_file(self, local, remote, clean=True):
         """ # upload local file named ``local`` to server directory of ``remote``
-        :param local:       local file
-        :param remote:      remote server directory
-        :param clean:       only save local file for remote directory
+        @param local:       local file
+        @param remote:      remote server directory
+        @param clean:       only save local file for remote directory
         :return:            the result messages of upload file
         """
         self._check_remote_dir_exist(remote, clean=clean)
@@ -56,9 +56,9 @@ class SFTP(object):
 
     def upload_dir(self, local_dir, remote_dir, clean=True):
         """ # upload directory named ``local_dir`` to server directory of ``remote_dir``
-        :param local_dir:       local directory
-        :param remote_dir:      remote server directory for save local directory
-        :param clean:           None
+        @param local_dir:       local directory
+        @param remote_dir:      remote server directory for save local directory
+        @param clean:           None
         :return:                the result messages of upload directory
         """
         all_files = self._get_all_files_in_local_dir(local_dir)
@@ -80,8 +80,8 @@ class SFTP(object):
 
     def download_file(self, local, remote):
         """ # download file named ``remote`` from server to save as ``local``
-        :param local:       file's name after downloaded
-        :param remote:      file's name in server
+        @param local:       file's name after downloaded
+        @param remote:      file's name in server
         :return:            the result messages of download file
         """
         if os.path.isdir(local):

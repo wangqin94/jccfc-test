@@ -84,11 +84,36 @@ def get_base_data(env, *project, back=20, **kwargs):
     return data
 
 
+# # -----------------------------------------------------------
+# # - 用户四要素生成（临时数据，不保存到文件）
+# # -----------------------------------------------------------
+def get_base_data_temp(*project, **kwargs):
+    strings = str(int(round(time.time() * 1000)))
+    data = {}
+    res = requests.get('http://10.10.100.153:8081/getTestData')
+    data['name'] = eval(res.text)["姓名"]
+    data['cer_no'] = eval(res.text)["身份证号"]
+    data['bankid'] = eval(res.text)["银行卡号"]
+    # 获取随机生成的手机号
+    data['telephone'] = get_telephone()
+
+    # project赋值后天从到data中
+    if project:
+        for item in project:
+            data[item] = str(item) + strings
+
+    if kwargs:
+        for key, value in kwargs.items():
+            data[key] = str(value)
+
+    return data
+
+
 # 计算还款时间和放款时间差，天为单位
 def get_day(time1, time2):
     """
-    :param time1: 时间1
-    :param time2: 时间2
+    @param time1: 时间1
+    @param time2: 时间2
     :return: 差异天数
     """
     try:
@@ -105,10 +130,10 @@ def get_day(time1, time2):
 # # -----------------------------------------------------------
 def get_sql_qurey_str(table, db=None, attr=None, **kwargs):
     """ # 数据库查询sql
-    :param table:       表名
-    :param db:          数据库名
-    :param attr:        查询表子项
-    :param kwargs:      where 筛选条件
+    @param table:       表名
+    @param db:          数据库名
+    @param attr:        查询表子项
+    @param kwargs:      where 筛选条件
     :return:            sql语句
     """
     table = table if not db else '%s.%s' % (db, table)
@@ -149,10 +174,10 @@ def loanByAvgAmt(loanamt, term, year_rate):
 # # -----------------------------------------------------------
 def loan_and_period_date_parser(*, date_str, period=1, flag=False, max_bill=25):
     """ # tips: 入参时须带关键字
-    :param date_str:    (str)借款日期  eg: '2020-01-09'
-    :param period:      (int)分期数  eg: 3， 默认为 1
-    :param flag:        返回首期还款日、账单日
-    :param max_bill:    (int) 最大账单日, 默认25号
+    @param date_str:    (str)借款日期  eg: '2020-01-09'
+    @param period:      (int)分期数  eg: 3， 默认为 1
+    @param flag:        返回首期还款日、账单日
+    @param max_bill:    (int) 最大账单日, 默认25号
     :return:
     """
     date_list = date_str.split('-')
@@ -180,9 +205,9 @@ def loan_and_period_date_parser(*, date_str, period=1, flag=False, max_bill=25):
 # # -----------------------------------------------------------
 def encrypt(encrypt_url, headers, encrypt_payload):
     """ # 接口数据payload加密
-    :param encrypt_url:     加密请求地址
-    :param headers:         加密请求报文头部
-    :param encrypt_payload: 待加密数据
+    @param encrypt_url:     加密请求地址
+    @param headers:         加密请求报文头部
+    @param encrypt_payload: 待加密数据
     :return: 加密后的payload
     """
     _log.info("开始请求加密接口对报文进行加密操作...")
@@ -199,9 +224,9 @@ def encrypt(encrypt_url, headers, encrypt_payload):
 # # -----------------------------------------------------------
 def decrypt(decrypt_url, headers, decrypt_payload):
     """ # 接口数据payload解密
-    :param decrypt_url:     解密请求地址
-    :param headers:         解密请求报文头部
-    :param decrypt_payload: 待解密数据
+    @param decrypt_url:     解密请求地址
+    @param headers:         解密请求报文头部
+    @param decrypt_payload: 待解密数据
     :return:                解密后的报文
     """
     _log.info("开始请求解密接口对报文进行解密操作...")
@@ -329,7 +354,7 @@ def project_dir():
 # # -----------------------------------------------------------
 def get_read_json(json_file_name):
     """
-    :param json_file_name: json文件名
+    @param json_file_name: json文件名
     :return: 返回json文件的内容
     """
     with open(os.path.join(project_dir(), "XXX", json_file_name),
@@ -379,7 +404,7 @@ def get_before_day(n):
 def get_base64_from_img(img_path):
     """
     @param img_path: 图片存储路径
-    @return:
+    @return: response 接口响应参数 数据类型：json
     """
     with open(img_path, "rb") as f:  # 转为二进制格式
         base64_data = base64.b64encode(f.read())  # 使用base64进行加密

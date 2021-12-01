@@ -28,8 +28,8 @@ zhixin = {
                 "partner": "ICE_JCXJ",
                 "version": "1.0",
                 "input": {
-                    "md5": "${手机号+身份证号}",  # md5 值
-                    "mode": "MI",
+                    "md5": "${手机号}",  # md5 值
+                    "mode": "M",
                 }
             },
             "method": "checkUser",
@@ -125,7 +125,7 @@ zhixin = {
                         "district": "510107",  # 区代码
                         "workUnit": "华西精神病研究研究",  # 工作单位
                         "workAddr": "工作单位地址成都莆田街133号-4-5",  # 工作单位地址
-                        "addrDetail": "家庭地址广西壮族自治区莆田街133号-4-5"  # 家庭地址
+                        "addrDetail": "家庭地址成都市武侯区莆田街133号-4-5"  # 家庭地址
                     },
                     "linkmanInfo": {
                         "relationshipA": "10",  # 紧急联系人A关系 枚举值见RelationshipEnum
@@ -383,7 +383,7 @@ zhixin = {
 
     # 还款试算
     'repayTrial': {
-        'interface': '/api/v1/zhixin/credit/repayTrial',
+        'interface': '/api/v1/zhixin/repay/repayTrial',
         'payload': {
             'data': {
                 "requestNo": "361920480915sssss",
@@ -392,10 +392,10 @@ zhixin = {
                 "version": "1.0",
                 "input": {
                     "userId": "${userId}",  # 用户ID： 必填
-                    "creditApplyNo": "${creditApplyNo}",  # 申请单号  必填
+                    "repayApplyNo": "${creditApplyNo}",  # 申请单号  必填
                     "loanApplyNo": "${loanApplyNo}",  # 智信引擎借款申请单号  必填
                     "partnerLoanNo": "${partnerLoanNo}",  # 合作方内部借款申请单号  必填
-                    "repayType": "${repayType}",  # 还款类型 1 按期还款 2 提前结清3 按金额还款按期还款时，需合作方自行计算还款期次。用户无法在前端选择特定期次还款。  必填
+                    "repayType": "1",  # 还款类型 1 按期还款 2 提前结清3 按金额还款按期还款时，需合作方自行计算还款期次。用户无法在前端选择特定期次还款。  必填
                     "repayTime": "${repayTime}",  # 还款时间 格式：yyyyMMddHHmmss  必填
                     "repayAmt": "${repayAmt}",  # 还款金额  按金额还款时有值,其他还款类型没有还款金额 选填
                 }
@@ -411,7 +411,7 @@ zhixin = {
 
     # 还款申请
     'applyRepayment': {
-        'interface': '/api/v1/zhixin/credit/applyRepayment',
+        'interface': '/api/v1/zhixin/repay/applyRepayment',
         'payload': {
             'data': {
                 "requestNo": "361920480915sssss",
@@ -420,7 +420,7 @@ zhixin = {
                 "version": "1.0",
                 "input": {
                     "userId": "${userId}",  # 用户ID： 必填
-                    "creditApplyNo": "${creditApplyNo}",  # 申请单号  必填
+                    "repayApplyNo": "${creditApplyNo}",  # 申请单号  必填
                     "loanApplyNo": "${loanApplyNo}",  # 智信引擎借款申请单号  必填
                     "partnerLoanNo": "${partnerLoanNo}",  # 合作方内部借款申请单号  必填
                     "repayType": "${repayType}",  # 还款类型 1 按期还款 2 提前结清3 按金额还款按期还款时，需合作方自行计算还款期次。用户无法在前端选择特定期次还款。  必填
@@ -447,7 +447,7 @@ zhixin = {
 
     # 还款结果查询
     'queryRepayResult': {
-        'interface': '/api/v1/zhixin/credit/queryRepayResult',
+        'interface': '/api/v1/zhixin/repay/queryRepayResult',
         'payload': {
             'data': {
                 "requestNo": "361920480915sssss",
@@ -465,6 +465,29 @@ zhixin = {
             "encType": "DES",
             "cmp": "N",
             "ct": "1523619204809"
+        }
+    },
+
+    # 信用评估申请
+    'applyQFICO': {
+        'interface': '/api/v1/zhixin/qfico/apply',
+        'payload': {
+            "applyId": "000CA2021111700000007",   # 锦城授信/支用申请单号
+            "qficoApplyNo": "1000",  # 智信请求流水号
+            "name": "1000",
+            "mobile": "1000",
+            "idCardNo": "1000",
+            "type": "credit",  # credit-授信 loan-借款
+            "businessNo": "1000",   # 智信授信/支用申请单号
+            "pumaInfo": "{\"partnerFlowId\":\"28947c4d45e94e6680f5d40fecd4dd52\",\"responseCode\":\"S000\",\"responseMsg\":\"成功\",\"resultJsons\":\"[{\\\"consumeScore\\\":\\\"1.1\\\",\\\"pbocScoreDzXgModel\\\":\\\"0.49359607696533203\\\",\\\"pbocScoreFlag\\\":\\\"1\\\",\\\"workScore\\\":\\\"4197.8448997\\\",\\\"loyalScore\\\":\\\"1.1\\\",\\\"prepayScore\\\":\\\"4890.3221087\\\",\\\"creditLineFromBank\\\":\\\"0.50862|5286.78331|2266.03264\\\",\\\"model2Score\\\":\\\"4990.1578447\\\",\\\"debtScore\\\":\\\"1.1\\\",\\\"pbocScoreLongtermXgModel\\\":\\\"0.9804129600524902\\\",\\\"behaviorScoreFromBank\\\":\\\"57.0|\\\",\\\"salaryFromBank2\\\":\\\"2564.78059\\\",\\\"fraudScore\\\":\\\"4996.9535747\\\",\\\"rhFlagFromBank\\\":\\\"1|0\\\",\\\"strategyBranchFromBank\\\":\\\"\\\",\\\"useRateScoreFromBank\\\":\\\"3.28|7.23|-3.44|11.06\\\",\\\"resultFromBank\\\":\\\"A\\\",\\\"ruleScore\\\":\\\"5854.7\\\",\\\"modelScore\\\":\\\"6332.985347\\\",\\\"modelName\\\":\\\"{\\\\\\\"master\\\\\\\":\\\\\\\"Y\\\\\\\",\\\\\\\"modelName\\\\\\\":\\\\\\\"人行端规则\\\\\\\",\\\\\\\"version\\\\\\\":\\\\\\\"1906300014\\\\\\\"}\\\",\\\"loanScore\\\":\\\"4180.9681197\\\",\\\"debtScoreFromBank\\\":540.0,\\\"salaryScoreFromBank\\\":5833.47727,\\\"qualityScoreFromBank\\\":2.0,\\\"creditScoreFromBank\\\":\\\"44.0|2.781|0.1773\\\",\\\"model3Score\\\":\\\"4569.7849277\\\",\\\"pbocScoreSyXgModel\\\":\\\"0.7147897481918335\\\"}]\",\"serialId\":\"SARN0305871555\"}"
+        }
+    },
+
+    # 信用评估结果查询
+    'queryQFICO': {
+        'interface': '/api/v1/zhixin/qfico/query',
+        'payload': {
+            "qficoApplyNo": "1000",  # 智信请求流水号
         }
     },
 }

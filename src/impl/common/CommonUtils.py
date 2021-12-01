@@ -21,7 +21,7 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
     @param encrypt_url: 加密接口请求地址
     @param decrypt_url: 解密接口请求地址
     @param encrypt_flag: 加密标识默认true
-    @return: 
+    @return: response 接口响应参数 数据类型：json 
     """
     data1 = json.dumps(payload)
     log.info("payload数据: {}".format(data1))
@@ -62,13 +62,13 @@ class GetSqlData(INIT):
         """
         @param record: 查询记录,非必填
         @param kwargs: 查询条件，字典类型
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         table = 'credit_loan_apply'
         keys = self.mysql_credit.select_table_column(table_name=table, database=self.credit_database_name)
         # 获取查询内容
         sql = get_sql_qurey_str(table, self.credit_database_name, attr=None, **kwargs)
-        self.log.info("sql查询语句：{}".format(sql))
+        self.log.info("执行sql查询：{}".format(sql))
         values = self.mysql_credit.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
@@ -81,13 +81,13 @@ class GetSqlData(INIT):
         """
         @param record: 查询记录，非必填
         @param kwargs: 查询条件，字典类型
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         table = 'credit_apply'
         keys = self.mysql_credit.select_table_column(table_name=table, database=self.credit_database_name)
         # 获取查询内容
         sql = get_sql_qurey_str(table, self.credit_database_name, attr=None, **kwargs)
-        self.log.info("sql查询语句：{}".format(sql))
+        self.log.info("执行sql查询：{}".format(sql))
         values = self.mysql_credit.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
@@ -100,12 +100,12 @@ class GetSqlData(INIT):
         """
         @param record: 查询记录，非必填
         @param kwargs: 查询条件，字典类型
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         keys = self.mysql_credit.select_table_column(table_name=table, database=self.credit_database_name)
         # 获取查询内容
         sql = get_sql_qurey_str(table, self.credit_database_name, attr=None, **kwargs)
-        self.log.info("sql查询语句：{}".format(sql))
+        self.log.info("执行sql查询：{}".format(sql))
         values = self.mysql_credit.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
@@ -118,12 +118,12 @@ class GetSqlData(INIT):
         """
         @param record: 查询记录，非必填
         @param kwargs: 查询条件，字典类型
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         keys = self.mysql_user.select_table_column(table_name=table, database=self.user_database_name)
         # 获取查询内容
         sql = get_sql_qurey_str(table, self.user_database_name, attr=None, **kwargs)
-        self.log.info("sql查询语句：{}".format(sql))
+        self.log.info("执行sql查询：{}".format(sql))
         values = self.mysql_user.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]

@@ -118,7 +118,7 @@ class Logs(object):
     def build_start_line(self, case_no):
         """
         write start line
-        :param case_no:
+        @param case_no:
         :return:
         """
         self.__logger.info("------" + case_no + " API test Start------")
@@ -126,7 +126,7 @@ class Logs(object):
     def build_end_line(self, case_no):
         """
         write end line
-        :param case_no:
+        @param case_no:
         :return:
         """
         self.__logger.info("--------" + case_no + " END--------")
@@ -134,9 +134,9 @@ class Logs(object):
     def build_case_line(self, case_name, code, msg):
         """
         write test case line
-        :param case_name:
-        :param code:
-        :param msg:
+        @param case_name:
+        @param code:
+        @param msg:
         :return:
         """
         self.__logger.info((case_name + " - Code:" + code + " - msg:" + msg))
@@ -159,7 +159,7 @@ class Logs(object):
     def write_result(self, result):
         """
         write result in logfile
-        :param result:
+        @param result:
         :return:
         """
         result_path = os.path.join(self.logPath, log_file_name)
@@ -171,8 +171,8 @@ class Logs(object):
 
     def __log_style(self, color=37, bgd=1):
         """ # # console log display sample
-        :param color:   recv a number of color
-        :param bgd:     recv a number of background
+        @param color:   recv a number of color
+        @param bgd:     recv a number of background
         :return:        stream handler of updated formatter
         """
 
@@ -198,8 +198,8 @@ class Logs(object):
 
     def info(self, msg, *args, **kwargs):
         self.__log_style(color=1)
-        if len(msg) > 1024:
-            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
+        if len(msg) > 8192:
+            msg = "日志长度超过8192，控制台只打印8192字节长度,{}".format(msg[0:8192])
         self.__logger.info(msg, *args, **kwargs)
         self._log_style_reset()
 

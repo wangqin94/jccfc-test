@@ -13,11 +13,11 @@ from src.test_data.module_data import ctrip
 class CtripBizImpl(INIT):
     def __init__(self, *, data=None, repay_term_no="1", repay_mode="1", loan_invoice_id=None, repay_date='2021-08-09'):
         """
-        :param data:  四要素
-        :param repay_term_no:   还款期次
-        :param repay_mode:      还款类型:1 按期还款；2 提前结清；3逾期还款
-        :param loan_invoice_id: 借据号为None取用户第一笔借据，否则取自定义值
-        :param repay_date:      实际还款时间'2021-08-09'
+        @param data:  四要素
+        @param repay_term_no:   还款期次
+        @param repay_mode:      还款类型:1 按期还款；2 提前结清；3逾期还款
+        @param loan_invoice_id: 借据号为None取用户第一笔借据，否则取自定义值
+        @param repay_date:      实际还款时间'2021-08-09'
         """
         super().__init__()
         self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
@@ -116,8 +116,8 @@ class CtripBizImpl(INIT):
     def loan(self, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         loan_data = dict()
         # 四要素
@@ -145,8 +145,8 @@ class CtripBizImpl(INIT):
     def repay_notice(self, **kwargs):
         """ # 还款通知payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         repay_notice = dict()
         # 根据openId查询支用信息

@@ -3,6 +3,7 @@
 # 百度接口数据封装类
 # ------------------------------------------
 import hashlib
+import sys
 
 from config.TestEnvInfo import TEST_ENV_INFO
 from src.enums.EnumsCommon import *
@@ -140,11 +141,11 @@ class ZhiXinBizImpl(INIT):
         best = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqface.png'))
         credit_data['best'] = best  # 人脸base64字符串
         action1 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action1.jpg'))
-        # credit_data['action1'] = action1  # 身份证反面base64字符串
+        credit_data['action1'] = action1  # 身份证反面base64字符串
         action2 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action2.jpg'))
-        # credit_data['action2'] = action2  # 身份证反面base64字符串
+        credit_data['action2'] = action2  # 身份证反面base64字符串
         action3 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action3.jpg'))
-        # credit_data['action3'] = action3  # 身份证反面base64字符串
+        credit_data['action3'] = action3  # 身份证反面base64字符串
 
         # 银行卡信息
         credit_data['idCardNo'] = self.data['cer_no']
@@ -172,8 +173,8 @@ class ZhiXinBizImpl(INIT):
     def queryCreditResult(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return:
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
         """
         queryCreditResult_data = dict()
         # body
@@ -181,9 +182,9 @@ class ZhiXinBizImpl(INIT):
         queryCreditResult_data['requestTime'] = self.times
         queryCreditResult_data['ct'] = self.times
 
-        credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
-        queryCreditResult_data['userId'] = self.data['userId']
-        queryCreditResult_data['creditApplyNo'] = credit_apply_info['credit_apply_id']
+        # credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        # queryCreditResult_data['userId'] = self.data['userId']
+        # queryCreditResult_data['creditApplyNo'] = credit_apply_info['credit_apply_id']
 
         # 更新 payload 字段值
         queryCreditResult_data.update(kwargs)
@@ -200,8 +201,8 @@ class ZhiXinBizImpl(INIT):
     def loanTrial(self, **kwargs):
         """ # 借款试算payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         loanTrial_data = dict()
         # body
@@ -238,8 +239,8 @@ class ZhiXinBizImpl(INIT):
     def applyLoan(self, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         applyLoan_data = dict()
         # body
@@ -286,8 +287,8 @@ class ZhiXinBizImpl(INIT):
     def queryLoanResult(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return:
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
         """
         queryLoanResult_data = dict()
         # body
@@ -314,8 +315,8 @@ class ZhiXinBizImpl(INIT):
     def queryLoanPlan(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return:
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
         """
         queryLoanPlan_data = dict()
         # body
@@ -342,11 +343,13 @@ class ZhiXinBizImpl(INIT):
         return response
 
     # 还款试算申请
-    def repayTrial(self, **kwargs):
+    def repayTrial(self, loan_no, repay_type='1', **kwargs):
         """ # 还款试算payload字段装填
-        注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        注意：repayAmt按金额还款时有值,其他还款类型没有还款金额
+        @param loan_no: 借据号 userid依赖loan_no 必填
+        @param repay_type： 还款类型 1 按期还款（repayAmt为空）； 2 提前结清（repayAmt为空）； 3 按金额还款（repayAmt必填）
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         repayTrial_data = dict()
         # body
@@ -354,8 +357,25 @@ class ZhiXinBizImpl(INIT):
         repayTrial_data['requestTime'] = self.times
         repayTrial_data['ct'] = self.times
 
+        repayTrial_data['partnerLoanNo'] = loan_no
+        repayTrial_data['loanApplyNo'] = 'loanApplyNo' + self.strings
+        repayTrial_data['repayApplyNo'] = 'repayApplyNo' + self.strings
+        loan_apply_info = self.getSqlData.get_loan_apply_info(loan_apply_id=loan_no)
+        repayTrial_data['userId'] = loan_apply_info['thirdpart_user_id']
+
+        # 当还款类型不是repayType=3按金额还款时，还款金额repayAmt为空
+        repayTrial_data['repayType'] = repay_type
+        if repay_type != "3":
+            repayTrial_data['repayAmt'] = None
+
         # 还款时间默认当前系统时间
         repayTrial_data['repayTime'] = self.date
+        if repay_type == '1':
+            credit_loan_invoice = self.getSqlData.get_credit_database_info('credit_loan_invoice', loan_apply_id=loan_no)
+            key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(credit_loan_invoice['loan_invoice_id'])
+            asset_repay_plan = self.getSqlData.get_asset_data_info('asset_repay_plan', key)
+            self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
+            repayTrial_data['repayTime'] = str(asset_repay_plan['pre_repay_date']).replace('-', '') + '111111'
 
         # 更新 payload 字段值
         repayTrial_data.update(kwargs)
@@ -369,11 +389,13 @@ class ZhiXinBizImpl(INIT):
         return response
 
     # 还款申请
-    def applyRepayment(self, **kwargs):
+    def applyRepayment(self, loan_no, repay_type='1', **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        :return: None
+        @param loan_no: 借据号 userid依赖loan_no 必填
+        @param repay_type： 还款类型 1 按期还款（repayAmt为空）； 2 提前结清（repayAmt为空）； 3 按金额还款（repayAmt必填）
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
         """
         applyRepayment_data = dict()
         # body
@@ -381,14 +403,31 @@ class ZhiXinBizImpl(INIT):
         applyRepayment_data['requestTime'] = self.times
         applyRepayment_data['ct'] = self.times
 
-        # 还款时间默认当前系统时间
-        applyRepayment_data['repayTime'] = self.date
-
         # 银行卡信息
         applyRepayment_data['idCardNo'] = self.data['cer_no']
         applyRepayment_data['userMobile'] = self.data['telephone']
         applyRepayment_data['userName'] = self.data['name']
         applyRepayment_data['bankCardNo'] = self.data['bankid']
+
+        applyRepayment_data['partnerLoanNo'] = loan_no
+        applyRepayment_data['loanApplyNo'] = 'loanApplyNo' + self.strings
+        applyRepayment_data['repayApplyNo'] = 'repayApplyNo' + self.strings
+        loan_apply_info = self.getSqlData.get_loan_apply_info(loan_apply_id=loan_no)
+        applyRepayment_data['userId'] = loan_apply_info['thirdpart_user_id']
+
+        # 当还款类型不是repayType=3按金额还款时，还款金额repayAmt为空
+        applyRepayment_data['repayType'] = repay_type
+        if repay_type != "3":
+            applyRepayment_data['repayAmt'] = None
+
+        # 还款时间默认当前系统时间
+        applyRepayment_data['repayTime'] = self.date
+        if repay_type == '1':
+            credit_loan_invoice = self.getSqlData.get_credit_database_info('credit_loan_invoice', loan_apply_id=loan_no)
+            key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(credit_loan_invoice['loan_invoice_id'])
+            asset_repay_plan = self.getSqlData.get_asset_data_info('asset_repay_plan', key)
+            self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
+            applyRepayment_data['repayTime'] = str(asset_repay_plan['pre_repay_date']).replace('-', '') + '111111'
 
         # 更新 payload 字段值
         applyRepayment_data.update(kwargs)
@@ -405,8 +444,8 @@ class ZhiXinBizImpl(INIT):
     def queryRepayResult(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
-        :param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return:
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
         """
         queryRepayResult_data = dict()
         # body
@@ -423,4 +462,62 @@ class ZhiXinBizImpl(INIT):
         url = self.host + self.cfg['queryRepayResult']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 信用评估申请payload
+    def applyQFICO(self, type='credit', **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param type: 业务类型 credit、loan
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        qficoApply_data = dict()
+        # body
+        qficoApply_data['qficoApplyNo'] = 'qficoApplyNo' + self.strings + "_1300"
+        qficoApply_data['name'] = self.data['name']
+        qficoApply_data['mobile'] = self.data['telephone']
+        qficoApply_data['idCardNo'] = self.data['cer_no']
+
+        # 根据type类型取业务流水号和锦城申请号
+        try:
+            if type == "credit":
+                credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+                qficoApply_data['applyId'] = credit_apply_info['credit_apply_id']
+                qficoApply_data['businessNo'] = credit_apply_info['thirdpart_apply_id']
+            if type == "loan":
+                loan_apply_info = self.getSqlData.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
+                qficoApply_data['applyId'] = loan_apply_info['loan_apply_id']
+                qficoApply_data['businessNo'] = loan_apply_info['thirdpart_apply_id']
+        except Exception as r:
+            self.log.error("未知错误{}".format(r))
+            sys.exit()
+
+        # 更新 payload 字段值
+        qficoApply_data.update(kwargs)
+        parser = DataUpdate(self.cfg['applyQFICO']['payload'], **qficoApply_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('信用评估申请请求...')
+        url = self.host + self.cfg['applyQFICO']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
+        return response
+
+    # 信用评估结果查询payload
+    def queryQFICO(self, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        qficoQuery_data = dict()
+        # body
+        # 更新 payload 字段值
+        qficoQuery_data.update(kwargs)
+        parser = DataUpdate(self.cfg['queryQFICO']['payload'], **qficoQuery_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('信用评估结果查询请求...')
+        url = self.host + self.cfg['queryQFICO']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response

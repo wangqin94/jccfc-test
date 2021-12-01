@@ -17,7 +17,7 @@ class CtripCheckBizImpl(INIT):
     def check_loan_apply_status(self, **kwargs):
         """
         @param kwargs: 查询条件
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         for n in range(10):
             info = self.getSqlData.get_loan_apply_info(**kwargs)
@@ -35,7 +35,7 @@ class CtripCheckBizImpl(INIT):
     def check_credit_apply_status(self, **kwargs):
         """
         @param kwargs: 查询条件
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         for n in range(10):
             info = self.getSqlData.get_credit_apply_info(**kwargs)

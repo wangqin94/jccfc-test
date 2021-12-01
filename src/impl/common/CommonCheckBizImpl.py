@@ -17,7 +17,7 @@ class CheckBizImpl(INIT):
     def check_loan_apply_status(self, **kwargs):
         """
         @param kwargs: 查询条件
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('支用结果校验...')
         flag = 10
@@ -39,7 +39,7 @@ class CheckBizImpl(INIT):
     def check_file_loan_apply_status(self, **kwargs):
         """
         @param kwargs: 查询条件
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('文件放款支用结果校验...')
         flag = 10
@@ -61,7 +61,7 @@ class CheckBizImpl(INIT):
     def check_credit_apply_status(self, **kwargs):
         """
         @param kwargs: 查询条件
-        @return:
+        @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库授信结果校验...')
         flag = 10
