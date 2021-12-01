@@ -7,3 +7,5 @@
 /src/impl/ctrip/person.py
 /src/impl/YingJiZF/person.py
 /results/
+.pytest_cache
+/allure/
