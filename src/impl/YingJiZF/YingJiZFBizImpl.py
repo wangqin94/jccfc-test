@@ -50,7 +50,7 @@ class YingJiZFBizImpl(INIT):
         """ # 应急支付渠道查询payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：jsonR
         """
         data = dict()
         # head
@@ -65,7 +65,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('应急支付渠道查询...')
-        url = self.host + self.cfg['queryChannel']['interface']
+        url = self.host_api + self.cfg['queryChannel']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -90,7 +90,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload["head"]["channelNo"] = "21"
         
         self.log.demsg('批量查询客户借据信息...')
-        url = self.host + self.cfg['queryInvoiceListByPage']['interface']
+        url = self.host_api + self.cfg['queryInvoiceListByPage']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -115,7 +115,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload["head"]["channelNo"] = "21"
         
         self.log.demsg('我的账单查询...')
-        url = self.host + self.cfg['loan_bill']['interface']
+        url = self.host_api + self.cfg['loan_bill']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -140,7 +140,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('支付记录查询...')
-        url = self.host + self.cfg['payment_query']['interface']
+        url = self.host_api + self.cfg['payment_query']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -165,7 +165,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('贷款列表查询...')
-        url = self.host + self.cfg['loan_query']['interface']
+        url = self.host_api + self.cfg['loan_query']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -189,7 +189,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('贷款详情查询...')
-        url = self.host + self.cfg['loan_details']['interface']
+        url = self.host_api + self.cfg['loan_details']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -213,7 +213,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('还款记录查询...')
-        url = self.host + self.cfg['repay_query']['interface']
+        url = self.host_api + self.cfg['repay_query']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -237,7 +237,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('待还款计划查询...')
-        url = self.host + self.cfg['plan_query']['interface']
+        url = self.host_api + self.cfg['plan_query']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -261,7 +261,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('查询订单支付结果...')
-        url = self.host + self.cfg['payment_result']['interface']
+        url = self.host_api + self.cfg['payment_result']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -278,6 +278,8 @@ class YingJiZFBizImpl(INIT):
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
         data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
+        data['certificateNo'] = self.data['cer_no']
+        data['mobileNo'] = self.data['telephone']
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -285,7 +287,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('绑定银行卡...')
-        url = self.host + self.cfg['bankcard_bind']['interface']
+        url = self.host_api + self.cfg['bankcard_bind']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -302,6 +304,8 @@ class YingJiZFBizImpl(INIT):
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
         data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
+        data['certificateNo'] = self.data['cer_no']
+        data['mobileNo'] = self.data['telephone']
 
         # 更新 payload 字段值
         data.update(kwargs)
@@ -309,7 +313,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload = parser.parser
         
         self.log.demsg('更换银行卡...')
-        url = self.host + self.cfg['bankcard_modify']['interface']
+        url = self.host_api + self.cfg['bankcard_modify']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
@@ -349,7 +353,7 @@ class YingJiZFBizImpl(INIT):
         self.active_payload["head"]["channelNo"] = "21"
         
         self.log.demsg('根据用户名称查询借据信息...')
-        url = self.host + self.cfg['payment']['interface']
+        url = self.host_api + self.cfg['payment']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 

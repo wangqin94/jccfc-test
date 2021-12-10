@@ -7,7 +7,7 @@
 
 API = {
 	'request_host': "http://hapi-web-{}.corp.jccfc.com",
-	'request_host_fql': "http://api-web-{}.jccfc.com",
+	'request_host_api': "http://api-web-{}.jccfc.com",
 	'eureka_host': "https://eureka-{}.corp.jccfc.com/eureka/apps/"
 }
 

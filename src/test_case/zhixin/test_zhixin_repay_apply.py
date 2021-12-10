@@ -27,9 +27,9 @@ class MyTestCase(unittest.TestCase):
         # res = zhixin.repayTrial(loan_no="000LA2021111900000005")
         # repay_type还款类型： 1 按期还款； 2 提前结清； 3 按金额还款
         # repayAmt还款金额： repay_type=3时，还款金额必填
-        # self.repayRes = json.loads(zhixin.applyRepayment(repay_type='1', loan_no=loan_apply_info['loan_apply_id'], repayTime='20220228111111').get('output'))  # 按期还款
-        self.repayRes = json.loads(zhixin.applyRepayment(loan_no="000LA2021120100000013", repay_type='2', repayTime='20220205111111').get('output'))  # 提前结清
-        # self.repayRes = json.loads(zhixin.applyRepayment(loan_no="000LA2021120100000013", repay_type='3', repayAmt='701.95', repayTime='20220205111111').get('output')) # 逾期还款
+        self.repayRes = json.loads(zhixin.applyRepayment(repay_type='1', loan_no=loan_apply_info['loan_apply_id']).get('output'))  # 按期还款
+        # self.repayRes = json.loads(zhixin.applyRepayment(loan_no=loan_apply_info['loan_apply_id'], repay_type='2', repayTime='20220216111111').get('output'))  # 提前结清
+        # self.repayRes = json.loads(zhixin.applyRepayment(loan_no=loan_apply_info['loan_apply_id'], repay_type='3', repayAmt='366.06', repayTime='20220302111111').get('output')) # 逾期还款
 
         # 还款结果哈讯
         zhixin.queryRepayResult(userId=self.repayRes['userId'], repayApplyNo=self.repayRes['repayApplyNo'])

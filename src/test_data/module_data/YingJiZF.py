@@ -230,7 +230,7 @@ YingJiZF = {
                 "periods": "1",  # 还款期数 多期以,分隔
                 "repayAmt": 212.46,  # 还款金额
                 "appOrderNo": "",  # 还款订单流水号
-                "settleStatus": "1",  # 结清标识 EnumBool 0 未结清  1 结清
+                "settleStatus": "0",  # 结清标识 EnumBool 0 未结清  1 结清
                 "payPlatformCode": "zhifubianhao",  # 支付平台编号
                 "aliPayViewUrl": "https://www.baidu.com/",  # 支付平台编号
                 "idNo": "451123198311190587",  # 身份证号（银行卡还款必须）
