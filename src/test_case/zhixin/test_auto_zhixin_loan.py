@@ -16,7 +16,7 @@ class TestCase(object):
     @pytest.mark.smoke
     @allure.title("绑卡申请&校验")  # 标题
     @allure.step("绑卡申请&校验")  # 测试报告显示步骤
-    def test_applyCertification(self, get_base_data, zhixin, checkBizImpl, zhiXinCheckBizImpl):
+    def test_loan(self, get_base_data, zhixin, checkBizImpl, zhiXinCheckBizImpl):
         """ 测试步骤 """
         data = get_base_data
         with allure.step("绑卡申请"):

@@ -30,7 +30,7 @@ class INIT(object):
         self._config = Config()
 
         self.host = API['request_host'].format(self.env)
-        self.host_fql = API['request_host_fql'].format(self.env)
+        self.host_api = API['request_host_api'].format(self.env)
         self.mysql_data = '%s_mysql' % self.env.lower()
         self.credit_data = '%s_credit' % self.env.lower()
         self.asset_data = '%s_asset' % self.env.lower()

@@ -29,8 +29,8 @@ class FqlBizImpl(INIT):
         self.loanTerm = loan_term
 
         self.sourceCode = '000UC010000006268'
-        self.encrypt_url = self.host_fql + FqlPathEnum.fqlEncryptPath.value
-        self.decrypt_url = self.host_fql + FqlPathEnum.fqlDecryptPath.value
+        self.encrypt_url = self.host_api + FqlPathEnum.fqlEncryptPath.value
+        self.decrypt_url = self.host_api + FqlPathEnum.fqlDecryptPath.value
 
         # 初始化payload变量
         self.active_payload = {}
@@ -80,7 +80,7 @@ class FqlBizImpl(INIT):
         self.check_user_available(self.data)
 
         self.log.demsg('开始授信申请...')
-        url = self.host_fql + self.cfg['credit']['interface']
+        url = self.host_api + self.cfg['credit']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
                                      encrypt_flag=self.encrypt_flag)
         response['applyId'] = self.data['applyId']
@@ -102,7 +102,7 @@ class FqlBizImpl(INIT):
         self.active_payload = parser.parser
 
         self.log.demsg('开始授信查询...')
-        url = self.host_fql + self.cfg['credit_query']['interface']
+        url = self.host_api + self.cfg['credit_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
                                      encrypt_flag=self.encrypt_flag)
         return response
@@ -144,7 +144,7 @@ class FqlBizImpl(INIT):
         self.active_payload = parser.parser
 
         self.log.demsg('开始支用申请...')
-        url = self.host_fql + self.cfg['loan']['interface']
+        url = self.host_api + self.cfg['loan']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
                                      encrypt_flag=self.encrypt_flag)
         return response
@@ -165,7 +165,7 @@ class FqlBizImpl(INIT):
         self.active_payload = parser.parser
 
         self.log.demsg('开始支用查询...')
-        url = self.host_fql + self.cfg['loan_query']['interface']
+        url = self.host_api + self.cfg['loan_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
                                      encrypt_flag=self.encrypt_flag)
         return response

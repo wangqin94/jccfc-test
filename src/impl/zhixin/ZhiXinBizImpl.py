@@ -420,7 +420,7 @@ class ZhiXinBizImpl(INIT):
         if repay_type != "3":
             applyRepayment_data['repayAmt'] = None
 
-        # 还款时间默认当前系统时间
+        # 还款时间默认账单日
         applyRepayment_data['repayTime'] = self.date
         if repay_type == '1':
             credit_loan_invoice = self.getSqlData.get_credit_database_info('credit_loan_invoice', loan_apply_id=loan_no)

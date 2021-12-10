@@ -34,7 +34,7 @@ class MyTestCase(unittest.TestCase):
     def test_one(self):
         YingJiZF = YingJiZFBizImpl(data=data)
         # repayType：0 按期还夸；1 提前结清
-        self.jsonData = YingJiZF.payment(paymentType='5', repayType="0", periods="3", repayAmt=104.83)
+        self.jsonData = YingJiZF.payment(loanInvoiceId='000LI0001424863990595669011', paymentType='5', repayType="0", periods="1", repayAmt=1.56)
 
 
 if __name__ == '__main__':
