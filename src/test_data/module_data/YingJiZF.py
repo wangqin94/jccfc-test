@@ -134,7 +134,7 @@ YingJiZF = {
     },
 
     'plan_query': {
-        'interface': '/api/v1/replay/plan/query',
+        'interface': '/api/v1/repay/plan/query',
         'payload': {
             "head": {
                 "jcSystemEncry": "2582a6b723486da364ada1af2c00f115",

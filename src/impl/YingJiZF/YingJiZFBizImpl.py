@@ -107,6 +107,7 @@ class YingJiZFBizImpl(INIT):
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
         data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
+        data['idNo'] = self.data['cer_no']
 
         # 更新 payload 字段值
         data.update(kwargs)
