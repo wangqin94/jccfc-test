@@ -4,11 +4,13 @@
 # ------------------------------------------
 import hashlib
 import sys
-
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
 from config.TestEnvInfo import TEST_ENV_INFO
 from src.enums.EnumsCommon import *
 from src.test_data.module_data import zhixin
 from src.impl.common.CommonUtils import *
+from engine.Base import INIT
 
 
 def computeMD5(message):
@@ -131,20 +133,20 @@ class ZhiXinBizImpl(INIT):
         # ocr信息
         credit_data['nameOCR'] = self.data['name']
         credit_data['idCardNoOCR'] = self.data['cer_no']
-        positive = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid1.png'))
+        positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/cqid1.png'))
         credit_data['positive'] = positive  # 身份证正面base64字符串
-        negative = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png'))
+        negative = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/cqid2.png'))
         credit_data['negative'] = negative  # 身份证反面base64字符串
 
         # 活体图信息
         credit_data['assayTime'] = self.date
-        best = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqface.png'))
+        best = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/cqface.png'))
         credit_data['best'] = best  # 人脸base64字符串
-        action1 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action1.jpg'))
+        action1 = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
         credit_data['action1'] = action1  # 身份证反面base64字符串
-        action2 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action2.jpg'))
+        action2 = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action2.jpg'))
         credit_data['action2'] = action2  # 身份证反面base64字符串
-        action3 = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\action3.jpg'))
+        action3 = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action3.jpg'))
         credit_data['action3'] = action3  # 身份证反面base64字符串
 
         # 银行卡信息
@@ -259,9 +261,9 @@ class ZhiXinBizImpl(INIT):
         # ocr信息
         applyLoan_data['nameOCR'] = self.data['name']
         applyLoan_data['idCardNoOCR'] = self.data['cer_no']
-        positive = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid1.png'))
+        positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/cqid1.png'))
         applyLoan_data['positive'] = positive  # 身份证正面base64字符串
-        negative = get_base64_from_img(os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png'))
+        negative = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/cqid2.png'))
         applyLoan_data['negative'] = negative  # 身份证反面base64字符串
 
         # 银行卡信息
