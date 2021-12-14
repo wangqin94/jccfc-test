@@ -1,9 +1,12 @@
-import allure
-import pytest
-
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
 from src.enums.EnumZhiXin import ZhiXinApiStatusEnum
 from src.impl.common.CommonCheckBizImpl import *
 import time
+import allure
+import pytest
+
 
 
 @allure.feature("支用申请查询")
@@ -14,8 +17,8 @@ class TestCase(object):
 
     @pytest.mark.zhixin
     @pytest.mark.smoke
-    @allure.title("绑卡申请&校验")  # 标题
-    @allure.step("绑卡申请&校验")  # 测试报告显示步骤
+    @allure.title("绑卡申请-绑卡校验-授信申请-授信查询-支用申请-支用查询")  # 标题
+    @allure.step("绑卡申请-绑卡校验-授信申请-授信查询-支用申请-支用查询")  # 测试报告显示步骤
     def test_loan(self, get_base_data, zhixin, checkBizImpl, zhiXinCheckBizImpl):
         """ 测试步骤 """
         data = get_base_data
