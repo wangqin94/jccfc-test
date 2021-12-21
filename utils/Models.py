@@ -5,17 +5,18 @@
 # # -----------------------------------------------------------
 import base64
 import datetime as datetimes
-import os
 import random
 import string
 import json
 import time
+import os
 import requests
 from inspect import getcallargs
 from functools import wraps
 from utils.Logger import MyLog
 
 from dateutil.relativedelta import relativedelta
+
 
 _log = MyLog.get_log()
 # __all__ = ['output_format', 'wait_time', 'get_day', 'get_base_data',
@@ -61,9 +62,9 @@ def get_base_data(env, *project, back=20, **kwargs):
     # 读取文件行数，超过20行删除历史数据
     with open('person.py', "r", encoding='utf-8') as f:  # 打开文件
         back_data = f.readlines()  # 读取文件
-        count = len(back_data)    # 获取txt文件的行数
+        count = len(back_data)  # 获取txt文件的行数
         if count > back:
-            start = count-back
+            start = count - back
             back_data = back_data[start:count]  # 只读取最后20行的内容
             f = open('person.py', "w", encoding='utf-8')  # 以写入的形式打开txt文件
             f.writelines(back_data)  # 将修改后的文本内容写入

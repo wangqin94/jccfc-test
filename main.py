@@ -1,10 +1,13 @@
 import pytest
 import os
+import sys
+print(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 if __name__ == '__main__':
     pytest.main(["-sq"])
-    os.system(r"allure generate results/allure/allure-results -o results/allure/allure-report --clean")
-    os.system('allure open results/allure/allure-report')  # 打开报告
+    os.system(r"allure generate py -o allure-report --clean")
+    os.system('allure open allure-report')  # 打开报告
 
 #失败重试
 # • 测试失败后要重新运行n次，要在重新运行之间添加延迟时 间，间隔n秒再运行。

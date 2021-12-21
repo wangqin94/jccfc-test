@@ -19,7 +19,7 @@ class AllTest():
     def __init__(self):
         global log, resultPath, on_off, email_send_model
         self.DeleteLog = Logger.DeleteLog()
-        log = MyLog.get_log()
+        log = MyLog().get_log()
         resultPath = log.get_report_path()
         on_off = readconfig.get_email("on_off")
         email_send_model = readconfig.get_email("email_send_model")
