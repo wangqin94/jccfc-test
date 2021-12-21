@@ -6,11 +6,12 @@
 
 # port http请求
 from engine.Base import INIT
+from utils.Logger import MyLog
 from utils.Models import *
 from config.globalConfig import *
 from src.test_data.module_data.common import *
 
-log = MyLog.get_log()
+_log = MyLog.get_log()
 
 
 def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decrypt_url', encrypt_flag=True):
@@ -24,7 +25,7 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
     @return: response 接口响应参数 数据类型：json 
     """
     data1 = json.dumps(payload)
-    log.info("payload数据: {}".format(data1))
+    _log.info("payload数据: {}".format(data1))
 
     if encrypt_flag:
         encrypt_payload = encrypt(encrypt_url, headers, payload)
@@ -33,7 +34,7 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
     else:
         response = requests.post(url=url, headers=headers, json=payload)
         response = response.json()
-        log.info(f"响应报文：{response}")
+        _log.info(f"响应报文：{response}")
     return response
 
 

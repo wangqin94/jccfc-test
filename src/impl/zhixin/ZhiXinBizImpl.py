@@ -4,13 +4,10 @@
 # ------------------------------------------
 import hashlib
 import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
 from config.TestEnvInfo import TEST_ENV_INFO
 from src.enums.EnumsCommon import *
 from src.test_data.module_data import zhixin
 from src.impl.common.CommonUtils import *
-from engine.Base import INIT
 
 
 def computeMD5(message):

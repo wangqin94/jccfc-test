@@ -16,7 +16,7 @@ class INIT(object):
     def __init__(self):
         super().__init__()
         # 初始化日志引擎模块
-        self.log = MyLog.get_log()
+        self.log = MyLog().get_log()
         # 环境配置获取
         self._envinit()
 

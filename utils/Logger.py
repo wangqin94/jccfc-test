@@ -2,21 +2,21 @@
 # # -----------------------------------------
 # # - Common log tools
 # # -----------------------------------------
-
-import os
 import logging
 from logging.handlers import RotatingFileHandler
 import threading
 from datetime import datetime
 import datetime as dt
 import shutil
+import os
+from utils.ReadConfig import Config
+
 
 # # -----------------------------------------
 # # - Font color style
 # # -----------------------------------------
 
 # color number
-from utils.ReadConfig import Config
 
 COLOR_RESET = 0
 BLACK = 30
@@ -84,12 +84,12 @@ def get_log_filepath():
 class Logs(object):
     # 控制台日志句柄初始化
     __INSTANCE = None
-    __slots__ = ('__logger', 'logPath')
+    __slots__ = ('logger', 'logPath')
     console_handler = logging.StreamHandler()
     console_output_level = _config.get_log('console_level')
     console_handler.setLevel(console_output_level)
 
-    # # TODO: Limit to instance amount only one
+    # TODO: Limit to instance amount only one
     def __new__(cls, *args, **kwargs):
         if not cls.__INSTANCE:
             cls.__INSTANCE = super().__new__(cls, *args, **kwargs)
@@ -97,23 +97,23 @@ class Logs(object):
 
     def __init__(self):
         # 初始化
-        logger = logging.getLogger()
+        logger1 = logging.getLogger()
         # 设置日志级别
-        logger.setLevel(_config.get_log('file_level'))
+        logger1.setLevel(_config.get_log('file_level'))
         self.logPath = get_log_filepath()
 
-        if not logger.handlers:  # 避免重复日志
-            # 初始文件日志句柄
-            # file_handler = logging.FileHandler(os.path.join(self.logPath, log_file_name))
-            # 写入文件，如果文件超过100个Bytes，仅保留5个文件。
-            file_handler = RotatingFileHandler(os.path.join(self.logPath, log_file_name), maxBytes=100*1024, backupCount=3)
-            formatter = logging.Formatter(_config.get_log('pattern'))
-            file_handler.setFormatter(formatter)
-            # 设置文件日志级别
-            file_output_level = _config.get_log('file_level')
-            file_handler.setLevel(file_output_level)
-            logger.addHandler(file_handler)
-            self.__logger = logger
+        # if not logger1.handlers:  # 避免重复日志
+        # 初始文件日志句柄
+        # file_handler = logging.FileHandler(os.path.join(self.logPath, log_file_name))
+        # 写入文件，如果文件超过100个Bytes，仅保留5个文件。
+        file_handler = RotatingFileHandler(os.path.join(self.logPath, log_file_name), maxBytes=100*1024, backupCount=3)
+        formatter = logging.Formatter(_config.get_log('pattern'))
+        file_handler.setFormatter(formatter)
+        # 设置文件日志级别
+        file_output_level = _config.get_log('file_level')
+        file_handler.setLevel(file_output_level)
+        logger1.addHandler(file_handler)
+        self.logger = logger1
 
     def build_start_line(self, case_no):
         """
@@ -121,7 +121,7 @@ class Logs(object):
         @param case_no:
         :return:
         """
-        self.__logger.info("------" + case_no + " API test Start------")
+        self.logger.info("------" + case_no + " API test Start------")
 
     def build_end_line(self, case_no):
         """
@@ -129,7 +129,7 @@ class Logs(object):
         @param case_no:
         :return:
         """
-        self.__logger.info("--------" + case_no + " END--------")
+        self.logger.info("--------" + case_no + " END--------")
 
     def build_case_line(self, case_name, code, msg):
         """
@@ -139,7 +139,7 @@ class Logs(object):
         @param msg:
         :return:
         """
-        self.__logger.info((case_name + " - Code:" + code + " - msg:" + msg))
+        self.logger.info((case_name + " - Code:" + code + " - msg:" + msg))
 
     def get_report_path(self):
         """
@@ -167,7 +167,7 @@ class Logs(object):
         try:
             fb.write(result)
         except FileNotFoundError as ex:
-            self.__logger.error(str(ex))
+            self.logger.error(str(ex))
 
     def __log_style(self, color=37, bgd=1):
         """ # # console log display sample
@@ -179,13 +179,13 @@ class Logs(object):
         fmt = '[%(asctime)s] [%(levelname)s] \033[{};{}m%(message)s\033[0m'.format(bgd, color)
         formatter = logging.Formatter(fmt, '%F %T')
         self.console_handler.setFormatter(formatter)
-        self.__logger.addHandler(self.console_handler)
+        self.logger.addHandler(self.console_handler)
 
     def _log_style_reset(self):
         fmt = "[%(asctime)s] [%(levelname)s] %(message)s"
         formatter = logging.Formatter(fmt, '%F %T')
         self.console_handler.setFormatter(formatter)
-        self.__logger.addHandler(self.console_handler)
+        self.logger.addHandler(self.console_handler)
 
     """ # The functions of log level """
 
@@ -193,42 +193,42 @@ class Logs(object):
         self.__log_style(color=WHITE, bgd=BGD_RESET)
         if len(msg) > 1024:
             msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
-        self.__logger.debug(msg, *args, **kwargs)
+        self.logger.debug(msg, *args, **kwargs)
         self._log_style_reset()
 
     def info(self, msg, *args, **kwargs):
         self.__log_style(color=1)
         if len(msg) > 8192:
             msg = "日志长度超过8192，控制台只打印8192字节长度,{}".format(msg[0:8192])
-        self.__logger.info(msg, *args, **kwargs)
+        self.logger.info(msg, *args, **kwargs)
         self._log_style_reset()
 
     def demsg(self, msg, *args, **kwargs):
         self.__log_style(color=DARK_GREEN, bgd=1)
         if len(msg) > 1024:
             msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
-        self.__logger.info(msg, *args, **kwargs)
+        self.logger.info(msg, *args, **kwargs)
         self._log_style_reset()
 
     def warning(self, msg, *args, **kwargs):
         self.__log_style(color=YELLOW)
         if len(msg) > 1024:
             msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
-        self.__logger.warning(msg, *args, **kwargs)
+        self.logger.warning(msg, *args, **kwargs)
         self._log_style_reset()
 
     def error(self, msg, *args, **kwargs):
         self.__log_style(color=RED, bgd=Underline)
         if len(msg) > 1024:
             msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
-        self.__logger.error(msg, *args, **kwargs)
+        self.logger.error(msg, *args, **kwargs)
         self._log_style_reset()
 
     def fatal(self, msg, *args, **kwargs):
         self.__log_style(color=RED, bgd=strikethrough)
         if len(msg) > 1024:
             msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
-        self.__logger.critical(msg, *args, **kwargs)
+        self.logger.critical(msg, *args, **kwargs)
         self._log_style_reset()
 
 
@@ -239,7 +239,7 @@ class DeleteLog:
         if not os.path.exists(self.del_path):
             os.mkdir(self.del_path)
         self.delList = os.listdir(self.del_path)  # 需要删除目录下所有文件或文件夹列表
-        self.logger = MyLog.get_log()
+        self.logger = MyLog().get_log()
 
     def compare_file_time(self, file):
         time_of_last_mod = dt.date.fromtimestamp(os.path.getctime(file))
@@ -286,7 +286,7 @@ class DeleteLog:
                     self.logger.error(str(e))
 
 
-class MyLog:
+class MyLog(object):
     log = None
     mutex = threading.Lock()
 
@@ -304,7 +304,7 @@ class MyLog:
 
 
 if __name__ == "__main__":
-    logger = MyLog.get_log()
+    logger = MyLog().get_log()
     logger.debug("test debug")
     logger.info("test info")
     logger.warning("test warning")

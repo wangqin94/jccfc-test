@@ -7,6 +7,8 @@ import datetime
 import threading
 import zipfile
 import glob
+
+from utils.Logger import MyLog
 from utils.Models import *
 from requests_html import HTMLSession
 from requests_file import FileAdapter
