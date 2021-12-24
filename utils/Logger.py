@@ -106,7 +106,7 @@ class Logs(object):
         # 初始文件日志句柄
         # file_handler = logging.FileHandler(os.path.join(self.logPath, log_file_name))
         # 写入文件，如果文件超过100个Bytes，仅保留5个文件。
-        file_handler = RotatingFileHandler(os.path.join(self.logPath, log_file_name), maxBytes=100*1024, backupCount=3)
+        file_handler = RotatingFileHandler(os.path.join(self.logPath, log_file_name), maxBytes=100*102400, backupCount=10)
         formatter = logging.Formatter(_config.get_log('pattern'))
         file_handler.setFormatter(formatter)
         # 设置文件日志级别
@@ -198,8 +198,8 @@ class Logs(object):
 
     def info(self, msg, *args, **kwargs):
         self.__log_style(color=1)
-        if len(msg) > 8192:
-            msg = "日志长度超过8192，控制台只打印8192字节长度,{}".format(msg[0:8192])
+        if len(msg) > 1024:
+            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
         self.logger.info(msg, *args, **kwargs)
         self._log_style_reset()
 

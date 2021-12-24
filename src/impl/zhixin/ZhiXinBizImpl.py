@@ -30,7 +30,7 @@ class ZhiXinBizImpl(INIT):
         self.loanAmt = 1000  # 支用申请金额, 默认1000 单位元
         self.term = 3  # 借款期数, 默认3期
         self.encrypt_flag = encrypt_flag
-        self.strings = str(int(round(time.time() * 1000)))
+        self.strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
 
@@ -156,6 +156,7 @@ class ZhiXinBizImpl(INIT):
 
         # 更新 payload 字段值
         credit_data.update(kwargs)
+
         parser = DataUpdate(self.cfg['applyCredit']['payload'], **credit_data)
         self.active_payload = parser.parser
 
@@ -235,7 +236,7 @@ class ZhiXinBizImpl(INIT):
         return response
 
     # 支用申请
-    def applyLoan(self, **kwargs):
+    def applyLoan(self,  **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
@@ -250,7 +251,7 @@ class ZhiXinBizImpl(INIT):
         applyLoan_data['loanApplyNo'] = 'loanApplyNo' + self.strings
         applyLoan_data['userId'] = self.data['userId']
         applyLoan_data['loanTime'] = self.date
-        credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'], status='03')
         applyLoan_data['partnerCreditNo'] = credit_apply_info['credit_apply_id']
         applyLoan_data['loanAmt'] = self.loanAmt
         applyLoan_data['term'] = self.term
