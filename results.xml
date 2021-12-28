@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="30.805" timestamp="2021-12-28T12:11:07.837713" hostname="DESKTOP-V3DPO2Q"><testcase classname="src.test_case.zhixin.test_auto_zhixin_loan.TestCase" name="test_loan" time="29.752" /></testsuite></testsuites>
