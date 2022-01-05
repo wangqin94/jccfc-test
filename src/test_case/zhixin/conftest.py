@@ -2,7 +2,7 @@ import pytest
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
-from src.impl.common.CommonCheckBizImpl import *
+from src.impl.common.CheckBizImpl import *
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 from src.impl.zhixin.ZhiXinCheckBizImpl import ZhiXinCheckBizImpl
 

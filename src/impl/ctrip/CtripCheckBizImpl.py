@@ -5,14 +5,16 @@
 @Author  ：jccfc
 @Date    ：2021/9/9 15:55 
 """
+from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import *
-from src.impl.common.CommonUtils import *
+from src.impl.common.CommonBizImpl import *
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 
 
-class CtripCheckBizImpl(INIT):
+class CtripCheckBizImpl(EnvInit):
     def __init__(self):
         super().__init__()
-        self.getSqlData = GetSqlData()
+        self.MysqlBizImpl = MysqlBizImpl()
 
     def check_loan_apply_status(self, **kwargs):
         """
@@ -20,7 +22,7 @@ class CtripCheckBizImpl(INIT):
         @return: response 接口响应参数 数据类型：json
         """
         for n in range(10):
-            info = self.getSqlData.get_loan_apply_info(**kwargs)
+            info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == EnumLoanStatus.ON_USE.value:
                 self.log.demsg('支用成功')
@@ -38,7 +40,7 @@ class CtripCheckBizImpl(INIT):
         @return: response 接口响应参数 数据类型：json
         """
         for n in range(10):
-            info = self.getSqlData.get_credit_apply_info(**kwargs)
+            info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
             status = info['status']
             if status == EnumCreditStatus.SUCCESS.value:
                 self.log.demsg('授信成功')

@@ -5,14 +5,16 @@
 @Author  ：jccfc
 @Date    ：2021/9/9 15:55 
 """
+from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import *
-from src.impl.common.CommonUtils import *
+from src.impl.common.CommonBizImpl import *
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 
 
-class CheckBizImpl(INIT):
+class CheckBizImpl(EnvInit):
     def __init__(self):
         super().__init__()
-        self.getSqlData = GetSqlData()
+        self.MysqlBizImpl = MysqlBizImpl()
 
     def check_loan_apply_status(self, **kwargs):
         """
@@ -22,7 +24,7 @@ class CheckBizImpl(INIT):
         self.log.demsg('支用结果校验...')
         flag = 10
         for n in range(flag):
-            info = self.getSqlData.get_loan_apply_info(**kwargs)
+            info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == EnumLoanStatus.ON_USE.value:
                 self.log.demsg('支用成功')
@@ -44,7 +46,7 @@ class CheckBizImpl(INIT):
         self.log.demsg('文件放款支用结果校验...')
         flag = 10
         for n in range(flag):
-            info = self.getSqlData.get_loan_apply_info(**kwargs)
+            info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == EnumLoanStatus.TO_LOAN.value:
                 self.log.demsg('支用成功')
@@ -66,7 +68,7 @@ class CheckBizImpl(INIT):
         self.log.demsg('数据库授信结果校验...')
         flag = 10
         for n in range(10):
-            info = self.getSqlData.get_credit_apply_info(**kwargs)
+            info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
             status = info['status']
             if status == EnumCreditStatus.SUCCESS.value:
                 self.log.demsg('数据库层授信查询成功')

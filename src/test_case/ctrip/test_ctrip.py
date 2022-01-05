@@ -35,7 +35,7 @@ class TestCase(object):
         # 授信查询
         elif flag == 1:
             xc = CtripBizImpl(data=data)
-            xc.credit_query()
+            xc.MysqlBizImpl.credit_query()
 
         # 支用申请
         elif flag == 2:
@@ -45,7 +45,7 @@ class TestCase(object):
         # 支用查询
         elif flag == 3:
             xc = CtripBizImpl(data=data)
-            xc.loan_query()
+            xc.MysqlBizImpl.loan_query()
 
         # 还款通知
         elif flag == 4:
@@ -61,7 +61,7 @@ class TestCase(object):
                 xc.pre_credit(advice_amount=10000)
                 xc.credit(advice_amount=10000)
                 for n in range(10):
-                    status = xc.credit_query()
+                    status = xc.MysqlBizImpl.credit_query()
                     if status == '03':
                         xc.loan(loan_amount=600, first_repay_date="20210725121311")
                         break
@@ -88,5 +88,5 @@ if __name__ == '__main__':
     start_time = time.time()
     start = TestCase()
     total = time.time() - start_time
-    log = MyLog.get_log()
+    log = MyLog().get_log()
     log.info('程序运行时间：{}'.format(round(total)))

@@ -15,7 +15,7 @@ class MyTestCase(unittest.TestCase):
     def test_one(self):
         # repay_mode=还款类型: 必填参数 :1按期还款；2提前结清；3逾期还款；4提前当期还款
         # finish_time=实际还款时间： 提前结清必填参数"2021-08-06"
-        ctrip = CtripBizImpl(data=data, repay_mode="3", repay_term_no="2", repay_date='2021-10-22', loan_invoice_id=None)
+        ctrip = CtripBizImpl(data=data, repay_mode="2", repay_term_no="2", repay_date='2021-11-25', loan_invoice_id=None)
         self.jsonData = ctrip.repay_notice()
 
 

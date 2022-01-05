@@ -28,7 +28,7 @@ class TestCase(object):
         # 授信查询
         elif flag == 1:
             mt = BaiDuBizImpl(data=data)
-            mt.credit_query()
+            mt.MysqlBizImpl.credit_query()
 
         # 支用申请
         elif flag == 2:
@@ -39,7 +39,7 @@ class TestCase(object):
         # 支用查询
         elif flag == 3:
             mt = BaiDuBizImpl(data=data)
-            mt.loan_query()
+            mt.MysqlBizImpl.loan_query()
 
         return self
 
@@ -52,5 +52,5 @@ if __name__ == '__main__':
     start_time = time.time()
     start = TestCase()
     total = time.time() - start_time
-    log = MyLog.get_log()
+    log = MyLog().get_log()
     log.info('程序运行时间：{}'.format(round(total)))

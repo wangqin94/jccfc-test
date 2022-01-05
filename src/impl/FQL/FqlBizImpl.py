@@ -2,21 +2,24 @@
 # ------------------------------------------
 # 分期乐接口数据封装类
 # ------------------------------------------
-import time
-from config.TestEnvInfo import *
-from src.impl.common.CommonUtils import *
+
+from engine.EnvInit import EnvInit
+from src.impl.common.CommonBizImpl import *
 from src.enums.EnumsCommon import *
 from src.enums.EnumFql import *
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from src.test_data.module_data import fql
 
 
-class FqlBizImpl(INIT):
+class FqlBizImpl(EnvInit):
     def __init__(self, *, data=None, credit_amount=30000, loan_amount=600, loan_term=3, encrypt_flag=True):
         super().__init__()
 
         # 解析项目特性配置
         self.cfg = fql.fql
+        self.log = MyLog.get_log()
+        self.MysqlBizImpl = MysqlBizImpl()
 
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQL.value), 'applyId')
         self.log.info('用户四要素信息 \n%s', self.data)
@@ -29,15 +32,11 @@ class FqlBizImpl(INIT):
         self.loanTerm = loan_term
 
         self.sourceCode = '000UC010000006268'
-        self.encrypt_url = self.host_api + FqlPathEnum.fqlEncryptPath.value
-        self.decrypt_url = self.host_api + FqlPathEnum.fqlDecryptPath.value
+        self.encrypt_url = API['request_host_api'].format(self.env) + FqlPathEnum.fqlEncryptPath.value
+        self.decrypt_url = API['request_host_api'].format(self.env) + FqlPathEnum.fqlDecryptPath.value
 
         # 初始化payload变量
         self.active_payload = {}
-
-        # 初始数据库变量
-        self.credit_database_name = '%s_credit' % TEST_ENV_INFO.lower()
-        self.asset_database_name = '%s_asset' % TEST_ENV_INFO.lower()
 
     def set_active_payload(self, payload):
         self.active_payload = payload
@@ -77,7 +76,7 @@ class FqlBizImpl(INIT):
         self.active_payload = parser.parser
 
         # 校验用户是否在系统中已存在
-        self.check_user_available(self.data)
+        self.MysqlBizImpl.check_user_available(self.data)
 
         self.log.demsg('开始授信申请...')
         url = self.host_api + self.cfg['credit']['interface']

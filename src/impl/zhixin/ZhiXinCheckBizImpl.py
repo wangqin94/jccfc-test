@@ -5,15 +5,19 @@
 @Author  ：jccfc
 @Date    ：2021/11/17 15:55
 """
+import json
+import time
+
+from engine.MysqlInit import MysqlInit
 from src.enums.EnumZhiXin import StatusCodeEnum, ZhiXinApiStatusEnum
-from src.impl.common.CommonUtils import *
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 
 
-class ZhiXinCheckBizImpl(INIT):
+class ZhiXinCheckBizImpl(MysqlInit):
     def __init__(self):
         super().__init__()
-        self.getSqlData = GetSqlData()
+        self.MysqlBizImpl = MysqlBizImpl()
 
     def check_credit_apply_status(self, data, userid, credit_apply_no):
         """

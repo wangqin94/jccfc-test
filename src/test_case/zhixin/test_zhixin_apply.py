@@ -1,5 +1,5 @@
 import unittest
-from src.impl.common.CommonCheckBizImpl import *
+from src.impl.common.CheckBizImpl import *
 import time
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 

@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
     """ 测试步骤 """
     def test_one(self):
         YingJiZF = YingJiZFBizImpl(data=data)
-        self.jsonData = YingJiZF.loan_query(idNo='361024200303288460')
+        self.jsonData = YingJiZF.loan_query(idNo='410106198412303339')
 
 
 if __name__ == '__main__':

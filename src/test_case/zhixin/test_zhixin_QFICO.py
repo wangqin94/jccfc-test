@@ -1,9 +1,7 @@
 import unittest
 
-from src.impl.common.CommonCheckBizImpl import *
-import time
+from src.impl.common.CheckBizImpl import *
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
-from src.impl.zhixin.ZhiXinCheckBizImpl import ZhiXinCheckBizImpl
 from src.test_case.zhixin.person import data
 
 

@@ -4,6 +4,9 @@ test case script
 """
 import json
 import time
+from multiprocessing import Process
+
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 from person import *
 from utils.Logger import MyLog
@@ -12,18 +15,19 @@ from utils.Logger import MyLog
 class TestCase(object):
     def __init__(self):
         self.process()
+        # self.manythread()
 
     def preprocess(self):
         """ 预置条件处理 """
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=8):
+    def process(self, flag=6):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
             zhixin = ZhiXinBizImpl(data=data)
-            res = json.loads(zhixin.applyCertification(bankCardNo='6216669203242548301').get('output'))
+            res = json.loads(zhixin.applyCertification().get('output'))
             zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                               cdKey=res['cdKey'])
 
@@ -40,12 +44,12 @@ class TestCase(object):
         # 授信
         elif flag == 3:
             zhixin = ZhiXinBizImpl(data=data)
-            zhixin.credit(nameOCR='111')
+            zhixin.credit()
 
         # 授信查询
         elif flag == 4:
             zhixin = ZhiXinBizImpl(data=data)
-            zhixin.queryCreditResult(userId="userId1637659049563", creditApplyNo="creditApplyNo1637659049593")
+            zhixin.queryCreditResult(userId="userId1640223565824", creditApplyNo="creditApplyNo16402239971575769")
 
         # 借款试算
         elif flag == 5:
@@ -55,7 +59,7 @@ class TestCase(object):
         # 借款申请
         elif flag == 6:
             zhixin = ZhiXinBizImpl(data=data)
-            zhixin.applyLoan(loanAmt='1000', term='6')
+            zhixin.applyLoan(loanAmt='1000', term='3')
 
         # 借款查询
         elif flag == 7:
@@ -65,16 +69,31 @@ class TestCase(object):
         # 还款结果查询
         elif flag == 8:
             zhixin = ZhiXinBizImpl(data=data)
-            zhixin.queryRepayResult(userId="SUR1322676348", repayApplyNo="repayApplyNo1638351305689")
+            zhixin.queryRepayResult(userId="PUR6189972556213129218", repayApplyNo="RA6191735358594482177")
+
+        # 还款
+        elif flag == 9:
+            zhixin = ZhiXinBizImpl(data=data)
+            # 默认取person文件中的userid
+            loan_apply_info = MysqlBizImpl().get_loan_apply_info(thirdpart_user_id=data['userId'])
+            zhixin.applyRepayment(repay_type='1', loan_no="000LA2021122300000068")  # 按期还款
 
     def postprocess(self):
         """ 后置条件处理 """
         pass
+
+    def manythread(self):
+        threads = []
+        for x in range(10):  # 循环创建10个线程
+            t = Process(target=self.process)
+            threads.append(t)
+        for t in threads:  # 循环启动10个线程
+            t.start()
 
 
 if __name__ == '__main__':
     start_time = time.time()
     start = TestCase()
     total = time.time() - start_time
-    log = MyLog.get_log()
+    log = MyLog().get_log()
     log.info('程序运行时间：{}'.format(round(total)))

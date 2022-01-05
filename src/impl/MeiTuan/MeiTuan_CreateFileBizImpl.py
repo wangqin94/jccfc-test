@@ -7,9 +7,11 @@ import sys
 from datetime import date, timedelta
 
 from config.TestEnvInfo import TEST_ENV_INFO
+from engine.EnvInit import EnvInit
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Logger import Logs
 from src.enums.EnumsCommon import *
-from src.impl.common.CommonUtils import *
+from src.impl.common.CommonBizImpl import *
 
 _log = Logs()
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))) # 项目根目录
@@ -18,7 +20,7 @@ if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)
 
 
-class MtFile(INIT):
+class MtFile(EnvInit):
     def __init__(self, certificate_no, user_name, apply_date=None, delay=(0, 0), loan_record=0):
         """
         @param certificate_no:  用户身份证号
@@ -29,6 +31,7 @@ class MtFile(INIT):
         """
         super().__init__()
         self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
+        self.MysqlBizImpl = MysqlBizImpl()
         self.user_name = user_name
         self.certificate_no = certificate_no
         self.loan_record = loan_record
@@ -44,11 +47,11 @@ class MtFile(INIT):
         # 获取文件名及存放路径
         self.data_save_path, self.bank_loan_filename, self.bank_period_filename = self.get_filename()
         print(self.data_save_path, self.bank_loan_filename, self.bank_period_filename)
+
         # 获取用户数据库表 hsit_credit.credit_loan_apply, hsit_user.user_financial_instrument_info信息
-        self.getSqlData = GetSqlData()
-        self.data_info = self.getSqlData.get_credit_database_info('credit_loan_apply', record=self.loan_record,
+        self.data_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply', record=self.loan_record,
                                                                   certificate_no=self.certificate_no)
-        self.data_info1 = self.getSqlData.get_user_database_info('user_financial_instrument_info',
+        self.data_info1 = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
                                                                  account_name=self.user_name)
 
         # 根据生息日获取对应的账单日和还款日列表
@@ -373,7 +376,6 @@ class MtFile(INIT):
         @param amount_tuple: 当前期应还本金和利息
         @param plan_repay_date: 计划还款日
         @param period_id: 还款期ID与还款计划相对应
-        @param delay: 逾期天数
         :return:
         """
         times = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())

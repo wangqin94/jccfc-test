@@ -2,15 +2,16 @@
 # 携程接口数据封装类
 # ------------------------------------------
 from datetime import datetime
-from src.impl.common.CommonUtils import *
+from src.impl.common.CommonBizImpl import *
 from src.enums.EnumsCommon import *
-from engine.Base import INIT
+from engine.EnvInit import EnvInit
 from config.TestEnvInfo import *
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from src.test_data.module_data import ctrip
 
 
-class CtripBizImpl(INIT):
+class CtripBizImpl(EnvInit):
     def __init__(self, *, data=None, repay_term_no="1", repay_mode="1", loan_invoice_id=None, repay_date='2021-08-09'):
         """
         @param data:  四要素
@@ -49,7 +50,7 @@ class CtripBizImpl(INIT):
         self.asset_database_name = '%s_asset' % TEST_ENV_INFO.lower()
 
         # 初始化查询数据库类
-        self.getSqlData = GetSqlData()
+        self.MysqlBizImpl = MysqlBizImpl()
 
     def set_active_payload(self, payload):
         self.active_payload = payload
@@ -151,26 +152,26 @@ class CtripBizImpl(INIT):
         repay_notice = dict()
         # 根据openId查询支用信息
         key1 = "thirdpart_user_id = '{}'".format(self.data['open_id'])
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
         apply_rate = credit_loan_apply["apply_rate"]
 
         # 根据支用申请单号查询借据信息
         if self.loan_invoice_id:
             loan_invoice_id = self.loan_invoice_id
             key2 = "loan_invoice_id = '{}'".format(loan_invoice_id)
-            credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
             loan_apply_id = credit_loan_invoice["loan_apply_id"]
             key21 = "loan_apply_id = '{}'".format(loan_apply_id)
-            credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key21)
+            credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key21)
         else:
             loan_apply_id = credit_loan_apply["loan_apply_id"]
             key2 = "loan_apply_id = '{}'".format(loan_apply_id)
-            credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
             loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
 
         # 根据借据Id和期次获取还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, self.repay_term_no)
-        asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
+        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
 
         # 通知payload
         repay_notice['open_id'] = self.data['open_id']
