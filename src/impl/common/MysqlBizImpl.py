@@ -3,11 +3,8 @@
 # 基于项目级业务层公共方法
 # ------------------------------------------
 
-import sys
 from engine.MysqlInit import MysqlInit
 from utils.Models import *
-
-_log = MyLog.get_log()
 
 
 class MysqlBizImpl(MysqlInit):
@@ -31,8 +28,8 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             data = [dict(zip(keys, item)) for item in values][record]
             return data
-        except (IndexError, Exception):
-            self.log.warning("SQL查询结果为空")
+        except Exception as err:
+            self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
     def get_asset_data_info(self, table='asset_loan_apply', key="查询条件", record=0):
         """
@@ -51,8 +48,8 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             data = [dict(zip(keys, item)) for item in values][record]
             return data
-        except (IndexError, Exception):
-            self.log.warning("SQL查询结果为空")
+        except Exception as err:
+            self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
     def credit_apply_query(self, data):
         """ # 接口数据payload解密
@@ -93,7 +90,7 @@ class MysqlBizImpl(MysqlInit):
             self.log.info("执行sql查询：{} 查询结果:{}".format(sql, data))
             return data
         except Exception as err:
-            self.log.warning("SQL查询结果为空{}".format(err))
+            self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
     def get_credit_apply_info(self, record=0, **kwargs):
         """
@@ -112,7 +109,7 @@ class MysqlBizImpl(MysqlInit):
             self.log.info("执行sql查询：{} 查询结果:{}".format(sql, data))
             return data
         except Exception as err:
-            self.log.warning("SQL查询结果为空{}".format(err))
+            self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
     def get_credit_database_info(self, table, record=0, **kwargs):
         """
@@ -131,7 +128,7 @@ class MysqlBizImpl(MysqlInit):
             self.log.info("执行sql查询：{} 查询结果:{}".format(sql, data))
             return data
         except Exception as err:
-            self.log.warning("SQL查询结果为空{}".format(err))
+            self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
     def get_user_database_info(self, table, record=0, **kwargs):
         """
@@ -150,7 +147,7 @@ class MysqlBizImpl(MysqlInit):
             self.log.info("执行sql查询：{} 查询结果:{}".format(sql, data))
             return data
         except Exception as err:
-            self.log.warning("SQL查询结果为空{}".format(err))
+            self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
     def get_base_database_info(self, table, record=0, **kwargs):
         """
@@ -170,7 +167,7 @@ class MysqlBizImpl(MysqlInit):
             self.log.info("执行sql查询：{} 查询结果:{}".format(sql, data))
             return data
         except Exception as err:
-            self.log.warning("SQL查询结果为空{}".format(err))
+            self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
     def get_bigacct_database_info(self, table, record=0, **kwargs):
         """
@@ -190,7 +187,7 @@ class MysqlBizImpl(MysqlInit):
             self.log.info("执行sql查询：{} 查询结果:{}".format(sql, data))
             return data
         except Exception as err:
-            self.log.warning("SQL查询结果为空{}".format(err))
+            self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
 
 if __name__ == '__main__':

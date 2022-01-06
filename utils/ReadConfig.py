@@ -59,7 +59,7 @@ class Config:
 
     def get_redis(self, name):
         value = self.conf.get("REDIS", name)
-        return value
+        return json.loads(value)
 
 
 if __name__ == '__main__':
