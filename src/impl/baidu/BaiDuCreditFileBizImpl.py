@@ -3,7 +3,8 @@
     Function: 百度借据/费率/息费减免/还款计划/还款文件生成
 """
 
-from engine.Base import INIT
+from engine.EnvInit import EnvInit
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from utils.Logger import Logs
 from datetime import datetime
@@ -17,7 +18,7 @@ if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)
 
 
-class BaiduFile(INIT):
+class BaiduFile(EnvInit):
     def __init__(self, data, cur_date=None, loan_record=0, repay_mode='02'):
         """ # 百度对账文件
         @param data:                用户四要素
@@ -25,6 +26,7 @@ class BaiduFile(INIT):
         @param loan_record:         用户成功支用笔数，默认为0 为第1笔
         """
         super(BaiduFile, self).__init__()
+        self.MysqlBizImpl = MysqlBizImpl()
         self.user_name = data['name']
         self.cer_no = data['cer_no']
         self.loan_record = loan_record
@@ -355,11 +357,11 @@ class BaiduFile(INIT):
         table = 'credit_loan_apply'
         # 查询sql语句
         sql = "select * from {}.credit_loan_apply where certificate_no='{}';".format(
-            self.credit_database_name, self.cer_no)
+            self.MysqlBizImpl.credit_database_name, self.cer_no)
         # 获取表属性字段名
-        keys = self.mysql_credit.select_table_column(table_name=table, database=self.credit_database_name)
+        keys = self.MysqlBizImpl.mysql_credit.select_table_column(table_name=table, database=self.MysqlBizImpl.credit_database_name)
         # 获取查询内容
-        values = self.mysql_credit.select(sql)
+        values = self.MysqlBizImpl.mysql_credit.select(sql)
         try:
             info = [dict(zip(keys, item)) for item in values][self.loan_record]
         except IndexError as err:
@@ -467,11 +469,11 @@ class BaiduRepayFile(BaiduFile):
         if self.loan_invoice_id:
             loan_invoice_id = self.loan_invoice_id
             key1 = "loan_invoice_id = '{}'".format(loan_invoice_id)
-            credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key1)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key1)
             total_term = int(credit_loan_invoice["installment_num"])
         else:
             key2 = "user_name = '{}'".format(self.user_name)
-            credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
             total_term = int(credit_loan_invoice["installment_num"])
             loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
 
@@ -484,11 +486,11 @@ class BaiduRepayFile(BaiduFile):
         if self.loan_invoice_id:
             loan_invoice_id = self.loan_invoice_id
             key1 = "loan_invoice_id = '{}'".format(loan_invoice_id)
-            mysql = self.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key1)
+            mysql = self.MysqlBizImpl.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key1)
             loan_no = str(mysql["third_loan_no"])
         else:
             key2 = "user_name = '{}'".format(self.user_name)
-            mysql = self.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key2)
+            mysql = self.MysqlBizImpl.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key2)
             loan_no = str(mysql["third_loan_no"])
 
         return loan_no
@@ -506,7 +508,7 @@ class BaiduRepayFile(BaiduFile):
         total_term, loan_invoice_id = self.get_invoice_info()
         for term in range(total_term):
             key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, str(term + 1))
-            asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
 
             temple['start_date'] = str(asset_repay_plan["start_date"]).replace("-", "")  # 开始时间
             temple['end_date'] = str(asset_repay_plan["pre_repay_date"]).replace("-", "")  # 结束时间
@@ -539,12 +541,12 @@ class BaiduRepayFile(BaiduFile):
         total_term, loan_invoice_id = self.get_invoice_info()
         # 根据借据ID获取用户的申请费率
         key2 = "loan_invoice_id = '{}'".format(loan_invoice_id)
-        credit_third_wait_loan_deal_info = self.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key2)
+        credit_third_wait_loan_deal_info = self.MysqlBizImpl.get_credit_data_info(table="credit_third_wait_loan_deal_info", key=key2)
         interest_rate = credit_third_wait_loan_deal_info["interest_rate"]  # 年化利率
 
         # 根据借据Id和期次获取资产侧还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, self.repay_term_no)
-        asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
+        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
         temple['total_amt'] = int(float(asset_repay_plan["pre_repay_amount"])*100)  # 总金额
         temple['income_amt'] = int(float(asset_repay_plan["pre_repay_amount"])*100)  # 不含优惠券总金额
         temple['prin_amt'] = int(float(asset_repay_plan["pre_repay_principal"])*100)  # 本金

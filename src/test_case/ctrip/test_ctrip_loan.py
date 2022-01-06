@@ -6,7 +6,7 @@ test case script
 import threading
 
 from src.impl.ctrip.CtripBizImpl import CtripBizImpl
-from src.impl.common.CommonCheckBizImpl import *
+from src.impl.common.CheckBizImpl import *
 # from person import *
 from utils.Models import *
 
@@ -30,7 +30,8 @@ class TestCase(object):
         time.sleep(10)
         CheckBizImpl.check_credit_apply_status(thirdpart_user_id=open_id)
         # 发起支用刚申请
-        ctrip.loan(loan_amount=600, first_repay_date=self.cur_time)
+        # ctrip.loan(loan_amount=600, first_repay_date=self.cur_time)
+        ctrip.loan(loan_amount=600, first_repay_date='20211125111111')
         # 检查支用状态
         time.sleep(5)
         CheckBizImpl.check_loan_apply_status(thirdpart_user_id=open_id)

@@ -1,5 +1,5 @@
 import unittest
-from src.impl.common.CommonCheckBizImpl import *
+from src.impl.common.CheckBizImpl import *
 from src.impl.WLD.WldBizImpl import WldBizImpl
 from person import *
 

@@ -3,16 +3,18 @@
 # 百度接口数据封装类
 # ------------------------------------------
 from config.TestEnvInfo import TEST_ENV_INFO
-from src.impl.common.CommonUtils import post_with_encrypt
+from src.impl.common.CommonBizImpl import post_with_encrypt
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
-from engine.Base import INIT
+from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import *
 from src.test_data.module_data import BaiDu
 
 
-class BaiDuBizImpl(INIT):
+class BaiDuBizImpl(EnvInit):
     def __init__(self, *, data=None, type=1, loan_no=None, encrypt_flag=False):
         super().__init__()
+        self.MysqlBizImpl = MysqlBizImpl()
         self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
 
         # 解析项目特性配置
@@ -57,7 +59,7 @@ class BaiDuBizImpl(INIT):
         self.active_payload = parser.parser
 
         # 校验用户是否已存在
-        self.check_user_available(self.data)
+        self.MysqlBizImpl.check_user_available(self.data)
 
         self.log.demsg('开始授信申请...')
         url = self.host + self.cfg['credit']['interface']
@@ -115,11 +117,11 @@ class BaiDuBizImpl(INIT):
 
         # 根据姓名查询支用信息
         key1 = "user_name = '{}'".format(self.data['name'])
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
 
         # 借据号默认为空取当前用户第一笔借据号，否则取赋值借据号
         loan_no = self.loan_no if self.loan_no else credit_loan_apply["third_loan_invoice_id"]
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
         notice_data['loan_id'] = loan_no
         notice_data['order_id'] = loan_no
         comment['amount_total'] = str(int(credit_loan_apply["apply_amount"]) * 100)

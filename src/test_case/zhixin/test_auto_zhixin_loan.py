@@ -1,12 +1,10 @@
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
 from src.enums.EnumZhiXin import ZhiXinApiStatusEnum
-from src.impl.common.CommonCheckBizImpl import *
+from src.impl.common.CheckBizImpl import *
 import time
 import allure
 import pytest
-
 
 
 @allure.feature("支用申请查询")

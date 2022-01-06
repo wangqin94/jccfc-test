@@ -5,10 +5,10 @@
 from datetime import datetime
 
 from config.TestEnvInfo import *
-from engine.Base import INIT
+from engine.EnvInit import EnvInit
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from src.enums.EnumsCommon import *
-from person import data
 
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
 _FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.FQL.value, TEST_ENV_INFO)  # 文件存放目录
@@ -16,7 +16,7 @@ if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)
 
 
-class FQL(INIT):
+class FQL(EnvInit):
     def __init__(self, data, repay_mode='1', term_no='1', repay_date='2021-08-09'):
         """
         @param data:  四要素
@@ -25,8 +25,7 @@ class FQL(INIT):
         @param repay_date:    还款时间
         """
         super().__init__()
-        self.credit_database_name = '%s_credit' % TEST_ENV_INFO.lower()
-        self.user_database_name = '%s_user' % TEST_ENV_INFO.lower()
+        self.MysqlBizImpl = MysqlBizImpl()
         self.applyId = data['applyId']
         self.repay_mode = repay_mode
         self.term_no = term_no
@@ -34,9 +33,7 @@ class FQL(INIT):
         self.data_save_path = ''
         self.repay_filename = ""
         self.current_date = time.strftime('%Y-%m-%d', time.localtime())
-
-        # 数据库表初始化
-        self.asset_database_name = '%s_asset' % TEST_ENV_INFO.lower()
+        self.data = data
 
         # 还款 字段名列表，(文件生成时字符串拼接使用)
         self.repay_key_temple = [
@@ -88,11 +85,10 @@ class FQL(INIT):
             self.log.error("系统错误:{}".format(e))
 
     # 获取文件存放路径，还款文件名
-    @staticmethod
-    def get_filename(repay_date):
+    def get_filename(self, repay_date):
         # 初始化文件存放路径，(用户_身份证号_时间戳)
         data_save_path = '%s_%s' % (
-            data['name'], time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime()))
+            self.data['name'], time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime()))
         data_save_path = os.path.join(_FilePath, data_save_path)
         os.mkdir(data_save_path)
         # 借据文件名
@@ -111,17 +107,17 @@ class FQL(INIT):
 
         # 根据applyId查询还款计划中的借据号
         key1 = "apply_id = '{}'".format(self.applyId)
-        credit_repay_plan = self.get_credit_data_info(table="credit_repay_plan", key=key1)
+        credit_repay_plan = self.MysqlBizImpl.get_credit_data_info(table="credit_repay_plan", key=key1)
         loan_invoice_id = credit_repay_plan["loan_invoice_id"]
 
         # 根据applyId查询还款计划中的借据号
         key2 = "thirdpart_apply_id = '{}'".format(self.applyId)
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key2)
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key2)
         apply_rate = credit_loan_apply["apply_rate"]
 
         # 根据借据Id和期次获取资产侧还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, self.term_no)
-        asset_repay_plan = self.get_asset_data_info(table="asset_repay_plan", key=key3)
+        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
         temple['repay_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_principal"]))
         temple['paid_prin_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_interest"]))
         temple['paid_int_amt'] = str('{:.2f}'.format(asset_repay_plan["pre_repay_fee"]))
@@ -168,4 +164,5 @@ class FQL(INIT):
 if __name__ == '__main__':
     # 按期还款，提前结清（按日计息），提前结清
     # repay_mode:  还款模式，1：按期还款；3：提前结清；5；逾期还款
+    from src.test_case.fql.person import data
     t = FQL(data, repay_date='2021-09-16', term_no="1", repay_mode='1')

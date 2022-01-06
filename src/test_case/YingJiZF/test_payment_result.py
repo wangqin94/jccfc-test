@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
     """ 测试步骤 """
     def test_one(self):
         YingJiZF = YingJiZFBizImpl(data=data)
-        self.jsonData = YingJiZF.payment_result(appOrderNo='appOrderNo16261623973093')
+        self.jsonData = YingJiZF.payment_result(appOrderNo='appOrderNo16396438654353')
 
 
 if __name__ == '__main__':

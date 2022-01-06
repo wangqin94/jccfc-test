@@ -24,8 +24,8 @@ class TestCase(object):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
-            fql = FqlBizImpl(data=None, credit_amount=2000)
-            fql.credit(creditAmount=2000)
+            fql = FqlBizImpl(data=None)
+            fql.credit(creditAmount=1000)
 
         # 授信查询
         elif flag == 1:
@@ -54,5 +54,5 @@ if __name__ == '__main__':
     start_time = time.time()
     start = TestCase()
     total = time.time() - start_time
-    log = MyLog.get_log()
+    log = MyLog().get_log()
     log.info('程序运行时间：'.format(round(total)))

@@ -4,17 +4,19 @@
 # ------------------------------------------
 from datetime import datetime
 
-from src.impl.common.CommonUtils import *
+from engine.EnvInit import EnvInit
+from src.impl.common.CommonBizImpl import *
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from src.enums.EnumsCommon import *
 from src.enums.EnumWld import *
 from src.test_data.module_data import wld
 
 
-class WldBizImpl(INIT):
+class WldBizImpl(EnvInit):
     def __init__(self, *, data=None, repay_term_no='1', repay_type="1", loan_invoice_id="", encrypt_flag=True):
         super().__init__()
-
+        self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = wld.wld
 
@@ -59,7 +61,7 @@ class WldBizImpl(INIT):
         self.active_payload = parser.parser
 
         # 校验用户是否在系统中已存在
-        self.check_user_available(self.data)
+        self.MysqlBizImpl.check_user_available(self.data)
 
         self.log.demsg('发起代扣签约...')
         url = self.host + self.cfg['bind_card']['interface']
@@ -79,7 +81,7 @@ class WldBizImpl(INIT):
         confirm_bind_card_data['requestTime'] = self.times
         # body
         key = "id_card_no = '" + self.data['cer_no'] + "' order by create_time desc"
-        content = self.get_credit_data_info(table="credit_bind_card_info", key=key)
+        content = self.MysqlBizImpl.get_credit_data_info(table="credit_bind_card_info", key=key)
         confirm_bind_card_data['tradeSerialNo'] = content['trade_serial_no']
 
         # 更新 payload 字段值
@@ -101,7 +103,7 @@ class WldBizImpl(INIT):
         query_bind_card_data['requestTime'] = self.times
         # body
         key = "id_card_no = '" + self.data['cer_no'] + "' order by create_time desc"
-        content = self.get_credit_data_info(table="credit_bind_card_info", key=key)
+        content = self.MysqlBizImpl.get_credit_data_info(table="credit_bind_card_info", key=key)
         query_bind_card_data['tradeSerialNo'] = content['trade_serial_no']
         query_bind_card_data['userId'] = content['user_id']
 
@@ -124,7 +126,7 @@ class WldBizImpl(INIT):
         update_card_data['requestTime'] = self.times
         # body
         key = "certificate_no = '" + self.data['cer_no'] + "' order by create_time desc"
-        content = self.get_credit_data_info(table="credit_loan_invoice", key=key)
+        content = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key)
         update_card_data['loanInvoiceId'] = content['loan_invoice_id']
         update_card_data['idNo'] = self.data['cer_no']
         res = requests.get('http://10.10.100.153:8081/getTestData')
@@ -199,7 +201,7 @@ class WldBizImpl(INIT):
         loan_data['name'] = self.data['name']
         loan_data['idNo'] = self.data['cer_no']
         key = "thirdpart_apply_id = '" + self.data['applyid'] + "'"
-        content = self.get_credit_data_info(table="credit_apply", key=key)
+        content = self.MysqlBizImpl.get_credit_data_info(table="credit_apply", key=key)
         print(content)
         loan_data['loanAmt'] = float(content['apply_amount'])
         loan_data['loanTerm'] = str(content['apply_term'])
@@ -243,7 +245,7 @@ class WldBizImpl(INIT):
         repay_plan_data['requestTime'] = self.times
         # body
         key = "certificate_no = '" + self.data['cer_no'] + "' order by create_time desc"
-        content = self.get_credit_data_info(table="credit_loan_invoice", key=key)
+        content = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key)
         repay_plan_data['loanInvoiceId'] = content['loan_invoice_id']
 
         # 更新 payload 字段值
@@ -271,10 +273,10 @@ class WldBizImpl(INIT):
         repay_data['loanInvoiceId'] = self.loan_invoice_id
         key = "user_id in (select user_id from credit_loan_invoice where loan_invoice_id = '" \
               + self.loan_invoice_id + "')"
-        content = self.get_credit_data_info(table="credit_bind_card_info", key=key)
+        content = self.MysqlBizImpl.get_credit_data_info(table="credit_bind_card_info", key=key)
         repay_data['repaymentAccountNo'] = content['bank_card_no']
         key1 = "loan_invoice_id = '" + self.loan_invoice_id + "' and current_num = '" + self.repay_term_no + "'"
-        content1 = self.get_asset_data_info(table="asset_repay_plan", key=key1)
+        content1 = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key1)
         self.log.info(content1)
         repay_data['repayInterest'] = float(content1['pre_repay_interest'])
         repay_data['repayFee'] = float(content1['pre_repay_fee'])

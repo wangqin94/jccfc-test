@@ -232,7 +232,7 @@ class DDT:
         # 请求头部headers
         try:
             headers = eval(self.data["headers"])
-            print("请求头部：%s") % headers
+            print("请求头部：%s" % headers)
         except:
             headers = None
         print("正在执行用例:******---%s---********" % self.case_id)

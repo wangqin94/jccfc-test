@@ -4,16 +4,19 @@
 # ------------------------------------------
 
 from config.TestEnvInfo import *
+from engine.EnvInit import EnvInit
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import MeiTuan
 from src.enums.EnumMeiTuan import *
-from src.impl.common.CommonUtils import *
+from src.impl.common.CommonBizImpl import *
 from src.enums.EnumsCommon import *
 
 
-class MeiTuanBizImpl(INIT):
+class MeiTuanBizImpl(EnvInit):
     def __init__(self, *, data=None, loan_no=None, term="1", encrypt_flag=True):
         super().__init__()
         self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
+        self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = MeiTuan.MeiTuan
 
@@ -28,7 +31,7 @@ class MeiTuanBizImpl(INIT):
         self.user_loan_apply_info = {}
 
         # 初始化数据库查询公共类
-        self.GetSqlData = GetSqlData()
+        self.MysqlBizImpl = MysqlBizImpl()
         # 初始换加密标识
         self.encrypt_flag = encrypt_flag
 
@@ -62,13 +65,13 @@ class MeiTuanBizImpl(INIT):
 
     # 获取数据库用户授信信息
     def get_user_credit_apply_info(self, sql=None, table='credit_apply', database=None, times=10, interv=5):
-        database = self.credit_database_name if not database else database
+        database = self.MysqlBizImpl.credit_database_name if not database else database
         if not sql:
             sql = "SELECT * FROM {} WHERE certificate_no='{}';".format(table, self.data['cer_no'])
-        keys = self.mysql_credit.select_table_column(table_name=table, database=database)
+        keys = self.MysqlBizImpl.mysql_credit.select_table_column(table_name=table, database=database)
         res = []
         for _ in range(times):
-            res = self.mysql_credit.select(sql)
+            res = self.MysqlBizImpl.mysql_credit.select(sql)
             if res:
                 break
             wait_time(interv)
@@ -78,7 +81,7 @@ class MeiTuanBizImpl(INIT):
         self.user_credit_apply_info = info
 
     def get_user_file_info(self, sql, table='credit', database=None):
-        database = self.credit_database_name if not database else database
+        database = self.MysqlBizImpl.credit_database_name if not database else database
         # keys = self.mysql_credit.select_table_column(table_name=table, database=database)
         # sql =
         # values = self.mysql_credit.select(sql)
@@ -86,10 +89,10 @@ class MeiTuanBizImpl(INIT):
 
     # 获取数据库支用申请用户信息
     def get_user_loan_apply_info(self, certificate_no, database=None):
-        database = self.credit_database_name if not database else database
+        database = self.MysqlBizImpl.credit_database_name if not database else database
         sql = "select * from {}.credit_loan_apply where certificate_no='{}';".format(database, certificate_no)
-        keys = self.mysql_credit.select_table_column(table_name='credit_loan_apply', database=database)
-        res = self.mysql_credit.select(sql)
+        keys = self.MysqlBizImpl.mysql_credit.select_table_column(table_name='credit_loan_apply', database=database)
+        res = self.MysqlBizImpl.mysql_credit.select(sql)
         info = [dict(zip(keys, item)) for item in res]
         self.user_loan_apply_info = info
 
@@ -120,7 +123,7 @@ class MeiTuanBizImpl(INIT):
         self.active_payload = parser.parser
 
         # 校验用户是否在系统中已存在
-        self.check_user_available(self.data)
+        self.MysqlBizImpl.check_user_available(self.data)
 
         self.log.demsg('授信申请...')
         url = self.host + self.cfg['credit']['interface']
@@ -169,7 +172,7 @@ class MeiTuanBizImpl(INIT):
         loan_data["USED_LIMIT"] = 0
 
         app_no = app_no if app_no else self.data['app_no']
-        content = self.GetSqlData.get_credit_apply_info(thirdpart_apply_id=app_no)
+        content = self.MysqlBizImpl.get_credit_apply_info(thirdpart_apply_id=app_no)
         loan_data['APP_NO'] = app_no
         loan_data['CUSTOMER_NO'] = content['thirdpart_user_id']
 
@@ -223,7 +226,7 @@ class MeiTuanBizImpl(INIT):
 
         # 根据姓名查询支用信息
         key1 = "user_name = '{}'".format(self.data['name'])
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
         repay_notice['RATE'] = str(int(credit_loan_apply["apply_rate"]) / 36000)
         repay_notice['TRADE_PERIOD'] = credit_loan_apply["apply_term"]
 
@@ -231,7 +234,7 @@ class MeiTuanBizImpl(INIT):
         loan_no = self.loan_no if self.loan_no else credit_loan_apply["third_loan_invoice_id"]
 
         key3 = "certificate_no = '{}'".format(self.data['cer_no'])
-        credit_personal_limit_detail = self.get_credit_data_info(table="credit_personal_limit_detail", key=key3)
+        credit_personal_limit_detail = self.MysqlBizImpl.get_credit_data_info(table="credit_personal_limit_detail", key=key3)
         repay_notice['CREDIT_LIMIT'] = str(int(credit_personal_limit_detail["total_amount"]))
         repay_notice['AVALIABLE_LIMIT'] = str(int(credit_personal_limit_detail["total_amount"]) * 100)
         repay_notice['USED_LIMIT'] = str(int(credit_personal_limit_detail["total_amount"]) * 100 - int(
@@ -268,7 +271,7 @@ class MeiTuanBizImpl(INIT):
 
         # 根据姓名查询支用信息
         key1 = "user_name = '{}'".format(self.data['name'])
-        credit_loan_apply = self.get_credit_data_info(table="credit_loan_apply", key=key1)
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
         loan_notice['RATE'] = str(int(credit_loan_apply["apply_rate"]) / 36000)
         loan_notice['TRADE_PERIOD'] = str(credit_loan_apply["apply_term"])
         loan_notice['PAYMENT_CONFIRM_TIME'] = str(credit_loan_apply["loan_pay_time"])

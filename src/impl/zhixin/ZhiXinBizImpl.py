@@ -5,9 +5,11 @@
 import hashlib
 import sys
 from config.TestEnvInfo import TEST_ENV_INFO
+from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import zhixin
-from src.impl.common.CommonUtils import *
+from src.impl.common.CommonBizImpl import *
 
 
 def computeMD5(message):
@@ -16,9 +18,10 @@ def computeMD5(message):
     return m.hexdigest()
 
 
-class ZhiXinBizImpl(INIT):
+class ZhiXinBizImpl(MysqlInit):
     def __init__(self, data=None, encrypt_flag=True):
         super().__init__()
+        self.MysqlBizImpl = MysqlBizImpl()
         self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
 
         # 解析项目特性配置
@@ -39,8 +42,6 @@ class ZhiXinBizImpl(INIT):
 
         self.encrypt_url = self.host + self.cfg['encrypt']['interface']
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
-
-        self.getSqlData = GetSqlData()
 
     # 客户撞库校验
     def checkUser(self, iphone, **kwargs):
@@ -161,7 +162,7 @@ class ZhiXinBizImpl(INIT):
         self.active_payload = parser.parser
 
         # 校验用户是否已存在
-        self.check_user_available(self.data)
+        self.MysqlBizImpl.check_user_available(self.data)
 
         self.log.demsg('开始授信申请...')
         url = self.host + self.cfg['applyCredit']['interface']
@@ -213,7 +214,7 @@ class ZhiXinBizImpl(INIT):
         loanTrial_data['loanApplyNo'] = 'loanApplyNo' + self.strings
         loanTrial_data['userId'] = self.data['userId']
         loanTrial_data['loanTime'] = self.date
-        credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
         loanTrial_data['partnerCreditNo'] = credit_apply_info['credit_apply_id']
         loanTrial_data['loanAmt'] = self.loanAmt
         loanTrial_data['term'] = self.term
@@ -236,7 +237,7 @@ class ZhiXinBizImpl(INIT):
         return response
 
     # 支用申请
-    def applyLoan(self,  **kwargs):
+    def applyLoan(self, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
@@ -251,7 +252,7 @@ class ZhiXinBizImpl(INIT):
         applyLoan_data['loanApplyNo'] = 'loanApplyNo' + self.strings
         applyLoan_data['userId'] = self.data['userId']
         applyLoan_data['loanTime'] = self.date
-        credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'], status='03')
+        credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'], status='03')
         applyLoan_data['partnerCreditNo'] = credit_apply_info['credit_apply_id']
         applyLoan_data['loanAmt'] = self.loanAmt
         applyLoan_data['term'] = self.term
@@ -296,7 +297,7 @@ class ZhiXinBizImpl(INIT):
         queryLoanResult_data['requestTime'] = self.times
         queryLoanResult_data['ct'] = self.times
 
-        loan_apply_info = self.getSqlData.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
+        loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
         queryLoanResult_data['userId'] = self.data['userId']
         queryLoanResult_data['loanApplyNo'] = loan_apply_info['loan_apply_id']
 
@@ -324,11 +325,12 @@ class ZhiXinBizImpl(INIT):
         queryLoanPlan_data['requestTime'] = self.times
         queryLoanPlan_data['ct'] = self.times
 
-        loan_apply_info = self.getSqlData.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
+        loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
         queryLoanPlan_data['userId'] = self.data['userId']
         queryLoanPlan_data['loanApplyNo'] = loan_apply_info['loan_apply_id']
-        credit_loan_invoice = self.getSqlData.get_credit_database_info('credit_loan_invoice',
-                                                                       loan_apply_id=queryLoanPlan_data['loanApplyNo'])
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                         loan_apply_id=queryLoanPlan_data[
+                                                                             'loanApplyNo'])
         queryLoanPlan_data['partnerLoanNo'] = credit_loan_invoice['loan_invoice_id']
 
         # 更新 payload 字段值
@@ -360,7 +362,7 @@ class ZhiXinBizImpl(INIT):
         repayTrial_data['partnerLoanNo'] = loan_no
         repayTrial_data['loanApplyNo'] = 'loanApplyNo' + self.strings
         repayTrial_data['repayApplyNo'] = 'repayApplyNo' + self.strings
-        loan_apply_info = self.getSqlData.get_loan_apply_info(loan_apply_id=loan_no)
+        loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(loan_apply_id=loan_no)
         repayTrial_data['userId'] = loan_apply_info['thirdpart_user_id']
 
         # 当还款类型不是repayType=3按金额还款时，还款金额repayAmt为空
@@ -371,9 +373,11 @@ class ZhiXinBizImpl(INIT):
         # 还款时间默认当前系统时间
         repayTrial_data['repayTime'] = self.date
         if repay_type == '1':
-            credit_loan_invoice = self.getSqlData.get_credit_database_info('credit_loan_invoice', loan_apply_id=loan_no)
-            key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(credit_loan_invoice['loan_invoice_id'])
-            asset_repay_plan = self.getSqlData.get_asset_data_info('asset_repay_plan', key)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                             loan_apply_id=loan_no)
+            key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(
+                credit_loan_invoice['loan_invoice_id'])
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
             self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
             repayTrial_data['repayTime'] = str(asset_repay_plan['pre_repay_date']).replace('-', '') + '111111'
 
@@ -412,7 +416,7 @@ class ZhiXinBizImpl(INIT):
         applyRepayment_data['partnerLoanNo'] = loan_no
         applyRepayment_data['loanApplyNo'] = 'loanApplyNo' + self.strings
         applyRepayment_data['repayApplyNo'] = 'repayApplyNo' + self.strings
-        loan_apply_info = self.getSqlData.get_loan_apply_info(loan_apply_id=loan_no)
+        loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(loan_apply_id=loan_no)
         applyRepayment_data['userId'] = loan_apply_info['thirdpart_user_id']
 
         # 当还款类型不是repayType=3按金额还款时，还款金额repayAmt为空
@@ -423,9 +427,11 @@ class ZhiXinBizImpl(INIT):
         # 还款时间默认账单日
         applyRepayment_data['repayTime'] = self.date
         if repay_type == '1':
-            credit_loan_invoice = self.getSqlData.get_credit_database_info('credit_loan_invoice', loan_apply_id=loan_no)
-            key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(credit_loan_invoice['loan_invoice_id'])
-            asset_repay_plan = self.getSqlData.get_asset_data_info('asset_repay_plan', key)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                             loan_apply_id=loan_no)
+            key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(
+                credit_loan_invoice['loan_invoice_id'])
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
             self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
             applyRepayment_data['repayTime'] = str(asset_repay_plan['pre_repay_date']).replace('-', '') + '111111'
 
@@ -482,11 +488,11 @@ class ZhiXinBizImpl(INIT):
         # 根据type类型取业务流水号和锦城申请号
         try:
             if type == "credit":
-                credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+                credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
                 qficoApply_data['applyId'] = credit_apply_info['credit_apply_id']
                 qficoApply_data['businessNo'] = credit_apply_info['thirdpart_apply_id']
             if type == "loan":
-                loan_apply_info = self.getSqlData.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
+                loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
                 qficoApply_data['applyId'] = loan_apply_info['loan_apply_id']
                 qficoApply_data['businessNo'] = loan_apply_info['thirdpart_apply_id']
         except Exception as r:

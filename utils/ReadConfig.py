@@ -49,9 +49,17 @@ class Config:
         value = self.conf.get("PATH", name)
         return value
 
-    def get_browser(self,name):
-        value = self.conf.get("BROWSER" ,name)
+    def get_browser(self, name):
+        value = self.conf.get("BROWSER", name)
         return value
+
+    def get_job(self, name):
+        value = self.conf.get("JOB", name)
+        return value
+
+    def get_redis(self, name):
+        value = self.conf.get("REDIS", name)
+        return json.loads(value)
 
 
 if __name__ == '__main__':

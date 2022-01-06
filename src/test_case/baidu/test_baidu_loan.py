@@ -1,5 +1,5 @@
 import unittest
-from src.impl.common.CommonCheckBizImpl import *
+from src.impl.common.CheckBizImpl import *
 from src.impl.baidu.BaiDuBizImpl import *
 # from person import *
 
@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
         time.sleep(10)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.applyId)
         # 发起支用刚申请
-        self.orderId = baidu.loan(cashAmount=60000, repayMode='22')['orderId']
+        self.orderId = baidu.loan(cashAmount=60000, repayMode='32')['orderId']
 
     """ 后置条件处理 """
     def tearDown(self):

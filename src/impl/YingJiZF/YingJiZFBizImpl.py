@@ -5,9 +5,12 @@
 import hashlib
 
 from config.TestEnvInfo import *
+from engine.EnvInit import EnvInit
+from src.impl.common.CommonBizImpl import *
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import YingJiZF
 from src.enums.EnumsCommon import *
-from src.impl.common.CommonUtils import *
+from utils.Models import *
 
 
 def encrypt_md5(data):
@@ -20,10 +23,10 @@ def encrypt_md5(data):
     return hl.hexdigest()
 
 
-class YingJiZFBizImpl(INIT):
+class YingJiZFBizImpl(EnvInit):
     def __init__(self, *, data=None, payment_type="5"):
         super().__init__()
-
+        self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = YingJiZF.YingJiZF
         
@@ -335,7 +338,7 @@ class YingJiZFBizImpl(INIT):
         # body
         # 根据用户名称查询借据信息
         key1 = "user_name = '{}'".format(self.data['name'])
-        credit_loan_invoice = self.get_credit_data_info(table="credit_loan_invoice", key=key1)
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key1)
         loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
         data['loanInvoiceId'] = loan_invoice_id
         data['paymentType'] = self.paymentType

@@ -17,11 +17,11 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡, 3: 授信, 5: 支用, 6: 还款, 7: 绑卡&授信&支用]
-    def process(self, flag=7):
+    def process(self, flag=0):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            wld = WldBizImpl(data=None)
+            wld = WldBizImpl(data=data)
             wld.bind_card()
             wld.confirm_bind_card()
 
@@ -70,7 +70,7 @@ class TestCase(object):
                 wld.credit(loanTerm=6, applyAmount=1000)
                 for n in range(10):
                     time.sleep(3)
-                    status = wld.credit_apply_query(user_data)
+                    status = wld.MysqlBizImpl.credit_apply_query(user_data)
                     if status == '03':
                         wld.loan()
                         wld.log.demsg('授信成功')
@@ -92,5 +92,5 @@ if __name__ == '__main__':
     start_time = time.time()
     start = TestCase()
     total = time.time() - start_time
-    log = MyLog.get_log()
+    log = MyLog().get_log()
     log.info('程序运行时间：{}'.format(round(total)))
