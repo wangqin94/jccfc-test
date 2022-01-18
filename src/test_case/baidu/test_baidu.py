@@ -17,8 +17,8 @@ class TestCase(object):
         """ 预置条件处理 """
         pass
 
-    # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效]
-    def process(self, flag=2):
+    # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效 , 5:结清证明]
+    def process(self, flag=5):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
@@ -40,6 +40,11 @@ class TestCase(object):
         elif flag == 3:
             mt = BaiDuBizImpl(data=data)
             mt.MysqlBizImpl.loan_query()
+
+        # 结清证明   0不需要返回base64 1需要  杜星
+        elif flag == 5:
+            mt = BaiDuBizImpl(data=data, encrypt_flag=False)
+            mt.settlement(query_flag=1, username="仰敬胜")
 
         return self
 
