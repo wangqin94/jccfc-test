@@ -49,16 +49,16 @@ class TestCase(object):
             job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
             job.trigger_job("资产日终任务流", group=6)
 
-        # with allure.step("发起逾期还款申请"):
-        #     repayTime = "{}111111".format(repay_date.replace("-", ""))
-        #     loan_apply_info = MysqlBizImpl().get_loan_apply_info(thirdpart_user_id=data['userId'])
-        #     self.repayRes = json.loads(zhixin.applyRepayment(repay_type='1', loan_no=loan_apply_info['loan_apply_id'], repayTime=repayTime).get('output'))  # 按期还款
-        #     creditApplyNo = self.repayRes['creditApplyNo']
-        #
-        # with allure.step("数据库层校验支用结果是否符合预期"):
-        #     time.sleep(5)
-        #     status = checkBizImpl.check_loan_apply_status(thirdpart_apply_id=loanApplyNo)
-        #     assert EnumLoanStatus.ON_USE.value == status, '支用失败'
+        with allure.step("发起逾期还款申请"):
+            repayTime = "{}111111".format(repay_date.replace("-", ""))
+            loan_apply_info = MysqlBizImpl().get_loan_apply_info(thirdpart_user_id=data['userId'])
+            self.repayRes = json.loads(zhixin.applyRepayment(repay_type='1', loan_no=loan_apply_info['loan_apply_id'], repayTime=repayTime).get('output'))  # 按期还款
+            creditApplyNo = self.repayRes['creditApplyNo']
+
+        with allure.step("数据库层校验支用结果是否符合预期"):
+            time.sleep(5)
+            status = checkBizImpl.check_loan_apply_status(thirdpart_apply_id=loanApplyNo)
+            assert EnumLoanStatus.ON_USE.value == status, '支用失败'
         #
         # with allure.step("接口层校验支用结果是否符合预期"):
         #     status = zhiXinCheckBizImpl.check_loan_apply_status(data, loanRes['userId'],
