@@ -172,9 +172,8 @@ class MeiTuanBizImpl(EnvInit):
         loan_data["USED_LIMIT"] = 0
 
         app_no = app_no if app_no else self.data['app_no']
-        content = self.MysqlBizImpl.get_credit_apply_info(thirdpart_apply_id=app_no)
         loan_data['APP_NO'] = app_no
-        loan_data['CUSTOMER_NO'] = content['thirdpart_user_id']
+        loan_data['CUSTOMER_NO'] = 'loan_apply_no' + strings + '1003'
 
         # 更新 payload 字段值
         loan_data.update(kwargs)
