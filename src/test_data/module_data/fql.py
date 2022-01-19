@@ -88,7 +88,7 @@ fql = {
                 "firstOrderDate": "2021-05-08",
                 "latestOrderDate": "2021-04-08",
                 "monthlyIncome": "10000",
-                "idCardExpireDate": "2025-3-30",
+                "idCardExpireDate": "2022-3-30",
                 "idCardAddr": "510000-510100-510107",
                 "idCardDetailAddr": "成都市武侯区府城大道中段85号",
                 "manualApproval": "false",
@@ -96,27 +96,27 @@ fql = {
                 "companyArea": "510000-510100-510107",
                 "fileInfos": [{
                     "fileType": "1",
-                    "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
+                    "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
                     "fileName": "idcard_front_202000000948071964.jpg"
                 },
                     {
                         "fileType": "2",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
                         "fileName": "idcard_back_202000000948071964.jpg"
                     },
                     {
                         "fileType": "3",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
                         "fileName": "face_distinguish_202000000948071964.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
                         "fileName": "JC_userauth_202000000948071964.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
                         "fileName": "JC_non_student_202000000948071964.pdf"
                     }
 

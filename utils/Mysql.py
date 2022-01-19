@@ -3,6 +3,9 @@
 数据库类，连接，查询等方法
 """
 import pymysql
+from utils.Logger import MyLog
+
+_log = MyLog.get_log()
 
 
 class Mysql(object):
@@ -63,6 +66,17 @@ class Mysql(object):
             print(e)
         res_values = self.cursor.fetchall()
         return res_values
+
+    def update(self, sql):
+        try:
+            # 执行SQL语句
+            self.cursor.execute(sql)
+            # 提交到数据库执行
+            self.__mysql.commit()
+        except Exception as e:
+            _log.error("数据更新出错：case%s" % e)
+            # 发生错误是回滚
+            self.__mysql.rollback()
 
 
 if __name__ == '__main__':
