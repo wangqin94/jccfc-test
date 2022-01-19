@@ -33,8 +33,8 @@ class TestCase(object):
         # 支用申请
         elif flag == 2:
             bd = BaiDuBizImpl(data=data)
-            #bd.loan(cashAmount=60000, repayMode='32', dailyInterestRate='6.5', compreAnnualInterestRate='2234')
-            bd.loan(cashAmount=60000, repayMode='32')
+            #bd.loan(cashAmount=60000, repayMode='22', dailyInterestRate='6.5', compreAnnualInterestRate='2340')
+            bd.loan(cashAmount=60000, repayMode='32', dailyInterestRate='6.2', compreAnnualInterestRate='2232')
 
         # 支用查询
         elif flag == 3:

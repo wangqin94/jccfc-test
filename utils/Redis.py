@@ -24,7 +24,7 @@ class Redis(object):
         self.redis = self.connect_redis()
 
     def connect_redis(self):
-        pool = redis.ConnectionPool(host=self.host, port=self.port, password=self.password, decode_responses=True)
+        pool = redis.ConnectionPool(host=self.host, port=self.port, password=self.password, decode_responses=False)
         return redis.Redis(connection_pool=pool)
 
     def del_key(self, *args):
@@ -40,4 +40,4 @@ class Redis(object):
 if __name__ == '__main__':
     r = Redis()
     # print(r.redis.get('000:ACCT:SysInfo:BIGACCT').decode('utf-8', errors='ignore'))
-    r.del_key('000LI4695400462956521074587')
+    r.del_key('000:ACCT:SysInfo:BIGACCT')

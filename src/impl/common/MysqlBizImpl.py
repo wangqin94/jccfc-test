@@ -171,7 +171,7 @@ class MysqlBizImpl(MysqlInit):
 
     def get_bigacct_database_info(self, table, record=0, **kwargs):
         """
-        过去base数据库结构
+        获取base数据库结构
         @param table: 查询表
         @param record: 查询记录，非必填
         @param kwargs: 查询条件，字典类型
@@ -189,7 +189,34 @@ class MysqlBizImpl(MysqlInit):
         except Exception as err:
             self.log.warning("SQL查询{} 结果为空{}".format(sql, err))
 
+    def update_bigacct_database_info(self, table, attr, **kwargs):
+        """
+        更新bigacct数据库结构
+        @param table: 更新表
+        @param attr: 更新条件
+        @param kwargs: 更新值，字典类型
+        """
+        keys = self.mysql_bigacct.select_table_column(table_name=table, database=self.bigacct_database_name)
+        # 获取查询内容
+        sql = update_sql_qurey_str(table, self.bigacct_database_name, attr=attr, **kwargs)
+        self.mysql_bigacct.update(sql)
+        self.log.info("sql：更新成功 [{}]".format(sql))
+
+    def update_asset_database_info(self, table, attr, **kwargs):
+        """
+        更新asset数据库结构
+        @param table: 更新表
+        @param attr: 更新条件
+        @param kwargs: 更新值，字典类型
+        """
+        keys = self.mysql_asset.select_table_column(table_name=table, database=self.asset_database_name)
+        # 获取查询内容
+        sql = update_sql_qurey_str(table, self.asset_database_name, attr=attr, **kwargs)
+        self.mysql_asset.update(sql)
+        self.log.info("sql：更新成功 [{}]".format(sql))
+
 
 if __name__ == '__main__':
-    t = MysqlBizImpl().get_bigacct_database_info('acct_sys_info', sys_id='BIGACCT')
+    # t = MysqlBizImpl().get_bigacct_database_info('acct_sys_info', sys_id='BIGACCT')
+    MysqlBizImpl().update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", account_date='20220113')
     # print(common.get('limit')['interface'])

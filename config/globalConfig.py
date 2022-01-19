@@ -10,6 +10,8 @@ API = {
     'request_host_api': "http://api-web-{}.jccfc.com",
     'eureka_host': "https://eureka-{}.corp.jccfc.com/eureka/apps/",
     'request_job_host': "http://job-admin-{}.corp.jccfc.com",
+    'request_apollo_host': "https://apollo-{}.corp.jccfc.com",
+    'apollo_index_host': "http://apollo-{}.corp.jccfc.com/"
 }
 
 headers = {
@@ -23,6 +25,22 @@ headers = {
 
 job_headers = {
     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "Cache-Control": "no-cache",
+    "Accept": "*/*",
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"
+}
+
+apollo_headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Cache-Control": "no-cache",
+    "Referer": "https://apollo-hdev.corp.jccfc.com",
+    "Origin": "https://apollo-hdev.corp.jccfc.com",
+    "Accept": "*/*",
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"
+}
+
+json_headers = {
+    "Content-Type": "application/json",
     "Cache-Control": "no-cache",
     "Accept": "*/*",
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"

@@ -12,13 +12,15 @@ import time
 import os
 import requests
 from inspect import getcallargs
+from datetime import datetime
 from functools import wraps
 from utils.Logger import MyLog
 
 from dateutil.relativedelta import relativedelta
 
-
 _log = MyLog.get_log()
+
+
 # __all__ = ['output_format', 'wait_time', 'get_day', 'get_base_data',
 #            'loan_and_period_date_parser', 'ciphertext',
 #            'encrypt', 'decrypt', 'DataUpdate', 'loanByAvgAmt', 'get_telephone', 'project_dir', 'get_read_json',
@@ -143,6 +145,27 @@ def get_sql_qurey_str(table, db=None, attr=None, **kwargs):
     if kwargs:
         filters = 'where ' + ' and '.join(["%s='%s'" % (k, v) for k, v in kwargs.items()]) + ';'
         sql_str.append(filters)
+    return ' '.join(sql_str)
+
+
+# # -----------------------------------------------------------
+# # - 数据库更新语句组装
+# # -----------------------------------------------------------
+def update_sql_qurey_str(table, db=None, attr=None, **kwargs):
+    """ # 数据库更新sql
+    @param attr:        where 条件
+    @param table:       表名
+    @param db:          数据库名
+    @param kwargs:      更新字段
+    :return:            sql语句
+    """
+    table = table if not db else '%s.%s' % (db, table)
+    sql_str = ["UPDATE", table, "SET"]
+    if kwargs:
+        filters = ','.join(["%s='%s'" % (k, v) for k, v in kwargs.items()])
+        sql_str.append(filters)
+    attr = 'where ' + attr + ';'
+    sql_str.append(attr)
     return ' '.join(sql_str)
 
 
@@ -373,12 +396,26 @@ def get_next_month_today(n):
 
 
 # # -----------------------------------------------------------
-# # - 获取当前时间的后N月
+# # - 获取当前时间的前N月
 # # -----------------------------------------------------------
 def get_before_month_today(n):
     today = datetimes.date.today()
     before_month_today = today - relativedelta(months=+int(n))
     return before_month_today
+
+
+# # -----------------------------------------------------------
+# # - 获取指定日期的前N月
+# # -----------------------------------------------------------
+def get_custom_month(month=3, date='2021-11-13'):
+    """
+    @param month: 跳转月份数
+    @param date: 指定时间
+    @return:
+    """
+    date = datetime.strptime(date, '%Y-%m-%d').date()
+    date = str(date - relativedelta(months=-int(month)))
+    return date
 
 
 # # -----------------------------------------------------------
@@ -400,6 +437,20 @@ def get_before_day(n):
 
 
 # # -----------------------------------------------------------
+# # - 获取指定日期的前N月
+# # -----------------------------------------------------------
+def get_custom_day(day=0, date='2021-11-13'):
+    """
+    @param month: 跳转月份数
+    @param date: 指定时间
+    @return:
+    """
+    date = datetime.strptime(date, '%Y-%m-%d').date()
+    date = str(date - relativedelta(days=-int(day)))
+    return date
+
+
+# # -----------------------------------------------------------
 # # - 图片转为base64字符串
 # # -----------------------------------------------------------
 def get_base64_from_img(img_path):
@@ -413,6 +464,9 @@ def get_base64_from_img(img_path):
 
 
 if __name__ == "__main__":
-    img_path = os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png')
-    r = get_base64_from_img(img_path)
+    # img_path = os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png')
+    # r = get_base64_from_img(img_path)
+    # r = get_before_month(2, date='2021-11-13')
+    # r = update_sql_qurey_str(table='table', db='db', attr='a=b', a=1, b=2)
+    r = get_custom_day(-2, date='2021-11-13')
     print(r)
