@@ -1,7 +1,7 @@
 import unittest
 
 from src.impl.common.CheckBizImpl import *
-from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
+from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
 from src.test_case.zhixin.person import data
 
 
@@ -18,7 +18,7 @@ class MyTestCase(unittest.TestCase):
     def test_apply(self):
         """ 测试步骤 """
         # 信用评估申请
-        zhixin = ZhiXinBizImpl(data=data)
+        zhixin = ZhiXinBiz(data=data)
         zhixin.applyQFICO(qficoApplyNo='qficoApplyNo1637570100177_1300')
         # zhixin.queryQFICO(qficoApplyNo='qficoApplyNo1637570100167_1300')
 

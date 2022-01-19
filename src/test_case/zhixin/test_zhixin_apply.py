@@ -1,7 +1,7 @@
 import unittest
 from src.impl.common.CheckBizImpl import *
 import time
-from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
+from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
 
 
 class MyTestCase(unittest.TestCase):
@@ -16,7 +16,7 @@ class MyTestCase(unittest.TestCase):
     def test_apply(self):
         """ 测试步骤 """
         # 绑卡签约-绑卡确认-授信
-        zhixin = ZhiXinBizImpl(data=None)
+        zhixin = ZhiXinBiz(data=None)
         res = json.loads(zhixin.applyCertification().get('output'))
         zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                           cdKey=res['cdKey'])
