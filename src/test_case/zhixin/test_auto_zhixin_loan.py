@@ -1,5 +1,3 @@
-import json
-
 from src.enums.EnumZhiXin import ZhiXinApiStatusEnum
 from src.impl.common.CheckBizImpl import *
 import time

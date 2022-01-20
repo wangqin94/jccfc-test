@@ -37,3 +37,9 @@ def checkBizImpl():
 def zhiXinCheckBizImpl():
     zhiXinCheckBizImpl = ZhiXinCheckBizImpl()
     return zhiXinCheckBizImpl
+
+
+@pytest.fixture(scope="class")
+def mysqlBizImpl():
+    mysqlBizImpl = MysqlBizImpl()
+    return mysqlBizImpl

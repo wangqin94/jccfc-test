@@ -408,6 +408,7 @@ class ZhiXinBiz(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         applyRepayment_data = dict()
         # body
         applyRepayment_data['requestNo'] = 'requestNo' + self.strings + "_1100"
@@ -421,21 +422,24 @@ class ZhiXinBiz(MysqlInit):
         applyRepayment_data['bankCardNo'] = self.data['bankid']
 
         applyRepayment_data['partnerLoanNo'] = loan_no
-        applyRepayment_data['loanApplyNo'] = 'loanApplyNo' + self.strings
-        applyRepayment_data['repayApplyNo'] = 'repayApplyNo' + self.strings
+        applyRepayment_data['repayApplyNo'] = 'repayApplyNo' + strings
         loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(loan_apply_id=loan_no)
         applyRepayment_data['userId'] = loan_apply_info['thirdpart_user_id']
+        applyRepayment_data['loanApplyNo'] = loan_apply_info['thirdpart_apply_id']
 
         # 当还款类型不是repayType=3按金额还款时，还款金额repayAmt为空
         applyRepayment_data['repayType'] = repay_type
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                         loan_apply_id=loan_no)
         if repay_type != "3":
-            applyRepayment_data['repayAmt'] = None
-
+            repayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                 atrr='sum(pre_repay_amount)',
+                                                                 loan_invoice_id=credit_loan_invoice['loan_invoice_id'],
+                                                                 repay_plan_status='4')
+            applyRepayment_data['repayAmt'] = str(repayAmt)
         # 还款时间默认账单日
         applyRepayment_data['repayTime'] = self.date
         if repay_type == '1':
-            credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                             loan_apply_id=loan_no)
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(
                 credit_loan_invoice['loan_invoice_id'])
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)

@@ -6,10 +6,11 @@
 @Date    ：2021/9/9 10:51 
 """
 
-# @unique
-from enum import Enum
+
+from enum import Enum, unique
 
 
+@unique
 class WldPathEnum(Enum):
     wldEncryptPath = "/api/v1/secret/thirdEncryptData/WLD"
     wldDecryptPath = "/api/v1/secret/thirdDecryptData/WLD"
