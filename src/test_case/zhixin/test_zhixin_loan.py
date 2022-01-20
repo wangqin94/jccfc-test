@@ -7,7 +7,7 @@ import time
 
 from src.enums.EnumsCommon import *
 from src.impl.common.CheckBizImpl import CheckBizImpl
-from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
+from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
 from src.impl.zhixin.ZhiXinCheckBizImpl import ZhiXinCheckBizImpl
 from src.test_case.zhixin.person import data
 from utils.Logger import MyLog
@@ -32,7 +32,7 @@ class MyTestCase(unittest.TestCase):
         # self.data = get_base_data_temp('userId')
         self.env = TEST_ENV_INFO
         self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ZHIXIN.value), 'userId')
-        zhixin = ZhiXinBizImpl(data=self.data)
+        zhixin = ZhiXinBiz(data=self.data)
         res = json.loads(zhixin.applyCertification().get('output'))
         zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                           cdKey=res['cdKey'])
@@ -47,7 +47,7 @@ class MyTestCase(unittest.TestCase):
         self.ZhiXinCheckBizImpl.check_credit_apply_status(self.data, creditRes['userId'], creditRes['creditApplyNo'])
 
         # 发起支用申请
-        self.loanRes = json.loads(zhixin.applyLoan(loanAmt='1000', term='3').get('output'))
+        self.loanRes = json.loads(zhixin.applyLoan(loanAmt='1000', term='12').get('output'))
         self.loanApplyNo = self.loanRes['loanApplyNo']
 
     """ 后置条件处理 """

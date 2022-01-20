@@ -18,7 +18,7 @@ class TestCase(object):
         pass
 
     # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效 , 5:结清证明]
-    def process(self, flag=2):
+    def process(self, flag=5):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
@@ -33,8 +33,8 @@ class TestCase(object):
         # 支用申请
         elif flag == 2:
             bd = BaiDuBizImpl(data=data)
-            #bd.loan(cashAmount=60000, repayMode='32', dailyInterestRate='6.5', compreAnnualInterestRate='2234')
-            bd.loan(cashAmount=60000, repayMode='22')
+            #bd.loan(cashAmount=60000, repayMode='22', dailyInterestRate='6.5', compreAnnualInterestRate='2340')
+            bd.loan(cashAmount=60000, repayMode='32', dailyInterestRate='6.2', compreAnnualInterestRate='2232')
 
         # 支用查询
         elif flag == 3:

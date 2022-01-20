@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
 from src.impl.common.CheckBizImpl import *
-from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
+from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
 from src.impl.zhixin.ZhiXinCheckBizImpl import ZhiXinCheckBizImpl
 
 
@@ -23,7 +23,7 @@ def get_base_data():
 @pytest.fixture(scope="class")
 def zhixin(get_base_data):
     data = get_base_data
-    zhixin = ZhiXinBizImpl(data)
+    zhixin = ZhiXinBiz(data)
     return zhixin
 
 

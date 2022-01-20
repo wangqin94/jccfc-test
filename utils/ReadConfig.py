@@ -57,6 +57,10 @@ class Config:
         value = self.conf.get("JOB", name)
         return value
 
+    def get_apollo(self, name):
+        value = self.conf.get("APOLLO", name)
+        return value
+
     def get_redis(self, name):
         value = self.conf.get("REDIS", name)
         return json.loads(value)

@@ -11,7 +11,7 @@ import time
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumZhiXin import StatusCodeEnum, ZhiXinApiStatusEnum
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
+from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
 
 
 class ZhiXinCheckBizImpl(MysqlInit):
@@ -28,7 +28,7 @@ class ZhiXinCheckBizImpl(MysqlInit):
         """
         self.log.demsg('接口层授信结果校验...')
         flag = 6
-        zhixin = ZhiXinBizImpl(data=data)
+        zhixin = ZhiXinBiz(data=data)
         for n in range(flag):
             res = zhixin.queryCreditResult(userId=userid, creditApplyNo=credit_apply_no)
             try:
@@ -61,7 +61,7 @@ class ZhiXinCheckBizImpl(MysqlInit):
         """
         self.log.demsg('接口层支用结果校验...')
         flag = 6
-        zhixin = ZhiXinBizImpl(data=data)
+        zhixin = ZhiXinBiz(data=data)
         for n in range(flag):
             res = zhixin.queryLoanResult(userId=userid, loanApplyNo=loan_apply_no)
             try:
