@@ -30,6 +30,9 @@ class BaiDuBizImpl(EnvInit):
         self.type = type
         self.encrypt_flag = encrypt_flag
 
+        # self.encrypt_url = self.host + EnumBaiDu.BaiDuEncryptPath.value
+        # self.decrypt_url = self.host + EnumBaiDu.BaiDuDecryptPath.value
+
         # 初始化payload变量
         self.credit_payload = {}
         self.loan_payload = {}
@@ -37,6 +40,26 @@ class BaiDuBizImpl(EnvInit):
 
     def set_active_payload(self, payload):
         self.active_payload = payload
+
+
+     # 结清证明
+    def settlement(self, **kwargs):
+        settlement_data = dict()
+        strings = str(int(round(time.time() * 1000)))
+        settlement_data['requestTime'] = time.strftime('%Y%m%d%H%M%S')
+        settlement_data['requestSerialNo'] = "SerialNo" + strings + "1001"
+        # 更新 payload 字段值
+        settlement_data['reqsn'] = time.strftime('%Y%m%d%H%M%S')
+        settlement_data.update(kwargs)
+        parser = DataUpdate(self.cfg['settlement']['payload'], **settlement_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('开始支用申请...')
+        url = self.host + self.cfg['settlement']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
+        # response['orderId'] = settlement_data['orderId']
+        return response
+
 
     # 授信申请
     def credit(self, **kwargs):

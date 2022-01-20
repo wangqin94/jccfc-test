@@ -157,4 +157,19 @@ BaiDu = {
         },
     },
 
+    'settlement': {
+        'interface': '/api/v1/baidu/demo/settlement/applyInfo',
+        'payload': {
+                "loanId": "5170535549454899682",
+                "query_flag": "",
+                "confirmDate": "2021-12-05",
+                "amount": "600",
+                "clearDate": "2021-12-03",
+                "prcid": "610102199905187862",  #  141100200905221670
+                "reqsn": "",
+                "username": "",
+                "subLoanId": "12332122"
+        }
+    }
+
 }
