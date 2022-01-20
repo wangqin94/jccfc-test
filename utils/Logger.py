@@ -191,29 +191,29 @@ class Logs(object):
 
     def debug(self, msg, *args, **kwargs):
         self.__log_style(color=WHITE, bgd=BGD_RESET)
-        if len(msg) > 1024:
-            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
+        if len(msg) > 2048:
+            msg = "日志长度超过2048，控制台只打印2048字节长度,{}".format(msg[0:2047])
         self.logger.debug(msg, *args, **kwargs)
         self._log_style_reset()
 
     def info(self, msg, *args, **kwargs):
         self.__log_style(color=1)
-        if len(msg) > 1024:
-            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
+        if len(msg) > 2048:
+            msg = "日志长度超过2048，控制台只打印2048字节长度,{}".format(msg[0:2047])
         self.logger.info(msg, *args, **kwargs)
         self._log_style_reset()
 
     def demsg(self, msg, *args, **kwargs):
         self.__log_style(color=DARK_GREEN, bgd=1)
-        if len(msg) > 1024:
-            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
+        if len(msg) > 2048:
+            msg = "日志长度超过2048，控制台只打印2048字节长度,{}".format(msg[0:2048])
         self.logger.info(msg, *args, **kwargs)
         self._log_style_reset()
 
     def warning(self, msg, *args, **kwargs):
         self.__log_style(color=YELLOW)
-        if len(msg) > 1024:
-            msg = "日志长度超过1024，控制台只打印1024字节长度,{}".format(msg[0:1023])
+        if len(msg) > 2048:
+            msg = "日志长度超过2048，控制台只打印2048字节长度,{}".format(msg[0:2048])
         self.logger.warning(msg, *args, **kwargs)
         self._log_style_reset()
 
