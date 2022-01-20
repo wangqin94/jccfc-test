@@ -15,6 +15,7 @@ class ProductEnum(Enum):
     YINGJF = 'YingJiZF'
     WLD = 'wld'
     ZHIXIN = 'zhixin'
+    JieTiao = 'jietiao'
 
 
 # @unique

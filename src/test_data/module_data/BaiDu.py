@@ -33,7 +33,7 @@ BaiDu = {
                     "bidNormalScoreExp3": "92",
                     "phoneNormalScoreExp3": "92",
                     "taxMonthlyIncomeSection": "-9999",
-                    "ocrExpdate": "20220203",
+                    "ocrExpdate": "20221203",
                     # "r21P12FinallyInterest": "6.5",
                     "r21P12FinallyInterest": "6.5",
                     "dxmDScore": "575",
