@@ -5,6 +5,8 @@
 from datetime import datetime
 
 from engine.EnvInit import EnvInit
+from src.enums.EnumJieTiao import JieTiaoEnum
+from src.impl.common.CommonBizImpl import post_with_encrypt
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import JieTiao
 from utils.Models import *
@@ -23,6 +25,9 @@ class JieTiaoBizImpl(EnvInit):
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
+
+        self.encrypt_url = self.host + JieTiaoEnum.JieTiaoEncryptPath.value
+        self.decrypt_url = self.host + JieTiaoEnum.JieTiaoDecryptPath.value
 
         # 初始化payload变量
         self.active_payload = {}
@@ -43,9 +48,9 @@ class JieTiaoBizImpl(EnvInit):
 
         self.log.demsg('放款请求接口...')
         url = self.host + self.cfg['loan']['interface']
-        # response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-        #                              encrypt_flag=self.encrypt_flag)
-        # return response
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
 
     def loan_query(self, **kwargs):
         loan_query_data = dict()
@@ -57,9 +62,9 @@ class JieTiaoBizImpl(EnvInit):
 
         self.log.demsg('放款结果查询接口...')
         url = self.host + self.cfg['loan_query']['interface']
-        # response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-        #                              encrypt_flag=self.encrypt_flag)
-        # return response
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
 
     def payment(self, **kwargs):
         payment_data = dict()
@@ -73,9 +78,9 @@ class JieTiaoBizImpl(EnvInit):
 
         self.log.demsg('代扣接口...')
         url = self.host + self.cfg['payment']['interface']
-        # response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-        #                              encrypt_flag=self.encrypt_flag)
-        # return response
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
 
 
     def payment_query(self, **kwargs):
@@ -88,9 +93,9 @@ class JieTiaoBizImpl(EnvInit):
 
         self.log.demsg('代扣结果查询接口...')
         url = self.host + self.cfg['payment_query']['interface']
-        # response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-        #                              encrypt_flag=self.encrypt_flag)
-        # return response
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
 
 
     def repay_notice(self, **kwargs):
@@ -103,9 +108,9 @@ class JieTiaoBizImpl(EnvInit):
 
         self.log.demsg('还款通知接口...')
         url = self.host + self.cfg['repay_notice']['interface']
-        # response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-        #                              encrypt_flag=self.encrypt_flag)
-        # return response
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
 
     def repay_query(self, **kwargs):
         repay_query_data = dict()
@@ -117,6 +122,6 @@ class JieTiaoBizImpl(EnvInit):
 
         self.log.demsg('还款查询接口...')
         url = self.host + self.cfg['repay_query']['interface']
-        # response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-        #                              encrypt_flag=self.encrypt_flag)
-        # return response
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response

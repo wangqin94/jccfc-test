@@ -10,6 +10,6 @@
 from enum import Enum
 
 
-class EnumJieTiaoPath(Enum):
+class JieTiaoEnum(Enum):
     JieTiaoEncryptPath = "/api/v1/secret/thirdEncryptData/JieTiao"
     JieTiaoDecryptPath = "/api/v1/secret/thirdDecryptData/JieTiao"

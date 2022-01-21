@@ -307,6 +307,7 @@ class BaiduFile(EnvInit):
 
         # 获取每期应还本金和利息
         self.amount = loanByAvgAmt(self.info['apply_amount'], self.info['apply_term'], self.info['apply_rate'])
+        self.log.info('还款计划---- %s: ', self.amount)
 
         # 根据生息日获取对应的账单日和还款日列表
         self.period_date_list, self.bill_day = self.get_bill_day()

@@ -36,16 +36,19 @@ class MysqlInit(object):
         self.user_data = '%s_user' % self.env.lower()
         self.base_data = '%s_base' % self.env.lower()
         self.bigacct_data = '%s_bigacct' % self.env.lower()
+        self.opchannel_data = '%s_op_channeldb' % self.env.lower()
         self.credit_database = self._config.get_mysql(self.env, self.credit_data)
         self.asset_database = self._config.get_mysql(self.env, self.asset_data)
         self.user_database = self._config.get_mysql(self.env, self.user_data)
         self.base_database = self._config.get_mysql(self.env, self.base_data)
         self.bigacct_database = self._config.get_mysql(self.env, self.bigacct_data)
+        self.opchannel_database = self._config.get_mysql(self.env, self.opchannel_data)
         self.credit_database_name = self._config.get_mysql(self.env, self.credit_data)['databaseName']
         self.asset_database_name = self._config.get_mysql(self.env, self.asset_data)['databaseName']
         self.user_database_name = self._config.get_mysql(self.env, self.user_data)['databaseName']
         self.base_database_name = self._config.get_mysql(self.env, self.base_data)['databaseName']
         self.bigacct_database_name = self._config.get_mysql(self.env, self.bigacct_data)['databaseName']
+        self.opchannel_database_name = self._config.get_mysql(self.env, self.opchannel_data)['databaseName']
         self.headers = headers
 
         self.mysql_credit = Mysql(self.credit_database)
@@ -53,6 +56,7 @@ class MysqlInit(object):
         self.mysql_user = Mysql(self.user_database)
         self.mysql_base = Mysql(self.base_database)
         self.mysql_bigacct = Mysql(self.bigacct_database)
+        self.mysql_opchannel = Mysql(self.opchannel_database)
 
 
 class DataGenerator(object):
