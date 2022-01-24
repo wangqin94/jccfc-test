@@ -6,7 +6,7 @@ from src.impl.JieTiao.JieTiaoCreateFileBizImpl import repayPlanFile, repayDetail
 class MyTestCase(unittest.TestCase):
     """ 预置条件处理 """
     """ 测试步骤 """
-    def test_create_file(self,flag=0):
+    def test_create_file(self,flag=1):
 
          #还款计划文件
         if flag == 0:

@@ -10,8 +10,6 @@ from utils.Logger import Logs
 _log = Logs()
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
 _FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.JieTiao.value, TEST_ENV_INFO)  # 文件存放目录
-if not os.path.exists(_FilePath):
-    os.makedirs(_FilePath)
 
 
 class repayPlanFile(EnvInit):
@@ -22,6 +20,8 @@ class repayPlanFile(EnvInit):
         # 获取文件存储名
         data_save_path = '%s' % (time.strftime('%Y%m%d', time.localtime()))
         self.data_save_path = os.path.join(_FilePath, data_save_path)
+        if not os.path.exists(self.data_save_path):
+            os.makedirs(self.data_save_path)
 
         self.repay_plan_keys = [
             'loan_req_no',
@@ -118,6 +118,8 @@ class repayDetailFile(EnvInit):
         # 获取文件存储名
         data_save_path = '%s' % (time.strftime('%Y%m%d', time.localtime()))
         self.data_save_path = os.path.join(_FilePath, data_save_path)
+        if not os.path.exists(self.data_save_path):
+            os.makedirs(self.data_save_path)
 
         self.repay_detail_keys = [
             'loanReqNo',
@@ -165,14 +167,16 @@ class repayDetailFile(EnvInit):
 
     def start_repayDetailFile(self,loan_req_no=''):
 
-        self.repay_plan_template['loan_req_no'] = loan_req_no
+        # self.repay_detail_template['loan_req_no'] = loan_req_no
         # 查询sql语句
         sql = "select loan_req_no,source_code,rpy_type,rpy_term,rpy_req_no,tran_no,rpy_date,rpy_prin_amt,rpy_int_amt,rpy_oint_amt,rpy_share_amt,rpy_deduct_amt,rpy_red_line_amt," \
               "if_enough,rpy_share_amt_one,rpy_share_amt_two,rpy_share_amt_three,rpy_share_amt_four,rpy_channel from {}.channel_jietiao_repay_detail where loan_req_no='{}' ;".format(
-            self.MysqlBizImpl.opchannel_database_name, self.repay_plan_template['loan_req_no'])
+            self.MysqlBizImpl.op_channel_database_name, loan_req_no)
+
+        self.log.demsg("还款还款明细：{}".format(sql))
 
         # 获取查询内容
-        values = self.MysqlBizImpl.mysql_asset.select(sql)
+        values = self.MysqlBizImpl.mysql_op_channel.select(sql)
         self.log.demsg("还款还款明细：{}".format(values))
 
         # 开始写入还款计划文件
@@ -187,28 +191,28 @@ class repayDetailFile(EnvInit):
         repay_detail = os.path.join(self.data_save_path, 'repay_detail.txt')
         self.log.demsg("还款明细生成路径：{}".format(repay_detail))
 
-        # self.repay_detail_template['loanReqNo'] = value[0]
-        # self.repay_detail_template['sourceCode'] = value[1]
-        # self.repay_detail_template['rpyType'] = value[2]
-        # self.repay_detail_template['rpyTerm'] = value[3]
-        # self.repay_detail_template['rpyReqNo'] = value[4]
-        # self.repay_detail_template['tranNo'] = value[5]
-        # self.repay_detail_template['rpyDate'] = value[6]
-        # self.repay_detail_template['rpyPrinAmt'] = value[7]
-        # self.repay_detail_template['rpyIntAmt'] = value[8]
-        # self.repay_detail_template['rpyOintAmt'] = value[9]
-        # self.repay_detail_template['rpyShareAmt'] = value[10]
-        # self.repay_detail_template['rpyDeductAmt'] = value[11]
-        # self.repay_detail_template['rpyRedLineAmt'] = value[12]
-        # self.repay_detail_template['ifEnough'] = value[13]
-        # self.repay_detail_template['rpyShareAmtOne'] = value[14]
-        # self.repay_detail_template['rpyShareAmtTwo'] = value[15]
-        # self.repay_detail_template['rpyShareAmtThree'] = value[16]
-        # self.repay_detail_template['rpyShareAmtFour'] = value[17]
-        # self.repay_detail_template['rpyChannel'] = value[18]
+        self.repay_detail_template['loanReqNo'] = value[0]
+        self.repay_detail_template['sourceCode'] = value[1]
+        self.repay_detail_template['rpyType'] = value[2]
+        self.repay_detail_template['rpyTerm'] = value[3]
+        self.repay_detail_template['rpyReqNo'] = value[4]
+        self.repay_detail_template['tranNo'] = value[5]
+        self.repay_detail_template['rpyDate'] = value[6]
+        self.repay_detail_template['rpyPrinAmt'] = value[7]
+        self.repay_detail_template['rpyIntAmt'] = value[8]
+        self.repay_detail_template['rpyOintAmt'] = value[9]
+        self.repay_detail_template['rpyShareAmt'] = value[10]
+        self.repay_detail_template['rpyDeductAmt'] = value[11]
+        self.repay_detail_template['rpyRedLineAmt'] = value[12]
+        self.repay_detail_template['ifEnough'] = value[13]
+        self.repay_detail_template['rpyShareAmtOne'] = value[14]
+        self.repay_detail_template['rpyShareAmtTwo'] = value[15]
+        self.repay_detail_template['rpyShareAmtThree'] = value[16]
+        self.repay_detail_template['rpyShareAmtFour'] = value[17]
+        self.repay_detail_template['rpyChannel'] = value[18]
 
-        # val_list = map(str, [self.repay_detail_template[key] for key in self.repay_detail_keys])
-        # strings = ','.join(val_list)
+        val_list = map(str, [self.repay_detail_template[key] for key in self.repay_detail_keys])
+        strings = ','.join(val_list)
         with open(repay_detail, 'a+', encoding='utf-8') as f:
-            f.write(value)
+            f.write(strings)
             f.write('\n')
