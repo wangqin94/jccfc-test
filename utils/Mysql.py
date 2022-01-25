@@ -46,7 +46,7 @@ class Mysql(object):
         cursor = db.cursor()
         return cursor, db
 
-    def select_table_column(self, table_name='credit_apply', database='hsit_credit'):
+    def select_table_column(self, *args, table_name='credit_apply', database='hsit_credit'):
         column_key = []
         sql_column = "select COLUMN_NAME from information_schema.COLUMNS where table_name='{}' and table_schema='{}';".format(table_name, database)
         try:
@@ -54,8 +54,11 @@ class Mysql(object):
         except Exception as e:
             print(e)
         res_column = self.cursor.fetchall()
-        if res_column:
-            column_key = [item[0] for item in res_column]
+        if args:
+            column_key = args
+        else:
+            if res_column:
+                column_key = [item[0] for item in res_column]
             # print(column_key)
         return column_key
 
@@ -78,7 +81,18 @@ class Mysql(object):
             # 发生错误是回滚
             self.__mysql.rollback()
 
+    def delete(self, sql):
+        try:
+            # 执行SQL语句
+            self.cursor.execute(sql)
+            # 提交到数据库执行
+            self.__mysql.commit()
+        except Exception as e:
+            _log.error("数据删除出错：case%s" % e)
+            # 发生错误是回滚
+            self.__mysql.rollback()
+
 
 if __name__ == '__main__':
-    t = Mysql()
+    t = Mysql().select_table_column()
 

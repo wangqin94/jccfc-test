@@ -1,6 +1,9 @@
 import pytest
 import sys
 import os
+
+from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
 from src.impl.common.CheckBizImpl import *
 from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
@@ -21,10 +24,10 @@ def get_base_data():
 
 
 @pytest.fixture(scope="class")
-def zhixin(get_base_data):
+def zhiXinBiz(get_base_data):
     data = get_base_data
-    zhixin = ZhiXinBiz(data)
-    return zhixin
+    zhiXinBiz = ZhiXinBiz(data)
+    return zhiXinBiz
 
 
 @pytest.fixture(scope="class")
@@ -43,3 +46,10 @@ def zhiXinCheckBizImpl():
 def mysqlBizImpl():
     mysqlBizImpl = MysqlBizImpl()
     return mysqlBizImpl
+
+
+@pytest.fixture(scope="class")
+def zhiXinBizImpl(get_base_data):
+    data = get_base_data
+    zhiXinBizImpl = ZhiXinBizImpl(data)
+    return zhiXinBizImpl
