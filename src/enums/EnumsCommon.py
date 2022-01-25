@@ -30,6 +30,8 @@ class EnumLoanStatus(Enum):
     TO_LOAN = '15'  # 待放款
     ON_USE = '17'  # 使用中
     LOAN_PAY_FAILED = '21'  # 放款失败
+    DEAL_FAILED = '10'  # 处理失败
+    REJECT = '07'  # 拒绝
 
 
 @unique

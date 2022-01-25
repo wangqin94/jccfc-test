@@ -131,16 +131,16 @@ def get_day(time1, time2):
 # # -----------------------------------------------------------
 # # - 数据库查询语句组装
 # # -----------------------------------------------------------
-def get_sql_qurey_str(table, db=None, attr=None, **kwargs):
+def get_sql_qurey_str(table, *args, db=None, **kwargs):
     """ # 数据库查询sql
     @param table:       表名
     @param db:          数据库名
-    @param attr:        查询表子项
+    @param args:        查询表子项 tuple
     @param kwargs:      where 筛选条件
     :return:            sql语句
     """
     table = table if not db else '%s.%s' % (db, table)
-    attr = '*' if not attr else ', '.join(attr)
+    attr = '*' if not args else ', '.join(args)
     sql_str = ["select", attr, "from", table]
     if kwargs:
         filters = 'where ' + ' and '.join(["%s='%s'" % (k, v) for k, v in kwargs.items()]) + ';'
@@ -166,6 +166,24 @@ def update_sql_qurey_str(table, db=None, attr=None, **kwargs):
         sql_str.append(filters)
     attr = 'where ' + attr + ';'
     sql_str.append(attr)
+    return ' '.join(sql_str)
+
+
+# # -----------------------------------------------------------
+# # - 数据库删除语句组装
+# # -----------------------------------------------------------
+def delete_sql_qurey_str(table, db=None, **kwargs):
+    """ # 数据库更新sql
+    @param table:       表名
+    @param db:          数据库名
+    @param kwargs:      更新字段
+    :return:            sql语句
+    """
+    table = table if not db else '%s.%s' % (db, table)
+    sql_str = ["DELETE", "FROM", table]
+    if kwargs:
+        filters = 'where ' + ' and '.join(["%s='%s'" % (k, v) for k, v in kwargs.items()]) + ';'
+        sql_str.append(filters)
     return ' '.join(sql_str)
 
 
@@ -468,5 +486,6 @@ if __name__ == "__main__":
     # r = get_base64_from_img(img_path)
     # r = get_before_month(2, date='2021-11-13')
     # r = update_sql_qurey_str(table='table', db='db', attr='a=b', a=1, b=2)
-    r = get_custom_day(-2, date='2021-11-13')
+    # r = get_custom_day(-2, date='2021-11-13')
+    r = get_sql_qurey_str('table', 'a', 'b', db='base')
     print(r)
