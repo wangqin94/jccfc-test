@@ -271,10 +271,34 @@ class MysqlBizImpl(MysqlInit):
         self.mysql_asset.delete(sql)
         self.log.info("sql：删除成功 [{}]".format(sql))
 
+    def get_loan_apply_status(self, exp_status, m=6, t=5, **kwargs):
+        """
+        查询支用状态
+        @param t: 每次时间间隔, 默认5S
+        @param exp_status: 需要查询的状态
+        @param m: 查询轮训次数 默认6次
+        @param kwargs: 查询条件
+        @return: status 支用单状态
+        """
+        self.log.demsg('获取支用单的借据状态...')
+        for n in range(1, m+1):
+            info = self.get_loan_apply_info(**kwargs)
+            status = info['status']
+            if status == exp_status:
+                self.log.demsg('credit_loan_apply获取支用单状态为{}'.format(status))
+                return status
+            else:
+                if n == m:
+                    self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    sys.exit(7)
+                self.log.demsg("credit_loan_apply获取支用单状态不符合预期,启动轮训查询")
+                time.sleep(t)
+
 
 if __name__ == '__main__':
     # t = MysqlBizImpl().get_bigacct_database_info('acct_sys_info', sys_id='BIGACCT')
     # MysqlBizImpl().update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", account_date='20220113')
     # print(common.get('limit')['interface'])
     # MysqlBizImpl().get_loan_apply_info(id=999)
-    MysqlBizImpl().get_credit_apply_info('credit_apply_id', credit_apply_id='000CA2021031500000021')
+    # MysqlBizImpl().get_credit_apply_info('credit_apply_id', credit_apply_id='000CA2021031500000021')
+    MysqlBizImpl().get_loan_apply_status('01')

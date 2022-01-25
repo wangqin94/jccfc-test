@@ -12,6 +12,7 @@ from utils.JobCenter import *
 @allure.step('前置操作：预置放款数据')
 @pytest.fixture(scope="class")
 def pre_loan_data(get_base_data, zhiXinBiz, checkBizImpl, zhiXinCheckBizImpl, mysqlBizImpl, zhiXinBizImpl):
+    data = get_base_data
     job = JOB()
     apollo = Apollo()
     redis1 = Redis()
@@ -41,8 +42,10 @@ def pre_loan_data(get_base_data, zhiXinBiz, checkBizImpl, zhiXinCheckBizImpl, my
         job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
         job.trigger_job("资产日终任务流", group=6)
 
-    with allure.step("校验当前借据是否已逾期：30s轮训等待"):
+    with allure.step("校验当前借据是否已逾期：15s轮训等待"):
         zhiXinBiz.log.info('验当前借据状态')
+        status = mysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value, thirdpart_user_id=data['userId'])
+        assert EnumLoanStatus.OVERDUE.value == status, '当前支用单状态不为逾期状态，请检查账务日终任务执行结果'
     return repay_date
 
 

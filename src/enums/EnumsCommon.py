@@ -32,6 +32,7 @@ class EnumLoanStatus(Enum):
     LOAN_PAY_FAILED = '21'  # 放款失败
     DEAL_FAILED = '10'  # 处理失败
     REJECT = '07'  # 拒绝
+    OVERDUE = '30'  # 逾期
 
 
 @unique
