@@ -411,7 +411,7 @@ class ZhiXinBiz(MysqlInit):
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         applyRepayment_data = dict()
         # body
-        applyRepayment_data['requestNo'] = 'requestNo' + self.strings + "_1100"
+        applyRepayment_data['requestNo'] = 'requestNo' + strings + "_1100"
         applyRepayment_data['requestTime'] = self.times
         applyRepayment_data['ct'] = self.times
 
@@ -427,16 +427,19 @@ class ZhiXinBiz(MysqlInit):
         applyRepayment_data['userId'] = loan_apply_info['thirdpart_user_id']
         applyRepayment_data['loanApplyNo'] = loan_apply_info['thirdpart_apply_id']
 
-        # 当还款类型不是repayType=3按金额还款时，还款金额repayAmt为空
+        # 当还款类型repayType!=3按金额还款时，还款金额repayAmt为空
+        applyRepayment_data['repayAmt'] = ''
         applyRepayment_data['repayType'] = repay_type
-        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                         loan_apply_id=loan_no)
-        if repay_type != "3":
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice', loan_apply_id=loan_no)
+
+        # 逾期按金额还款，默认写入待还所有金额
+        if repay_type == "3":
             repayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                 atrr='sum(pre_repay_amount)',
+                                                                 'sum(pre_repay_amount)',
                                                                  loan_invoice_id=credit_loan_invoice['loan_invoice_id'],
                                                                  repay_plan_status='4')
-            applyRepayment_data['repayAmt'] = str(repayAmt)
+            applyRepayment_data['repayAmt'] = str("{:.2f}".format(repayAmt['sum(pre_repay_amount)']))
+
         # 还款时间默认账单日
         applyRepayment_data['repayTime'] = self.date
         if repay_type == '1':
