@@ -22,8 +22,8 @@ class UiAutoTestCase(unittest.TestCase):
     def parse(html, xpath):
         """
             解析页面中的元素并返回一个对象
-        :param xpath: 需要获取页面中的元素对应的xpath
-        :param html: 页面的html元素
+        @param xpath: 需要获取页面中的元素对应的xpath
+        @param html: 页面的html元素
         :return:
         """
         return etree.HTML(html).xpath(xpath)
@@ -31,7 +31,7 @@ class UiAutoTestCase(unittest.TestCase):
     def save_img(self, img_name):
         """
             传入一个img_name, 并存储到默认的文件路径下
-        :param img_name:
+        @param img_name:
         :return:
         """
         self.driver.get_screenshot_as_file('{}/{}.png'.format(os.path.abspath(self.img_path), img_name))

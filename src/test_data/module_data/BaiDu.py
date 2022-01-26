@@ -108,13 +108,13 @@ BaiDu = {
                     "repayMode": "22",  # 32等额本息对应还款对账文件还款类型05，22随借随还对应还款类型02
                     "dxmDScore": "575.24151",
                     # "ocrAddress": "重庆市江北区府城大道中段87号",
-                    "careerType": "",
+                    "careerType": "",  # 职业
                     "ocrAddress": "",  # 身份地址
-                    "userHomeAddress": "",  # 家庭地址
-                    "zxPermanentAddress": "",  # 征信户籍地址
+                    "userHomeAddress": "家庭地址重庆市江北区府城大道中段87号",  # 家庭地址
+                    "zxPermanentAddress": "户籍地址重庆市江北区府城大道中段87号",  # 征信户籍地址
                     "zxsDomicile": "",  # 征信居住地址
                     "zxMailingAddress": "",  # 征信通讯地址
-                    "zxsCareer": "",
+                    "zxsCareer": "",  # 征信职业
                     "contactPhone": "19982022546",
                     "contactName": "张三",
                     "contactRalation": "父母"
