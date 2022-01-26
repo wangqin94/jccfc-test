@@ -56,7 +56,6 @@ class ZhiXinBizImpl(ZhiXinBiz):
         creditApplyNo = creditRes['creditApplyNo']
 
         # 数据库陈校验授信结果是否符合预期
-        time.sleep(5)
         status = self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=creditApplyNo)
         assert EnumCreditStatus.SUCCESS.value == status, '授信失败'
         # 接口层校验授信结果是否符合预期
@@ -75,7 +74,6 @@ class ZhiXinBizImpl(ZhiXinBiz):
         loanRes = json.loads(self.applyLoan(loanAmt='1000', term='12').get('output'))
         loanApplyNo = loanRes['loanApplyNo']
 
-        time.sleep(5)
         # 数据库陈校验授信结果是否符合预期
         status = self.CheckBizImpl.check_loan_apply_status(thirdpart_apply_id=loanApplyNo)
         assert EnumLoanStatus.ON_USE.value == status, '支用失败'

@@ -8,6 +8,8 @@ from utils.Apollo import Apollo
 from utils.Redis import *
 from utils.JobCenter import *
 
+log = MyLog().get_log()
+
 
 @allure.step('前置操作：预置放款数据')
 @pytest.fixture(scope="class")
@@ -65,7 +67,7 @@ class TestCase(object):
         repay_date = pre_loan_data
         data = get_base_data
         with allure.step("发起逾期还款申请"):
-            zhiXinBiz.log.debug('发起逾期还款申请')
+            log.debug('发起逾期还款申请')
             repayTime = "{}111111".format(repay_date.replace("-", ""))
             loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
             repayRes = json.loads(zhiXinBiz.applyRepayment(repay_type='3', loan_no=loan_apply_info['loan_apply_id'],
@@ -75,7 +77,6 @@ class TestCase(object):
             assert ZhiXinApiStatusEnum.TO_DOING.value == repayRes['repayStatus'], '还款失败'
 
         with allure.step("数据库层校验支用结果是否符合预期"):
-            time.sleep(5)
             status = checkBizImpl.check_channel_repay_status(third_repay_id=repayRes['repayApplyNo'])
             assert EnumChannelRepayStatus.SUCCESS.value == status, '还款失败'
 
@@ -89,7 +90,7 @@ class TestCase(object):
         repay_date = pre_loan_data
         data = get_base_data
         with allure.step("发起按期还款申请"):
-            zhiXinBiz.log.debug('发起按期还款申请')
+            log.debug('发起按期还款申请')
             repayTime = "{}111111".format(repay_date.replace("-", ""))
             loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
             repayRes = json.loads(zhiXinBiz.applyRepayment(repay_type='1', loan_no=loan_apply_info['loan_apply_id'],
@@ -99,7 +100,6 @@ class TestCase(object):
             assert ZhiXinApiStatusEnum.TO_DOING.value == repayRes['repayStatus'], '还款失败'
 
         with allure.step("数据库层校验还款结果是否符合预期"):
-            time.sleep(5)
             status = checkBizImpl.check_channel_repay_status(third_repay_id=repayRes['repayApplyNo'])
             assert EnumChannelRepayStatus.SUCCESS.value == status, '还款失败'
 
@@ -113,7 +113,7 @@ class TestCase(object):
         repay_date = pre_loan_data
         data = get_base_data
         with allure.step("发起提前结清申请"):
-            zhiXinBiz.log.debug('发起提前结清申请')
+            log.debug('发起提前结清申请')
             repayTime = "{}111111".format(repay_date.replace("-", ""))
             loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
             repayRes = json.loads(zhiXinBiz.applyRepayment(repay_type='2', loan_no=loan_apply_info['loan_apply_id'],
@@ -123,7 +123,6 @@ class TestCase(object):
             assert ZhiXinApiStatusEnum.TO_DOING.value == repayRes['repayStatus'], '还款失败'
 
         with allure.step("数据库层校验还款结果是否符合预期"):
-            time.sleep(5)
             status = checkBizImpl.check_channel_repay_status(third_repay_id=repayRes['repayApplyNo'])
             assert EnumChannelRepayStatus.SUCCESS.value == status, '还款失败'
 
