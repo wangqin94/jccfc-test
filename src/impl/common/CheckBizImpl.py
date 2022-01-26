@@ -26,22 +26,31 @@ class CheckBizImpl(EnvInit):
         self.log.demsg('支用结果校验...')
         flag_n = 10
         flag_m = 2
-        info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
         for m in range(flag_m+1):
+            info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
                 self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
                 time.sleep(3)
                 if m == flag_m:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")
                     sys.exit(7)
-                info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
+            else:
+                self.log.info("支用记录已入loan_apply表")
+                break
         for n in range(flag_n):
+            info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == EnumLoanStatus.ON_USE.value:
                 self.log.demsg('支用成功')
                 return status
             elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
-                self.log.error('支用失败,状态：{}'.format(status))
+                self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
+                return status
+            elif status == EnumLoanStatus.DEAL_FAILED.value:
+                self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
+                return status
+            elif status == EnumLoanStatus.REJECT.value:
+                self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
                 return status
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
@@ -57,22 +66,31 @@ class CheckBizImpl(EnvInit):
         self.log.demsg('文件放款支用结果校验...')
         flag_n = 10
         flag_m = 2
-        info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
         for m in range(flag_m+1):
+            info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
                 self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
                 time.sleep(3)
                 if m == flag_m:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")
                     sys.exit(7)
-                info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
+            else:
+                self.log.info("支用记录已入loan_apply表")
+                break
         for n in range(flag_n):
+            info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == EnumLoanStatus.TO_LOAN.value:
                 self.log.demsg('支用成功')
                 return status
             elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
-                self.log.error('支用失败,状态：{}'.format(status))
+                self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
+                return status
+            elif status == EnumLoanStatus.DEAL_FAILED.value:
+                self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
+                return status
+            elif status == EnumLoanStatus.REJECT.value:
+                self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
                 return status
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
@@ -88,16 +106,19 @@ class CheckBizImpl(EnvInit):
         self.log.demsg('数据库授信结果校验...')
         flag = 10
         flag_m = 2
-        info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
         for m in range(flag_m+1):
+            info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
             if not info:
                 self.log.info("credit_apply未查询到授信记录，启动3次轮训")
                 time.sleep(3)
                 if m == flag_m:
                     self.log.error("超过当前系统设置等待时间，授信异常，请手动查看结果....")
                     sys.exit(7)
-                info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
+            else:
+                self.log.info("授信记录已入credit_apply表")
+                break
         for n in range(10):
+            info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
             status = info['status']
             if status == EnumCreditStatus.SUCCESS.value:
                 self.log.demsg('数据库层授信查询成功')
@@ -120,16 +141,19 @@ class CheckBizImpl(EnvInit):
         self.log.demsg('数据库还款结果校验...')
         flag = 10
         flag_m = 2
-        info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
         for m in range(flag_m + 1):
+            info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
             if not info:
                 self.log.info("channel_repay未查询到还款记录，启动3次轮训")
                 time.sleep(3)
                 if m == flag_m:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
                     sys.exit(7)
-                info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
+            else:
+                self.log.info("还款记录已入channel_repay表")
+                break
         for n in range(10):
+            info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
             status = info['status']
             if status == EnumChannelRepayStatus.SUCCESS.value:
                 self.log.demsg('数据库层还款查询成功')

@@ -79,7 +79,6 @@ class Apollo(object):
                 if key == item['item']['key']:
                     flag = 1
                     return item['item']
-            flag = 0
             if flag == 0:
                 _log.error('config error, namespaces:{} cannot get config:{}'.format(namespace, key))
         except Exception as err:

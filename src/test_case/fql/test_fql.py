@@ -7,7 +7,7 @@ import time
 from src.impl.FQL.FqlBizImpl import FqlBizImpl
 from person import *
 from utils.Logger import MyLog
-from utils.Models import get_next_month_today
+from utils.Models import *
 
 
 class TestCase(object):
