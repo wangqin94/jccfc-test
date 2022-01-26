@@ -285,7 +285,7 @@ class MysqlBizImpl(MysqlInit):
             info = self.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == exp_status:
-                self.log.demsg('credit_loan_apply获取支用单状态为{}'.format(status))
+                self.log.demsg('credit_loan_apply获取支用单状态[status：{}]'.format(status))
                 return status
             else:
                 if n == m:

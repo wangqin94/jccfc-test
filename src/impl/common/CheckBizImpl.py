@@ -154,7 +154,7 @@ class CheckBizImpl(EnvInit):
                 break
         for n in range(10):
             info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
-            status = info['status']
+            status = info['repay_status']
             if status == EnumChannelRepayStatus.SUCCESS.value:
                 self.log.demsg('数据库层还款查询成功')
                 return status

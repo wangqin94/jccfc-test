@@ -6,7 +6,14 @@
 /src/impl/MeiTuan/person.py
 /src/impl/ctrip/person.py
 /src/impl/YingJiZF/person.py
+/src/test_case/baidu/person.py
+/src/test_case/ctrip/person.py
+/src/test_case/fql/person.py
+/src/test_case/meituan/person.py
+/src/test_case/wld/person.py
+/src/test_case/YingJiZF/person.py
 /results/
 .pytest_cache
 /allure/
 /package/
+/src/test_case/*/allure-report/
