@@ -191,27 +191,7 @@ class repayDetailFile(EnvInit):
         repay_detail = os.path.join(self.data_save_path, 'repay_detail.txt')
         self.log.demsg("还款明细生成路径：{}".format(repay_detail))
 
-        self.repay_detail_template['loanReqNo'] = value[0]
-        self.repay_detail_template['sourceCode'] = value[1]
-        self.repay_detail_template['rpyType'] = value[2]
-        self.repay_detail_template['rpyTerm'] = value[3]
-        self.repay_detail_template['rpyReqNo'] = value[4]
-        self.repay_detail_template['tranNo'] = value[5]
-        self.repay_detail_template['rpyDate'] = value[6]
-        self.repay_detail_template['rpyPrinAmt'] = value[7]
-        self.repay_detail_template['rpyIntAmt'] = value[8]
-        self.repay_detail_template['rpyOintAmt'] = value[9]
-        self.repay_detail_template['rpyShareAmt'] = value[10]
-        self.repay_detail_template['rpyDeductAmt'] = value[11]
-        self.repay_detail_template['rpyRedLineAmt'] = value[12]
-        self.repay_detail_template['ifEnough'] = value[13]
-        self.repay_detail_template['rpyShareAmtOne'] = value[14]
-        self.repay_detail_template['rpyShareAmtTwo'] = value[15]
-        self.repay_detail_template['rpyShareAmtThree'] = value[16]
-        self.repay_detail_template['rpyShareAmtFour'] = value[17]
-        self.repay_detail_template['rpyChannel'] = value[18]
-
-        val_list = map(str, [self.repay_detail_template[key] for key in self.repay_detail_keys])
+        val_list = map(str, [v for v in value])
         strings = ','.join(val_list)
         with open(repay_detail, 'a+', encoding='utf-8') as f:
             f.write(strings)
