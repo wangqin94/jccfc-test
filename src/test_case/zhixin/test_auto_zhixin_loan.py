@@ -15,17 +15,17 @@ class TestCase(object):
     @pytest.mark.smoke
     @allure.title("绑卡申请-绑卡校验-授信申请-授信查询-支用申请-支用查询")  # 标题
     @allure.step("绑卡申请-绑卡校验-授信申请-授信查询-支用申请-支用查询")  # 测试报告显示步骤
-    def test_loan(self, get_base_data, zhixin, checkBizImpl, zhiXinCheckBizImpl):
+    def test_loan(self, get_base_data, ZhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl):
         """ 测试步骤 """
         data = get_base_data
         with allure.step("绑卡申请"):
-            res = json.loads(zhixin.applyCertification().get('output'))
+            res = json.loads(ZhiXinBizImpl.applyCertification().get('output'))
         with allure.step("绑卡校验"):
-            zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
+            ZhiXinBizImpl.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                               cdKey=res['cdKey'])
 
         with allure.step("发起授信申请"):
-            creditRes = json.loads(zhixin.credit().get('output'))
+            creditRes = json.loads(ZhiXinBizImpl.credit().get('output'))
             creditApplyNo = creditRes['creditApplyNo']
 
         with allure.step("数据库层校验授信结果是否符合预期"):
@@ -37,7 +37,7 @@ class TestCase(object):
                                                          creditRes['creditApplyNo'])
 
         with allure.step("发起支用申请"):
-            loanRes = json.loads(zhixin.applyLoan(loanAmt='1000', term='6').get('output'))
+            loanRes = json.loads(ZhiXinBizImpl.applyLoan(loanAmt='1000', term='6').get('output'))
             loanApplyNo = loanRes['loanApplyNo']
 
         with allure.step("数据库层校验支用结果是否符合预期"):

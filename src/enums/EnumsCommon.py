@@ -43,5 +43,20 @@ class EnumChannelRepayStatus(Enum):
     FAIL = '04'   # 资产校验失败
 
 
+@unique
+class EnumCustomPaymentStatus(Enum):
+    TO_REPAY = '01'  # 处理中
+    SUCCESS = '03'  # 成功
+    FAIL = '02'  # 信贷校验失败
+    TO_DO = '00'   # 待处理
+
+
+# @unique
+class EnumH5PaymentStatus(Enum):
+    SUCCESS = "000000"  # 成功
+    TO_DOING = 'P'  # 处理中
+    FAIL = "999999"
+
+
 if __name__ == "__main__":
     print(ProductEnum.BAIDU.value)

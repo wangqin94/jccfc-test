@@ -7,9 +7,8 @@ import time
 
 from src.enums.EnumsCommon import *
 from src.impl.common.CheckBizImpl import CheckBizImpl
-from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
+from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 from src.impl.zhixin.ZhiXinCheckBizImpl import ZhiXinCheckBizImpl
-from src.test_case.zhixin.person import data
 from utils.Logger import MyLog
 from utils.Models import get_base_data
 
@@ -32,7 +31,7 @@ class MyTestCase(unittest.TestCase):
         # self.data = get_base_data_temp('userId')
         self.env = TEST_ENV_INFO
         self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ZHIXIN.value), 'userId')
-        zhixin = ZhiXinBiz(data=self.data)
+        zhixin = ZhiXinBizImpl(data=self.data)
         res = json.loads(zhixin.applyCertification().get('output'))
         zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                           cdKey=res['cdKey'])
@@ -44,7 +43,7 @@ class MyTestCase(unittest.TestCase):
         time.sleep(5)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.creditApplyNo)
         # 接口层校验授信结果是否符合预期
-        self.ZhiXinCheckBizImpl.check_credit_apply_status(self.data, creditRes['userId'], creditRes['creditApplyNo'])
+        self.ZhiXinCheckBizImpl.check_credit_apply_status(creditRes['userId'], creditRes['creditApplyNo'])
 
         # 发起支用申请
         self.loanRes = json.loads(zhixin.applyLoan(loanAmt='1000', term='12').get('output'))
@@ -58,7 +57,7 @@ class MyTestCase(unittest.TestCase):
         status = self.CheckBizImpl.check_loan_apply_status(thirdpart_apply_id=self.loanApplyNo)
         self.assertEqual(EnumLoanStatus.ON_USE.value, status, '支用失败')
         # 接口层校验授信结果是否符合预期
-        status = self.ZhiXinCheckBizImpl.check_loan_apply_status(self.data, self.loanRes['userId'], self.loanRes['loanApplyNo'])
+        status = self.ZhiXinCheckBizImpl.check_loan_apply_status(self.loanRes['userId'], self.loanRes['loanApplyNo'])
         self.assertEqual(ZhiXinApiStatusEnum.SUCCESS.value, status, '支用失败')
 
 

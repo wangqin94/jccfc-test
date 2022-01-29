@@ -5,6 +5,8 @@
 @Author  ：jccfc
 @Date    ：2022/1/4 16:54 
 """
+import json
+
 import redis
 
 from config.TestEnvInfo import TEST_ENV_INFO
