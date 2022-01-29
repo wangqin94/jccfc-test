@@ -27,7 +27,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_credit.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -47,7 +50,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_asset.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -88,7 +94,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_credit.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
             return data
         except Exception as err:
@@ -108,7 +117,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_credit.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
             return data
         except Exception as err:
@@ -128,7 +140,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_credit.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
             return data
         except Exception as err:
@@ -148,7 +163,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_asset.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
             return data
         except Exception as err:
@@ -168,7 +186,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_user.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
             return data
         except Exception as err:
@@ -189,7 +210,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_base.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
             return data
         except Exception as err:
@@ -210,7 +234,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_bigacct.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
             return data
         except Exception as err:
@@ -231,7 +258,10 @@ class MysqlBizImpl(MysqlInit):
         values = self.mysql_op_channel.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
-            data = [dict(zip(keys, item)) for item in values][record]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
             self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
             return data
         except Exception as err:
@@ -297,8 +327,9 @@ class MysqlBizImpl(MysqlInit):
 
 if __name__ == '__main__':
     # t = MysqlBizImpl().get_bigacct_database_info('acct_sys_info', sys_id='BIGACCT')
-    # MysqlBizImpl().update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", account_date='20220113')
+    # MysqlBizImpl().update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", account_date='20220217')
     # print(common.get('limit')['interface'])
     # MysqlBizImpl().get_loan_apply_info(id=999)
     # MysqlBizImpl().get_credit_apply_info('credit_apply_id', credit_apply_id='000CA2021031500000021')
-    MysqlBizImpl().get_loan_apply_status('01')
+    # MysqlBizImpl().get_loan_apply_status('01')
+    MysqlBizImpl().get_asset_database_info('asset_repay_plan', 'sum(pre_repay_amount)', record=999, loan_invoice_id='000LI0001287425037156375010', repay_plan_status='4')

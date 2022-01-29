@@ -2,11 +2,11 @@ import pytest
 import sys
 import os
 
-from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
+from src.impl.zhixin.ZhiXinSynBizImpl import ZhiXinBizImpl, ZhiXinSynBizImpl
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
 from src.impl.common.CheckBizImpl import *
-from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
+from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 from src.impl.zhixin.ZhiXinCheckBizImpl import ZhiXinCheckBizImpl
 
 
@@ -18,38 +18,39 @@ from src.impl.zhixin.ZhiXinCheckBizImpl import ZhiXinCheckBizImpl
 # @pytest.fixture(autouse=True)  想让每一个测试用例都运行公共的方法
 
 @pytest.fixture(scope="class", autouse=True)
-def get_base_data():
+def get_base_data_zhixin():
     data = get_base_data_temp('userId')
     return data
 
 
-@pytest.fixture(scope="class")
-def zhiXinBiz(get_base_data):
-    data = get_base_data
-    zhiXinBiz = ZhiXinBiz(data)
-    return zhiXinBiz
+@pytest.fixture(scope="class", autouse=True)
+def zhiXinBizImpl(get_base_data_zhixin):
+    data = get_base_data_zhixin
+    zhiXinBizImpl = ZhiXinBizImpl(data)
+    return zhiXinBizImpl
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="class", autouse=True)
 def checkBizImpl():
     checkBizImpl = CheckBizImpl()
     return checkBizImpl
 
 
-@pytest.fixture(scope="class")
-def zhiXinCheckBizImpl():
-    zhiXinCheckBizImpl = ZhiXinCheckBizImpl()
+@pytest.fixture(scope="class", autouse=True)
+def zhiXinCheckBizImpl(get_base_data_zhixin):
+    data = get_base_data_zhixin
+    zhiXinCheckBizImpl = ZhiXinCheckBizImpl(data)
     return zhiXinCheckBizImpl
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="class", autouse=True)
 def mysqlBizImpl():
     mysqlBizImpl = MysqlBizImpl()
     return mysqlBizImpl
 
 
-@pytest.fixture(scope="class")
-def zhiXinBizImpl(get_base_data):
-    data = get_base_data
-    zhiXinBizImpl = ZhiXinBizImpl(data)
-    return zhiXinBizImpl
+@pytest.fixture(scope="class", autouse=True)
+def zhiXinSynBizImpl(get_base_data_zhixin):
+    data = get_base_data_zhixin
+    zhiXinSynBizImpl = ZhiXinSynBizImpl(data)
+    return zhiXinSynBizImpl

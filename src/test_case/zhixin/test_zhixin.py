@@ -7,7 +7,7 @@ import time
 from multiprocessing import Process
 
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.impl.zhixin.ZhiXinBiz import ZhiXinBiz
+from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 from person import *
 from utils.Logger import MyLog
 
@@ -26,54 +26,54 @@ class TestCase(object):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             res = json.loads(zhixin.applyCertification().get('output'))
             zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                               cdKey=res['cdKey'])
 
         # 撞库
         elif flag == 1:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             zhixin.checkUser(data['telephone'])
 
         # 绑卡申请
         elif flag == 2:
-            zhixin = ZhiXinBiz(data=None)
+            zhixin = ZhiXinBizImpl(data=None)
             zhixin.applyCertification()
 
         # 授信
         elif flag == 3:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             zhixin.credit()
 
         # 授信查询
         elif flag == 4:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             zhixin.queryCreditResult(userId="SUR1678250090", creditApplyNo="SLN4301654300")
 
         # 借款试算
         elif flag == 5:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             zhixin.loanTrial()
 
         # 借款申请
         elif flag == 6:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             zhixin.applyLoan(loanAmt='1000', term='12', loanPurpose='06')
 
         # 借款查询
         elif flag == 7:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             zhixin.queryLoanResult(userId="SUR1678250090", loanApplyNo="SLN4301654300")
 
         # 还款结果查询
         elif flag == 8:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             zhixin.queryRepayResult(userId="userId1642402917009", repayApplyNo="repayApplyNo16424043945925851")
 
         # 还款
         elif flag == 9:
-            zhixin = ZhiXinBiz(data=data)
+            zhixin = ZhiXinBizImpl(data=data)
             # 默认取person文件中的userid
             loan_apply_info = MysqlBizImpl().get_loan_apply_info(thirdpart_user_id=data['userId'])
             zhixin.applyRepayment(repay_type='1', loan_no="000LA2021122300000068")  # 按期还款

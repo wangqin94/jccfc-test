@@ -29,7 +29,7 @@ class YingJiZFBizImpl(EnvInit):
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = YingJiZF.YingJiZF
-        
+
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.YINGJF.value))
         self.log.info('用户四要素信息 \n%s', self.data)
 
@@ -66,7 +66,7 @@ class YingJiZFBizImpl(EnvInit):
         # 更新 payload 字段值
         parser = DataUpdate(self.cfg['queryChannel']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('应急支付渠道查询...')
         url = self.host_api + self.cfg['queryChannel']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -91,7 +91,7 @@ class YingJiZFBizImpl(EnvInit):
         parser = DataUpdate(self.cfg['queryInvoiceListByPage']['payload'], **data)
         self.active_payload = parser.parser
         self.active_payload["head"]["channelNo"] = "21"
-        
+
         self.log.demsg('批量查询客户借据信息...')
         url = self.host_api + self.cfg['queryInvoiceListByPage']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -117,7 +117,7 @@ class YingJiZFBizImpl(EnvInit):
         parser = DataUpdate(self.cfg['loan_bill']['payload'], **data)
         self.active_payload = parser.parser
         self.active_payload["head"]["channelNo"] = "21"
-        
+
         self.log.demsg('我的账单查询...')
         url = self.host_api + self.cfg['loan_bill']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -142,7 +142,7 @@ class YingJiZFBizImpl(EnvInit):
         data.update(kwargs)
         parser = DataUpdate(self.cfg['payment_query']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('支付记录查询...')
         url = self.host_api + self.cfg['payment_query']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -167,7 +167,7 @@ class YingJiZFBizImpl(EnvInit):
         data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_query']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('贷款列表查询...')
         url = self.host_api + self.cfg['loan_query']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -191,7 +191,7 @@ class YingJiZFBizImpl(EnvInit):
         data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_details']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('贷款详情查询...')
         url = self.host_api + self.cfg['loan_details']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -215,7 +215,7 @@ class YingJiZFBizImpl(EnvInit):
         data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_query']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('还款记录查询...')
         url = self.host_api + self.cfg['repay_query']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -239,7 +239,7 @@ class YingJiZFBizImpl(EnvInit):
         data.update(kwargs)
         parser = DataUpdate(self.cfg['plan_query']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('待还款计划查询...')
         url = self.host_api + self.cfg['plan_query']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -263,7 +263,7 @@ class YingJiZFBizImpl(EnvInit):
         data.update(kwargs)
         parser = DataUpdate(self.cfg['payment_result']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('查询订单支付结果...')
         url = self.host_api + self.cfg['payment_result']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -289,7 +289,7 @@ class YingJiZFBizImpl(EnvInit):
         data.update(kwargs)
         parser = DataUpdate(self.cfg['bankcard_bind']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('绑定银行卡...')
         url = self.host_api + self.cfg['bankcard_bind']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
@@ -315,35 +315,60 @@ class YingJiZFBizImpl(EnvInit):
         data.update(kwargs)
         parser = DataUpdate(self.cfg['bankcard_modify']['payload'], **data)
         self.active_payload = parser.parser
-        
+
         self.log.demsg('更换银行卡...')
         url = self.host_api + self.cfg['bankcard_modify']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
     # 还款申请payload
-    def payment(self, **kwargs):
-        """ # 还款申请payload字段装填
+    def payment(self, loan_invoice_id=None, repay_type='0', **kwargs):
+        """
+        还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
+        @param loan_invoice_id: 借据号 默认不传根据身份证号获取
+        @param repay_type: 还款类型 0：按期还款； 1：提前结清
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         data = dict()
         # head
-        requestSerialNo = 'SerialNo' + self.strings + "2"
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        requestSerialNo = 'SerialNo' + strings + "2"
         data['requestSerialNo'] = requestSerialNo
         data['jcSystemCode'] = self.jcSystemCode
         data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
 
         # body
-        # 根据用户名称查询借据信息
-        key1 = "user_name = '{}'".format(self.data['name'])
-        credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key1)
-        loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
-        data['loanInvoiceId'] = loan_invoice_id
-        data['paymentType'] = self.paymentType
+        data['repayType'] = repay_type
+        if loan_invoice_id:
+            data['loanInvoiceId'] = loan_invoice_id
+        else:
+            # 根据用户名称查询借据信息
+            key1 = "user_name = '{}'".format(self.data['name'])
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key1)
+            data['loanInvoiceId'] = credit_loan_invoice["loan_invoice_id"]
 
-        data['appOrderNo'] = 'appOrderNo' + self.strings + "3"
+        data['paymentType'] = self.paymentType
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                         loan_invoice_id=data['loanInvoiceId'])
+        # 逾期还款/按期还款 先查询借据表状态，如果已逾期还款金额默认写入所有逾期待还金额，如果按期写入当前期次待还金额
+        if repay_type == "0":
+            # 逾期还款，去所有逾期待还金额
+            if credit_loan_invoice['status'] == '2':
+                asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                             'sum(left_repay_amount)',
+                                                                             loan_invoice_id=data['loanInvoiceId'],
+                                                                             repay_plan_status='4')
+                data['repayAmt'] = str("{:.2f}".format(asset_repay_plan['sum(left_repay_amount)']))
+            # 按期还款，取最早未还期次待还金额
+            if credit_loan_invoice['status'] == '1':
+                key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(
+                    data['loanInvoiceId'])
+                asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+                self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
+                data['repayAmt'] = str("{:.2f}".format(asset_repay_plan['left_repay_amount']))
+        data['appOrderNo'] = 'appOrderNo' + strings + "3"
         if self.paymentType == "5":
             data['idNo'] = self.data['cer_no']
             data['bankAcctNo'] = self.data['bankid']
@@ -355,7 +380,7 @@ class YingJiZFBizImpl(EnvInit):
         parser = DataUpdate(self.cfg['payment']['payload'], **data)
         self.active_payload = parser.parser
         self.active_payload["head"]["channelNo"] = "21"
-        
+
         self.log.demsg('根据用户名称查询借据信息...')
         url = self.host_api + self.cfg['payment']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)

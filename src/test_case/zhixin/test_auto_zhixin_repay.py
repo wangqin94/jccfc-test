@@ -13,13 +13,13 @@ log = MyLog().get_log()
 
 @allure.step('前置操作：预置放款数据')
 @pytest.fixture(scope="class")
-def pre_loan_data(get_base_data, zhiXinBiz, checkBizImpl, zhiXinCheckBizImpl, mysqlBizImpl, zhiXinBizImpl):
-    data = get_base_data
+def pre_loan_data(get_base_data_zhixin, zhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl, mysqlBizImpl, zhiXinSynBizImpl):
+    data = get_base_data_zhixin
     job = JOB()
     apollo = Apollo()
     redis1 = Redis()
     with allure.step("前置条件-准备借据：借据逾期2期且为账单日"):
-        bill_date = zhiXinBizImpl.preLoanapply(month=3)
+        bill_date = zhiXinSynBizImpl.preLoanapply(month=3)
     with allure.step("设置credit还款mock时间, 第二期账单日"):
         # 设置apollo还款mock时间 默认当前时间
         repay_date = str(get_custom_month(-1, bill_date))
@@ -45,7 +45,7 @@ def pre_loan_data(get_base_data, zhiXinBiz, checkBizImpl, zhiXinCheckBizImpl, my
         job.trigger_job("资产日终任务流", group=6)
 
     with allure.step("校验当前借据是否已逾期：15s轮训等待"):
-        zhiXinBiz.log.info('验当前借据状态')
+        zhiXinBizImpl.log.info('验当前借据状态')
         status = mysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value, thirdpart_user_id=data['userId'])
         assert EnumLoanStatus.OVERDUE.value == status, '当前支用单状态不为逾期状态，请检查账务日终任务执行结果'
     return repay_date
@@ -54,7 +54,7 @@ def pre_loan_data(get_base_data, zhiXinBiz, checkBizImpl, zhiXinCheckBizImpl, my
 @pytest.mark.zhixin
 @pytest.mark.smoke
 @allure.feature("还款模块")
-@allure.story("还款流程自动化测试")
+@allure.story("360智信渠道还款")
 @allure.title("逾期还款-按期还款-提前结清")  # 标题
 class TestCase(object):
     """ 预置条件处理 """
@@ -63,14 +63,14 @@ class TestCase(object):
 
     @allure.step("逾期还款")  # 测试报告显示步骤
     @pytest.mark.run(order=1)
-    def test_overdue_repay(self, get_base_data, zhiXinBiz, checkBizImpl, zhiXinCheckBizImpl, pre_loan_data, mysqlBizImpl):
+    def test_overdue_repay(self, get_base_data_zhixin, zhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl, pre_loan_data, mysqlBizImpl):
         repay_date = pre_loan_data
-        data = get_base_data
+        data = get_base_data_zhixin
         with allure.step("发起逾期还款申请"):
             log.debug('发起逾期还款申请')
             repayTime = "{}111111".format(repay_date.replace("-", ""))
             loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
-            repayRes = json.loads(zhiXinBiz.applyRepayment(repay_type='3', loan_no=loan_apply_info['loan_apply_id'],
+            repayRes = json.loads(zhiXinBizImpl.applyRepayment(repay_type='3', loan_no=loan_apply_info['loan_apply_id'],
                                                         repayTime=repayTime).get('output'))  # 逾期还款
             assert ZhiXinApiStatusEnum.SUCCESS.value == repayRes['result'], '还款API接口请求失败，失败原因{}'.format(
                 repayRes['reasonMsg'])
@@ -81,19 +81,19 @@ class TestCase(object):
             assert EnumChannelRepayStatus.SUCCESS.value == status, '还款失败'
 
         with allure.step("接口层校验支用结果是否符合预期"):
-            status = zhiXinCheckBizImpl.check_channel_repay_status(data, repayRes['userId'], repayRes['repayApplyNo'])
+            status = zhiXinCheckBizImpl.check_repay_status(repayRes['userId'], repayRes['repayApplyNo'])
             assert ZhiXinApiStatusEnum.SUCCESS.value == status, '还款失败'
 
     @allure.step("按期还款")  # 测试报告显示步骤
     @pytest.mark.run(order=2)
-    def test_billDate_repay(self, get_base_data, zhiXinBiz, checkBizImpl, zhiXinCheckBizImpl, pre_loan_data, mysqlBizImpl):
+    def test_billDate_repay(self, get_base_data_zhixin, zhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl, pre_loan_data, mysqlBizImpl):
         repay_date = pre_loan_data
-        data = get_base_data
+        data = get_base_data_zhixin
         with allure.step("发起按期还款申请"):
             log.debug('发起按期还款申请')
             repayTime = "{}111111".format(repay_date.replace("-", ""))
             loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
-            repayRes = json.loads(zhiXinBiz.applyRepayment(repay_type='1', loan_no=loan_apply_info['loan_apply_id'],
+            repayRes = json.loads(zhiXinBizImpl.applyRepayment(repay_type='1', loan_no=loan_apply_info['loan_apply_id'],
                                                         repayTime=repayTime).get('output'))  # 按期还款
             assert ZhiXinApiStatusEnum.SUCCESS.value == repayRes['result'], '还款API接口请求失败，失败原因{}'.format(
                 repayRes['reasonMsg'])
@@ -104,19 +104,19 @@ class TestCase(object):
             assert EnumChannelRepayStatus.SUCCESS.value == status, '还款失败'
 
         with allure.step("接口层校验支用结果是否符合预期"):
-            status = zhiXinCheckBizImpl.check_channel_repay_status(data, repayRes['userId'], repayRes['repayApplyNo'])
+            status = zhiXinCheckBizImpl.check_repay_status(repayRes['userId'], repayRes['repayApplyNo'])
             assert ZhiXinApiStatusEnum.SUCCESS.value == status, '还款失败'
 
     @allure.step("提前结清")  # 测试报告显示步骤
     @pytest.mark.run(order=3)
-    def test_advance_repay(self, get_base_data, zhiXinBiz, checkBizImpl, zhiXinCheckBizImpl, pre_loan_data, mysqlBizImpl):
+    def test_advance_repay(self, get_base_data_zhixin, zhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl, pre_loan_data, mysqlBizImpl):
         repay_date = pre_loan_data
-        data = get_base_data
+        data = get_base_data_zhixin
         with allure.step("发起提前结清申请"):
             log.debug('发起提前结清申请')
             repayTime = "{}111111".format(repay_date.replace("-", ""))
             loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
-            repayRes = json.loads(zhiXinBiz.applyRepayment(repay_type='2', loan_no=loan_apply_info['loan_apply_id'],
+            repayRes = json.loads(zhiXinBizImpl.applyRepayment(repay_type='2', loan_no=loan_apply_info['loan_apply_id'],
                                                         repayTime=repayTime).get('output'))  # 提前结清还款
             assert ZhiXinApiStatusEnum.SUCCESS.value == repayRes['result'], '还款API接口请求失败，失败原因{}'.format(
                 repayRes['reasonMsg'])
@@ -127,7 +127,7 @@ class TestCase(object):
             assert EnumChannelRepayStatus.SUCCESS.value == status, '还款失败'
 
         with allure.step("接口层校验支用结果是否符合预期"):
-            status = zhiXinCheckBizImpl.check_channel_repay_status(data, repayRes['userId'], repayRes['repayApplyNo'])
+            status = zhiXinCheckBizImpl.check_repay_status(repayRes['userId'], repayRes['repayApplyNo'])
             assert ZhiXinApiStatusEnum.SUCCESS.value == status, '还款失败'
 
 
