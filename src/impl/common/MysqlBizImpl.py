@@ -29,8 +29,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -52,8 +54,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -96,9 +100,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-            self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -119,9 +124,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-            self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -142,9 +148,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-            self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -165,9 +172,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-            self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -188,9 +196,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-            self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -212,9 +221,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-            self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -236,9 +246,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-            self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -260,9 +271,10 @@ class MysqlBizImpl(MysqlInit):
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
             if record == 999:
                 data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-            self.log.info("执行sql查询：{} {}: query 0 ".format(sql, data))
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))

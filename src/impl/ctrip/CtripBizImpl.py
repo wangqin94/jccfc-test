@@ -21,12 +21,10 @@ class CtripBizImpl(EnvInit):
         @param repay_date:      实际还款时间'2021-08-09'
         """
         super().__init__()
-        self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
         # 解析项目特性配置
         self.cfg = ctrip.ctrip
 
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ctrip.value), 'open_id')
-        self.log.info('用户四要素信息 %s', self.data)
 
         self.strings = str(int(round(time.time() * 1000)))
 

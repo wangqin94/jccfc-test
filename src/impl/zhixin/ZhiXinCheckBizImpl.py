@@ -33,16 +33,16 @@ class ZhiXinCheckBizImpl(ZhiXinBizImpl):
                     status = json.loads(res.get('output'))['status']
                     if status == ZhiXinApiStatusEnum.SUCCESS.value:
                         self.log.demsg('接口层查询：授信成功')
-                        return status
+                        # return status
                     elif status == ZhiXinApiStatusEnum.FAIL.value:
                         self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
-                        return status
+                        raise AssertionError('支用成功')
                     elif status == ZhiXinApiStatusEnum.TO_DOING.value:
                         self.log.demsg("授信审批状态处理中，请等待....")
                         time.sleep(3)
                         if n == flag-1:
                             self.log.warning("超过当前系统设置等待时间，请手动查看结果....")
-                            return status
+                            raise AssertionError('支用成功')
                 if res['code'] == StatusCodeEnum.NO_HOURLY.code and res['msg'] == StatusCodeEnum.NO_HOURLY.msg:
                     self.log.demsg("请勿频繁请求，请等待....")
                     time.sleep(15)
@@ -64,7 +64,8 @@ class ZhiXinCheckBizImpl(ZhiXinBizImpl):
                     status = json.loads(res.get('output'))['loanStatus']
                     if status == ZhiXinApiStatusEnum.SUCCESS.value:
                         self.log.demsg('支用成功')
-                        return status
+                        raise AssertionError('支用成功')
+                        # return status
                     elif status == ZhiXinApiStatusEnum.FAIL.value:
                         self.log.error('支用失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
                         return status
@@ -110,3 +111,8 @@ class ZhiXinCheckBizImpl(ZhiXinBizImpl):
                     time.sleep(15)
             except Exception as r:
                 self.log.error("系统错误{}".format(r))
+
+
+if __name__ == '__main__':
+
+    ZhiXinCheckBizImpl().check_credit_apply_status("userId1643511151762", "creditApplyNo16435111528004788")

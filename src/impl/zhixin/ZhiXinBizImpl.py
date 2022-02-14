@@ -29,29 +29,28 @@ class ZhiXinBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = zhixin.zhixin
-        self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
-        self.log.info('用户四要素信息 {}'.format(self.data))
-        # 获取四要素信息
-        if data:
-            self.data = data
-        else:
-            if person:
-                self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ZHIXIN.value), 'userId')
-            else:
-                self.data = get_base_data_temp('userId')
-
-        self.loanAmt = 1000  # 支用申请金额, 默认1000 单位元
-        self.term = 3  # 借款期数, 默认3期
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
+        self.data = self.get_user_info(data=data, person=person)
 
         # 初始化payload变量
         self.active_payload = {}
 
         self.encrypt_url = self.host + self.cfg['encrypt']['interface']
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
+
+    def get_user_info(self, data=None, person=True):
+        # 获取四要素信息
+        if data:
+            base_data = data
+        else:
+            if person:
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ZHIXIN.value), 'userId')
+            else:
+                base_data = get_base_data_temp('userId')
+        return base_data
 
     # 客户撞库校验
     def checkUser(self, iphone, **kwargs):
@@ -121,8 +120,9 @@ class ZhiXinBizImpl(MysqlInit):
 
     # 授信申请
     def credit(self, **kwargs):
-        credit_data = dict()
+        self.log.info('用户四要素信息: {}'.format(self.data))
         # body
+        credit_data = dict()
         credit_data['requestNo'] = 'requestNo' + self.strings + "_3000"
         credit_data['requestTime'] = self.times
         credit_data['userId'] = self.data['userId']
@@ -209,9 +209,11 @@ class ZhiXinBizImpl(MysqlInit):
         return response
 
     # 借款还算
-    def loanTrial(self, **kwargs):
+    def loanTrial(self, term=3, loanAmt=1000, **kwargs):
         """ # 借款试算payload字段装填
         注意：键名必须与接口原始数据的键名一致
+        @param loanAmt: 支用申请金额, 默认1000 单位元
+        @param term: 借款期数：默认3期
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
@@ -226,8 +228,8 @@ class ZhiXinBizImpl(MysqlInit):
         loanTrial_data['loanTime'] = self.date
         credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
         loanTrial_data['partnerCreditNo'] = credit_apply_info['credit_apply_id']
-        loanTrial_data['loanAmt'] = self.loanAmt
-        loanTrial_data['term'] = self.term
+        loanTrial_data['loanAmt'] = loanAmt
+        loanTrial_data['term'] = term
 
         # 银行卡信息
         loanTrial_data['idCardNo'] = self.data['cer_no']
@@ -247,12 +249,15 @@ class ZhiXinBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, **kwargs):
+    def applyLoan(self, term=3, loanAmt=1000, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
+        @param loanAmt: 支用申请金额, 默认1000 单位元
+        @param term: 借款期数：默认3期
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
+        self.log.info('用户四要素信息: {}'.format(self.data))
         applyLoan_data = dict()
         # body
         applyLoan_data['requestNo'] = 'requestNo' + self.strings + "_6000"
@@ -264,8 +269,8 @@ class ZhiXinBizImpl(MysqlInit):
         applyLoan_data['loanTime'] = self.date
         credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'], status='03')
         applyLoan_data['partnerCreditNo'] = credit_apply_info['credit_apply_id']
-        applyLoan_data['loanAmt'] = self.loanAmt
-        applyLoan_data['term'] = self.term
+        applyLoan_data['loanAmt'] = loanAmt
+        applyLoan_data['term'] = term
 
         # ocr信息
         applyLoan_data['nameOCR'] = self.data['name']
@@ -411,6 +416,7 @@ class ZhiXinBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        self.log.info('用户四要素信息: {}'.format(self.data))
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         applyRepayment_data = dict()
         # body

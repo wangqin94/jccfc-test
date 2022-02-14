@@ -34,7 +34,7 @@ class ZhiXinSynBizImpl(ZhiXinBizImpl):
     def __init__(self, data=None, encrypt_flag=True, person=False):
         super().__init__(data=data, encrypt_flag=encrypt_flag, person=person)
         self.CheckBizImpl = CheckBizImpl()
-        self.ZhiXinCheckBizImpl = ZhiXinCheckBizImpl(data)
+        self.zhiXinCheckBizImpl = ZhiXinCheckBizImpl(data)
 
     # 准备借款数据
     def preLoanapply(self, month=3, bill_date=None, term='12'):
@@ -58,7 +58,7 @@ class ZhiXinSynBizImpl(ZhiXinBizImpl):
         status = self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=creditApplyNo)
         assert EnumCreditStatus.SUCCESS.value == status, '授信失败'
         # 接口层校验授信结果是否符合预期
-        status = self.ZhiXinCheckBizImpl.check_credit_apply_status(creditRes['userId'], creditRes['creditApplyNo'])
+        status = self.zhiXinCheckBizImpl.check_credit_apply_status(creditRes['userId'], creditRes['creditApplyNo'])
         assert ZhiXinApiStatusEnum.SUCCESS.value == status, '授信失败'
 
         # 设置apollo放款mock时间 默认当前时间前两月日期month=3 eg:当前时间2022-01-13 放款时间2021-11-13 账单日2021-12-13
@@ -77,7 +77,7 @@ class ZhiXinSynBizImpl(ZhiXinBizImpl):
         status = self.CheckBizImpl.check_loan_apply_status(thirdpart_apply_id=loanApplyNo)
         assert EnumLoanStatus.ON_USE.value == status, '支用失败'
         # 接口层校验授信结果是否符合预期
-        status = self.ZhiXinCheckBizImpl.check_loan_apply_status(loanRes['userId'], loanRes['loanApplyNo'])
+        status = self.zhiXinCheckBizImpl.check_loan_apply_status(loanRes['userId'], loanRes['loanApplyNo'])
         assert ZhiXinApiStatusEnum.SUCCESS.value == status, '支用失败'
 
         # 更新资产asset_loan_invoice_info放款时间,apply_loan_date=loan_date:
