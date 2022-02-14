@@ -167,13 +167,10 @@ class repayDetailFile(EnvInit):
 
     def start_repayDetailFile(self,loan_req_no=''):
 
-        # self.repay_detail_template['loan_req_no'] = loan_req_no
         # 查询sql语句
         sql = "select loan_req_no,source_code,rpy_type,rpy_term,rpy_req_no,tran_no,rpy_date,rpy_prin_amt,rpy_int_amt,rpy_oint_amt,rpy_share_amt,rpy_deduct_amt,rpy_red_line_amt," \
               "if_enough,rpy_share_amt_one,rpy_share_amt_two,rpy_share_amt_three,rpy_share_amt_four,rpy_channel from {}.channel_jietiao_repay_detail where loan_req_no='{}' ;".format(
             self.MysqlBizImpl.op_channel_database_name, loan_req_no)
-
-        self.log.demsg("还款还款明细：{}".format(sql))
 
         # 获取查询内容
         values = self.MysqlBizImpl.mysql_op_channel.select(sql)

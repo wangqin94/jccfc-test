@@ -4,6 +4,7 @@
 # ------------------------------------------
 
 from engine.EnvInit import EnvInit
+from src.enums import global_var as gl
 from src.impl.common.CommonBizImpl import *
 from src.enums.EnumsCommon import *
 from src.enums.EnumFql import *
@@ -12,24 +13,26 @@ from utils.Models import *
 from src.test_data.module_data import fql
 
 
+
 class FqlBizImpl(EnvInit):
-    def __init__(self, *, data=None, credit_amount=30000, loan_amount=600, loan_term=3, encrypt_flag=True):
+    def __init__(self, *, data=None, encrypt_flag=True):
         super().__init__()
 
         # 解析项目特性配置
         self.cfg = fql.fql
-        self.log = MyLog.get_log()
         self.MysqlBizImpl = MysqlBizImpl()
 
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQL.value), 'applyId')
+        gl._init()
+        self.data= data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQL.value), 'applyId')
         self.log.info('用户四要素信息 \n%s', self.data)
+
+        for key, value in self.data.items():
+             gl.set_value(key, value)
+        self.log.info('用户四要素信息-全局变量 \n%s', gl)
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
         self.times = time.strftime('%Y-%m-%d', time.localtime())
-        self.loanAmount = loan_amount
-        self.credit_amount = credit_amount
-        self.loanTerm = loan_term
 
         self.sourceCode = '000UC010000006268'
         self.encrypt_url = API['request_host_api'].format(self.env) + FqlPathEnum.fqlEncryptPath.value
@@ -61,8 +64,6 @@ class FqlBizImpl(EnvInit):
         # body
         credit_data['applyId'] = self.data['applyId']
         credit_data['sourceCode'] = self.sourceCode
-        credit_data['loanAmount'] = self.credit_amount
-        credit_data['creditAmount'] = self.credit_amount
         credit_data['firstOrderDate'] = time.strftime('%Y-%m-%d', time.localtime())
 
         credit_data['idNo'] = self.data['cer_no']
@@ -107,7 +108,7 @@ class FqlBizImpl(EnvInit):
         return response
 
     # 支用申请payload
-    def loan(self, **kwargs):
+    def loan(self, loanTerm='3', **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
@@ -124,14 +125,12 @@ class FqlBizImpl(EnvInit):
         # body
         loan_data['applyId'] = self.data['applyId']
         loan_data['sourceCode'] = self.sourceCode
-        loan_data['loanAmt'] = self.loanAmount
-        loan_data['loanTerm'] = self.loanTerm
         loan_data['name'] = self.data['name']
         loan_data['mobileNo'] = self.data['telephone']
         loan_data['debitAccountNo'] = self.data['bankid']
 
         date = self.times.split()[0]
-        firstRepayDate, day = loan_and_period_date_parser(date_str=date, period=int(self.loanTerm), flag=False,
+        firstRepayDate, day = loan_and_period_date_parser(date_str=date, period=int(loanTerm), flag=False,
                                                           max_bill=28)
         loan_data['firstRepayDate'] = firstRepayDate[0]
         loan_data['fixedRepayDay'] = day
@@ -146,6 +145,7 @@ class FqlBizImpl(EnvInit):
         url = self.host_api + self.cfg['loan']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
                                      encrypt_flag=self.encrypt_flag)
+        response['applyId'] = self.data['applyId']
         return response
 
     # 支用查询

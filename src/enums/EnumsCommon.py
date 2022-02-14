@@ -21,8 +21,10 @@ class ProductEnum(Enum):
 @unique
 class EnumCreditStatus(Enum):
     SUCCESS = '03'  # 成功
-    TO_CREDIT = '02'
-    FAIL = '04'
+    TO_CREDIT = '02'  # 审批中
+    FAIL = '04'        #失败
+    AUDITING = '00'      #待审核
+
 
 
 @unique
@@ -33,6 +35,9 @@ class EnumLoanStatus(Enum):
     DEAL_FAILED = '10'  # 处理失败
     REJECT = '07'  # 拒绝
     OVERDUE = '30'  # 逾期
+    AUDITING = '06'  # 审核中
+    LOANING = '16'  # 放款中
+    LOAN_AUDITING = '23'  # 放款审核中
 
 
 @unique

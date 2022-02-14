@@ -32,9 +32,9 @@ fql = {
                 "applyId": "202000000948071964",
                 "sourceCode": "000UC010000006268",
                 "orderType": "1",  # 订单类型
-                "loanAmount": 30000,
+                "loanAmount": "",
                 "creditAmount": 30000,
-                "loanTerm": "12",  # 借款期数
+                "loanTerm": "",  # 借款期数
                 "repayType": "1",  # 还款方式 1:等额本息 2:等额本金 3:按天计息
                 "fixedBillDay": "10",
                 "fixedRepayDay": "27",
@@ -177,12 +177,12 @@ fql = {
                 "debitAccountName": "蓝安峰",
                 "debitOpenAccountBank": "中国银行",
                 "debitAccountNo": "6212268611367176969",
-                "debitOpenAccountBankCode": "121",
-                "fileInfos": [{
-                    "fileType": "5",
-                    "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_contract_202000001209703817.pdf",
-                    "fileName": "JC_contract_202000001209703817.pdf"
-                }]
+                "debitOpenAccountBankCode": "121"
+                # "fileInfos": [{
+                #     "fileType": "5",
+                #     "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_contract_202000001209703817.pdf",
+                #     "fileName": "JC_contract_202000001209703817.pdf"
+                # }]
             }
         }
     },
