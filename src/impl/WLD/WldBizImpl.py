@@ -21,7 +21,6 @@ class WldBizImpl(EnvInit):
         self.cfg = wld.wld
 
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WLD.value), "applyid")
-        self.log.info('用户四要素信息 %s: ', self.data)
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
