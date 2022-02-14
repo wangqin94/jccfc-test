@@ -14,6 +14,8 @@ import requests
 from inspect import getcallargs
 from datetime import datetime
 from functools import wraps
+
+from config.TestEnvInfo import TEST_ENV_INFO
 from utils.Logger import MyLog
 
 from dateutil.relativedelta import relativedelta
@@ -84,6 +86,8 @@ def get_base_data(env, *project, back=20, **kwargs):
     with open('person.py', 'a', encoding='utf-8') as f:
         f.write('\n')
         f.write('data = {}  # {}'.format(str(data), env))
+    _log.demsg('当前测试环境: {}'.format(TEST_ENV_INFO))
+    _log.info('用户四要素信息: {}'.format(data))
     return data
 
 
@@ -108,7 +112,8 @@ def get_base_data_temp(*project, **kwargs):
     if kwargs:
         for key, value in kwargs.items():
             data[key] = str(value)
-
+    _log.demsg('当前测试环境: {}'.format(TEST_ENV_INFO))
+    _log.info('用户四要素信息: {}'.format(data))
     return data
 
 

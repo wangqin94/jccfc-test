@@ -6,6 +6,7 @@
 @Date    ：2022/1/26 16:38 
 """
 from src.impl.YingJiZF.YingJiZFBizImpl import YingJiZFBizImpl
+from src.impl.YingJiZF.YingJiZhiFuSynBizImpl import YingJiZhiFuSynBizImpl
 from src.impl.common.CheckBizImpl import *
 import allure
 import pytest
@@ -96,6 +97,15 @@ class TestCase(object):
             status = checkBizImpl.check_H5_repay_status(payment_order_no=appOrderNo)
             assert EnumCustomPaymentStatus.SUCCESS.value == status, '还款失败'
 
+        with allure.step("校验支用单状态是否符合预期"):
+            status = checkBizImpl.check_loan_apply_status_with_expect(EnumLoanStatus.ON_USE.value,
+                                                                      thirdpart_user_id=data['userId'])
+            assert EnumLoanStatus.ON_USE.value == status, '支用单状态未从逾期更新为正常，还款失败'
+
+        with allure.step("接口层查询还款结果是否符合预期"):
+            yingJiZhiFuSynBizImpl = YingJiZhiFuSynBizImpl(data)
+            yingJiZhiFuSynBizImpl.check_payment_result_status_with_success(appOrderNo=appOrderNo)
+
     @allure.step("按期还款")  # 测试报告显示步骤
     @pytest.mark.run(order=2)
     def test_billDate_repay(self, get_base_data_zhixin, checkBizImpl, mysqlBizImpl):
@@ -117,6 +127,10 @@ class TestCase(object):
         with allure.step("数据库层校验支用结果是否符合预期"):
             status = checkBizImpl.check_H5_repay_status(payment_order_no=appOrderNo)
             assert EnumCustomPaymentStatus.SUCCESS.value == status, '还款失败'
+
+        with allure.step("接口层查询还款结果是否符合预期"):
+            yingJiZhiFuSynBizImpl = YingJiZhiFuSynBizImpl(data)
+            yingJiZhiFuSynBizImpl.check_payment_result_status_with_success(appOrderNo=appOrderNo)
 
     @allure.step("提前结清")  # 测试报告显示步骤
     @pytest.mark.run(order=3)
@@ -144,6 +158,10 @@ class TestCase(object):
         with allure.step("数据库层校验支用结果是否符合预期"):
             status = checkBizImpl.check_H5_repay_status(payment_order_no=appOrderNo)
             assert EnumCustomPaymentStatus.SUCCESS.value == status, '还款失败'
+
+        with allure.step("接口层查询还款结果是否符合预期"):
+            yingJiZhiFuSynBizImpl = YingJiZhiFuSynBizImpl(data)
+            yingJiZhiFuSynBizImpl.check_payment_result_status_with_success(appOrderNo=appOrderNo)
 
 
 if __name__ == "__main__":

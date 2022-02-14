@@ -27,7 +27,7 @@ class CheckBizImpl(EnvInit):
         """
         self.log.demsg('支用结果校验...')
         flag = 2
-        for i in range(flag+1):
+        for i in range(flag + 1):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
                 self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
@@ -56,8 +56,33 @@ class CheckBizImpl(EnvInit):
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
                 time.sleep(t)
-                if j == m-1:
+                if j == m - 1:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+
+    def check_loan_apply_status_with_expect(self, expect_status, m=10, t=3, **kwargs):
+        """
+        @param expect_status: 期望状态
+        @param kwargs: 查询条件
+        @param t: 每次时间间隔, 默认5S
+        @param m: 查询轮训次数 默认10次
+        @return: response 接口响应参数 数据类型：json
+        """
+        self.log.demsg('支用结果校验...')
+        for j in range(m):
+            info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
+            if not info:
+                self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
+            else:
+                status = info['status']
+                if status == expect_status:
+                    self.log.demsg('支用单状态校验成功，符合预期值[status={}]'.format(expect_status))
+                    return status
+                else:
+                    self.log.demsg("支用单状态不符合逾期，期望值[{}]！= 实际值[{}]，当前第[{}]次轮训....".format(expect_status, status, j + 1))
+                    time.sleep(t)
+                    if j == m - 1:
+                        self.log.error("超过当前系统设置等待时间，支用单状态不符合逾期，当前值[{}]！= 实际值[{}]".format(expect_status, status))
+                        sys.exit(7)
 
     def check_file_loan_apply_status(self, m=10, t=3, **kwargs):
         """
@@ -68,7 +93,7 @@ class CheckBizImpl(EnvInit):
         """
         self.log.demsg('文件放款支用结果校验...')
         flag = 2
-        for i in range(flag+1):
+        for i in range(flag + 1):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
                 self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
@@ -97,7 +122,7 @@ class CheckBizImpl(EnvInit):
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
                 time.sleep(t)
-                if j == m-1:
+                if j == m - 1:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
 
     def check_credit_apply_status(self, m=10, t=3, **kwargs):
@@ -109,7 +134,7 @@ class CheckBizImpl(EnvInit):
         """
         self.log.demsg('数据库授信结果校验...')
         flag = 2
-        for i in range(flag+1):
+        for i in range(flag + 1):
             info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
             if not info:
                 self.log.info("credit_apply未查询到授信记录，启动3次轮训")
@@ -132,7 +157,7 @@ class CheckBizImpl(EnvInit):
             else:
                 self.log.demsg("授信审批状态处理中，请等待....")
                 time.sleep(t)
-                if j == m-1:
+                if j == m - 1:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
 
     def check_channel_repay_status(self, m=10, t=3, **kwargs):
@@ -212,4 +237,5 @@ class CheckBizImpl(EnvInit):
 
 
 if __name__ == '__main__':
-    CheckBizImpl().check_channel_repay_status(id=999)
+    # CheckBizImpl().check_channel_repay_status(id=999)
+    CheckBizImpl().check_loan_apply_status_with_expect('11', id=86)

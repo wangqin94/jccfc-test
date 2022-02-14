@@ -19,18 +19,18 @@ class MyTestCase(unittest.TestCase):
 
     def setUp(self):
         # 初始化日志引擎模块
+        self.env = TEST_ENV_INFO
+        # self.data = get_base_data_temp('userId')
+        self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ZHIXIN.value), 'userId')
         self.log = MyLog.get_log()
         self.CheckBizImpl = CheckBizImpl()
-        self.ZhiXinCheckBizImpl = ZhiXinCheckBizImpl()
+        self.zhiXinCheckBizImpl = ZhiXinCheckBizImpl(self.data)
 
     """ 测试步骤 """
 
     def test_apply(self):
         """ 测试步骤 """
         # 绑卡签约-绑卡确认-授信
-        # self.data = get_base_data_temp('userId')
-        self.env = TEST_ENV_INFO
-        self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.ZHIXIN.value), 'userId')
         zhixin = ZhiXinBizImpl(data=self.data)
         res = json.loads(zhixin.applyCertification().get('output'))
         zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
@@ -43,7 +43,7 @@ class MyTestCase(unittest.TestCase):
         time.sleep(5)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.creditApplyNo)
         # 接口层校验授信结果是否符合预期
-        self.ZhiXinCheckBizImpl.check_credit_apply_status(creditRes['userId'], creditRes['creditApplyNo'])
+        self.zhiXinCheckBizImpl.check_credit_apply_status(creditRes['userId'], creditRes['creditApplyNo'])
 
         # 发起支用申请
         self.loanRes = json.loads(zhixin.applyLoan(loanAmt='1000', term='12').get('output'))
@@ -57,7 +57,7 @@ class MyTestCase(unittest.TestCase):
         status = self.CheckBizImpl.check_loan_apply_status(thirdpart_apply_id=self.loanApplyNo)
         self.assertEqual(EnumLoanStatus.ON_USE.value, status, '支用失败')
         # 接口层校验授信结果是否符合预期
-        status = self.ZhiXinCheckBizImpl.check_loan_apply_status(self.loanRes['userId'], self.loanRes['loanApplyNo'])
+        status = self.zhiXinCheckBizImpl.check_loan_apply_status(self.loanRes['userId'], self.loanRes['loanApplyNo'])
         self.assertEqual(ZhiXinApiStatusEnum.SUCCESS.value, status, '支用失败')
 
 

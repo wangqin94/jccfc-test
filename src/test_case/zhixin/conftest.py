@@ -11,7 +11,7 @@ from src.impl.zhixin.ZhiXinCheckBizImpl import ZhiXinCheckBizImpl
 
 
 # scope = "session"表示在整个目录中只执行一次
-# scope = "moudle"表示每一个模块也就是每个.py文件执行一次
+# scope = "module"表示每一个模块也就是每个.py文件执行一次
 # scope = "class"表示每一个类执行一次
 # scope = "function"默认范围，每一个函数或方法都会调用，不填写时便是它
 # session > module > class > function

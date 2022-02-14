@@ -4,7 +4,6 @@
 # ------------------------------------------
 import hashlib
 
-from config.TestEnvInfo import *
 from engine.EnvInit import EnvInit
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
@@ -29,10 +28,7 @@ class YingJiZFBizImpl(EnvInit):
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = YingJiZF.YingJiZF
-
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.YINGJF.value))
-        self.log.info('用户四要素信息 \n%s', self.data)
-
+        self.data = data
         self.strings = str(int(round(time.time() * 1000)))
         self.times = time.strftime('%Y-%m-%d', time.localtime())
         self.jcSystemCode = 'loan-web'
@@ -331,6 +327,7 @@ class YingJiZFBizImpl(EnvInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
+        self.log.demsg('准备锦程H5还款申请报文...')
         data = dict()
         # head
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
@@ -381,7 +378,7 @@ class YingJiZFBizImpl(EnvInit):
         self.active_payload = parser.parser
         self.active_payload["head"]["channelNo"] = "21"
 
-        self.log.demsg('根据用户名称查询借据信息...')
+        self.log.demsg('发起锦程H5还款申请...')
         url = self.host_api + self.cfg['payment']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
