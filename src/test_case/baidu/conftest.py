@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
 from src.impl.baidu.BaiDuBizImpl import BaiDuBizImpl
-
+from utils.Models import *
 
 # scope = "session"表示在整个目录中只执行一次
 # scope = "moudle"表示每一个模块也就是每个.py文件执行一次
@@ -12,9 +12,16 @@ from src.impl.baidu.BaiDuBizImpl import BaiDuBizImpl
 # session > module > class > function
 # @pytest.fixture(autouse=True)  想让每一个测试用例都运行公共的方法
 
+
+@pytest.fixture(scope="class", autouse=True)
+def get_base_data_baidu():
+    data = get_base_data_temp()
+    return data
+
+
 @pytest.fixture(scope="class")
-def baiduBizImpl(get_base_data):
-    data = get_base_data
+def baiduBizImpl(get_base_data_baidu):
+    data = get_base_data_baidu
     baiduBizImpl = BaiDuBizImpl(data=data)
     return baiduBizImpl
 

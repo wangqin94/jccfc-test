@@ -42,12 +42,6 @@ def logger():
     return logger
 
 
-@pytest.fixture(scope="class", autouse=True)
-def get_base_data():
-    data = get_base_data_temp('userId')
-    return data
-
-
 @pytest.fixture(scope="class")
 def checkBizImpl():
     checkBizImpl = CheckBizImpl()
