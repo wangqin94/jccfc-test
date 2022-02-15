@@ -7,6 +7,7 @@ import time
 from src.impl.baidu.BaiDuBizImpl import BaiDuBizImpl
 from person import *
 from utils.Logger import MyLog
+from src.impl.baidu.BaiDuSynBizImpl import BaiDuSynBizImpl
 
 
 class TestCase(object):
@@ -17,8 +18,8 @@ class TestCase(object):
         """ 预置条件处理 """
         pass
 
-    # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效 , 5:结清证明]
-    def process(self, flag=5):
+    # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效 , 5:结清证明, 6:放款全流程]
+    def process(self, flag=6):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
@@ -32,9 +33,9 @@ class TestCase(object):
 
         # 支用申请
         elif flag == 2:
-            bd = BaiDuBizImpl(data=data)
-            #bd.loan(cashAmount=60000, repayMode='22', dailyInterestRate='6.5', compreAnnualInterestRate='2340')
-            bd.loan(cashAmount=60000, repayMode='32', dailyInterestRate='6.2', compreAnnualInterestRate='2232')
+            # repay_mode='02'随借随还，repay_mode='05'等额本息；
+            bd = BaiDuBizImpl(data=data, repay_mode='02')
+            bd.loan(cashAmount=60000)
 
         # 支用查询
         elif flag == 3:
@@ -45,6 +46,10 @@ class TestCase(object):
         elif flag == 5:
             mt = BaiDuBizImpl(data=data, encrypt_flag=False)
             mt.settlement(query_flag=1, username="仰敬胜")
+
+        elif flag == 6:
+            bd = BaiDuSynBizImpl(data=data)
+            bd.loan_flow()
 
         return self
 

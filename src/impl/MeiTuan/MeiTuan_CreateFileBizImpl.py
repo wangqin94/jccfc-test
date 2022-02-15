@@ -290,11 +290,12 @@ class MtFile(EnvInit):
 
     # 获取文件存放路径，借据文件名，还款计划文件名
     def get_filename(self):
-        # 初始化文件存放路径，(用户_身份证号_时间戳)
-        data_save_path = '%s_%s_%s' % (
-            self.user_name, self.certificate_no, time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime()))
-        data_save_path = os.path.join(_FilePath, data_save_path)
-        os.mkdir(data_save_path)
+        # 初始化文件存放路径，(用户_身份证号)
+        data_save_path = '%s_%s' % (
+            self.user_name, self.certificate_no)
+        data_save_path = os.path.join(_FilePath, data_save_path, self.loan_date)
+        if not os.path.exists(data_save_path):
+            os.makedirs(data_save_path)
         # 借据文件名
         loan_create = os.path.join(data_save_path, 'bank_loan_create_%s.txt' % self.loan_date.replace('-', ''))
         # 还款计划文件名

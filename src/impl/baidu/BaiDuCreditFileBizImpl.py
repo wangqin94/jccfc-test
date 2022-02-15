@@ -10,6 +10,7 @@ from utils.Logger import Logs
 from datetime import datetime
 from config.TestEnvInfo import *
 from src.enums.EnumsCommon import ProductEnum
+from utils.KS3 import *
 
 _log = Logs()
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
@@ -27,6 +28,7 @@ class BaiduFile(EnvInit):
         """
         super(BaiduFile, self).__init__()
         self.MysqlBizImpl = MysqlBizImpl()
+        self.ks3 = KS3()
         self.user_name = data['name']
         self.cer_no = data['cer_no']
         self.loan_record = loan_record
@@ -38,7 +40,8 @@ class BaiduFile(EnvInit):
         self.cur_date = self.current_date if not cur_date else cur_date.replace('-', '')
 
         # 获取文件存储名
-        data_save_path = '%s_%s_%s' % (self.user_name, self.cer_no, time.strftime('%Y%m%d', time.localtime()))
+        # 保存路径：用户_身份证号
+        data_save_path = '%s_%s' % (self.user_name, self.cer_no)
         self.data_save_path = os.path.join(_FilePath, data_save_path)
         self.loan_file_path = self.get_filename(self.cur_date)
 
@@ -326,6 +329,7 @@ class BaiduFile(EnvInit):
             self.get_repay_plan_csv(self.repay_plan_csv_template, amt)
 
         self.log.demsg("借据文件生成路径：{}".format(_FilePath))
+        self.baidu_upload_loan_file()
 
     def get_bill_day(self):
         """
@@ -423,6 +427,16 @@ class BaiduFile(EnvInit):
             s = '\n'.join([table_head, strings])
             f.write(s)
 
+    def baidu_upload_loan_file(self):
+        filelist = []
+        remotelist = []
+        for root, dirs, files in os.walk(self.loan_file_path):
+            for file in files:
+                filelist.append(os.path.join(self.loan_file_path, file))
+                remotelist.append("xdgl/hj/baidu/file/" + self.cur_date + "/" + file)
+        for local, remote in zip(filelist, remotelist):
+            self.ks3.upload_file(local, remote)
+
 
 class BaiduRepayFile(BaiduFile):
     def __init__(self, data, repay_mode='02', repay_date="2021-08-06", repay_term_no=1, repay_type='01',
@@ -444,7 +458,7 @@ class BaiduRepayFile(BaiduFile):
         self.repay_date = repay_date
         self.repay_term_no = repay_term_no
         self.repay_type = repay_type
-        self.repay_file_path = ''
+        self.repay_file_path = self.get_filename(self.repay_date)
         self.loan_invoice_id = loan_invoice_id
         self.loan_no = self.get_loan_id()
         self.prin_amt = prin_amt
@@ -461,6 +475,7 @@ class BaiduRepayFile(BaiduFile):
         self.get_new_repay_plan_csv(self.repay_plan_csv_template)
         self.get_reduce_csv(self.reduce_csv_template)
         self.log.demsg("还款文件生成路径：{}".format(_FilePath))
+        self.baidu_upload_repay_file()
 
     def get_invoice_info(self):
         """
@@ -616,7 +631,7 @@ class BaiduRepayFile(BaiduFile):
             temple['total_amt'] = temple['income_amt']  # 总金额
 
         # 写入头信息
-        repay_item = os.path.join(self.loan_file_path, 'repay_item.csv')
+        repay_item = os.path.join(self.repay_file_path, 'repay_item.csv')
         table_head = ','.join(self.repay_item_csv_keys)
         with open(repay_item, 'w', encoding='utf-8') as f:
             f.write(table_head)
@@ -630,7 +645,7 @@ class BaiduRepayFile(BaiduFile):
     # 手工减免息费明细文件
     def get_reduce_csv(self, temple):
         # 写入头信息
-        reduce_csv = os.path.join(self.loan_file_path, 'reduce.csv')
+        reduce_csv = os.path.join(self.repay_file_path, 'reduce.csv')
         table_head = ','.join(self.reduce_csv_keys)
         with open(reduce_csv, 'w', encoding='utf-8') as f:
             f.write(table_head)
@@ -651,6 +666,17 @@ class BaiduRepayFile(BaiduFile):
             with open(reduce_csv, 'a+', encoding='utf-8') as f:
                 f.write(strings)
                 f.write('\n')
+
+    def baidu_upload_repay_file(self):
+        filelist = []
+        remotelist = []
+        for root, dirs, files in os.walk(self.repay_file_path):
+            for file in files:
+                filelist.append(os.path.join(self.repay_file_path, file))
+                remotelist.append("xdgl/hj/baidu/file/" + self.repay_date.replace('-', '') + "/" + file)
+        for local, remote in zip(filelist, remotelist):
+            self.ks3.upload_file(local, remote)
+
 
 
 if __name__ == '__main__':

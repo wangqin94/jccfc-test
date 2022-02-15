@@ -1,7 +1,12 @@
 import pytest
 import logging
-
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from typing import List
+from src.impl.common.CheckBizImpl import *
+from utils.JobCenter import *
+from utils.Redis import *
 
 
 def pytest_collection_modifyitems(
@@ -35,3 +40,33 @@ def logger():
 
     logger.setLevel(numeric_level)
     return logger
+
+
+@pytest.fixture(scope="class", autouse=True)
+def get_base_data():
+    data = get_base_data_temp('userId')
+    return data
+
+
+@pytest.fixture(scope="class")
+def checkBizImpl():
+    checkBizImpl = CheckBizImpl()
+    return checkBizImpl
+
+
+@pytest.fixture(scope="class")
+def mysqlBizImpl():
+    mysqlBizImpl = MysqlBizImpl()
+    return mysqlBizImpl
+
+
+@pytest.fixture(scope="class")
+def job():
+    job = JOB()
+    return job
+
+
+@pytest.fixture(scope="class")
+def redis():
+    redis = Redis()
+    return redis

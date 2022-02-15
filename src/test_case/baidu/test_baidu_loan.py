@@ -18,18 +18,18 @@ class MyTestCase(unittest.TestCase):
         baidu = BaiDuBizImpl(data=None)
 
         # 发起授信申请
-        self.applyId = baidu.credit(initialAmount=3000000)['applyId']
+        self.applyId = baidu.credit(initialAmount=3000000)['credit_apply_id']
         # 检查授信状态
         time.sleep(10)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.applyId)
         # 发起支用刚申请
-        self.orderId = baidu.loan(cashAmount=60000, repayMode='32')['orderId']
+        self.loan_apply_id = baidu.loan(cashAmount=60000)['loan_apply_id']
 
     """ 后置条件处理 """
     def tearDown(self):
         time.sleep(5)
         # 检查支用状态
-        self.CheckBizImpl.check_file_loan_apply_status(thirdpart_order_id=self.orderId)
+        self.CheckBizImpl.check_file_loan_apply_status(loan_apply_serial_id=self.loan_apply_id)
 
 
 if __name__ == '__main__':

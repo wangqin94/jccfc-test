@@ -8,11 +8,13 @@ from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import *
+from src.enums.EnumBaiDu import *
 from src.test_data.module_data import BaiDu
+from config.globalConfig import *
 
 
 class BaiDuBizImpl(EnvInit):
-    def __init__(self, *, data=None, type=1, loan_no=None, encrypt_flag=False):
+    def __init__(self, *, data=None, type=1, repay_mode='02', loan_no=None, encrypt_flag=False):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
@@ -28,6 +30,7 @@ class BaiDuBizImpl(EnvInit):
         self.period = 3  # 借款期数, 默认3期
         self.loan_no = loan_no
         self.type = type
+        self.repay_mode = repay_mode   # repay_mode='02'随借随还，repay_mode='05'等额本息
         self.encrypt_flag = encrypt_flag
 
         # self.encrypt_url = self.host + EnumBaiDu.BaiDuEncryptPath.value
@@ -41,8 +44,7 @@ class BaiDuBizImpl(EnvInit):
     def set_active_payload(self, payload):
         self.active_payload = payload
 
-
-     # 结清证明
+    # 结清证明
     def settlement(self, **kwargs):
         settlement_data = dict()
         strings = str(int(round(time.time() * 1000)))
@@ -59,7 +61,6 @@ class BaiDuBizImpl(EnvInit):
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         # response['orderId'] = settlement_data['orderId']
         return response
-
 
     # 授信申请
     def credit(self, **kwargs):
@@ -87,7 +88,31 @@ class BaiDuBizImpl(EnvInit):
         self.log.demsg('开始授信申请...')
         url = self.host + self.cfg['credit']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
-        response['applyId'] = credit_data['reqSn']
+        response['credit_apply_id'] = credit_data['reqSn']
+        return response
+
+    # 授信查询
+    def credit_query(self, credit_apply_id):
+        strings = str(int(round(time.time() * 1000)))
+        credit_query_data = dict()
+        credit_query_data['prcid'] = self.data['cer_no']
+        credit_query_data['bankcard'] = self.data['bankid']
+        credit_query_data['name'] = self.data['name']
+        credit_query_data['phonenumber'] = self.data['telephone']
+
+        credit_query_data['timestamp'] = time.strftime('%Y%m%d%H%M%S')
+        credit_query_data['reqSn'] = 'reqSn' + strings + "1001"
+        credit_query_data['sessionId'] = 'sid' + strings + "1002"
+        credit_query_data['transactionId'] = 'tid' + strings + "1003"
+        credit_query_data['expanding'] = {'reqSn': credit_apply_id}
+
+        # 更新 payload 字段值
+        parser = DataUpdate(self.cfg['credit_query']['payload'], **credit_query_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('开始授信查询...')
+        url = self.host + self.cfg['credit_query']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         return response
 
     # 支用申请
@@ -111,7 +136,16 @@ class BaiDuBizImpl(EnvInit):
         loan_data['cashAmount'] = self.loan_amount  # 支用申请金额, 默认1000000分
         loan_data['orderId'] = 'orderId' + strings
         loan_data['term'] = self.period
-
+        # 随借随还
+        if self.repay_mode == '02':
+            loan_data['repayMode'] = '22'
+            loan_data['dailyInterestRate'] = '6.5'
+            loan_data['compreAnnualInterestRate'] = '2340'
+        # 等额本息
+        elif self.repay_mode == '05':
+            loan_data['repayMode'] = '32'
+            loan_data['dailyInterestRate'] = '6.2'
+            loan_data['compreAnnualInterestRate'] = '2232'
         loan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.active_payload = parser.parser
@@ -119,7 +153,31 @@ class BaiDuBizImpl(EnvInit):
         self.log.demsg('开始支用申请...')
         url = self.host + self.cfg['loan']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
-        response['orderId'] = loan_data['orderId']
+        response['loan_apply_id'] = loan_data['reqSn']
+        return response
+
+    # 支用查询
+    def loan_query(self, loan_apply_id):
+        strings = str(int(round(time.time() * 1000)))
+        loan_query_data = dict()
+        loan_query_data['prcid'] = self.data['cer_no']
+        loan_query_data['bankcard'] = self.data['bankid']
+        loan_query_data['name'] = self.data['name']
+        loan_query_data['phonenumber'] = self.data['telephone']
+
+        loan_query_data['timestamp'] = time.strftime('%Y%m%d%H%M%S')
+        loan_query_data['reqSn'] = 'reqSn' + strings + "1001"
+        loan_query_data['sessionId'] = 'sid' + strings + "1002"
+        loan_query_data['transactionId'] = 'tid' + strings + "1003"
+        loan_query_data['expanding'] = {'reqSn': loan_apply_id}
+
+        # 更新 payload 字段值
+        parser = DataUpdate(self.cfg['credit_query']['payload'], **loan_query_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('开始支用查询...')
+        url = self.host + self.cfg['loan_query']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         return response
 
     # 还款通知申请
@@ -159,3 +217,25 @@ class BaiDuBizImpl(EnvInit):
         url = self.host + self.cfg['notice']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         return response
+
+    # 文件加密
+    def file_encrypt(self, date):
+        """
+        百度文件加密
+        :param date: 要加密文件路径的日期
+        :return: 加密文件
+        """
+        file_data = dict()
+        # 金山云存放文件路径
+        file_data['file'] = 'hj/baidu/file/' + date
+        url = self.host + BaiDuPathEnum.BaiDuFileEncryptPath.value
+        file_data = json.dumps(file_data)
+        response = requests.post(url=url, headers=headers, json=file_data)
+        return response
+
+
+if __name__ == '__main__':
+    data = {'name': '公静欣', 'cer_no': '511526201807141836', 'bankid': '6216666008997301373',
+            'telephone': '17859187062'}
+    baidu = BaiDuBizImpl(data=data)
+    res = baidu.loan_query('Loan_req16445503379621001')
