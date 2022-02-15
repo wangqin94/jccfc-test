@@ -65,6 +65,10 @@ class Config:
         value = self.conf.get("REDIS", name)
         return json.loads(value)
 
+    def get_ks3(self, name):
+        value = self.conf.get('ks3', name)
+        return value
+
 
 if __name__ == '__main__':
     c = Config()

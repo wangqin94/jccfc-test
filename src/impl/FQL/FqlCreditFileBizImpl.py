@@ -86,11 +86,12 @@ class FQL(EnvInit):
 
     # 获取文件存放路径，还款文件名
     def get_filename(self, repay_date):
-        # 初始化文件存放路径，(用户_身份证号_时间戳)
+        # 初始化文件存放路径，(用户_身份证号)
         data_save_path = '%s_%s' % (
-            self.data['name'], time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime()))
-        data_save_path = os.path.join(_FilePath, data_save_path)
-        os.mkdir(data_save_path)
+            self.data['name'], self.data['cer_no'])
+        data_save_path = os.path.join(_FilePath, data_save_path, repay_date)
+        if not os.path.exists(data_save_path):
+            os.makedirs(data_save_path)
         # 借据文件名
         repayment_acct = os.path.join(data_save_path,  'JC_repayment_acct_%s.txt' % (repay_date.replace('-', '')))
         return data_save_path, repayment_acct

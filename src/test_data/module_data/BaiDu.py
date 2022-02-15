@@ -50,8 +50,26 @@ BaiDu = {
         },
     },
     'credit_query': {
-        'interface': '',
-        'payload': {},
+        'interface': '/api/v1/baidu/demo/credit/query',
+        'payload': {
+            "type": "sync",
+            "reqSn": 'credit_baidu502102002105001650',
+            "message": {
+                "sessionId": 'credit_baidu502102002105001650',
+                "transactionType": "query",
+                "transactionId": '',
+                "timestamp": '',
+                "basicInfo": {
+                    "prcid": '',
+                    "bankcard": '',
+                    "name": '',
+                    "phonenumber": ''
+                },
+                "expanding": {
+                    "reqSn": 'credit_baidu502102002105001650'
+                }
+            }
+        }
     },
 
     'loan': {
@@ -95,7 +113,7 @@ BaiDu = {
                     "livingPhoto": "/test/gysface.png",
                     "loanUse": "1",
                     "taxMonthlyIncomeSection": "01",
-                    "ocrExpdate": "20220506",
+                    "ocrExpdate": "20280625",
                     "term": '3',
                     "dailyInterestRate": "6.5000",
                     "dailyPenaltyRate": "7.5000",
@@ -124,8 +142,26 @@ BaiDu = {
     },
 
     'loan_query': {
-        'interface': '',
-        'payload': {},
+        'interface': '/api/v1/baidu/demo/loan/query',
+        'payload': {
+            "type": "sync",
+            "reqSn": 'loan_baidu502102002105001650',
+            "message": {
+                "sessionId": 'loan_baidu502102002105001650',
+                "transactionType": "query",
+                "transactionId": '',
+                "timestamp": '',
+                "basicInfo": {
+                    "prcid": '',
+                    "bankcard": '',
+                    "name": '',
+                    "phonenumber": ''
+                },
+                "expanding": {
+                    "reqSn": 'loan_baidu502102002105001650'
+                }
+            }
+        }
     },
     'limitrestore': {
         'interface': '/api/v1/baidu/demo/limit/restore',
