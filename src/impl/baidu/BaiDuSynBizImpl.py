@@ -14,7 +14,7 @@ from utils.JobCenter import *
 
 
 class BaiDuSynBizImpl(object):
-    def __init__(self, data, loanamount=100000, month=6, repay_mode='02', loan_date=None):
+    def __init__(self, data=None, loanamount=100000, month=6, repay_mode='02', loan_date=None):
         self.loanamount = loanamount
         self.month = month
         self.repay_mode = repay_mode
@@ -23,7 +23,7 @@ class BaiDuSynBizImpl(object):
         self.CheckBizImpl = CheckBizImpl()
         self.MysqlBizImpl = MysqlBizImpl()
         self.job = JOB()
-        self.data = data
+        self.data = data if data else self.BaiDuBizImpl.data
 
     def loan_flow(self):
         """
