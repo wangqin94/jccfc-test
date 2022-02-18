@@ -4,14 +4,13 @@
 # ------------------------------------------
 
 from engine.EnvInit import EnvInit
-from src.enums import global_var as gl
+from utils import global_var as gl
 from src.impl.common.CommonBizImpl import *
 from src.enums.EnumsCommon import *
 from src.enums.EnumFql import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from src.test_data.module_data import fql
-
 
 
 class FqlBizImpl(EnvInit):
@@ -22,13 +21,13 @@ class FqlBizImpl(EnvInit):
         self.cfg = fql.fql
         self.MysqlBizImpl = MysqlBizImpl()
 
-        gl._init()
-        self.data= data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQL.value), 'applyId')
-        self.log.info('用户四要素信息 \n%s', self.data)
+        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQL.value), 'applyId')
 
-        for key, value in self.data.items():
-             gl.set_value(key, value)
-        self.log.info('用户四要素信息-全局变量 \n%s', gl)
+        # 设置全局变量
+        gl._init()
+        # self.log.info('用户四要素信息-全局变量: {}'.format(gl))
+        gl.set_value('personData', self.data)
+        # print ('\n'.join(['%s:%s' % item for item in gl.__dict__.items()]))
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
@@ -76,12 +75,16 @@ class FqlBizImpl(EnvInit):
         parser = DataUpdate(self.cfg['credit']['payload'], **credit_data)
         self.active_payload = parser.parser
 
+        gl.set_value('creditRequestData', self.active_payload)
+        self.log.info('授信请求信息-全局变量: {}'.format(gl))
+        print('\n'.join(['%s:%s' % item for item in gl.__dict__.items()]))
+
         # 校验用户是否在系统中已存在
         self.MysqlBizImpl.check_user_available(self.data)
 
         self.log.demsg('开始授信申请...')
         url = self.host_api + self.cfg['credit']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         response['applyId'] = self.data['applyId']
         return response
@@ -103,7 +106,7 @@ class FqlBizImpl(EnvInit):
 
         self.log.demsg('开始授信查询...')
         url = self.host_api + self.cfg['credit_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -128,6 +131,7 @@ class FqlBizImpl(EnvInit):
         loan_data['name'] = self.data['name']
         loan_data['mobileNo'] = self.data['telephone']
         loan_data['debitAccountNo'] = self.data['bankid']
+        loan_data['loanTerm'] = loanTerm
 
         date = self.times.split()[0]
         firstRepayDate, day = loan_and_period_date_parser(date_str=date, period=int(loanTerm), flag=False,
@@ -141,9 +145,13 @@ class FqlBizImpl(EnvInit):
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.active_payload = parser.parser
 
+        gl.set_value('loanRequestData', self.active_payload)
+        self.log.info('支用请求信息-全局变量: {}'.format(gl))
+        print('\n'.join(['%s:%s' % item for item in gl.__dict__.items()]))
+
         self.log.demsg('开始支用申请...')
         url = self.host_api + self.cfg['loan']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         response['applyId'] = self.data['applyId']
         return response
@@ -165,7 +173,7 @@ class FqlBizImpl(EnvInit):
 
         self.log.demsg('开始支用查询...')
         url = self.host_api + self.cfg['loan_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -184,7 +192,7 @@ class FqlBizImpl(EnvInit):
         parser = DataUpdate(self.cfg['credit_query']['payload'], **loan_data)
         self.active_payload = parser.parser
         url = self.host + self.cfg['loan_repay_notice']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 

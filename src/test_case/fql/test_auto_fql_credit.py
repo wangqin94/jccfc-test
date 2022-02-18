@@ -9,12 +9,12 @@ log = logging.getLogger(__name__)
 @allure.feature("分期乐授信")
 class TestCase(object):
 
-    @allure.title("授信申请-授信查询")  # 标题
-    @allure.step("授信申请-授信查询")  # 测试报告显示步骤
+    @allure.title("授信申请-授信查询：授信成功")  # 标题
+    @allure.step("授信申请-授信查询：授信成功")  # 测试报告显示步骤
     def test_credit_success1(self, fqlBizImpl, fqlCreditCheckBizImpl):
 
         with allure.step("发起授信申请"):
-            creditRes = fqlBizImpl.credit(creditAmount=1000, loanAmount=1000, loanTerm=3)
+            creditRes = fqlBizImpl.credit(creditAmount=2000, loanAmount=1000, loanTerm=3)
             log.info(f"授信申请接口结果----：{creditRes}")
             creditStatus = creditRes['status']
             assert creditStatus == '0', "返回0说明授信申请成功"
