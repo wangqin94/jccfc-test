@@ -5,7 +5,6 @@
 import allure
 import pytest
 from src.impl.baidu.BaiDuCreditFileBizImpl import BaiduRepayFile
-from src.impl.baidu.BaiDuSynBizImpl import BaiDuSynBizImpl
 from src.enums.EnumsCommon import *
 from utils.Models import *
 
@@ -14,11 +13,8 @@ class TestCase(object):
 
     @pytest.mark.baidu
     @allure.step("逾期还款")
-    def test_overdue_repay(self, mysqlBizImpl, job, redis):
-        data = get_base_data_temp()
-        bd = BaiDuSynBizImpl(data)
-        loan_no = bd.loan_flow()
-        data['loan_no'] = loan_no
+    def test_overdue_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
+        data = baiduBizSynImpl
         repay_date_ove = get_next_day(40).strftime('%Y-%m-%d')
         with allure.step("设置大会计时间,账务时间=repay_date"):
             account_date = str(repay_date_ove).replace("-", '')
@@ -76,13 +72,10 @@ class TestCase(object):
 
     @pytest.mark.baidu
     @allure.step("按期还款")
-    def test_billDate_repay(self, mysqlBizImpl, job, redis):
-        data = get_base_data_temp()
-        bd = BaiDuSynBizImpl(data)
-        loan_no = bd.loan_flow()
-        data['loan_no'] = loan_no
+    def test_billDate_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
+        data = baiduBizSynImpl
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
-                                                                loan_invoice_id=data['loan_no'], current_num=1)
+                                                                loan_invoice_id=data['loan_no'], current_num=2)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
         with allure.step("设置大会计时间,账务时间=repay_date"):
             account_date = repay_date_bill.replace("-", '')
@@ -102,7 +95,7 @@ class TestCase(object):
             redis.del_key('000:ACCT:SysInfo:BIGACCT')
 
         with allure.step('生成按期还款文件并上传金山云'):
-            bd = BaiduRepayFile(data=data, repay_date=repay_date_bill, repay_type='01', repay_term_no=1)
+            bd = BaiduRepayFile(data=data, repay_date=repay_date_bill, repay_type='01', repay_term_no=2)
             bd.start_repay_file()
 
         with allure.step('执行任务流下载还款对账文件入库'):
@@ -121,18 +114,15 @@ class TestCase(object):
 
         with allure.step('检查是否还款成功'):
             info = mysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                        loan_invoice_id=data['loan_no'], current_num=1)
+                                                        loan_invoice_id=data['loan_no'], current_num=2)
             assert EnumRepayPlanStatus.REPAY.value == info['repay_plan_status'], '还款失败'
 
     @pytest.mark.baidu
     @allure.step("提前结清")
-    def test_settle_repay(self, mysqlBizImpl, job, redis):
-        data = get_base_data_temp()
-        bd = BaiDuSynBizImpl(data)
-        loan_no = bd.loan_flow()
-        data['loan_no'] = loan_no
-        asset_repay_plan = mysqlBizImpl.get_asset_data_info("asset_repay_plan",
-                                                            loan_invoice_id=data['loan_no'], current_num=1)
+    def test_settle_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
+        data = baiduBizSynImpl
+        asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
+                                                            loan_invoice_id=data['loan_no'], current_num=3)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
         repay_date_settle = get_custom_day(-1, repay_date_bill)
         with allure.step("设置大会计时间,账务时间=repay_date"):
@@ -153,7 +143,7 @@ class TestCase(object):
             redis.del_key('000:ACCT:SysInfo:BIGACCT')
 
         with allure.step('生成提前结清还款文件并上传金山云'):
-            bd = BaiduRepayFile(data=data, repay_date=repay_date_settle, repay_type='02', repay_term_no=1)
+            bd = BaiduRepayFile(data=data, repay_date=repay_date_settle, repay_type='02', repay_term_no=3)
             bd.start_repay_file()
 
         with allure.step('执行任务流下载还款对账文件入库'):
@@ -171,7 +161,7 @@ class TestCase(object):
 
         with allure.step("校验当前借据状态"):
             info = mysqlBizImpl.get_asset_database_info('asset_loan_invoice_info',
-                                                        loan_invoice_id=data['loan_no'], current_num=1)
+                                                        loan_invoice_id=data['loan_no'])
             assert EnumLoanInvoiceStatus.SETTLE.value == info['loan_invoice_status'], "借据状态非结清"
 
 

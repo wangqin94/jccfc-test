@@ -17,14 +17,9 @@ class BaiDuBizImpl(EnvInit):
     def __init__(self, *, data=None, type=1, repay_mode='02', loan_no=None, encrypt_flag=False):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
-        self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
-
         # 解析项目特性配置
         self.cfg = BaiDu.BaiDu
-
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.BAIDU.value))
-        self.log.info('用户四要素信息 \n%s', self.data)
-
         self.credit_amount = 3000000  # 授信申请金额, 默认3000000  单位分
         self.loan_amount = 1000000  # 支用申请金额, 默认1000000  单位分
         self.period = 3  # 借款期数, 默认3期
@@ -235,7 +230,5 @@ class BaiDuBizImpl(EnvInit):
 
 
 if __name__ == '__main__':
-    data = {'name': '公静欣', 'cer_no': '511526201807141836', 'bankid': '6216666008997301373',
-            'telephone': '17859187062'}
-    baidu = BaiDuBizImpl(data=data)
-    res = baidu.loan_query('Loan_req16445503379621001')
+    baidu = BaiDuBizImpl()
+
