@@ -179,6 +179,70 @@ class JOB(object):
         except Exception as err:
             _log.error('trigger job failed! %s', err)
 
+    def trigger_job_byJobId(self, job_group='5', job_type='MAIN_TRIGGER_JOB', id="" ,executeBizDate=""):
+        """
+        任务执行接口
+        @param desc: 任务描述 必填
+        @param group: 执行器ID 5：credit； 6：assert
+        @param job_type: 任务层级 MAIN_TRIGGER_JOB：任务流； VIRTUAL_JOB=任务；
+        @return:
+        """
+        query_url = self.host + '/job-admin/jobinfo/pageList'
+        query_payload = {
+            'jobGroup': job_group,
+            'jobDesc': "",
+            'jobLevelType': job_type,
+            'jobOrganizationSource': '',
+            'start': 0,
+            'length': 250
+        }
+        query_res = self.session.post(url=query_url, headers=job_headers, cookies=self.cookie, data=query_payload).json()['data']
+        for data in query_res:
+            if data['id'] == id:
+               data['executeBizDate'] = executeBizDate
+               updateData = data
+               break
+
+        update_url = self.host + '/job-admin/jobinfo/update'
+        trigger_url = self.host + '/job-admin/jobinfo/trigger'
+
+        # 获取配置信息
+        self.update_temple = {
+            'jobDesc',
+            "jobOrganizationSource",
+            "jobLevelType",
+            "executorBlockStrategy",
+            "executorRouteStrategy",
+            "alarmMobile",
+            "alarmEmail",
+            "executeBizDateType",
+            "executeBizDate",
+            "author",
+            "jobCron",
+            "executorTimeout",
+            "executorShardParam",
+            "executorParam",
+            "id"
+        }
+
+        triggerData = {}
+        for key in self.update_temple:
+           triggerData[key] = updateData[key]
+
+        _log.demsg("更新内容：{}".format(triggerData))
+        update_res = self.session.post(url=update_url, headers=job_headers, cookies=self.cookie, data=triggerData, verify=False).json()
+        try:
+            if update_res['code'] == 200:
+                _log.demsg("任务'{}'更新成功，更新内容：{}".format(id, triggerData))
+                trigger_res = self.session.post(url=trigger_url, headers=job_headers, cookies=self.cookie,
+                                        data={'id': id}, verify=False).json()
+                if trigger_res['code'] == 200 and trigger_res['msg'] == "任务触发成功":
+                    _log.demsg("任务:{}触发成功".format(id))
+            else:
+                _log.demsg("任务'{}'更新失败,response msg {}".format(id, update_res))
+        except Exception as err:
+            _log.error('update job failed! %s', err)
+
 
 if __name__ == '__main__':
     job = JOB()
