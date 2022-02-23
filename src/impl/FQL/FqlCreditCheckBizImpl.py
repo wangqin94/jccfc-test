@@ -2,7 +2,7 @@ import sys
 import time
 
 from engine.EnvInit import EnvInit
-from src.enums import global_var as gl
+from utils import global_var as gl
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 
@@ -51,27 +51,27 @@ class FqlCreditCheckBizImpl(EnvInit):
         assert creditApply['status'] == '03', "授信成功"
         assert creditApply['credit_biz_type'] == '1', "业务类型：正式授信"
         assert creditApply['credit_type'] == '0', "是否循环授信：否"
-        assert creditApply['user_name'] == gl.get_value('name'), "客户姓名"
-        assert creditApply['user_tel'] == gl.get_value('telephone'), "客户手机号"
+        assert creditApply['user_name'] == gl.get_value('personData')['name'], "客户姓名"
+        assert creditApply['user_tel'] == gl.get_value('personData')['telephone'], "客户手机号"
         assert creditApply['certificate_type'] == '0', "证件类型"
-        assert creditApply['certificate_no'] == gl.get_value('cer_no'), "身份证号"
+        assert creditApply['certificate_no'] == gl.get_value('personData')['cer_no'], "身份证号"
         assert creditApply['user_type'] == '200', "客户类型"
         assert creditApply['apply_term'] == 1, "申请期限"
         assert creditApply['apply_term_unit'] == '1', "申请期限单位"
-        assert creditApply['product_id'] == 'F021108', "产品码"
+        assert creditApply['product_id'] == ProductIdEnum.FQL.value, "产品码"
         assert creditApply['product_catalog'] == 'F0210001', "产品种类"
 
     def checkCreditInfo1(self, **kwargs):
         creditInfo = self.MysqlBizImpl.get_credit_database_info('credit_info', **kwargs)
         self.log.demsg(f"授信credit_info数据库信息校验----：{creditInfo}")
-        assert creditInfo['user_name'] == gl.get_value('name'), "客户姓名"
-        assert creditInfo['user_tel'] == gl.get_value('telephone'), "客户手机号"
+        assert creditInfo['user_name'] == gl.get_value('personData')['name'], "客户姓名"
+        assert creditInfo['user_tel'] == gl.get_value('personData')['telephone'], "客户手机号"
         assert creditInfo['certificate_type'] == '0', "证件类型"
-        assert creditInfo['certificate_no'] == gl.get_value('cer_no'), "身份证号"
+        assert creditInfo['certificate_no'] == gl.get_value('personData')['cer_no'], "身份证号"
         assert creditInfo['user_type'] == '200', "客户类型"
-        assert creditInfo['product_id'] == 'F021108', "产品码"
+        assert creditInfo['product_id'] == ProductIdEnum.FQL.value, "产品码"
         assert creditInfo['product_catalog'] == 'F0210001', "产品种类"
-        # assert creditInfo['credit_rate'] == '36.0000', "授信年利率"
-        # assert creditInfo['credit_amount'] == '1000', "授信金额"
+        assert creditInfo['credit_rate'] == 36, "授信年利率"
+        assert float(creditInfo['credit_amount']) == float(gl.get_value('creditRequestData')['body']['loanAmount']), "授信金额"
         assert creditInfo['credit_term'] == 1, "申请期限"
         assert creditInfo['credit_term_unit'] == '1', "申请期限单位"

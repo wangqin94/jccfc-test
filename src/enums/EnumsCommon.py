@@ -19,6 +19,25 @@ class ProductEnum(Enum):
 
 
 @unique
+class ProductIdEnum(Enum):
+    BAIDU = 'F21C021'
+    MEITUAN = 'F21C011'
+    ctrip = 'F20B021'
+    FQL = 'F021108'
+    WLD = 'F21E031'
+    ZHIXIN = 'F21E041'
+    JieTiao = 'jietiao'
+
+
+@unique
+class EnumMerchantId(Enum):
+    BAIDU = 'F21C02BAID'
+    MEITUAN = 'F21C01MEIT'
+    FQL = '000UC010000006268'
+    WLD = 'F21E03WOLD'
+
+
+@unique
 class EnumCreditStatus(Enum):
     SUCCESS = '03'  # 成功
     TO_CREDIT = '02'  # 审批中
@@ -38,6 +57,7 @@ class EnumLoanStatus(Enum):
     AUDITING = '06'  # 审核中
     LOANING = '16'  # 放款中
     LOAN_AUDITING = '23'  # 放款审核中
+    INITIALIZATION = '01'  #初始化
 
 
 @unique

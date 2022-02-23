@@ -85,7 +85,7 @@ class CheckBizImpl(EnvInit):
                         self.log.error("超过当前系统设置等待时间，支用单状态不符合逾期，当前值[{}]！= 实际值[{}]".format(expect_status, status))
                         sys.exit(7)
 
-    def check_file_loan_apply_status(self, m=10, t=3, **kwargs):
+    def check_file_loan_apply_status(self, m=20, t=3, **kwargs):
         """
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S

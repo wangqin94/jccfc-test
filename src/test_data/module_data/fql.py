@@ -169,7 +169,7 @@ fql = {
                 "fixedRepayDay": "27",
                 "firstRepayDate": "2021-06-11",
                 "loanAmt": "20000",
-                "loanTerm": "12",
+                "loanTerm": "6",
                 "mobileNo": "16100007381",
                 "interestRate": "35.28",
                 "orderType": "2",  # 1、取现 2、赊销（分期购物） 3、信用卡还款 4、账单分期 5、微信、银联消费资产（二类户资产）
