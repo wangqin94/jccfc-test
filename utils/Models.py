@@ -54,7 +54,7 @@ def wait_time(sec):
 # # - 用户四要素生成
 # # -----------------------------------------------------------
 def get_base_data(env, *project, back=20, **kwargs):
-    strings = str(int(round(time.time() * 1000)))
+    strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
     res = requests.get('http://10.10.100.153:8081/getTestData')
     data['name'] = eval(res.text)["姓名"]
@@ -95,7 +95,7 @@ def get_base_data(env, *project, back=20, **kwargs):
 # # - 用户四要素生成（临时数据，不保存到文件）
 # # -----------------------------------------------------------
 def get_base_data_temp(*project, **kwargs):
-    strings = str(int(round(time.time() * 1000)))
+    strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
     res = requests.get('http://10.10.100.153:8081/getTestData')
     data['name'] = eval(res.text)["姓名"]

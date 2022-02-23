@@ -15,9 +15,9 @@ class TestCase(object):
     @pytest.mark.smoke
     @allure.title("绑卡申请-绑卡校验-授信申请-授信查询-支用申请-支用查询")  # 标题
     @allure.step("绑卡申请-绑卡校验-授信申请-授信查询-支用申请-支用查询")  # 测试报告显示步骤
-    def test_loan(self, get_base_data, ZhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl):
+    def test_loan(self, get_base_data_zhixin, ZhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl):
         """ 测试步骤 """
-        data = get_base_data
+        data = get_base_data_zhixin
         with allure.step("绑卡申请"):
             res = json.loads(ZhiXinBizImpl.applyCertification().get('output'))
         with allure.step("绑卡校验"):
@@ -29,7 +29,6 @@ class TestCase(object):
             creditApplyNo = creditRes['creditApplyNo']
 
         with allure.step("数据库层校验授信结果是否符合预期"):
-            time.sleep(5)
             checkBizImpl.check_credit_apply_status(thirdpart_apply_id=creditApplyNo)
 
         with allure.step("接口层校验授信结果是否符合预期"):
@@ -41,7 +40,6 @@ class TestCase(object):
             loanApplyNo = loanRes['loanApplyNo']
 
         with allure.step("数据库层校验支用结果是否符合预期"):
-            time.sleep(5)
             status = checkBizImpl.check_loan_apply_status(thirdpart_apply_id=loanApplyNo)
             assert EnumLoanStatus.ON_USE.value == status, '支用失败'
 

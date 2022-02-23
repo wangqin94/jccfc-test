@@ -166,6 +166,23 @@ YingJiZF = {
         }
     },
 
+    'loan_queryCreditLoanInfo': {
+        'interface': '/api/v1/loan/queryCreditLoanInfo',
+        'payload': {
+            "head": {
+                "jcSystemEncry": "2582a6b723486da364ada1af2c00f115",
+                "jcSystemCode": "loan-web",
+                "tenantId": "000",
+                "channelNo": "21",
+                "requestSerialNo": "202=182714511036848",
+            },
+            "body": {
+                "loanInvoiceId": "000LI0002006230763790363028",  # 借据号
+                "certificateNo": "331124200408191921"  # 身份证号
+            }
+        }
+    },
+
     'bankcard_bind': {
         'interface': '/api/v1/bankCard/bind',
         'payload': {

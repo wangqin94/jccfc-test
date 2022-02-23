@@ -6,18 +6,21 @@ import time
 
 import paramiko
 
+from config.TestEnvInfo import TEST_ENV_INFO
 from utils.Logger import *
 
 _log = MyLog.get_log()
 __all__ = ['SFTP']
+_readconfig = Config()
 
 
 class SFTP(object):
-    def __init__(self, host, username, password, port):
-        self.sftp_host = host
-        self.sftp_user = username
-        self.sftp_passwd = password
-        self.sftp_port = port
+    def __init__(self):
+        self.env = TEST_ENV_INFO
+        self.sftp_host = _readconfig.get_sftp(self.env)['host']
+        self.sftp_user = _readconfig.get_sftp(self.env)['name']
+        self.sftp_passwd = _readconfig.get_sftp(self.env)['password']
+        self.sftp_port = _readconfig.get_sftp(self.env)['port']
         self.sftp = self.__login_sftp()
 
     def __del__(self):
@@ -38,7 +41,7 @@ class SFTP(object):
         """ # upload local file named ``local`` to server directory of ``remote``
         @param local:       local file
         @param remote:      remote server directory
-        @param clean:       only save local file for remote directory
+        @param clean:       only save local file for remote directory true:备份上传， false：强制覆盖上传
         :return:            the result messages of upload file
         """
         self._check_remote_dir_exist(remote, clean=clean)
@@ -54,29 +57,25 @@ class SFTP(object):
         except Exception as err:
             _log.error('Upload file failed! %s', err)
 
-    def upload_dir(self, local_dir, remote_dir, clean=True):
-        """ # upload directory named ``local_dir`` to server directory of ``remote_dir``
+    def upload_dir(self, local_dir, remote_dir, clean=False):
+        """ 覆盖上传 # upload directory named ``local_dir`` to server directory of ``remote_dir``
         @param local_dir:       local directory
         @param remote_dir:      remote server directory for save local directory
-        @param clean:           None
+        @param clean:           true:备份上传， false：强制覆盖上传
         :return:                the result messages of upload directory
         """
         all_files = self._get_all_files_in_local_dir(local_dir)
-        path_record = []
         for file in all_files:
-            remote_filename = os.path.join(remote_dir, file)
-            remote_filename = remote_filename.replace('\\', '/').replace('\\\\', '/').replace('..', '.').replace('/./', '/')
-            remote_path, filenme = os.path.split(remote_filename)
-            # 服务器上创建对应目录
-            if remote_path not in path_record:
-                path_record.append(remote_path)
-                self.recs_mkdir(remote_path)
+            remote_filepath = os.path.join(remote_dir, file)
+            remote_filepath = remote_filepath.replace('\\', '/').replace('\\\\', '/').replace('..', '.').replace('/./', '/')
+            loacl_filepath = os.path.join(local_dir, file)
+            self._check_remote_dir_exist(remote, clean=clean)
             # 开始上传文件
             try:
-                print(file, '->', remote_filename)
-                self.sftp.put(file, remote_filename)
+                self.sftp.put(loacl_filepath, remote_filepath)
+                _log.info('upload %s to server directory of %s success! ', loacl_filepath, remote_filepath)
             except Exception as err:
-                _log.error('upload file %s failed! %s', file, err)
+                _log.error('upload file %s failed! %s', remote_filepath, err)
 
     def download_file(self, local, remote):
         """ # download file named ``remote`` from server to save as ``local``
@@ -100,7 +99,12 @@ class SFTP(object):
         pass
 
     def _check_remote_dir_exist(self, remote_dir, clean=False):
+        """
         # Check is a directory or not
+        @param remote_dir: 远端目录
+        @param clean: true:备份上传， false：强制覆盖上传
+        @return:
+        """
         try:
             is_empty = self.sftp.listdir(remote_dir)
         except IOError as err:
@@ -116,12 +120,13 @@ class SFTP(object):
 
     @staticmethod
     def _get_all_files_in_local_dir(local_dir):
-        all_files = list()
+        """
+        获取本地文件夹路径，遍历所有文件并返回本地文件名
+        @param local_dir:
+        @return: 返回文件名
+        """
         for root, dirs, files in os.walk(local_dir, topdown=True):
-            for file in files:
-                filename = os.path.join(root, file)
-                all_files.append(filename.replace('\\', '/'))
-        return all_files
+            return files
 
     def recs_mkdir(self, dirs):
         res_dir = '/' if dirs[0] == '/' else './'
@@ -132,16 +137,23 @@ class SFTP(object):
                 try:
                     self.sftp.listdir(res_dir)
                 except Exception as err:
-                    print(err, ', mkdir %s' % res_dir)
+                    _log.info("dir {} is not exit, {}".format(res_dir, err))
                     self.sftp.mkdir(res_dir)
+                    _log.info("mkdir {} success".format(res_dir))
 
-    def sftp_upload(self, local, remote):
+    def sftp_upload(self, local, remote, clean=False):
+        """
+        upload file or dir to sftp server
+        @param local: 本地文件或者文件夹绝对路径
+        @param remote: 远端文件或者文件夹绝对路径
+        @param clean: true:备份上传， false：强制覆盖上传
+        @return:
+        """
         try:
             if os.path.isdir(local):  # 判断本地参数是目录还是文件
-                for f in os.listdir(local):  # 遍历本地目录
-                    self.sftp.put(os.path.join(local + f), os.path.join(remote + f))  # 上传目录中的文件
+                self.upload_dir(local, remote)  # 上传目录
             else:
-                self.sftp.put(local, remote)  # 上传文件
+                self.upload_file(local, remote, clean=False)  # 上传文件
         except Exception as err:
             _log.error('upload exception: %s', err)
 
@@ -157,4 +169,7 @@ class SFTP(object):
 
 
 if __name__ == '__main__':
-    pass
+    remote = "/hj/xdgl/meituan/bank_loan_create/20210102/"
+    local = "C:/Users/jccfc/Desktop/身份证/"
+    SFTP().sftp_upload(local, remote)
+

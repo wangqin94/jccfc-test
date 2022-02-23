@@ -46,18 +46,19 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.ON_USE.value, status))
             elif status == EnumLoanStatus.DEAL_FAILED.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.ON_USE.value, status))
             elif status == EnumLoanStatus.REJECT.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.ON_USE.value, status))
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
                 time.sleep(t)
                 if j == m - 1:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
     def check_loan_apply_status_with_expect(self, expect_status, m=10, t=3, **kwargs):
         """
@@ -112,18 +113,19 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.TO_LOAN.value, status))
             elif status == EnumLoanStatus.DEAL_FAILED.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.TO_LOAN.value, status))
             elif status == EnumLoanStatus.REJECT.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.TO_LOAN.value, status))
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
                 time.sleep(t)
                 if j == m - 1:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
     def check_credit_apply_status(self, m=10, t=3, **kwargs):
         """
@@ -153,12 +155,13 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumCreditStatus.FAIL.value:
                 self.log.error('数据库层授信查询结果失败,状态：{}'.format(status))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumCreditStatus.SUCCESS.value, status))
             else:
                 self.log.demsg("授信审批状态处理中，请等待....")
                 time.sleep(t)
                 if j == m - 1:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
     def check_channel_repay_status(self, m=10, t=3, **kwargs):
         """
@@ -189,15 +192,16 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumChannelRepayStatus.FAIL.value:
                 self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumChannelRepayStatus.SUCCESS.value, status))
             elif status == EnumChannelRepayStatus.CHECK_FAIL.value:
                 self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumChannelRepayStatus.SUCCESS.value, status))
             else:
                 self.log.demsg("还款审批状态处理中，请等待....")
                 time.sleep(t)
                 if j == m - 1:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
     def check_H5_repay_status(self, m=10, t=5, **kwargs):
         """
@@ -228,12 +232,13 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumCustomPaymentStatus.FAIL.value:
                 self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
-                return status
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumCustomPaymentStatus.SUCCESS.value, status))
             else:
                 self.log.demsg("还款审批状态处理中，请等待....")
                 time.sleep(t)
                 if j == m - 1:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
 
 if __name__ == '__main__':

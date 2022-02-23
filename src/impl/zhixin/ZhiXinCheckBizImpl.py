@@ -33,7 +33,7 @@ class ZhiXinCheckBizImpl(ZhiXinBizImpl):
                     status = json.loads(res.get('output'))['status']
                     if status == ZhiXinApiStatusEnum.SUCCESS.value:
                         self.log.demsg('接口层查询：授信成功')
-                        # return status
+                        return status
                     elif status == ZhiXinApiStatusEnum.FAIL.value:
                         self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
                         raise AssertionError('支用成功')
@@ -64,8 +64,7 @@ class ZhiXinCheckBizImpl(ZhiXinBizImpl):
                     status = json.loads(res.get('output'))['loanStatus']
                     if status == ZhiXinApiStatusEnum.SUCCESS.value:
                         self.log.demsg('支用成功')
-                        raise AssertionError('支用成功')
-                        # return status
+                        return status
                     elif status == ZhiXinApiStatusEnum.FAIL.value:
                         self.log.error('支用失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
                         return status

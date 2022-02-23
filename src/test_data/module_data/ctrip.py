@@ -105,9 +105,9 @@ ctrip = {
                     "idcard_ocr_validity": "2019.06.08-2029.06.08",
                     "contact_name": "数据流二",
                     "mobile": "${手机号}",
-                    "identity_card_image_1": "/ctrip/test/wymid1.png",
-                    "identity_card_image_2": "/ctrip/test/wymid2.png",
-                    "face_image": "/ctrip/test/wymface.png"
+                    "identity_card_image_1": "/test/wymid1.png",
+                    "identity_card_image_2": "/test/wymid2.png",
+                    "face_image": "/test/wymface.png"
                 }
             },
             "advice_rate_type": "${advice_rate_type}",
@@ -216,9 +216,9 @@ ctrip = {
                     "idcard_ocr_validity": "2019.06.08-2029.06.08",
                     "contact_name": "数据流二",
                     "mobile": "${手机号}",
-                    "identity_card_image_1": "/ctrip/test/gysid1.png",
-                    "identity_card_image_2": "/ctrip/test/gysid2.png",
-                    "face_image": "/ctrip/test/gysface.png"
+                    "identity_card_image_1": "/xdgl/ctrip/test/gysid1.png",
+                    "identity_card_image_2": "/xdgl/ctrip/test/gysid2.png",
+                    "face_image": "/xdgl/ctrip/test/gysface.png"
                 }
             },
             "advice_rate_type": "${advice_rate_type}",
