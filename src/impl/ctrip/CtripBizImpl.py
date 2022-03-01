@@ -206,7 +206,7 @@ class CtripBizImpl(EnvInit):
         elif self.repay_mode == "2":
             repay_notice['repay_type'] = self.repay_mode
             repay_notice['finish_time'] = str(self.repay_date.replace("-", "")) + "112233"
-            repay_notice["repay_principal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
+            repay_notice["repay_principal"] = float('{:.2f}'.format(asset_repay_plan['before_calc_principal']))  # 本金
 
             pre_repay_date = str(asset_repay_plan["start_date"])
             pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
@@ -221,8 +221,8 @@ class CtripBizImpl(EnvInit):
 
             repay_notice["repay_penalty_amount"] = 0
             repay_notice["repay_fee"] = 0
-            repay_notice["actual_repay_amount"] = repay_notice["repay_principal"] + repay_notice[
-                "repay_interest"]  # 总金额
+            repay_notice["actual_repay_amount"] = float('{:.2f}'.format(repay_notice["repay_principal"] + repay_notice[
+                "repay_interest"]))  # 总金额
             print("总金额：{}，本金：{}，利息{}".format(repay_notice["actual_repay_amount"], repay_notice["repay_principal"],
                                              repay_notice["repay_interest"]))
 

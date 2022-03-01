@@ -69,9 +69,13 @@ class Config:
         value = self.conf.get('ks3', name)
         return value
 
+    def get_sftp(self, name):
+        value = self.conf.get("SFTP", name)
+        return json.loads(value)
+
 
 if __name__ == '__main__':
     c = Config()
     # print(c.get_mysql("hsit", 'database'))
     # print(c.get_api('hsit','request_host') + '/api/v1/baidu/demo/credit/apply')
-    print(c.get_http('headers'))
+    print(c.get_sftp('hpre'))

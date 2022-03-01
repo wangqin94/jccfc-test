@@ -13,18 +13,14 @@ from src.enums.EnumsCommon import *
 
 
 class MeiTuanBizImpl(EnvInit):
-    def __init__(self, *, data=None, loan_no=None, term="1", encrypt_flag=True):
+    def __init__(self, *, data=None, loan_no=None, term="1", encrypt_flag=True, person=True):
         super().__init__()
-        self.log.demsg('当前测试环境 %s', TEST_ENV_INFO)
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = MeiTuan.MeiTuan
 
         self.app_no = 'mt_app_no' + str(int(round(time.time() * 1000))) + "1002"
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.MEITUAN.value),
-                                                    app_no=self.app_no)
-        self.log.info('用户四要素信息 %s: ', self.data)
-
+        self.data = self.get_user_info(data=data, person=person)
         # 初始化定义用户apply信息
         self.user_credit_apply_info = {}
         self.user_credit_file_info = {}
@@ -59,6 +55,18 @@ class MeiTuanBizImpl(EnvInit):
         data["content"] = response.split('content=')[1].split('&sign=')[0]
         data["sign"] = response.split('&sign=')[1]
         return data
+
+    def get_user_info(self, data=None, person=True):
+        # 获取四要素信息
+        if data:
+            base_data = data
+        else:
+            if person:
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.MEITUAN.value),
+                                                    app_no=self.app_no)
+            else:
+                base_data = get_base_data_temp('app_no')
+        return base_data
 
     def set_active_payload(self, payload):
         self.active_payload = payload
@@ -105,7 +113,7 @@ class MeiTuanBizImpl(EnvInit):
         strings = str(int(round(time.time() * 1000)))
         credit_data['requestTime'] = time.strftime('%Y%m%d%H%M%S')
         credit_data['requestSerialNo'] = "SerialNo" + strings + "1001"
-        credit_data['APP_NO'] = self.app_no
+        credit_data['APP_NO'] = self.data['app_no']
         credit_data['APPLY_AMT'] = self.credit_amount  # 授信申请贷款金额, 默认3000000分
         credit_data['CUSTOMER_NO'] = 'customer_no' + strings + "1002"
         credit_data['CER_NO'] = self.data['cer_no']
@@ -129,7 +137,7 @@ class MeiTuanBizImpl(EnvInit):
         url = self.host + self.cfg['credit']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
-        response['app_no'] = self.app_no
+        response['app_no'] = self.data['app_no']
         return response
 
     # 美团授信查询payload

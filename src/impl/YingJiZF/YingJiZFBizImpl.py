@@ -265,6 +265,30 @@ class YingJiZFBizImpl(EnvInit):
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
+    # 查询用户借据信息payload
+    def loan_queryCreditLoanInfo(self, **kwargs):
+        """ # 查询用户借据信息payload字段装填
+        注意：键名必须与接口原始数据的键名一致
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
+        """
+        data = dict()
+        # head
+        requestSerialNo = 'SerialNo' + self.strings + "2"
+        data['requestSerialNo'] = requestSerialNo
+        data['jcSystemCode'] = self.jcSystemCode
+        data['jcSystemEncry'] = encrypt_md5(requestSerialNo + self.jcSystemCode)
+
+        # 更新 payload 字段值
+        data.update(kwargs)
+        parser = DataUpdate(self.cfg['loan_queryCreditLoanInfo']['payload'], **data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('查询用户借据信息...')
+        url = self.host_api + self.cfg['loan_queryCreditLoanInfo']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
+        return response
+
     # 绑定银行卡payload
     def bankcard_bind(self, **kwargs):
         """ # 绑定银行卡payload字段装填
