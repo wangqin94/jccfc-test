@@ -34,7 +34,7 @@ class CheckBizImpl(EnvInit):
                 time.sleep(t)
                 if i == flag:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")
-                    sys.exit(7)
+                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
             else:
                 self.log.info("支用记录已入loan_apply表")
                 break
@@ -46,13 +46,13 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.ON_USE.value, status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_reason']))
             elif status == EnumLoanStatus.DEAL_FAILED.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.ON_USE.value, status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_reason']))
             elif status == EnumLoanStatus.REJECT.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.ON_USE.value, status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_reason']))
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
                 time.sleep(t)
@@ -83,7 +83,7 @@ class CheckBizImpl(EnvInit):
                     time.sleep(t)
                     if j == m - 1:
                         self.log.error("超过当前系统设置等待时间，支用单状态不符合逾期，当前值[{}]！= 实际值[{}]".format(expect_status, status))
-                        sys.exit(7)
+                        raise AssertionError('{}*{}内数据系统数据未插入数据库，测试终止'.format(m, t))
 
     def check_file_loan_apply_status(self, m=20, t=3, **kwargs):
         """
@@ -101,7 +101,7 @@ class CheckBizImpl(EnvInit):
                 time.sleep(t)
                 if i == flag:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")
-                    sys.exit(7)
+                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
             else:
                 self.log.info("支用记录已入loan_apply表")
                 break
@@ -113,13 +113,13 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.TO_LOAN.value, status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_reason']))
             elif status == EnumLoanStatus.DEAL_FAILED.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.TO_LOAN.value, status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_reason']))
             elif status == EnumLoanStatus.REJECT.value:
                 self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumLoanStatus.TO_LOAN.value, status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_reason']))
             else:
                 self.log.demsg("支用审批状态处理中，请等待....")
                 time.sleep(t)
@@ -143,7 +143,7 @@ class CheckBizImpl(EnvInit):
                 time.sleep(t)
                 if i == flag:
                     self.log.error("超过当前系统设置等待时间，授信异常，请手动查看结果....")
-                    sys.exit(7)
+                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
             else:
                 self.log.info("授信记录已入credit_apply表")
                 break
@@ -154,8 +154,8 @@ class CheckBizImpl(EnvInit):
                 self.log.demsg('数据库层授信查询成功')
                 return status
             elif status == EnumCreditStatus.FAIL.value:
-                self.log.error('数据库层授信查询结果失败,状态：{}'.format(status))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumCreditStatus.SUCCESS.value, status))
+                self.log.error('数据库层授信查询结果失败,状态：{}; 失败原因：{}'.format(status, info['fail_reason']))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_reason']))
             else:
                 self.log.demsg("授信审批状态处理中，请等待....")
                 time.sleep(t)
@@ -180,7 +180,7 @@ class CheckBizImpl(EnvInit):
                 time.sleep(t)
                 if i == flag:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
-                    sys.exit(7)
+                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
             else:
                 self.log.info("还款记录已入channel_repay表")
                 break
@@ -192,7 +192,7 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumChannelRepayStatus.FAIL.value:
                 self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumChannelRepayStatus.SUCCESS.value, status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_reason']))
             elif status == EnumChannelRepayStatus.CHECK_FAIL.value:
                 self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
                 raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumChannelRepayStatus.SUCCESS.value, status))
@@ -220,7 +220,7 @@ class CheckBizImpl(EnvInit):
                 time.sleep(3)
                 if i == flag_m:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
-                    sys.exit(7)
+                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
             else:
                 self.log.info("还款记录已入credit_custom_payment_apply表")
                 break
@@ -232,7 +232,7 @@ class CheckBizImpl(EnvInit):
                 return status
             elif status == EnumCustomPaymentStatus.FAIL.value:
                 self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
-                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumCustomPaymentStatus.SUCCESS.value, status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status, info['fail_message']))
             else:
                 self.log.demsg("还款审批状态处理中，请等待....")
                 time.sleep(t)

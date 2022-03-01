@@ -101,7 +101,7 @@ MeiTuan = {
                 "Signature_date": "20160225",
                 "Family_Address": "成都市武侯区府城大道中段85号",
                 # "FACE_PIC_PATH": "/hj/xdgl/meituan/wymface.png",
-                "FACE_PIC_PATH": "/hj/xdgl/meituan/cqface",    # /hj/xdgl/meituan/cqface.png
+                "FACE_PIC_PATH": "/hj/xdgl/meituan/cqface.png",    # /hj/xdgl/meituan/cqface.png
             }
         }
     },

@@ -36,13 +36,13 @@ class ZhiXinCheckBizImpl(ZhiXinBizImpl):
                         return status
                     elif status == ZhiXinApiStatusEnum.FAIL.value:
                         self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
-                        raise AssertionError('支用成功')
+                        raise AssertionError('支用失败，接口层状态不符合逾期')
                     elif status == ZhiXinApiStatusEnum.TO_DOING.value:
                         self.log.demsg("授信审批状态处理中，请等待....")
                         time.sleep(3)
                         if n == flag-1:
                             self.log.warning("超过当前系统设置等待时间，请手动查看结果....")
-                            raise AssertionError('支用成功')
+                            raise AssertionError('支用失败，接口层状态不符合逾期')
                 if res['code'] == StatusCodeEnum.NO_HOURLY.code and res['msg'] == StatusCodeEnum.NO_HOURLY.msg:
                     self.log.demsg("请勿频繁请求，请等待....")
                     time.sleep(15)
@@ -67,13 +67,13 @@ class ZhiXinCheckBizImpl(ZhiXinBizImpl):
                         return status
                     elif status == ZhiXinApiStatusEnum.FAIL.value:
                         self.log.error('支用失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
-                        return status
+                        raise AssertionError('支用失败，接口层状态不符合逾期')
                     elif status == ZhiXinApiStatusEnum.TO_DOING.value:
                         self.log.demsg("支用审批状态处理中，请等待....")
                         time.sleep(3)
                         if n == flag-1:
                             self.log.warning("超过当前系统设置等待时间，请手动查看结果....")
-                            return status
+                            raise AssertionError('支用失败，接口层状态不符合逾期')
                 if res['code'] == StatusCodeEnum.NO_HOURLY.code and res['msg'] == StatusCodeEnum.NO_HOURLY.msg:
                     self.log.demsg("请勿频繁请求，请等待....")
                     time.sleep(15)
@@ -98,13 +98,13 @@ class ZhiXinCheckBizImpl(ZhiXinBizImpl):
                         return status
                     elif status == ZhiXinApiStatusEnum.FAIL.value:
                         self.log.error('还款失败,状态：{},失败原因{}'.format(status, res['resultMsg']))
-                        return status
+                        raise AssertionError('支用失败，接口层状态不符合逾期')
                     elif status == ZhiXinApiStatusEnum.TO_DOING.value:
                         self.log.demsg("还款审批状态处理中，请等待....")
                         time.sleep(3)
                         if n == flag-1:
                             self.log.error("超过当前系统设置等待时间，请手动查看结果....")
-                            return status
+                            raise AssertionError('支用失败，接口层状态不符合逾期')
                 if res['code'] == StatusCodeEnum.NO_HOURLY.code and res['msg'] == StatusCodeEnum.NO_HOURLY.msg:
                     self.log.demsg("请勿频繁请求，请等待....")
                     time.sleep(15)

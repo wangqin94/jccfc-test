@@ -29,19 +29,19 @@ class MeiTuanCheckBizImpl(MeiTuanBizImpl):
         for n in range(m):
             res = self.credit_query(app_no=appNo)
             try:
-                code = json.loads(res.get('head'))['returnCode']
+                code = res.get('head')['returnCode']
                 if code == ApiStatusCodeEnum.SUCCESS.code:
-                    status = json.loads(res.get('body'))['STATUS']
-                    if status == ApiStatusCodeEnum.PASS.value:
+                    status = res.get('body')['STATUS']
+                    if status == ApiStatusCodeEnum.PASS.code:
                         self.log.demsg('接口层查询：授信成功')
                         return status
-                    elif status == ApiStatusCodeEnum.FAIL.value:
-                        self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, json.loads(res.get('body'))['REJECT_MSG']))
+                    elif status == ApiStatusCodeEnum.FAIL.code:
+                        self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res.get('body')['REJECT_MSG']))
                         raise AssertionError('授信状态失败')
-                    elif status == ApiStatusCodeEnum.NOT_EXIST.value:
+                    elif status == ApiStatusCodeEnum.NOT_EXIST.code:
                         self.log.error('接口层授信单号不存在,状态：{}'.format(status))
                         raise AssertionError('授信单号不存在')
-                    elif status == ApiStatusCodeEnum.TO_DOING.value:
+                    elif status == ApiStatusCodeEnum.TO_DOING.code:
                         self.log.demsg("授信审批状态处理中，请等待....")
                         time.sleep(t)
                         if n == m-1:
@@ -49,7 +49,7 @@ class MeiTuanCheckBizImpl(MeiTuanBizImpl):
                             raise AssertionError('授信状态为处理中')
                 if code == ApiStatusCodeEnum.NO_HOURLY.code:
                     self.log.demsg("系统异常")
-                    raise
+                    raise AssertionError('服务异常，接口返回code码：{}'.format(code))
             except Exception as r:
                 self.log.error("系统错误:{}".format(r))
                 raise
@@ -65,20 +65,19 @@ class MeiTuanCheckBizImpl(MeiTuanBizImpl):
         for n in range(m):
             res = self.loan_query(app_no=appNo)
             try:
-                d = json.loads(res.get('head'))
-                code = json.loads(res.get('head'))['returnCode']
+                code = res.get('head')['returnCode']
                 if code == ApiStatusCodeEnum.SUCCESS.code:
-                    status = json.loads(res.get('body'))['STATUS']
-                    if status == ApiStatusCodeEnum.PASS.value:
+                    status = res.get('body')['STATUS']
+                    if status == ApiStatusCodeEnum.PASS.code:
                         self.log.demsg('接口层查询：授信成功')
                         return status
-                    elif status == ApiStatusCodeEnum.FAIL.value:
-                        self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, json.loads(res.get('body'))['REJECT_MSG']))
+                    elif status == ApiStatusCodeEnum.FAIL.code:
+                        self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res.get('body')['REJECT_MSG']))
                         raise AssertionError('授信状态失败')
-                    elif status == ApiStatusCodeEnum.NOT_EXIST.value:
+                    elif status == ApiStatusCodeEnum.NOT_EXIST.code:
                         self.log.error('接口层授信单号不存在,状态：{}'.format(status))
                         raise AssertionError('授信单号不存在')
-                    elif status == ApiStatusCodeEnum.TO_DOING.value:
+                    elif status == ApiStatusCodeEnum.TO_DOING.code:
                         self.log.demsg("授信审批状态处理中，请等待....")
                         time.sleep(t)
                         if n == m-1:
