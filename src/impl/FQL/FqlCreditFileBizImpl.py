@@ -8,6 +8,7 @@ from config.TestEnvInfo import *
 from engine.EnvInit import EnvInit
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
+from utils.KS3 import *
 from src.enums.EnumsCommon import *
 
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
@@ -16,7 +17,7 @@ if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)
 
 
-class FQL(EnvInit):
+class fqlRepayFile(EnvInit):
     def __init__(self, data, repay_mode='1', term_no='1', repay_date='2021-08-09'):
         """
         @param data:  四要素
@@ -26,6 +27,7 @@ class FQL(EnvInit):
         """
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
+        self.ks3 = KS3()
         self.applyId = data['applyId']
         self.repay_mode = repay_mode
         self.term_no = term_no
@@ -132,7 +134,7 @@ class FQL(EnvInit):
         # 逾期还款
         elif self.repay_mode == "5":
             temple['repay_date'] = str(asset_repay_plan["calc_overdue_fee_date"]).replace("-", "")
-            self.repay_date = asset_repay_plan["calc_overdue_fee_date"]
+            # self.repay_date = asset_repay_plan["calc_overdue_fee_date"]
             self.repay_filename = self.get_filename(str(self.repay_date))[1]
 
         # 提前结清
@@ -157,13 +159,17 @@ class FQL(EnvInit):
         # 写入单期还款文件
         val_list = map(str, [temple[key] for key in self.repay_temple])
         strs = '|'.join(val_list)
-        with open(self.repay_filename, 'a+', encoding='utf-8') as f:
+        with open(self.repay_filename, 'w+', encoding='utf-8') as f:
             f.write(strs)
             f.write("|")
+
+        #上传金山云
+        self.ks3.upload_file(self.repay_filename, 'xdgl/fql/pl/' + 'JC_repayment_acct_%s.txt' % str(self.repay_date).replace("-", ""))
+
 
 
 if __name__ == '__main__':
     # 按期还款，提前结清（按日计息），提前结清
     # repay_mode:  还款模式，1：按期还款；3：提前结清；5；逾期还款
     from src.test_case.fql.person import data
-    t = FQL(data, repay_date='2021-09-16', term_no="1", repay_mode='1')
+    t = fqlRepayFile(data, repay_date='2021-09-16', term_no="1", repay_mode='1')

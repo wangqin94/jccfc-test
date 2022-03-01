@@ -35,7 +35,7 @@ class FqlLoanCheckBizImpl(EnvInit):
         for j in range(m):
             loanApply = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             status = loanApply['status']
-            if (status != EnumLoanStatus.AUDITING.value) & (status != EnumLoanStatus.LOANING.value) & (status != EnumLoanStatus.LOAN_AUDITING.value)  & (status != EnumLoanStatus.INITIALIZATION.value) :
+            if (status != EnumLoanStatus.AUDITING.value) & (status != EnumLoanStatus.LOANING.value) & (status != EnumLoanStatus.LOAN_AUDITING.value) & (status != EnumLoanStatus.INITIALIZATION.value) & (status != EnumLoanStatus.TO_LOAN.value) :
                 self.log.demsg('支用已终态-------')
                 return loanApply
             else:
@@ -75,8 +75,8 @@ class FqlLoanCheckBizImpl(EnvInit):
         assert loanInvoice['user_name'] == gl.get_value('loanRequestData')['body']['name']
         assert loanInvoice['loan_amount'] == gl.get_value('loanRequestData')['body']['loanAmt'], "支用金额"
         assert float(loanInvoice['rate']) == float(gl.get_value('loanRequestData')['body']['interestRate']), "年利率"
-        assert loanInvoice['status'] == 1, "状态：1使用中"
-        assert loanInvoice['loan_type'] == 1, "放款方式"
+        assert loanInvoice['status'] == '1', "状态：1使用中"
+        assert loanInvoice['loan_type'] == '1', "放款方式"
         assert loanInvoice['merchant_id'] == EnumMerchantId.FQL.value, "商户号"
         assert loanInvoice['installment_amount'] == gl.get_value('loanRequestData')['body']['loanAmt'], "分期金额"
         assert loanInvoice['installment_num'] == gl.get_value('loanRequestData')['body']['loanTerm'], "分期期数"
@@ -84,3 +84,10 @@ class FqlLoanCheckBizImpl(EnvInit):
         assert loanInvoice['certificate_type'] == '0', "证件类型"
         assert loanInvoice['certificate_no'] == gl.get_value('personData')['cer_no'], "身份证号"
 
+        return loanInvoice
+
+
+    def queryRepayPlanInfo(self,**kwargs):
+        repayPlanInfo = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan', **kwargs)
+        self.log.demsg(f"资产还款计划asset_repay_plan信息----：{repayPlanInfo}")
+        return repayPlanInfo
