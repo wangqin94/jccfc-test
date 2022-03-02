@@ -137,36 +137,46 @@ wld = {
                 "liveAreaName": "武侯区",  # 居住地址区名称
                 "contactRelationList": [
                     {
-                        "contactName": "联系人一",
+                        "contactName": "何奕阳",
                         "contactMobile": "18380446001",
-                        "contactRel": "2"  # 联系人关系 EnumRelationType
+                        "contactRel": "2"  # 配偶
                     },
                     {
-                        "contactName": "联系人二",
+                        "contactName": "王羲之",
                         "contactMobile": "18380446002",
-                        "contactRel": "1"
+                        "contactRel": "1"  # 父母
                     }
                 ],
                 "fileInfos": [
                     {
                         "fileType": "1",
-                        "fileName": "idcard_front.jpg",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/idz-1.jpg"
+                        "fileName": "idz-1.jpg",
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/idz-1.jpg"
                     },
                     {
                         "fileType": "2",
-                        "fileName": "idcard_back.jpg",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/idf-1.jpg"
+                        "fileName": "idz-1.jpg",
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/idz-1.jpg"
                     },
                     {
                         "fileType": "3",
                         "fileName": "face_distinguish.jpg",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/face_distinguish.jpg"
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/face_distinguish.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileName": "JC_userauth.pdf",
-                        "fileUrl": "http://jccfc-hsit.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/授权书.pdf"
+                        "fileName": "授权书.pdf",
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/授权书.pdf"
+                    },
+                    {
+                        "fileType": "6",
+                        "fileName": "JC_third_auth_202110120000099.pdf",
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/JC_third_auth_202110120000099.pdf"
+                    },
+                    {
+                        "fileType": "7",
+                        "fileName": "JC_userauth_202000000948071999.pdf",
+                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/JC_userauth_202000000948071999.pdf"
                     }
                 ]
             }
