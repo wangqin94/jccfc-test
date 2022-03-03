@@ -7,7 +7,7 @@ import pytest
 from src.enums.EnumsCommon import EnumLoanInvoiceStatus
 from src.impl.FQL.FqlCreditFileBizImpl import fqlRepayFile
 from src.test_case.JieTiao.person import data
-from utils import global_var as gl
+from utils import GlobalVar as gl
 from utils.Models import get_custom_day
 
 log = logging.getLogger(__name__)
