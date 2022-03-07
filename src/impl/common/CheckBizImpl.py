@@ -240,6 +240,32 @@ class CheckBizImpl(EnvInit):
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
                     raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
+    def check_third_wait_loan_status(self, t=5, **kwargs):
+        """
+        三方待放款建账明细信息credit_third_wait_loan_deal_info结果校验
+        :param t: 每次时间间隔, 默认5S
+        :param kwargs: 查询条件
+        :return: response 接口响应参数 数据类型：json
+        """
+        self.log.demsg('数据库还款结果校验...')
+        flag = 3
+        for i in range(flag + 1):
+            info = self.MysqlBizImpl.get_credit_database_info('credit_third_wait_loan_deal_info', **kwargs)
+            if not info:
+                self.log.info("credit_third_wait_loan_deal_info未查询到还款记录，启动3次轮训")
+                time.sleep(t)
+                if i == flag:
+                    self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
+                    sys.exit(7)
+            else:
+                try:
+                    info['deal_status'] = EnumHjLoanDealStatus.INIT.value
+                    self.log.info("放款记录已入credit_third_wait_loan_deal_info表")
+                except AssertionError:
+                    self.log.info("放款记录入库异常")
+                break
+
+
 
 if __name__ == '__main__':
     # CheckBizImpl().check_channel_repay_status(id=999)

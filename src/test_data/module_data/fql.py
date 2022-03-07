@@ -32,9 +32,9 @@ fql = {
                 "applyId": "202000000948071964",
                 "sourceCode": "000UC010000006268",
                 "orderType": "1",  # 订单类型
-                "loanAmount": "",
+                "loanAmount": "30000",
                 "creditAmount": 30000,
-                "loanTerm": "",  # 借款期数
+                "loanTerm": "3",  # 借款期数
                 "repayType": "1",  # 还款方式 1:等额本息 2:等额本金 3:按天计息
                 "fixedBillDay": "10",
                 "fixedRepayDay": "27",
@@ -96,28 +96,33 @@ fql = {
                 "companyArea": "510000-510100-510107",
                 "fileInfos": [{
                     "fileType": "1",
-                    "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
+                    "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
                     "fileName": "idcard_front_202000000948071964.jpg"
-                },
+                    },
                     {
                         "fileType": "2",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
                         "fileName": "idcard_back_202000000948071964.jpg"
                     },
                     {
                         "fileType": "3",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
                         "fileName": "face_distinguish_202000000948071964.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
                         "fileName": "JC_userauth_202000000948071964.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
                         "fileName": "JC_non_student_202000000948071964.pdf"
+                    },
+                    {
+                        "fileType": "7",
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_third_auth_202000000948071964.pdf",
+                        "fileName": "JC_third_auth_202000000948071964.pdf"
                     }
 
                 ]
