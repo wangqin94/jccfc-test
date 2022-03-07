@@ -69,20 +69,20 @@ class MeiTuanCheckBizImpl(MeiTuanBizImpl):
                 if code == ApiStatusCodeEnum.SUCCESS.code:
                     status = res.get('body')['STATUS']
                     if status == ApiStatusCodeEnum.PASS.code:
-                        self.log.demsg('接口层查询：授信成功')
+                        self.log.demsg('接口层查询：支用成功')
                         return status
                     elif status == ApiStatusCodeEnum.FAIL.code:
-                        self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res.get('body')['REJECT_MSG']))
-                        raise AssertionError('授信状态失败')
+                        self.log.error('接口层支用失败,状态：{},失败原因{}'.format(status, res.get('body')['REJECT_MSG']))
+                        raise AssertionError('支用状态失败')
                     elif status == ApiStatusCodeEnum.NOT_EXIST.code:
-                        self.log.error('接口层授信单号不存在,状态：{}'.format(status))
-                        raise AssertionError('授信单号不存在')
+                        self.log.error('接口层支用单号不存在,状态：{}'.format(status))
+                        raise AssertionError('支用单号不存在')
                     elif status == ApiStatusCodeEnum.TO_DOING.code:
-                        self.log.demsg("授信审批状态处理中，请等待....")
+                        self.log.demsg("支用审批状态处理中，请等待....")
                         time.sleep(t)
                         if n == m-1:
                             self.log.warning("超过当前系统设置等待时间，请手动查看结果....")
-                            raise AssertionError('授信状态为处理中')
+                            raise AssertionError('支用状态为处理中')
                 if code == ApiStatusCodeEnum.NO_HOURLY.code:
                     self.log.demsg("系统异常")
                     raise

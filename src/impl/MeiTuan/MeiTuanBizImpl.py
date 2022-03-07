@@ -19,7 +19,7 @@ class MeiTuanBizImpl(EnvInit):
         # 解析项目特性配置
         self.cfg = MeiTuan.MeiTuan
 
-        self.app_no = 'mt_app_no' + str(int(round(time.time() * 1000))) + "1002"
+        self.app_no = 'mt_app_no' + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999)) + "1002"
         self.data = self.get_user_info(data=data, person=person)
         # 初始化定义用户apply信息
         self.user_credit_apply_info = {}

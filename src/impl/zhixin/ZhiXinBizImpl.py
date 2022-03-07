@@ -193,9 +193,9 @@ class ZhiXinBizImpl(MysqlInit):
         queryCreditResult_data['requestTime'] = self.times
         queryCreditResult_data['ct'] = self.times
 
-        # credit_apply_info = self.getSqlData.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
-        # queryCreditResult_data['userId'] = self.data['userId']
-        # queryCreditResult_data['creditApplyNo'] = credit_apply_info['credit_apply_id']
+        credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        queryCreditResult_data['userId'] = self.data['userId']
+        queryCreditResult_data['creditApplyNo'] = credit_apply_info['thirdpart_apply_id']
 
         # 更新 payload 字段值
         queryCreditResult_data.update(kwargs)
@@ -204,6 +204,35 @@ class ZhiXinBizImpl(MysqlInit):
 
         self.log.demsg('授信查询请求...')
         url = self.host + self.cfg['queryCreditResult']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 额度&产品查询payload
+    def queryCreditProduct(self, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        queryCreditProduct_data = dict()
+        # body
+        queryCreditProduct_data['requestNo'] = 'requestNo' + self.strings + "_8000"
+        queryCreditProduct_data['requestTime'] = self.times
+        queryCreditProduct_data['ct'] = self.times
+
+        credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        queryCreditProduct_data['userId'] = self.data['userId']
+        queryCreditProduct_data['creditApplyNo'] = credit_apply_info['thirdpart_apply_id']
+        queryCreditProduct_data['partnerCreditNo'] = credit_apply_info['credit_apply_id']
+
+        # 更新 payload 字段值
+        queryCreditProduct_data.update(kwargs)
+        parser = DataUpdate(self.cfg['queryCreditProduct']['payload'], **queryCreditProduct_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('额度&产品查询请求...')
+        url = self.host + self.cfg['queryCreditProduct']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response

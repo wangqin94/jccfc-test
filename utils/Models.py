@@ -128,7 +128,8 @@ def get_day(time1, time2):
         day1 = time.strptime(str(time1), '%Y-%m-%d')
         day2 = time.strptime(str(time2), '%Y-%m-%d')
         day_num = (int(time.mktime(day2)) - int(time.mktime(day1))) / (24 * 60 * 60)
-        return abs(int(day_num))
+        # 2022-03-03修改： 去掉绝对值
+        return int(day_num)
     except Exception as e:
         _log.error("系统错误: {}".format(e))
 
@@ -486,11 +487,21 @@ def get_base64_from_img(img_path):
         return base64_data.decode()
 
 
+def format_path(path):
+    """
+    @param path: 待格式化路径
+    @return: response 返回标准化路径 eg: /hj/xdgl/meituan/bank_loan_create/20220401
+    """
+    return path.replace('\\', '/').replace('\\\\', '/').replace('..', '.').replace('/./', '/')
+
+
 if __name__ == "__main__":
     # img_path = os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png')
     # r = get_base64_from_img(img_path)
     # r = get_before_month(2, date='2021-11-13')
     # r = update_sql_qurey_str(table='table', db='db', attr='a=b', a=1, b=2)
     # r = get_custom_day(-2, date='2021-11-13')
-    r = get_sql_qurey_str('table', 'a', 'b', db='base')
+    # r = get_sql_qurey_str('table', 'a', 'b', db='base')
+
+    r = format_path("/hj/xdgl/meituan/bank_loan_create\\20220401")
     print(r)
