@@ -26,15 +26,14 @@ class CheckBizImpl(EnvInit):
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('支用结果校验...')
-        flag = 2
-        for i in range(flag + 1):
+        for i in range(m):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
-                self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
+                self.log.info("credit_loan_apply未查询到支用记录，启动轮训,当前第-{}-次".format(i))
                 time.sleep(t)
-                if i == flag:
+                if i == m-1:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")
-                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
+                    raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m*t))
             else:
                 self.log.info("支用记录已入loan_apply表")
                 break
@@ -72,7 +71,7 @@ class CheckBizImpl(EnvInit):
         for j in range(m):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
-                self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
+                self.log.info("credit_loan_apply未查询到支用记录，启动轮训,当前第-{}-次".format(j))
             else:
                 status = info['status']
                 if status == expect_status:
@@ -83,7 +82,7 @@ class CheckBizImpl(EnvInit):
                     time.sleep(t)
                     if j == m - 1:
                         self.log.error("超过当前系统设置等待时间，支用单状态不符合逾期，当前值[{}]！= 实际值[{}]".format(expect_status, status))
-                        raise AssertionError('{}*{}内数据系统数据未插入数据库，测试终止'.format(m, t))
+                        raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m*t))
 
     def check_file_loan_apply_status(self, m=20, t=3, **kwargs):
         """
@@ -93,15 +92,14 @@ class CheckBizImpl(EnvInit):
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('文件放款支用结果校验...')
-        flag = 2
-        for i in range(flag + 1):
+        for i in range(m):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
-                self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
+                self.log.info("credit_loan_apply未查询到支用记录，启动轮训,当前第-{}-次".format(i))
                 time.sleep(t)
-                if i == flag:
+                if i == m-1:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")
-                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
+                    raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m*t))
             else:
                 self.log.info("支用记录已入loan_apply表")
                 break
@@ -135,15 +133,14 @@ class CheckBizImpl(EnvInit):
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库授信结果校验...')
-        flag = 2
-        for i in range(flag + 1):
+        for i in range(m):
             info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
             if not info:
-                self.log.info("credit_apply未查询到授信记录，启动3次轮训")
+                self.log.info("credit_apply未查询到授信记录，启动轮训,当前第-{}-次".format(i))
                 time.sleep(t)
-                if i == flag:
+                if i == m-1:
                     self.log.error("超过当前系统设置等待时间，授信异常，请手动查看结果....")
-                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
+                    raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m*t))
             else:
                 self.log.info("授信记录已入credit_apply表")
                 break
@@ -172,15 +169,14 @@ class CheckBizImpl(EnvInit):
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库还款结果校验...')
-        flag = 2
-        for i in range(flag + 1):
+        for i in range(m):
             info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
             if not info:
-                self.log.info("channel_repay未查询到还款记录，启动3次轮训")
+                self.log.info("channel_repay未查询到还款记录，启动轮训,当前第-{}-次".format(i))
                 time.sleep(t)
-                if i == flag:
+                if i == m-1:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
-                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
+                    raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m*t))
             else:
                 self.log.info("还款记录已入channel_repay表")
                 break
@@ -212,15 +208,14 @@ class CheckBizImpl(EnvInit):
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库还款结果校验...')
-        flag_m = 2
-        for i in range(flag_m + 1):
+        for i in range(m):
             info = self.MysqlBizImpl.get_credit_database_info('credit_custom_payment_apply', **kwargs)
             if not info:
-                self.log.info("credit_custom_payment_apply未查询到还款记录，启动3次轮训")
+                self.log.info("credit_custom_payment_apply未查询到还款记录，启动轮训,当前第-{}-次".format(i))
                 time.sleep(3)
-                if i == flag_m:
+                if i == m-1:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
-                    raise AssertionError('9s内数据系统数据未插入数据库，测试终止')
+                    raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m*t))
             else:
                 self.log.info("还款记录已入credit_custom_payment_apply表")
                 break

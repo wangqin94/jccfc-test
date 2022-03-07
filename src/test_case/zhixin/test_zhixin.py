@@ -22,7 +22,7 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=6):
+    def process(self, flag=4):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
@@ -49,7 +49,7 @@ class TestCase(object):
         # 授信查询
         elif flag == 4:
             zhixin = ZhiXinBizImpl(data=data)
-            zhixin.queryCreditResult(userId="SUR1678250090", creditApplyNo="SLN4301654300")
+            zhixin.queryCreditResult()
 
         # 借款试算
         elif flag == 5:
@@ -77,6 +77,16 @@ class TestCase(object):
             # 默认取person文件中的userid
             loan_apply_info = MysqlBizImpl().get_loan_apply_info(thirdpart_user_id=data['userId'])
             zhixin.applyRepayment(repay_type='1', loan_no="000LA2021122300000068")  # 按期还款
+
+        # 额度&产品查询
+        elif flag == 10:
+            zhixin = ZhiXinBizImpl(data=data)
+            zhixin.queryCreditProduct()
+
+        # 借款&还款计划查询
+        elif flag == 11:
+            zhixin = ZhiXinBizImpl(data=data)
+            zhixin.queryLoanPlan()
 
     def postprocess(self):
         """ 后置条件处理 """

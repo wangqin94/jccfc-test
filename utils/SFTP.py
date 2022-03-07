@@ -23,11 +23,11 @@ class SFTP(object):
         self.sftp_port = _readconfig.get_sftp(self.env)['port']
         self.sftp = self.__login_sftp()
 
-    def __del__(self):
-        try:
-            self.sftp_close()
-        except Exception as err:
-            _log.error(err)
+    # def __del__(self):
+    #     try:
+    #         self.sftp_close()
+    #     except Exception as err:
+    #         _log.error(err)
 
     def __login_sftp(self):
         sf = paramiko.Transport(*(self.sftp_host, self.sftp_port))
@@ -56,6 +56,7 @@ class SFTP(object):
             _log.info('upload %s to server directory of %s success! ', local, remote)
         except Exception as err:
             _log.error('Upload file failed! %s', err)
+            raise err
 
     def upload_dir(self, local_dir, remote_dir, clean=False):
         """ 覆盖上传 # upload directory named ``local_dir`` to server directory of ``remote_dir``
@@ -69,13 +70,14 @@ class SFTP(object):
             remote_filepath = os.path.join(remote_dir, file)
             remote_filepath = remote_filepath.replace('\\', '/').replace('\\\\', '/').replace('..', '.').replace('/./', '/')
             loacl_filepath = os.path.join(local_dir, file)
-            self._check_remote_dir_exist(remote, clean=clean)
+            self._check_remote_dir_exist(remote_dir, clean=clean)
             # 开始上传文件
             try:
                 self.sftp.put(loacl_filepath, remote_filepath)
                 _log.info('upload %s to server directory of %s success! ', loacl_filepath, remote_filepath)
             except Exception as err:
                 _log.error('upload file %s failed! %s', remote_filepath, err)
+                raise err
 
     def download_file(self, local, remote):
         """ # download file named ``remote`` from server to save as ``local``
@@ -109,7 +111,7 @@ class SFTP(object):
             is_empty = self.sftp.listdir(remote_dir)
         except IOError as err:
             _log.warning('the directory of %s is not exist; %s!', remote_dir, err)
-            _log.info('start to make dir for server...')
+            _log.demsg('start to make dir: {} for server...'.format(remote_dir))
             self.sftp.mkdir(remote_dir)
         else:
             if is_empty and clean:
@@ -156,6 +158,7 @@ class SFTP(object):
                 self.upload_file(local, remote, clean=False)  # 上传文件
         except Exception as err:
             _log.error('upload exception: %s', err)
+            raise err
 
     def sftp_download(self, local, remote):
         try:

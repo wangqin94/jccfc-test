@@ -17,7 +17,7 @@ from utils.GlobalVar import GlobalMap
 
 @pytest.fixture(scope="class", autouse=True)
 def get_base_data_meituan():
-    data = get_base_data_temp('app_no')
+    data = get_base_data_temp('mt_app_no')
     GlobalMap().set(meituan_persion=data)
     return data
 

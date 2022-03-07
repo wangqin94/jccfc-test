@@ -46,6 +46,10 @@ json_headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"
 }
 
-path = {
-
+sftp_path = {
+    'meituan': {
+        "bank_loan_create": "/hj/xdgl/meituan/bank_loan_create",
+        "bank_period_create": "/hj/xdgl/meituan/bank_period_create",
+        "bank_repay_loan": "/hj/xdgl/meituan/bank_repay_loan",
+        "bank_repay_period": "/hj/xdgl/meituan/bank_repay_period"}
 }

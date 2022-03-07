@@ -23,13 +23,13 @@ class MyTestCase(unittest.TestCase):
         time.sleep(10)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.APP_NO)
         # 发起支用刚申请
-        MeiTuan.loan(TRADE_AMOUNT=60000, TRADE_PERIOD='3')
+        self.res = MeiTuan.loan(TRADE_AMOUNT=60000, TRADE_PERIOD='3')
 
     """ 后置条件处理 """
     def tearDown(self):
         time.sleep(5)
         # 检查支用状态
-        self.CheckBizImpl.check_file_loan_apply_status(thirdpart_apply_id=self.APP_NO)
+        self.CheckBizImpl.check_file_loan_apply_status(thirdpart_apply_id=self.res.get('body')['APP_NO'])
 
 
 if __name__ == '__main__':

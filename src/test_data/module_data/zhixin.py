@@ -490,4 +490,28 @@ zhixin = {
             "qficoApplyNo": "1000",  # 智信请求流水号
         }
     },
+
+    # 额度&产品查询
+    'queryCreditProduct': {
+        'interface': '/api/v1/zhixin/product/queryCreditProduct',
+        'payload': {
+            "data": {
+                "requestNo": "361920480915sssss",
+                "requestTime": "1523619204809",
+                "partner": "ICE_JCXJ",
+                "version": "1.0",
+                "input": {
+                    "userId": "${userId}",
+                    "creditApplyNo": "${creditApplyNo}",   # 智信引擎申请单号
+                    "partnerCreditNo": "${partnerCreditNo}",  # 合作方申请单号
+                },
+            },
+            "method": "queryLoanPlan",
+            "partner": "ICE_JCXJ",
+            "encFlag": "Y",
+            "encType": "DES",
+            "cmp": "N",
+            "ct": "1523619204809"
+        },
+    },
 }

@@ -8,6 +8,7 @@ from config.TestEnvInfo import *
 from utils.Logger import MyLog
 from utils.ReadConfig import *
 from config.globalConfig import *
+from utils.SFTP import SFTP
 
 
 class EnvInit(object):
@@ -28,6 +29,9 @@ class EnvInit(object):
         self._config = Config()
         self.host = API['request_host'].format(self.env)
         self.host_api = API['request_host_api'].format(self.env)
+
+        # 初始化SFTP连接
+        self.sftp = SFTP()
 
 
 class DataGenerator(object):
