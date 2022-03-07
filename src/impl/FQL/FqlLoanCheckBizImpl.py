@@ -3,7 +3,7 @@ import time
 
 from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import *
-from utils import global_var as gl
+from utils import GlobalVar as gl
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 
 
