@@ -11,6 +11,7 @@ from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Logger import Logs
 from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import *
+from utils.SFTP import SFTP
 
 _log = Logs()
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
@@ -456,11 +457,13 @@ class MeiTuanLoanFile(EnvInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.user_name = data['name']
         self.certificate_no = data['cer_no']
+        # 初始化SFTP连接
+        self.sftp = SFTP()
         # 获取借据及账单日期初始值
         self.current_date = time.strftime('%Y-%m-%d', time.localtime())
         self.loan_date = self.current_date if not apply_date else apply_date
 
-        self.loan_id = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999)) + "10086"
+        self.loan_id = str(int(round(time.time() * 1000))) + "10086"
         # 获取文件名及存放路径
         self.data_save_path, self.bank_loan_create_path, self.bank_period_create_path, self.bank_loan_filename, self.bank_period_filename = self.get_filename()
 
@@ -765,6 +768,7 @@ class MeiTuanRepayFile(EnvInit):
                  prin_amt=None, int_amt=None,
                  pnlt_int_amt=None):
         """
+        eg: 账单日还款
         @param user_data:           用户四要素   必填参数
         @param repay_type:          还款类型：   按期还款：01； 提前结清：02； 逾期还款：03
         @param loan_invoice_id:     借据号
@@ -776,6 +780,8 @@ class MeiTuanRepayFile(EnvInit):
         """
         super().__init__()
         self.log.demsg('当前测试环境 %s', self.env)
+        # 初始化SFTP连接
+        self.sftp = SFTP()
         self.MysqlBizImpl = MysqlBizImpl()
         self.loan_invoice_id = loan_invoice_id
         self.user_data = user_data
@@ -1084,7 +1090,7 @@ class MeiTuanRepayFile(EnvInit):
 
         # 期数动账文件赋值
         self.bank_repay_period_temple.update(temple)
-        self.bank_repay_period_temple['plan_repay_date'] = repay_date
+        self.bank_repay_period_temple['plan_repay_date'] = str(asset_repay_plan["pre_repay_date"])
         self.bank_repay_period_temple['current_period'] = str(repay_term_no)
         self.bank_repay_period_temple['period_id'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         self.bank_repay_period_temple['status'] = '1'
@@ -1147,7 +1153,6 @@ class MeiTuanRepayFile(EnvInit):
             key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, str(repay_term_no))
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
 
-            temple['plan_repay_date'] = str(asset_repay_plan["pre_repay_date"])
             temple['paid_prin_amt'] = str(int(asset_repay_plan["pre_repay_principal"] * 100))  # 本金
             # 利息=剩余本金*计息天数*年化利率/360
             days = get_day(asset_repay_plan["start_date"], repay_date)
@@ -1162,7 +1167,7 @@ class MeiTuanRepayFile(EnvInit):
             # 循环写入还款文件，当期次大于最大期次，退出循环
             # 期数动账文件赋值
             self.bank_repay_period_temple.update(temple)
-            self.bank_repay_period_temple['plan_repay_date'] = repay_date
+            self.bank_repay_period_temple['plan_repay_date'] = str(asset_repay_plan["pre_repay_date"])
             self.bank_repay_period_temple['current_period'] = str(repay_term_no)
             self.bank_repay_period_temple['period_id'] = str(int(round(time.time() * 1000))) + str(
                 random.randint(0, 9999)) + str(repay_term_no)
@@ -1184,11 +1189,10 @@ class MeiTuanRepayFile(EnvInit):
 
 if __name__ == '__main__':
     # 美团按期还款、提前结清，按日收息
-    data1 = {'name': '鲁宜云', 'cer_no': '512021200904250046', 'bankid': '6217237670539660703', 'telephone': '15208346597',
-             'app_no': 'mt_app_no164621185656539901002'}  # hsit -> MeiTuan
+    data1 = {'name': '胡岚娅', 'cer_no': '140623201804164975', 'bankid': '6222088167995790181', 'telephone': '17850683142', 'userId': 'userId16467093128035090'}
     card_id = data1['cer_no']
     user_name = data1['name']
-    t = MeiTuanRepayFile(data1, repay_type='01', repay_term_no='2')
+    t = MeiTuanRepayFile(data1, repay_type='03', repay_term_no='1', repay_date='2022-04-17')
     # t.bill_day_repay_file(repay_term_no='2')
     # t.pre_repay_file(repay_date="2022-04-01", repay_term_no='2')
-    # t = MeiTuanLoanFile(data1, apply_date='2022-04-01')
+    # t = MeiTuanLoanFile(data1, apply_date='2022-03-07')

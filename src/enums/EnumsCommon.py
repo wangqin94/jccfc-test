@@ -85,6 +85,15 @@ class EnumHjLoanDealStatus(Enum):
     LOAN_FAIL = '04'   # 放款失败
 
 
+@unique
+class EnumHjRepayNoticeStatus(Enum):
+    INIT = '00'  # 待处理
+    PROCESS = '01'  # 处理中
+    VALIDATE_FAIL = '02'  # 校验失败
+    REPAY_SUCCESS = '03'   # 放款成功
+    REPAY_FAIL = '04'   # 放款失败
+
+
 # @unique
 class EnumH5PaymentStatus(Enum):
     SUCCESS = "000000"  # 成功

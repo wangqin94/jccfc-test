@@ -19,7 +19,6 @@ class MeiTuanBizImpl(EnvInit):
         # 解析项目特性配置
         self.cfg = MeiTuan.MeiTuan
 
-        self.app_no = 'mt_app_no' + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999)) + "1002"
         self.data = self.get_user_info(data=data, person=person)
         # 初始化定义用户apply信息
         self.user_credit_apply_info = {}
@@ -62,10 +61,9 @@ class MeiTuanBizImpl(EnvInit):
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.MEITUAN.value),
-                                                    app_no=self.app_no)
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.MEITUAN.value), "userId")
             else:
-                base_data = get_base_data_temp('app_no')
+                base_data = get_base_data_temp('userId')
         return base_data
 
     def set_active_payload(self, payload):
@@ -113,9 +111,9 @@ class MeiTuanBizImpl(EnvInit):
         strings = str(int(round(time.time() * 1000)))
         credit_data['requestTime'] = time.strftime('%Y%m%d%H%M%S')
         credit_data['requestSerialNo'] = "SerialNo" + strings + "1001"
-        credit_data['APP_NO'] = self.data['app_no']
+        credit_data['APP_NO'] = 'apply_no' + str(int(round(time.time()))) + str(random.randint(1000, 9999))
         credit_data['APPLY_AMT'] = self.credit_amount  # 授信申请贷款金额, 默认3000000分
-        credit_data['CUSTOMER_NO'] = 'customer_no' + strings + "1002"
+        credit_data['CUSTOMER_NO'] = self.data['userId']
         credit_data['CER_NO'] = self.data['cer_no']
         credit_data['NAME'] = self.data['name']
         credit_data['MOBILE_NO'] = self.data['telephone']
@@ -137,7 +135,7 @@ class MeiTuanBizImpl(EnvInit):
         url = self.host + self.cfg['credit']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
-        response['app_no'] = self.data['app_no']
+        response['app_no'] = credit_data['APP_NO']
         return response
 
     # 美团授信查询payload
@@ -146,7 +144,8 @@ class MeiTuanBizImpl(EnvInit):
         strings = str(int(round(time.time() * 1000)))
         credit_query_data['requestSerialNo'] = 'SerialNo' + strings + "1001"
         credit_query_data['requestTime'] = time.strftime('%Y%m%d%H%M%S')
-        app_no = app_no if app_no else self.data['app_no']
+        content = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        app_no = app_no if app_no else content['thirdpart_apply_id']
         credit_query_data['APP_NO'] = app_no
 
         # 更新 payload 字段值
@@ -161,12 +160,12 @@ class MeiTuanBizImpl(EnvInit):
         return response
 
     # 美团放款申请payload
-    def loan(self, app_no=None, **kwargs):
+    def loan(self, **kwargs):
         loan_data = dict()
-        strings = str(int(round(time.time() * 1000)))
+        strings = str(int(round(time.time()))) + str(random.randint(1000, 9999))
         loan_data['requestTime'] = time.strftime('%Y%m%d%H%M%S')
-        loan_data['requestSerialNo'] = "SerialNo" + strings + "1001"
-        loan_data['LOAN_NO'] = 'loan_no' + strings + '1002'
+        loan_data['requestSerialNo'] = "SerialNo" + strings
+        loan_data['LOAN_NO'] = 'loan_invoice_no' + strings
         loan_data['ID_NO'] = self.data['cer_no']
         loan_data['NAME'] = self.data['name']
         loan_data['CARD_NO'] = self.data['bankid']
@@ -178,11 +177,9 @@ class MeiTuanBizImpl(EnvInit):
         loan_data["CREDIT_LIMIT"] = 30000  # 单位元
         loan_data["AVAILABLE_LIMIT"] = 30000  # 单位元
         loan_data["USED_LIMIT"] = 0
-
-        app_no = app_no if app_no else self.data['app_no']
-        content = self.MysqlBizImpl.get_credit_apply_info(thirdpart_apply_id=app_no)
-        loan_data['APP_NO'] = 'loan_apply_no' + strings + '1002'
-        loan_data['CUSTOMER_NO'] = content['thirdpart_user_id']
+        # get_credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
+        loan_data['APP_NO'] = 'loan_appno' + strings
+        loan_data['CUSTOMER_NO'] = self.data['userId']
 
         # 更新 payload 字段值
         loan_data.update(kwargs)
@@ -193,6 +190,7 @@ class MeiTuanBizImpl(EnvInit):
         url = self.host + self.cfg['loan']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response['loan_no'] = loan_data['LOAN_NO']
         return response
 
     # 美团放款查询payload

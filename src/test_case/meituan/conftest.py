@@ -17,7 +17,7 @@ from utils.GlobalVar import GlobalMap
 
 @pytest.fixture(scope="class", autouse=True)
 def get_base_data_meituan():
-    data = get_base_data_temp('mt_app_no')
+    data = get_base_data_temp('userId')
     GlobalMap().set(meituan_persion=data)
     return data
 
@@ -35,8 +35,10 @@ def meiTuanCheckBizImpl(get_base_data_meituan):
     meiTuanCheckBizImpl = MeiTuanCheckBizImpl(data)
     return meiTuanCheckBizImpl
 
-# @pytest.fixture(scope="class", autouse=True)
-# def meiTuanSynBizImpl(get_base_data_meituan):
-#     data = get_base_data_meituan
-#     meiTuanSynBizImpl = MeiTuanSynBizImpl(data)
-#     return meiTuanSynBizImpl
+
+@pytest.fixture(scope="class")
+def meiTuanSynBizImpl(get_base_data_meituan):
+    data = get_base_data_meituan
+    meiTuanSynBizImpl = MeiTuanSynBizImpl(data)
+    meiTuanSynBizImpl = meiTuanSynBizImpl.pre_meituan_Loan(TRADE_AMOUNT=60000, TRADE_PERIOD='6')
+    return meiTuanSynBizImpl

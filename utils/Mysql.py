@@ -80,6 +80,23 @@ class Mysql(object):
             _log.error("数据更新出错：case%s" % e)
             # 发生错误是回滚
             self.__mysql.rollback()
+            raise e
+
+    def insert(self, table, **kwargs):
+        try:
+            # 执行SQL语句
+            keys = ', '.join(kwargs.keys())
+            values = ', '.join(['%s'] * len(kwargs))
+            sql = 'INSERT INTO {table}({keys}) VALUES ({values})'.format(table=table, keys=keys, values=values)
+            self.cursor.execute(sql, tuple(kwargs.values()))
+            _log.demsg("成功插入数据[{}]".format(sql))
+            # 提交到数据库执行
+            self.__mysql.commit()
+        except Exception as e:
+            _log.error("插入数据出错：case%s" % e)
+            # 发生错误是回滚
+            self.__mysql.rollback()
+            raise e
 
     def delete(self, sql):
         try:

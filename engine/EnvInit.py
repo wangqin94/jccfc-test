@@ -30,9 +30,6 @@ class EnvInit(object):
         self.host = API['request_host'].format(self.env)
         self.host_api = API['request_host_api'].format(self.env)
 
-        # 初始化SFTP连接
-        self.sftp = SFTP()
-
 
 class DataGenerator(object):
     pass
