@@ -76,6 +76,15 @@ class EnumCustomPaymentStatus(Enum):
     TO_DO = '00'   # 待处理
 
 
+@unique
+class EnumHjLoanDealStatus(Enum):
+    INIT = '00'  # 待处理
+    PROCESS = '01'  # 处理中
+    VALIDATE_FAIL = '02'  # 校验失败
+    LOAN_SUCCESS = '03'   # 放款成功
+    LOAN_FAIL = '04'   # 放款失败
+
+
 # @unique
 class EnumH5PaymentStatus(Enum):
     SUCCESS = "000000"  # 成功
