@@ -6,7 +6,6 @@ import pytest
 
 from src.enums.EnumsCommon import EnumLoanInvoiceStatus
 from src.impl.FQL.FqlCreditFileBizImpl import fqlRepayFile
-from src.test_case.JieTiao.person import data
 from utils import GlobalVar as gl
 from utils.Models import get_custom_day
 
@@ -18,7 +17,6 @@ log = logging.getLogger(__name__)
 def pre_loan_data(fqlBizImpl, fqlCreditCheckBizImpl, fqlLoanCheckBizImpl):
     with allure.step("发起授信申请"):
         creditRes = fqlBizImpl.credit(creditAmount=2000, loanAmount=1000, loanTerm=3)
-        log.info(f"授信申请接口结果----：{creditRes}")
         creditStatus = creditRes['status']
         assert creditStatus == '0', "返回0说明授信申请成功"
 
@@ -30,13 +28,11 @@ def pre_loan_data(fqlBizImpl, fqlCreditCheckBizImpl, fqlLoanCheckBizImpl):
 
     with allure.step("接口层校验授信结果是否符合预期"):
         creditQueryRes = fqlBizImpl.credit_query()
-        log.info(f"授信查询接口结果----：{creditQueryRes}")
         auditState = creditQueryRes['auditState']
         assert auditState == '0', "返回0说明授信成功"
 
     with allure.step("发起支用申请"):
         loanRes = fqlBizImpl.loan(loanTerm=3, orderType=1, loanAmt=1000)
-        log.info(f"支用申请结果----：{loanRes}")
         loanStatus = loanRes['status']
         assert loanStatus == '0', "返回0说明支用申请成功"
 
@@ -53,7 +49,6 @@ def pre_loan_data(fqlBizImpl, fqlCreditCheckBizImpl, fqlLoanCheckBizImpl):
 
     with allure.step("接口层校验支用结果是否符合预期"):
         loanQueryRes = fqlBizImpl.loan_query()
-        log.info(f"支用查询接口结果----：{loanQueryRes}")
         loanResult = loanQueryRes['loanResult']
         assert loanResult == '0', "返回0说明支用成功"
 
@@ -76,7 +71,7 @@ class TestCase(object):
            fqlRepayCheckBizImpl.updateBigacct('acct_sys_info', "sys_id='BIGACCT'", last_date=last_date,account_date=account_date, next_date=next_date)
 
         with allure.step('更新资产卸数'):
-           fqlRepayCheckBizImpl.updateAssetDatabase('asset_job_ctl', "job_type = 'ASSET_BI_JOB_FINISH'",
+           fqlRepayCheckBizImpl.updateAssetDatabase('asset_job_ctl', "job_type = 'ASSET_BI_JOB_FINISH' limit 1",
                                                    job_date=last_date)
         with allure.step('清除分片流水'):
             fqlRepayCheckBizImpl.deleteSlice()
@@ -92,7 +87,8 @@ class TestCase(object):
 
         with allure.step("数据库层校验还款入账结果"):
            fqlRepayCheckBizImpl.check_credit_file_repay1(apply_id=gl.get_value('personData')['applyId'],repay_num =1)
-           # fqlRepayCheckBizImpl.credit_repay_order1(thirdpart_apply_id=gl.get_value('personData')['applyId'])
+           fqlRepayCheckBizImpl.credit_repay_order1(loan_invoice_id=gl.get_value('loanInfo')['loan_no'],repay_term=1)
+
 
     @allure.step("逾期还款")
     def test_overdue_repay2(self,fqlRepayCheckBizImpl, job, redis):
@@ -109,7 +105,7 @@ class TestCase(object):
                                                account_date=account_date, next_date=next_date)
 
         with allure.step('更新资产卸数'):
-            fqlRepayCheckBizImpl.updateAssetDatabase('asset_job_ctl', "job_type = 'ASSET_BI_JOB_FINISH'",
+            fqlRepayCheckBizImpl.updateAssetDatabase('asset_job_ctl', "job_type = 'ASSET_BI_JOB_FINISH' limit 1",
                                                      job_date=last_date)
         with allure.step('清除分片流水'):
             fqlRepayCheckBizImpl.deleteSlice()
@@ -139,7 +135,7 @@ class TestCase(object):
         with allure.step("数据库层校验还款入账结果"):
             fqlRepayCheckBizImpl.check_credit_file_repay1(apply_id=gl.get_value('personData')['applyId'],
                                                           repay_num=2)
-            # fqlRepayCheckBizImpl.credit_repay_order1(thirdpart_apply_id=gl.get_value('personData')['applyId'])
+            fqlRepayCheckBizImpl.credit_repay_order1(loan_invoice_id=gl.get_value('loanInfo')['loan_no'], repay_term=2)
 
     @allure.step("提前结清")
     def test_settle_repay3(self, fqlRepayCheckBizImpl, job, redis):
@@ -163,7 +159,7 @@ class TestCase(object):
         with allure.step("数据库层校验还款入账结果"):
             fqlRepayCheckBizImpl.check_credit_file_repay1(apply_id=gl.get_value('personData')['applyId'],
                                                           repay_num=3)
-            # fqlRepayCheckBizImpl.credit_repay_order1(thirdpart_apply_id=gl.get_value('personData')['applyId'])
+            fqlRepayCheckBizImpl.credit_repay_order1(loan_invoice_id=gl.get_value('loanInfo')['loan_no'], repay_term=3)
 
 
 

@@ -71,7 +71,7 @@ class FqlCreditCheckBizImpl(EnvInit):
         assert creditInfo['user_type'] == '200', "客户类型"
         assert creditInfo['product_id'] == ProductIdEnum.FQL.value, "产品码"
         assert creditInfo['product_catalog'] == 'F0210001', "产品种类"
-        assert creditInfo['credit_rate'] == 36, "授信年利率"
+        # assert creditInfo['credit_rate'] == 36, "授信年利率"
         assert float(creditInfo['credit_amount']) == float(gl.get_value('creditRequestData')['body']['loanAmount']), "授信金额"
         assert creditInfo['credit_term'] == 1, "申请期限"
         assert creditInfo['credit_term_unit'] == '1', "申请期限单位"

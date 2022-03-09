@@ -10,6 +10,8 @@ from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from utils.KS3 import *
 from src.enums.EnumsCommon import *
+from utils import GlobalVar as gl
+
 
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
 _FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.FQL.value, TEST_ENV_INFO)  # 文件存放目录
@@ -133,7 +135,7 @@ class fqlRepayFile(EnvInit):
 
         # 逾期还款
         elif self.repay_mode == "5":
-            temple['repay_date'] = str(asset_repay_plan["calc_overdue_fee_date"]).replace("-", "")
+            temple['repay_date'] = str(self.repay_date).replace("-", "")
             # self.repay_date = asset_repay_plan["calc_overdue_fee_date"]
             self.repay_filename = self.get_filename(str(self.repay_date))[1]
 
@@ -156,6 +158,14 @@ class fqlRepayFile(EnvInit):
                 paid_prin_amt = asset_repay_plan["left_principal"] * days * apply_rate / (100 * 360)
                 temple['paid_prin_amt'] = str('{:.2f}'.format(paid_prin_amt))
 
+        repay_plan={}
+        repay_plan['term_no'] = temple['term_no']
+        repay_plan['repay_mode'] = temple['repay_mode']
+        repay_plan['repay_date'] = temple['repay_date']
+        repay_plan['repay_amt'] = temple['repay_amt']
+        repay_plan['paid_prin_amt'] = temple['paid_prin_amt']
+        repay_plan['paid_int_amt'] = temple['paid_int_amt']
+        gl.set_value('repay_plan', repay_plan)
         # 写入单期还款文件
         val_list = map(str, [temple[key] for key in self.repay_temple])
         strs = '|'.join(val_list)
