@@ -144,18 +144,20 @@ class fqlRepayFile(EnvInit):
             temple['repay_date'] = self.repay_date.replace("-", "")
             self.repay_filename = self.get_filename(str(self.repay_date))[1]
             temple['repay_amt'] = str("{:.2f}".format(asset_repay_plan["before_calc_principal"]))  # 剩余应还本金
-            temple['paid_int_amt'] = 0
+            temple['paid_int_amt'] = str('{:.2f}'.format(0))
 
             pre_repay_date = str(asset_repay_plan["start_date"])
+            self.log.info("资产时间:{}".format(pre_repay_date))
+            self.log.info("huankuan时间:{}".format(self.repay_date))
             pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
             repay_date = datetime.strptime(self.repay_date, "%Y-%m-%d").date()
             if pre_repay_date > repay_date:
-                temple["paid_prin_amt"] = 0  # 如果还款时间小于账单日，利息应该为0
+                temple["paid_prin_amt"] = str('{:.2f}'.format(0))  # 如果还款时间小于账单开始时间，利息应该为0
             else:
                 # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
                 days = get_day(asset_repay_plan["start_date"], self.repay_date)
                 # 利息
-                paid_prin_amt = asset_repay_plan["left_principal"] * days * apply_rate / (100 * 360)
+                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * apply_rate / (100 * 360)
                 temple['paid_prin_amt'] = str('{:.2f}'.format(paid_prin_amt))
 
         repay_plan={}
@@ -165,6 +167,7 @@ class fqlRepayFile(EnvInit):
         repay_plan['repay_amt'] = temple['repay_amt']
         repay_plan['paid_prin_amt'] = temple['paid_prin_amt']
         repay_plan['paid_int_amt'] = temple['paid_int_amt']
+        # gl._init()
         gl.set_value('repay_plan', repay_plan)
         # 写入单期还款文件
         val_list = map(str, [temple[key] for key in self.repay_temple])

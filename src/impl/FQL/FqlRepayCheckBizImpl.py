@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from engine.EnvInit import EnvInit
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils import GlobalVar as gl
@@ -30,9 +32,9 @@ class FqlRepayCheckBizImpl(EnvInit):
         assert fileRepayInfo['repay_flag'] == gl.get_value('repay_plan')['repay_mode'], "还款标志"
         assert str(fileRepayInfo['repay_num']) == gl.get_value('repay_plan')['term_no']
         assert fileRepayInfo['repay_date'] == gl.get_value('repay_plan')['repay_date']
-        assert str(round(fileRepayInfo['repay_principal'], 2)) == gl.get_value('repay_plan')['repay_amt']
-        assert str(round(fileRepayInfo['repay_interest'], 2)) == gl.get_value('repay_plan')['paid_prin_amt']
-        assert str(round(fileRepayInfo['repay_penalty_interest'], 2)) == gl.get_value('repay_plan')['paid_int_amt']
+        assert str(Decimal(fileRepayInfo['repay_principal']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['repay_amt']
+        assert str(Decimal(fileRepayInfo['repay_interest']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['paid_prin_amt']
+        assert str(Decimal(fileRepayInfo['repay_penalty_interest']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['paid_int_amt']
         assert fileRepayInfo['transfer_status'] == '1', "文件传输状态：1已处理"
 
 
@@ -41,25 +43,25 @@ class FqlRepayCheckBizImpl(EnvInit):
         self.log.demsg(f"还款credit_repay_order_detail数据库信息校验----：{repayOrderDetail}")
         assert repayOrderDetail['user_name'] == gl.get_value('personData')['name'], "客户姓名"
         assert repayOrderDetail['repay_status'] == '1', "还款状态"
-        if gl.get_value('repay_plan')['repay_mode'] == 3:
+        if gl.get_value('repay_plan')['repay_mode'] == '3':
            assert repayOrderDetail['repay_type'] == '2'
         else:
            assert repayOrderDetail['repay_type'] == '1'
 
-        self.log.info("右边:{}".format(gl.get_value('repay_plan')))
-        self.log.info("右边:{}".format(round(float(gl.get_value('repay_plan')['repay_amt']) +float(gl.get_value('repay_plan')['paid_prin_amt']) + float(gl.get_value('repay_plan')['paid_int_amt']), 2)))
-        self.log.info("zuo边:{}".format(round(repayOrderDetail['repay_amount'], 2)))
-        # assert round(repayOrderDetail['repay_amount'], 2) == round((float(gl.get_value('repay_plan')['repay_amt']) +float(gl.get_value('repay_plan')['paid_prin_amt']) + float(gl.get_value('repay_plan')['paid_int_amt'])), 2)
-        assert str(round(repayOrderDetail['repay_principal'], 2)) == gl.get_value('repay_plan')['repay_amt']
-        assert str(round(repayOrderDetail['repay_interest'], 2)) == gl.get_value('repay_plan')['paid_prin_amt']
-        assert str(round(repayOrderDetail['repay_penalty_interest'], 2)) == gl.get_value('repay_plan')['paid_int_amt']
-        assert str(round(repayOrderDetail['repay_fee'], 2)) == '0.00'
+        self.log.info("左边:{}".format(Decimal(repayOrderDetail['repay_amount']).quantize(Decimal("0.00"))))
+        self.log.info("右边:{}".format(Decimal((float(gl.get_value('repay_plan')['repay_amt']) +float(gl.get_value('repay_plan')['paid_prin_amt']) + float(gl.get_value('repay_plan')['paid_int_amt']))).quantize(Decimal("0.00"))))
 
-        # assert round(repayOrderDetail['actual_repay_amount'], 2) == round((float(gl.get_value('repay_plan')['repay_amt']) + float(gl.get_value('repay_plan')['paid_prin_amt']) + float(gl.get_value('repay_plan')['paid_int_amt'])), 2)
-        assert str(round(repayOrderDetail['actual_repay_principal'], 2))== gl.get_value('repay_plan')['repay_amt']
-        assert str(round(repayOrderDetail['actual_repay_interest'], 2)) == gl.get_value('repay_plan')['paid_prin_amt']
-        assert str(round(repayOrderDetail['actual_repay_fee'], 2)) == gl.get_value('repay_plan')['paid_int_amt']
-        assert str(round(repayOrderDetail['actual_repay_penalty_interest'] , 2)) == '0.00'
+        assert Decimal(repayOrderDetail['repay_amount']).quantize(Decimal("0.00")) == Decimal((float(gl.get_value('repay_plan')['repay_amt']) +float(gl.get_value('repay_plan')['paid_prin_amt']) + float(gl.get_value('repay_plan')['paid_int_amt']))).quantize(Decimal("0.00"))
+        assert str(Decimal(repayOrderDetail['repay_principal']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['repay_amt']
+        assert str(Decimal(repayOrderDetail['repay_interest']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['paid_prin_amt']
+        assert str(Decimal(repayOrderDetail['repay_penalty_interest']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['paid_int_amt']
+        assert str(Decimal(repayOrderDetail['repay_fee']).quantize(Decimal("0.00"))) == '0.00'
+
+        assert Decimal(repayOrderDetail['actual_repay_amount']) .quantize(Decimal("0.00")) == Decimal((float(gl.get_value('repay_plan')['repay_amt']) + float(gl.get_value('repay_plan')['paid_prin_amt']) + float(gl.get_value('repay_plan')['paid_int_amt']))).quantize(Decimal("0.00"))
+        assert str(Decimal(repayOrderDetail['actual_repay_principal']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['repay_amt']
+        assert str(Decimal(repayOrderDetail['actual_repay_interest']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['paid_prin_amt']
+        assert str(Decimal(repayOrderDetail['actual_repay_fee']).quantize(Decimal("0.00"))) == gl.get_value('repay_plan')['paid_int_amt']
+        assert str(Decimal(repayOrderDetail['actual_repay_penalty_interest']).quantize(Decimal("0.00"))) == '0.00'
 
         assert str(repayOrderDetail['repay_term']) == gl.get_value('repay_plan')['term_no']
 
@@ -70,12 +72,12 @@ class FqlRepayCheckBizImpl(EnvInit):
         assert repayOrderInfo['certificate_type'] == '0', "证件类型"
         assert repayOrderInfo['certificate_no'] == gl.get_value('personData')['cer_no']
         assert repayOrderInfo['repay_status'] == '1'
-        if gl.get_value('repay_plan')['repay_mode'] == 3:
+        if gl.get_value('repay_plan')['repay_mode'] == '3':
             assert repayOrderInfo['repay_type'] == '2'
         else:
             assert repayOrderInfo['repay_type'] == '1'
         assert repayOrderInfo['repay_amount'] == repayOrderDetail['repay_amount']
         assert repayOrderInfo['repay_principal'] == repayOrderDetail['repay_principal']
-        # assert round(repayOrderInfo['repay_fee_amount'], 2) == round((float(repayOrderDetail['repay_interest']) + float(repayOrderDetail['repay_penalty_interest'])), 2)
+        assert Decimal(repayOrderInfo['repay_fee_amount']).quantize(Decimal("0.00")) == Decimal((float(repayOrderDetail['repay_interest']) + float(repayOrderDetail['repay_penalty_interest']))).quantize(Decimal("0.00"))
         assert repayOrderInfo['trial_amount'] == repayOrderDetail['repay_amount']
 
