@@ -176,6 +176,19 @@ def update_sql_qurey_str(table, db=None, attr=None, **kwargs):
 
 
 # # -----------------------------------------------------------
+# # - 数据库插入语句组装
+# # -----------------------------------------------------------
+def insert_sql_qurey_str(table, db=None):
+    """ # 数据库更新sql
+    @param table:       表名
+    @param db:          数据库名
+    :return:            表名
+    """
+    table = table if not db else '%s.%s' % (db, table)
+    return table
+
+
+# # -----------------------------------------------------------
 # # - 数据库删除语句组装
 # # -----------------------------------------------------------
 def delete_sql_qurey_str(table, db=None, **kwargs):
@@ -465,7 +478,7 @@ def get_before_day(n):
 # # -----------------------------------------------------------
 def get_custom_day(day=0, date='2021-11-13'):
     """
-    @param month: 跳转月份数
+    @param day: 跳转月天数
     @param date: 指定时间
     @return:
     """
@@ -500,8 +513,9 @@ if __name__ == "__main__":
     # r = get_base64_from_img(img_path)
     # r = get_before_month(2, date='2021-11-13')
     # r = update_sql_qurey_str(table='table', db='db', attr='a=b', a=1, b=2)
-    # r = get_custom_day(-2, date='2021-11-13')
+    r = get_custom_day(40, date='2021-11-13')
+    print(r)
     # r = get_sql_qurey_str('table', 'a', 'b', db='base')
 
-    r = format_path("/hj/xdgl/meituan/bank_loan_create\\20220401")
-    print(r)
+    # r = format_path("/hj/xdgl/meituan/bank_loan_create\\20220401")
+    # print(r)

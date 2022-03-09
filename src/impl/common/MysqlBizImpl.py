@@ -141,7 +141,7 @@ class MysqlBizImpl(MysqlInit):
         """
         keys = self.mysql_credit.select_table_column(*args, table_name=table, database=self.credit_database_name)
         # 获取查询内容
-        sql = get_sql_qurey_str(table,  *args, db=self.credit_database_name, **kwargs)
+        sql = get_sql_qurey_str(table, *args, db=self.credit_database_name, **kwargs)
         values = self.mysql_credit.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
@@ -159,7 +159,7 @@ class MysqlBizImpl(MysqlInit):
         """
         @param table:
         @param args: 查询表子项 tuple
-        @param record: 查询记录，非必填
+        @param record: 查询记录，非必填  record == 999: 查询所有记录
         @param kwargs: 查询条件，字典类型
         @return: response 接口响应参数 数据类型：json
         """
@@ -262,7 +262,8 @@ class MysqlBizImpl(MysqlInit):
         @param kwargs: 查询条件，字典类型
         @return: response 接口响应参数 数据类型：json
         """
-        keys = self.mysql_op_channel.select_table_column(*args, table_name=table, database=self.op_channel_database_name)
+        keys = self.mysql_op_channel.select_table_column(*args, table_name=table,
+                                                         database=self.op_channel_database_name)
         # 获取查询内容
         sql = get_sql_qurey_str(table, *args, db=self.op_channel_database_name, **kwargs)
         values = self.mysql_op_channel.select(sql)
@@ -346,7 +347,7 @@ class MysqlBizImpl(MysqlInit):
         @return: status 支用单状态
         """
         self.log.demsg('获取支用单的借据状态...')
-        for n in range(1, m+1):
+        for n in range(1, m + 1):
             info = self.get_loan_apply_info(**kwargs)
             status = info['status']
             if status == exp_status:
@@ -359,6 +360,17 @@ class MysqlBizImpl(MysqlInit):
                 self.log.demsg("credit_loan_apply获取支用单状态不符合预期,启动轮训查询")
                 time.sleep(t)
 
+    def get_asset_job_ctl_info(self, job_date, job_type='ASSET_BI_JOB_FINISH'):
+        self.log.demsg('检查资产卸数时间，不存则新增一条记录...')
+        data = self.get_asset_database_info('asset_job_ctl', job_date=job_date, job_type=job_type)
+        if data:
+            self.log.info('存在 job_date={} 资产卸数记录，无需新增'.format(job_date))
+        else:
+            curtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+            self.mysql_asset.insert('asset_job_ctl', tenant_id='000', job_date=job_date, job_type=job_type,
+                                    job_name='日终结束任务', job_order='999', job_status='1', create_time=curtime,
+                                    update_time=curtime)
+
 
 if __name__ == '__main__':
     # t = MysqlBizImpl().get_bigacct_database_info('acct_sys_info', sys_id='BIGACCT')
@@ -367,4 +379,5 @@ if __name__ == '__main__':
     # MysqlBizImpl().get_loan_apply_info(id=999)
     # MysqlBizImpl().get_credit_apply_info('credit_apply_id', credit_apply_id='000CA2021031500000021')
     # MysqlBizImpl().get_loan_apply_status('01')
-    MysqlBizImpl().get_asset_database_info('asset_repay_plan', 'sum(pre_repay_amount)', record=999, loan_invoice_id='000LI0001287425037156375010', repay_plan_status='4')
+    # MysqlBizImpl().get_asset_database_info('asset_repay_plan', 'sum(pre_repay_amount)', record=999, loan_invoice_id='000LI0001287425037156375010', repay_plan_status='4')
+    MysqlBizImpl().update_asset_job_ctl_date('20210909')
