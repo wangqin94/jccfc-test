@@ -13,7 +13,6 @@ import pytest
 
 from src.impl.common.MysqlBizImpl import *
 from utils.Apollo import Apollo
-from utils.Redis import *
 from utils.JobCenter import *
 
 log = MyLog().get_log()
@@ -21,11 +20,10 @@ log = MyLog().get_log()
 
 @allure.step('前置操作：预置放款数据')
 @pytest.fixture(scope="class", autouse=True)
-def pre_loan_data(get_base_data_zhixin, zhiXinSynBizImpl, checkBizImpl, zhiXinCheckBizImpl, mysqlBizImpl):
+def pre_loan_data(get_base_data_zhixin, zhiXinSynBizImpl, checkBizImpl, zhiXinCheckBizImpl, mysqlBizImpl, redis):
     data = get_base_data_zhixin
     job = JOB()
     apollo = Apollo()
-    redis1 = Redis()
     with allure.step("前置条件-准备借据：借据逾期2期且为账单日"):
         bill_date = zhiXinSynBizImpl.preLoanapply(month=3)
     with allure.step("设置H5还款mock时间, 第二期账单日"):
@@ -53,7 +51,7 @@ def pre_loan_data(get_base_data_zhixin, zhiXinSynBizImpl, checkBizImpl, zhiXinCh
         mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
     with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
-        redis1.del_key('000:ACCT:SysInfo:BIGACCT')
+        redis.del_assert_repay_keys()
 
     with allure.step("执行账务日终任务"):
         job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)

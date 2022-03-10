@@ -29,7 +29,7 @@ class TestCase(object):
         data = get_base_data_meituan
         with allure.step("准备逾期借据数据"):
             res = meiTuanSynBizImpl
-            repay_date = get_custom_day(50, date=res['loan_date'])
+            repay_date = get_custom_day(40, date=res['loan_date'])
             loan_invoice_id = res['loan_invoice_id']
             repay_date_ove = repay_date.replace('-', '')
             with allure.step("设置大会计时间,账务时间=repay_date"):
@@ -37,6 +37,15 @@ class TestCase(object):
                 next_date = str(get_custom_day(1, repay_date)).replace("-", '')
                 mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
                                                           account_date=repay_date_ove, next_date=next_date)
+
+            with allure.step('清除分片流水'):
+                mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
+                mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
+                mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
+
+            with allure.step("删除redis中资产账务时间 key=000:ACCT:SysInfo:BIGACCT、000:ACCT:AccountDate:BIGACCT"):
+                redis.del_assert_repay_keys()
+
             with allure.step("执行账务日终任务"):
                 job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
                 job.trigger_job("资产日终任务流", group=6)
@@ -51,16 +60,8 @@ class TestCase(object):
             with allure.step('新增资产卸数记录'):
                 mysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
 
-            with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
-                redis.del_key('000:ACCT:SysInfo:BIGACCT')
-
             with allure.step('生成逾期还款文件并上传SFTP'):
                 MeiTuanRepayFile(data, repay_type='03', repay_term_no='1', repay_date=repay_date)
-
-            with allure.step('清除分片流水'):
-                mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
-                mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-                mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
             with allure.step('执行任务流下载还款对账文件入库'):
                 job.update_job('美团期数动账单解析任务流', executeBizDateType='CUSTOMER', executeBizDate=repay_date_ove)
@@ -98,8 +99,8 @@ class TestCase(object):
             with allure.step('新增资产卸数记录'):
                 mysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
 
-            with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
-                redis.del_key('000:ACCT:SysInfo:BIGACCT')
+            with allure.step("删除redis中的账务时间缓存"):
+                redis.del_assert_repay_keys()
 
             with allure.step('生成逾期还款文件并上传SFTP'):
                 MeiTuanRepayFile(data, repay_type='01', repay_term_no='2')
@@ -147,8 +148,8 @@ class TestCase(object):
             with allure.step('新增资产卸数记录'):
                 mysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
 
-            with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
-                redis.del_key('000:ACCT:SysInfo:BIGACCT')
+            with allure.step("删除redis中的账务时间缓存"):
+                redis.del_assert_repay_keys()
 
             with allure.step('生成逾期还款文件并上传SFTP'):
                 MeiTuanRepayFile(data, repay_type='02', repay_term_no='3', repay_date=repay_date)
