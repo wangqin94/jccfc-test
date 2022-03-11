@@ -17,11 +17,11 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡, 3: 授信, 5: 支用, 6: 还款, 7: 绑卡&授信&支用]
-    def process(self, flag=0):
+    def process(self, flag=6):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            wld = WldBizImpl(data=data)
+            wld = WldBizImpl(data=None)
             wld.bind_card()
             wld.confirm_bind_card()
 
@@ -57,7 +57,7 @@ class TestCase(object):
 
         # 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
         elif flag == 6:
-            wld = WldBizImpl(data=data, repay_term_no="3", repay_type="4", loan_invoice_id="000LI5669354082158502004590")
+            wld = WldBizImpl(data=data, repay_term_no="3", repay_type="2", loan_invoice_id="000LI0001364906247323984107")
             wld.repay()
             # wld.repay(repayAmount=685.90, repayPrincipal=685.90, repayInterest=0)
 

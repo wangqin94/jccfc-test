@@ -3,7 +3,7 @@
 # 我来贷接口数据封装类
 # ------------------------------------------
 from datetime import datetime
-
+from config.TestEnvInfo import TEST_ENV_INFO
 from engine.EnvInit import EnvInit
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
@@ -14,26 +14,42 @@ from src.test_data.module_data import wld
 
 
 class WldBizImpl(EnvInit):
-    def __init__(self, *, data=None, repay_term_no='1', repay_type="1", loan_invoice_id="", encrypt_flag=True):
+    def __init__(self,  data=None, person=True,encrypt_flag=True,**kwargs):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = wld.wld
+        self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
 
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WLD.value), "applyid")
+        # 获取四要素
+        if data:
+            self.data = data
+
+        else:
+            if person:
+                self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WLD.value), 'applyid')
+            else:
+                self.data = get_base_data_temp('applyid')
+                print(data)
+
+
+        self.log.info('用户四要素信息 {}'.format(self.data))
+
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
         self.times = time.strftime('%Y%m%d%H%M%S', time.localtime())
-        self.repay_term_no = repay_term_no
-        self.repay_type = repay_type
-        self.loan_invoice_id = loan_invoice_id
+        # self.repay_term_no = repay_term_no
+        # self.repay_type = repay_type
+        # self.loan_invoice_id = loan_invoice_id
 
         self.encrypt_url = self.host + WldPathEnum.wldEncryptPath.value
         self.decrypt_url = self.host + WldPathEnum.wldDecryptPath.value
 
         # 初始化payload变量
         self.active_payload = {}
+
+
 
     @staticmethod
     def url_encoded_to_json(response):
@@ -259,22 +275,26 @@ class WldBizImpl(EnvInit):
         return response
 
     # 还款
-    def repay(self, repay_date=None, **kwargs):
+    def repay(self,repay_date=None, repay_term_no='1', repay_type="1",  loan_invoice_id='', **kwargs):
+        ## 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
         repay_data = dict()
+        strings = str(int(round(time.time() * 1000)))
+        times = time.strftime('%Y%m%d%H%M%S', time.localtime())
         # head
-        repay_data['requestSerialNo'] = 'SerialNo' + self.strings + "10"
-        repay_data['requestTime'] = self.times
+        repay_data['requestSerialNo'] = 'SerialNo' + strings + "10"
+        repay_data['requestTime'] = times
         # body
 
-        repay_data['repayApplySerialNo'] = 'repay' + self.strings + "5"
-        repay_data['repayType'] = self.repay_type
-        repay_data['repayNum'] = self.repay_term_no
-        repay_data['loanInvoiceId'] = self.loan_invoice_id
+        repay_data['repayApplySerialNo'] = 'repay' + strings + "5"
+        repay_data['repayType'] = repay_type
+        repay_data['repayNum'] = repay_term_no
+        repay_data['loanInvoiceId'] = loan_invoice_id
         key = "user_id in (select user_id from credit_loan_invoice where loan_invoice_id = '" \
-              + self.loan_invoice_id + "')"
+              + loan_invoice_id + "')"
+
         content = self.MysqlBizImpl.get_credit_data_info(table="credit_bind_card_info", key=key)
         repay_data['repaymentAccountNo'] = content['bank_card_no']
-        key1 = "loan_invoice_id = '" + self.loan_invoice_id + "' and current_num = '" + self.repay_term_no + "'"
+        key1 = "loan_invoice_id = '" + loan_invoice_id + "' and current_num = '" + repay_term_no + "'"
         content1 = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key1)
         self.log.info(content1)
         repay_data['repayInterest'] = float(content1['pre_repay_interest'])
@@ -282,12 +302,12 @@ class WldBizImpl(EnvInit):
         repay_data['repayOverdueFee'] = float(content1['pre_repay_overdue_fee'])
         repay_data['repayCompoundInterest'] = float(content1['pre_repay_compound_interest'])
         # 按期还款/逾期还款
-        if self.repay_type == "1" or self.repay_type == "4":
+        if repay_type == "1" or repay_type == "4":
             repay_data['repayAmount'] = float(content1['pre_repay_amount'])
             repay_data['repayPrincipal'] = float(content1['pre_repay_principal'])
 
         # 提前结清
-        elif self.repay_type == "2":
+        elif repay_type == "2":
             pre_repay_date = str(content1["start_date"])
             pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
             repay_date = datetime.strptime(repay_date, "%Y-%m-%d").date()
@@ -309,6 +329,28 @@ class WldBizImpl(EnvInit):
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
                                      encrypt_flag=self.encrypt_flag)
         return response
+
+
+    # 支用查询
+    def repay_result_query(self, repayApplySerialNo,):
+        lrepay_result_query = dict()
+        # head
+        lrepay_result_query['repayApplySerialNo'] = repayApplySerialNo
+
+        # body
+        lrepay_result_query['thirdApplyId'] = self.data['applyid']
+
+        # 更新 payload 字段值
+        lrepay_result_query.update(kwargs)
+        parser = DataUpdate(self.cfg['loan_query']['payload'], **lrepay_result_query)
+        self.active_payload = parser.parser
+
+        self.log.demsg('支用查询...')
+        url = self.host + self.cfg['loan_query']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
 
 
 if __name__ == '__main__':
