@@ -25,6 +25,12 @@ def pytest_addoption(parser):
     )
 
 
+@pytest.fixture(scope="class")
+def checkBizImpl():
+    checkBizImpl = CheckBizImpl()
+    return checkBizImpl
+
+
 @pytest.fixture
 def logger():
     loglevel = pytest.config.getoption("--log")
@@ -40,12 +46,6 @@ def logger():
 
     logger.setLevel(numeric_level)
     return logger
-
-
-@pytest.fixture(scope="class")
-def checkBizImpl():
-    checkBizImpl = CheckBizImpl()
-    return checkBizImpl
 
 
 @pytest.fixture(scope="class")

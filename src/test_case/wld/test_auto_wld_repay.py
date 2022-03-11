@@ -2,7 +2,6 @@ from src.enums.EnumWld import WldApiStatusEnum, StatusCodeEnum
 from src.impl.common.CheckBizImpl import *
 import allure
 import pytest
-
 from src.impl.common.MysqlBizImpl import *
 from utils.Apollo import Apollo
 from utils.Redis import *
@@ -72,8 +71,7 @@ class TestCase(object):
             assert EnumLoanStatus.OVERDUE.value == status, '当前支用单状态不为逾期状态，请检查账务日终任务执行结果'
 
         # set_ctl_time
-        # mysqlBizImpl.update_asset_database_info(table='asset_job_ctl', attr="job_type = 'ASSET_BI_JOB_FINISH'",
-        #                                         job_date=repay_time)
+
 
         mysqlBizImpl.get_asset_job_ctl_info(job_date=repay_time)
         u_id = mysqlBizImpl.get_loan_apply_info(thirdpart_apply_id=data['applyid'])['user_id']
@@ -91,11 +89,6 @@ class TestCase(object):
             repayRes['reasonMsg'])
         assert WldApiStatusEnum.QUERY_REPAY_RESULT_D.value == repayResstatus, '还款失败'
 
-        # 接口层验证
-
-        # with allure.step("接口层校验支用结果是否符合预期"):
-        #     status = wldCheckBizImpl.check_repay_status(repayApplySerialNo)
-        #     assert WldApiStatusEnum.QUERY_REPAY_RESULT_S.value == status, '还款失败'
 
         # 数据库层验证
         with allure.step("数据库层校验还款结果是否符合预期"):
@@ -151,9 +144,11 @@ class TestCase(object):
 
 
         repay_time = str(get_custom_day(-1, repay_date)).replace("-", '')
+
         # set_ctl_time
-        # mysqlBizImpl.update_asset_database_info(table='asset_job_ctl', attr="job_type = 'ASSET_BI_JOB_FINISH'", job_date=repay_time)
+
         mysqlBizImpl.get_asset_job_ctl_info(job_date=repay_time)
+
         u_id = mysqlBizImpl.get_loan_apply_info(thirdpart_apply_id=data['applyid'])['user_id']
 
         loan_invoiceid = mysqlBizImpl.get_loan_invoice_info(user_id=u_id)['loan_invoice_id']
@@ -214,12 +209,19 @@ class TestCase(object):
             next_date = str(get_custom_day(1, repay_date)).replace("-", '')
             mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
                                                   account_date=account_date, next_date=next_date)
+            print(last_date)
 
 
         with allure.step("清理分片流水"):
             mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
             mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
             mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
+
+        with allure.step("清理账务日终任务分片流水"):
+            mysqlBizImpl.delete_asset_database_info('asset_repay_plan_od', account_date = '20220510')
+            mysqlBizImpl.delete_asset_database_info('asset_repay_plan_fee_detail_od', account_date = '20220510')
+            mysqlBizImpl.delete_asset_database_info('asset_loan_invoice_info_od', account_date = '20220510')
+
 
 
         with allure.step("执行账务日终任务"):
@@ -228,10 +230,10 @@ class TestCase(object):
 
 
 
-        with allure.step("清理分片流水"):
-            mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
-            mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-            mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
+        # with allure.step("清理分片流水"):
+        #     mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
+        #     mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
+        #     mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
         with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
             redis1.del_key('000:ACCT:SysInfo:BIGACCT')
@@ -241,15 +243,14 @@ class TestCase(object):
 
         repay_time = str(get_custom_day(-1, repay_date)).replace("-", '')
         # set_ctl_time
-        # mysqlBizImpl.update_asset_database_info(table='asset_job_ctl', attr="job_type = 'ASSET_BI_JOB_FINISH'", job_date=repay_time)
+
         mysqlBizImpl.get_asset_job_ctl_info(job_date=repay_time)
+
         u_id = mysqlBizImpl.get_loan_apply_info(thirdpart_apply_id=data['applyid'])['user_id']
 
         loan_invoiceid = mysqlBizImpl.get_loan_invoice_info(user_id=u_id)['loan_invoice_id']
 
-        repayRes = wldBizImpl.repay(repay_date="2022-06-10",repay_term_no="3", repay_type="2", loan_invoice_id=loan_invoiceid
-                                    )
-
+        repayRes = wldBizImpl.repay(repay_date=repay_date,repay_term_no="3", repay_type="2", loan_invoice_id=loan_invoiceid)
 
 
         # repayApplySerialNo = repayRes['body']['repayApplyList'][0]['repayApplySerialNo']
@@ -261,10 +262,6 @@ class TestCase(object):
 
         assert WldApiStatusEnum.QUERY_REPAY_RESULT_D.value == repayResstatus, '还款失败'
 
-        # 接口层验证
-        # with allure.step("接口层校验支用结果是否符合预期"):
-        #     status = wldCheckBizImpl.check_repay_status(repayApplySerialNo)
-        #     assert WldApiStatusEnum.QUERY_REPAY_RESULT_S.value == status, '还款失败'
 
         # 数据库层验证
 

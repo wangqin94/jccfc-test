@@ -371,6 +371,31 @@ class MysqlBizImpl(MysqlInit):
                                     job_name='日终结束任务', job_order='999', job_status='1', create_time=curtime,
                                     update_time=curtime)
 
+    def get_loan_invoice_info(self, *args, record=0, **kwargs):
+
+        """  @param record: 查询记录，非必填
+             @param args: 查询表子项
+             @param kwargs: 查询条件，字典类型
+             @return: response 接口响应参数 数据类型：json
+        """
+        table = 'credit_loan_invoice'
+        keys = self.mysql_credit.select_table_column(*args, table_name=table, database=self.credit_database_name)
+        # 获取查询内容
+        sql = get_sql_qurey_str(table, *args, db=self.credit_database_name, **kwargs)
+        values = self.mysql_credit.select(sql)
+        try:
+            # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
+                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+            return data
+        except Exception as err:
+            self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
+
+
 
 if __name__ == '__main__':
     # t = MysqlBizImpl().get_bigacct_database_info('acct_sys_info', sys_id='BIGACCT')
