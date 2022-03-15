@@ -217,7 +217,6 @@ class WldBizImpl(EnvInit):
         loan_data['idNo'] = self.data['cer_no']
         key = "thirdpart_apply_id = '" + self.data['applyid'] + "'"
         content = self.MysqlBizImpl.get_credit_data_info(table="credit_apply", key=key)
-        print(content)
         loan_data['loanAmt'] = float(content['apply_amount'])
         loan_data['loanTerm'] = str(content['apply_term'])
 

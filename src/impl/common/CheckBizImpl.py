@@ -137,7 +137,7 @@ class CheckBizImpl(EnvInit):
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
                     raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
-    def check_credit_apply_status(self, m=10, t=3, **kwargs):
+    def check_credit_apply_status(self, m=20, t=3, **kwargs):
         """
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S

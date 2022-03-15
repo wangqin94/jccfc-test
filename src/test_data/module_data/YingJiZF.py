@@ -261,4 +261,35 @@ YingJiZF = {
             }
         }
     },
+    'vocation_query': {
+        'interface': '/api/v1/vocation/query',
+        'payload': {
+            "head": {
+                "jcSystemEncry": "2582a6b723486da364ada1af2c00f115",
+                "jcSystemCode": "loan-web",
+                "tenantId": "000",
+                "channelNo": "21",
+                "requestSerialNo": "202=182714511036848",
+            },
+            "body": {
+                "idCard": "${idCard}",
+            }
+        }
+    },
+    'vocation_update': {
+        'interface': '/api/v1/vocation/update',
+        'payload': {
+            "head": {
+                "jcSystemEncry": "2582a6b723486da364ada1af2c00f115",
+                "jcSystemCode": "loan-web",
+                "tenantId": "000",
+                "channelNo": "21",
+                "requestSerialNo": "202=182714511036848",
+            },
+            "body": {
+                "idCard": "${idCard}",
+                "vocation": "0",
+            }
+        }
+    },
 }
