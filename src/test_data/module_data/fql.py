@@ -38,7 +38,7 @@ fql = {
                 "repayType": "1",  # 还款方式 1:等额本息 2:等额本金 3:按天计息
                 "fixedBillDay": "10",
                 "fixedRepayDay": "27",
-                "interestRate": "30",  # 年利率
+                "interestRate": "24",  # 年利率
                 "annualRate": "20.36",  # 实际利率（平台优惠后的利率
                 "name": "祖文策",
                 "age": "39",
@@ -176,7 +176,7 @@ fql = {
                 "loanAmt": "20000",
                 "loanTerm": "6",
                 "mobileNo": "16100007381",
-                "interestRate": "35.28",
+                "interestRate": "24",
                 "orderType": "2",  # 1、取现 2、赊销（分期购物） 3、信用卡还款 4、账单分期 5、微信、银联消费资产（二类户资产）
                 "repayType": "1",
                 "debitAccountName": "蓝安峰",

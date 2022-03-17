@@ -28,11 +28,6 @@ class TestCase(object):
             qbindres = wldBizImpl.query_bind_card(user_id=u_id)
             qbindres2 = qbindres['body']['retDesc']
 
-        print(qbindres2)
-
-        # with allure.step("绑卡校验-数据库"):
-        #     wldBizImpl.query_bind_card()
-
         with allure.step("发起授信申请"):
             creditres = wldBizImpl.credit()
             creditApplyNo = creditres['body']['thirdApplyId']
