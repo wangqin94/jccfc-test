@@ -167,7 +167,7 @@ class fqlRepayFile(EnvInit):
         repay_plan['repay_amt'] = temple['repay_amt']
         repay_plan['paid_prin_amt'] = temple['paid_prin_amt']
         repay_plan['paid_int_amt'] = temple['paid_int_amt']
-        # gl._init()
+
         gl.set_value('repay_plan', repay_plan)
         # 写入单期还款文件
         val_list = map(str, [temple[key] for key in self.repay_temple])
