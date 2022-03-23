@@ -21,7 +21,6 @@ class JieTiaoBizImpl(EnvInit):
         self.cfg = JieTiao.JieTiao
 
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JieTiao.value), "applyid")
-        self.log.info('用户四要素信息 %s: ', self.data)
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
@@ -36,7 +35,7 @@ class JieTiaoBizImpl(EnvInit):
         loan_data = dict()
 
         loan_data['loanReqNo'] = 'loanReqNo' + self.strings + "2"
-        loan_data['custName'] ,loan_data['dbAcctName'] = self.data['name']
+        loan_data['custName'] ,loan_data['dbAcctName'] = self.data['name'],self.data['name']
         loan_data['id'] = self.data['cer_no']
         loan_data['dbAcct'] = self.data['bankid']
         loan_data['mobileNo'] = self.data['telephone']
@@ -45,7 +44,7 @@ class JieTiaoBizImpl(EnvInit):
         loan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.active_payload = parser.parser
-
+        
         self.log.demsg('放款请求接口...')
         url = self.host + self.cfg['loan']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
