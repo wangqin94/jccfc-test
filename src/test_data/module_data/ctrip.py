@@ -279,6 +279,21 @@ ctrip = {
         }
     },
 
+    'loan_query': {
+            'interface': '/api/v1/ctrip/demo/trade',
+            'payload': {
+                "service":"LOAN_APPLY_QUERY",
+                "loan_request_no": "${loan_request_no}",
+                "partner_loan_no": "${partner_loan_no}",
+                "result_code": "000000",
+                "loan_status": "0",
+                "result_msg": "成功 " ,
+                "partner": "XXCASH",
+                "loan_rate": 0.0008,
+                "service_version": "1.0"
+            }
+        },
+
     'loan_repay_notice': {
         'interface': '/api/v1/ctrip/demo/trade',
         'payload': {
