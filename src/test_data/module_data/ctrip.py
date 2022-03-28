@@ -140,7 +140,7 @@ ctrip = {
                     "customerStickiness": "优质",
                     "institutionType": "microCredit",
                     "loanAppRating2": "1",
-                    "loanAppRating": None,
+                    "loanAppRating": "优",
                     "login_period": "0.1978,0.1626,0.1930,0.3240,0.1226",
                     "rest_regular": "96.5241",
                     "creditRating": "优质",
@@ -249,7 +249,7 @@ ctrip = {
             "bank_no": "CCB",
             "first_repay_date": "${__time(YMD,)}113538",
             "service": "LOAN_CASH",
-            "term": "3",
+            "term": "6",
             "bank_bind_mobile": "${手机号}",
             "repay_type": "ECI",
             "extend_param": {
