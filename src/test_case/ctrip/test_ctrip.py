@@ -6,8 +6,8 @@ test case script
 import time
 import threading
 from src.impl.ctrip.CtripBizImpl import CtripBizImpl
-from person import *
 from utils.Logger import MyLog
+from person import *
 
 
 class TestCase(object):
@@ -18,7 +18,8 @@ class TestCase(object):
         """ 预置条件处理 """
         pass
 
-    # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效]
+    # # [0: 授信, 1: 授信查询, 2:支
+    # 用申请, 3: 支用查询, 4: 授信失效]
     def process(self, flag=0):
         """ 测试步骤 """
         # 授信申请
@@ -45,14 +46,14 @@ class TestCase(object):
         # 支用查询
         elif flag == 3:
             xc = CtripBizImpl(data=data)
-            xc.MysqlBizImpl.loan_query()
+            xc.loan_query()
 
         # 还款通知
         elif flag == 4:
             # repay_mode=还款类型: 必填参数 :1按期还款；2提前结清；3逾期还款
             # finish_time=实际还款时间： 提前结清必填参数"20210806"
-            xc = CtripBizImpl(data=data, repay_mode="1", repay_term_no="1", loan_invoice_id=None)
-            xc.repay_notice()
+            xc = CtripBizImpl(data=data)
+            xc.repay_notice(repay_mode="3", repay_term_no="2",finish_time="20220526")
 
         elif flag == 5:
             num = 1

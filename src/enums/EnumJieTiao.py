@@ -11,5 +11,5 @@ from enum import Enum
 
 
 class JieTiaoEnum(Enum):
-    JieTiaoEncryptPath = "/api/v1/secret/thirdEncryptData/JieTiao"
+    JieTiaoEncryptPath = "/api/v1/jietiao/demo/encryptData"
     JieTiaoDecryptPath = "/api/v1/secret/thirdDecryptData/JieTiao"

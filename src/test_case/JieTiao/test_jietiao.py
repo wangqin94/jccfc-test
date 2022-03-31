@@ -1,4 +1,4 @@
-from datetime import time
+import time
 
 from src.impl.JieTiao.JieTiaoBizImpl import JieTiaoBizImpl
 from src.test_case.JieTiao.person import data
@@ -18,8 +18,8 @@ class TestCase(object):
         """ 测试步骤 """
         # 放款请求接口
         if flag == 0:
-            jt = JieTiaoBizImpl(data=data)
-            jt.loan(loanDate='', loanAmt='', lnTerm='', creditAmt='', feeRate='', yearRate='', idValidDateStart='', idValidDateEnd='')
+            jt = JieTiaoBizImpl(data=None)
+            jt.loan(loanDate='2022-03-23', loanAmt='2000', lnTerm='3', creditAmt='2000', feeRate='16', yearRate='22', idValidDateStart='2022-01-10', idValidDateEnd='2022-10-12')
 
         # 放款结果查询接口
         elif flag == 1:
