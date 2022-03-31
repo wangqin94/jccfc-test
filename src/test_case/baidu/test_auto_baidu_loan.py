@@ -7,7 +7,6 @@ import allure
 import pytest
 import datetime
 from src.impl.baidu.BaiDuCreditFileBizImpl import BaiduFile
-from src.enums.EnumsCommon import *
 from src.enums.EnumBaiDu import *
 
 
@@ -24,8 +23,8 @@ class TestCase(object):
             time.sleep(5)
 
         with allure.step('数据库层校验授信结果是否符合预期'):
-            credit_status = checkBizImpl.check_credit_apply_status(thirdpart_apply_id=credit_apply_id)
-            assert EnumCreditStatus.SUCCESS.value == credit_status, '授信失败'
+
+            checkBizImpl.check_credit_apply_status(thirdpart_apply_id=credit_apply_id)
 
         with allure.step('接口层校验授信结果是否符合预期'):
             ris_code = baiduBizImpl.credit_query(credit_apply_id=credit_apply_id)['message']['expanding'][
@@ -37,8 +36,7 @@ class TestCase(object):
             time.sleep(5)
 
         with allure.step('数据库层校验支用状态-待放款'):
-            loan_status = checkBizImpl.check_file_loan_apply_status(loan_apply_serial_id=loan_apply_id)
-            assert EnumLoanStatus.TO_LOAN.value == loan_status, '支用失败'
+            checkBizImpl.check_file_loan_apply_status(loan_apply_serial_id=loan_apply_id)
 
         with allure.step('接口层校验支用结果-待放款'):
             l_ris_code = baiduBizImpl.loan_query(loan_apply_id=loan_apply_id)['message']['expanding']['risCode']
@@ -58,13 +56,15 @@ class TestCase(object):
             job.trigger_job('百度放款对账下载任务流-测试')
             time.sleep(5)
 
+        with allure.step('检查放款信息是否入三方待建账信息表'):
+            checkBizImpl.check_third_wait_loan_status(certificate_no=data['cer_no'])
+
         with allure.step('执行任务流放款'):
             job.update_job('线下自动放款', executeBizDate=loan_date.replace('-', ''))
             job.trigger_job('线下自动放款')
 
         with allure.step('数据库层校验支用状态-使用中'):
-            loan_status_2 = checkBizImpl.check_loan_apply_status(loan_apply_serial_id=loan_apply_id)
-            assert EnumLoanStatus.ON_USE.value == loan_status_2, '放款对账文件处理失败'
+            checkBizImpl.check_loan_apply_status(loan_apply_serial_id=loan_apply_id)
 
 
 if __name__ == '__main__':

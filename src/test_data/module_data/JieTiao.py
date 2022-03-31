@@ -10,7 +10,7 @@
 JieTiao = {
     # 放款请求接口
     'loan': {
-        'interface': '/api/v1/welab/common/getCardRealNameMessage',
+        'interface': '/api/v1/jietiao/loan/apply',
         'payload': {
             "loanReqNo": "",  # 放款请求流水号
             "sourceCode": "QH",  # 请求方代码  QH
@@ -52,7 +52,7 @@ JieTiao = {
     },
     # 放款结果查询接口
     'loan_query': {
-        'interface': '/api/v1/welab/common/bindCardRealName',
+        'interface': '/api/v1/jietiao/loan/query',
         'payload': {
             "loanReqNo": "",  # 放款请求流水号
             "sourceCode": "QH"  # 请求方代码QH

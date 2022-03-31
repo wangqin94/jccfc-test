@@ -8,7 +8,6 @@ from src.impl.common.CheckBizImpl import CheckBizImpl
 from src.impl.baidu.BaiDuBizImpl import BaiDuBizImpl
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.impl.baidu.BaiDuCreditFileBizImpl import BaiduFile
-from src.enums.EnumsCommon import *
 from src.enums.EnumBaiDu import *
 from utils.JobCenter import *
 
@@ -33,8 +32,7 @@ class BaiDuSynBizImpl(object):
         credit_apply_id = self.BaiDuBizImpl.credit(initialAmount=self.loanamount)['credit_apply_id']
         # 数据库层校验授信结果是否符合预期
         time.sleep(5)
-        credit_status = self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=credit_apply_id)
-        assert EnumCreditStatus.SUCCESS.value == credit_status, '授信失败'
+        self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=credit_apply_id)
         # 接口层校验授信结果是否符合预期
         ris_code = self.BaiDuBizImpl.credit_query(credit_apply_id=credit_apply_id)['message']['expanding']['risCode']
         assert EnumBaiDuRisCode.ACCEPT.value == ris_code, '授信失败'
@@ -42,8 +40,7 @@ class BaiDuSynBizImpl(object):
         loan_apply_id = self.BaiDuBizImpl.loan(cashAmount=self.loanamount, term=self.month)['loan_apply_id']
         time.sleep(5)
         # 数据库层校验支用状态-待放款
-        loan_status = self.CheckBizImpl.check_file_loan_apply_status(loan_apply_serial_id=loan_apply_id)
-        assert EnumLoanStatus.TO_LOAN.value == loan_status, '支用失败'
+        self.CheckBizImpl.check_file_loan_apply_status(loan_apply_serial_id=loan_apply_id)
         # 接口层校验支用结果-待放款
         l_ris_code = self.BaiDuBizImpl.loan_query(loan_apply_id=loan_apply_id)['message']['expanding']['risCode']
         assert EnumBaiDuRisCode.ACCEPT.value == l_ris_code, '支用失败'
@@ -58,12 +55,13 @@ class BaiDuSynBizImpl(object):
         self.job.update_job('百度放款对账下载任务流-测试', executeBizDate=self.loan_date.replace('-', ''))
         self.job.trigger_job('百度放款对账下载任务流-测试')
         time.sleep(5)
+        # 检查是否入三方待建账信息
+        self.CheckBizImpl.check_third_wait_loan_status(certificate_no=self.data['cer_no'])
         # 执行任务流放款
         self.job.update_job('线下自动放款', executeBizDate=self.loan_date.replace('-', ''))
         self.job.trigger_job('线下自动放款')
         # 数据库层校验支用状态-使用中
-        loan_status_2 = self.CheckBizImpl.check_loan_apply_status(loan_apply_serial_id=loan_apply_id)
-        assert EnumLoanStatus.ON_USE.value == loan_status_2, '放款对账文件处理失败'
+        self.CheckBizImpl.check_loan_apply_status(loan_apply_serial_id=loan_apply_id)
         # 查询借据号
         info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice', certificate_no=self.data['cer_no'])
         loan_no = info['loan_invoice_id']
