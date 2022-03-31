@@ -29,14 +29,14 @@ ctrip = {
                     "customerStickiness": "优质",
                     "institutionType": "microCredit",
                     "loanAppRating2": "1",
-                    "loanAppRating": None,
+                    "loanAppRating": '优',
                     "login_period": "0.1978,0.1626,0.1930,0.3240,0.1226",
                     "rest_regular": "96.5241",
                     "creditRating": "优质",
                     "flight_airport_tendency": "0.1429,0.1429,0.7143",
                     "car_prob": "0.9122",
                     "family_prob": None,
-                    "pbocQuery": "N",
+                    "pbocQuery": "Y",
                     "city_stable": "0.3855",
                     "house_prob": "0.6531",
                     "odc_prob": "0.9999",
@@ -274,6 +274,8 @@ ctrip = {
                 "identity_card_image_1": "5db0ea08059aa2955d005ac830510e6c",
                 "identity_card_image_2": "40d72516c9dd84bc75a0a73306250369",
                 "face_image": None,
+                "loanAppRating2": "1",
+                "loanAppRating": '优',
                 "riskGrade": 1
             }
         }

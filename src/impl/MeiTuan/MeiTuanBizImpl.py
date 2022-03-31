@@ -86,13 +86,6 @@ class MeiTuanBizImpl(EnvInit):
         info = [dict(zip(keys, item)) for item in res]
         self.user_credit_apply_info = info
 
-    def get_user_file_info(self, sql, table='credit', database=None):
-        database = self.MysqlBizImpl.credit_database_name if not database else database
-        # keys = self.mysql_credit.select_table_column(table_name=table, database=database)
-        # sql =
-        # values = self.mysql_credit.select(sql)
-        pass
-
     # 获取数据库支用申请用户信息
     def get_user_loan_apply_info(self, certificate_no, database=None):
         database = self.MysqlBizImpl.credit_database_name if not database else database
@@ -131,6 +124,7 @@ class MeiTuanBizImpl(EnvInit):
         # 校验用户是否在系统中已存在
         self.MysqlBizImpl.check_user_available(self.data)
 
+        # 配置风控mock返回建议额度与授信额度一致
         apollo_data = dict()
         creditAmt = int(self.active_payload['body']['APPLY_AMT'])/100
         apollo_data['hj.channel.risk.credit.line.amt.mock'] = str(creditAmt)
