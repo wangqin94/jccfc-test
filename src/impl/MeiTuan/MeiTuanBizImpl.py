@@ -3,13 +3,13 @@
 # 接口数据封装类
 # ------------------------------------------
 
-from config.TestEnvInfo import *
 from engine.EnvInit import EnvInit
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import MeiTuan
 from src.enums.EnumMeiTuan import *
 from src.impl.common.CommonBizImpl import *
 from src.enums.EnumsCommon import *
+from utils.Apollo import Apollo
 
 
 class MeiTuanBizImpl(EnvInit):
@@ -130,6 +130,11 @@ class MeiTuanBizImpl(EnvInit):
 
         # 校验用户是否在系统中已存在
         self.MysqlBizImpl.check_user_available(self.data)
+
+        apollo_data = dict()
+        creditAmt = int(self.active_payload['body']['APPLY_AMT'])/100
+        apollo_data['hj.channel.risk.credit.line.amt.mock'] = str(creditAmt)
+        Apollo().update_config(appId='loan2.1-jcxf-credit', **apollo_data)
 
         self.log.demsg('授信申请...')
         url = self.host + self.cfg['credit']['interface']

@@ -26,3 +26,7 @@ class TestCase(object):
                 checkBizImpl.check_credit_apply_status(thirdpart_apply_id=APP_NO)
             with allure.step("接口层校验授信结果是否符合预期"):
                 meiTuanCheckBizImpl.check_credit_apply_status(APP_NO)
+
+
+if __name__ == "__main__":
+    pytest.main(['test_auto_meituan_apply.py'])
