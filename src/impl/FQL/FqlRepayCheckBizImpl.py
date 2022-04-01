@@ -17,6 +17,9 @@ class FqlRepayCheckBizImpl(EnvInit):
     def updateAssetDatabase(self, table, attr, **kwargs):
         self.MysqlBizImpl.update_asset_database_info(table, attr, **kwargs)
 
+    def updateAssetJobCtl(self, job_date):
+        self.MysqlBizImpl.get_asset_job_ctl_info(job_date)
+
     def deleteSlice(self):
         self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
         self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')

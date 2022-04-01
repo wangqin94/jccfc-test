@@ -25,7 +25,7 @@ def pre_loan_repay_data(ctripBizImpl, ctripCreditCheckBizImpl,ctripLoanCheckBizI
         Apollo().update_config(**apollo_data)
 
     with allure.step("发起授信申请"):
-        creditRes = ctripBizImpl.credit(advice_amount=12000)
+        creditRes = ctripBizImpl.credit(advice_amount=30000)
         log.info(f"授信申请接口结果----：{creditRes}")
         creditStatus = creditRes['credit_status']
         assert creditStatus == '0', "返回0说明授信申请成功"
@@ -49,6 +49,7 @@ def pre_loan_repay_data(ctripBizImpl, ctripCreditCheckBizImpl,ctripLoanCheckBizI
         ctripLoanCheckBizImpl.checkLoanApply1(loanApply)
         return loanApply
 
+
 @pytest.mark.ctrip
 @pytest.mark.smoke
 @allure.feature("还款模块")
@@ -58,7 +59,7 @@ class TestCase(object):
 
     @allure.step("按期还款")  # 测试报告显示步骤
     @pytest.mark.run(order=1)
-    def test_overdue_repay(self,mysqlBizImpl, job, redis, ctripBizImpl,get_base_data_ctrip,pre_loan_repay_data):
+    def test_overdue_repay(self, mysqlBizImpl, job, redis, ctripBizImpl, pre_loan_repay_data):
 
         loanApply = pre_loan_repay_data
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
@@ -79,7 +80,7 @@ class TestCase(object):
             mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
         with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
-            redis.del_key('000:ACCT:SysInfo:BIGACCT')
+            redis.del_assert_repay_keys()
 
         with allure.step("执行账务日终任务"):
             job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
@@ -106,7 +107,7 @@ class TestCase(object):
 
     @allure.step("逾期还款")  # 测试报告显示步骤
     @pytest.mark.run(order=2)
-    def test_billDate_repay(self, mysqlBizImpl, job, redis, ctripBizImpl, pre_loan_repay_data,get_base_data_ctrip,):
+    def test_billDate_repay(self, mysqlBizImpl, job, redis, ctripBizImpl, pre_loan_repay_data):
         loanApply = pre_loan_repay_data
         repay_date_bill = get_next_day(70).strftime('%Y-%m-%d')
         with allure.step("设置大会计时间,账务时间=repay_date"):
@@ -124,7 +125,7 @@ class TestCase(object):
             mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
         with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
-            redis.del_key('000:ACCT:SysInfo:BIGACCT')
+            redis.del_assert_repay_keys()
 
         with allure.step("执行账务日终任务"):
             job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
@@ -155,8 +156,7 @@ class TestCase(object):
 
     @allure.step("提前结清")  # 测试报告显示步骤
     @pytest.mark.run(order=3)
-    def test_advance_repay(self, mysqlBizImpl, job, redis, ctripBizImpl, pre_loan_repay_data,
-                            get_base_data_ctrip, ):
+    def test_advance_repay(self, mysqlBizImpl, job, redis, ctripBizImpl, pre_loan_repay_data):
         loanApply = pre_loan_repay_data
         repay_date_bill = get_next_day(70).strftime('%Y-%m-%d')
         with allure.step("设置大会计时间,账务时间=repay_date"):
@@ -174,7 +174,7 @@ class TestCase(object):
             mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
         with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
-            redis.del_key('000:ACCT:SysInfo:BIGACCT')
+            redis.del_assert_repay_keys()
 
         with allure.step("执行账务日终任务"):
             job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
