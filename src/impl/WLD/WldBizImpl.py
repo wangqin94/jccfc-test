@@ -19,21 +19,20 @@ class WldBizImpl(EnvInit):
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = wld.wld
-        self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
+        # self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
 
         # 获取四要素
         if data:
             self.data = data
+            # self.log.info('用户四要素信息 {}'.format(self.data))
 
         else:
             if person:
                 self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WLD.value), 'applyid')
             else:
                 self.data = get_base_data_temp('applyid')
-                print(data)
 
 
-        self.log.info('用户四要素信息 {}'.format(self.data))
 
 
         self.encrypt_flag = encrypt_flag
