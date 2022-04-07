@@ -52,7 +52,6 @@ def mysqlBizImpl():
 def wldSynBizImpl(get_base_data_wld):
     data = get_base_data_wld
     wld = WldSynBizImpl(data)
-    # wldSynBizImpl = WldSynBizImpl(data)
     bil_date = wld.preLoanapply()
     data['bill_date']= bil_date
     return data

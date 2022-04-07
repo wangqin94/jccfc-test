@@ -240,7 +240,7 @@ class WldBizImpl(EnvInit):
         loan_query_data['thirdApplyId'] = self.data['applyid']
 
         # 更新 payload 字段值
-        loan_query_data.update(kwargs)
+        loan_query_data.update(**kwargs)
         parser = DataUpdate(self.cfg['loan_query']['payload'], **loan_query_data)
         self.active_payload = parser.parser
 
@@ -318,7 +318,7 @@ class WldBizImpl(EnvInit):
                 repay_data['repayAmount'] = repay_data['repayPrincipal'] + repay_data["repayInterest"]  # 总金额
 
         # 更新 payload 字段值
-        repay_data.update(kwargs)
+        repay_data.update(**kwargs)
         parser = DataUpdate(self.cfg['repay']['payload'], **repay_data)
         self.active_payload = parser.parser
 
@@ -329,25 +329,7 @@ class WldBizImpl(EnvInit):
         return response
 
 
-    # 支用查询
-    def repay_result_query(self, repayApplySerialNo,):
-        lrepay_result_query = dict()
-        # head
-        lrepay_result_query['repayApplySerialNo'] = repayApplySerialNo
 
-        # body
-        lrepay_result_query['thirdApplyId'] = self.data['applyid']
-
-        # 更新 payload 字段值
-        lrepay_result_query.update(kwargs)
-        parser = DataUpdate(self.cfg['loan_query']['payload'], **lrepay_result_query)
-        self.active_payload = parser.parser
-
-        self.log.demsg('支用查询...')
-        url = self.host + self.cfg['loan_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-                                     encrypt_flag=self.encrypt_flag)
-        return response
 
 
 
