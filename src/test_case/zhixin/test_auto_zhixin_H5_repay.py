@@ -45,8 +45,10 @@ def pre_loan_data(get_base_data_zhixin, zhiXinSynBizImpl, checkBizImpl, zhiXinCh
         account_date = repay_date.replace("-", '')
         last_date = str(get_custom_day(-1, repay_date)).replace("-", '')
         next_date = str(get_custom_day(1, repay_date)).replace("-", '')
+        cut_time = repay_date + " 00:10:00"
         mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
-                                                  account_date=account_date, next_date=next_date)
+                                                  account_date=account_date, next_date=next_date,
+                                                  cutday_time=cut_time)
     with allure.step("清理asset流水记录"):
         mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 

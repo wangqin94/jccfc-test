@@ -296,7 +296,7 @@ zhixin = {
                     "partnerCreditNo": "${partnerCreditNo}",  # 授信号
                     "productCode": "F21E041",
                     "loanAmt": "3000",  # 提现金额
-                    "loanPurpose": "02",
+                    "loanPurpose": "02",  # 借款用途
                     "term": "6",
                     "repayMethod": "01",
                     "agreementTime": "yyyyMMddHHmmss",

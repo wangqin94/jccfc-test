@@ -35,8 +35,10 @@ class TestCase(object):
             with allure.step("设置大会计时间,账务时间=repay_date"):
                 last_date = str(get_custom_day(-1, repay_date)).replace("-", '')
                 next_date = str(get_custom_day(1, repay_date)).replace("-", '')
+                cut_time = repay_date + " 00:10:00"
                 mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
-                                                          account_date=repay_date_ove, next_date=next_date)
+                                                          account_date=repay_date_ove, next_date=next_date,
+                                                          cutday_time=cut_time)
 
             with allure.step('清除分片流水'):
                 mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
@@ -94,8 +96,10 @@ class TestCase(object):
             with allure.step("设置大会计时间,账务时间=repay_date"):
                 last_date = str(get_custom_day(-1, repay_date)).replace("-", '')
                 next_date = str(get_custom_day(1, repay_date)).replace("-", '')
+                cut_time = repay_date + " 00:10:00"
                 mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
-                                                          account_date=repay_date_bill, next_date=next_date)
+                                                          account_date=repay_date_bill, next_date=next_date,
+                                                          cutday_time=cut_time)
             with allure.step('新增资产卸数记录'):
                 mysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
 
@@ -143,8 +147,10 @@ class TestCase(object):
             with allure.step("设置大会计时间,账务时间=repay_date"):
                 last_date = str(get_custom_day(-1, repay_date)).replace("-", '')
                 next_date = str(get_custom_day(1, repay_date)).replace("-", '')
+                cut_time = repay_date + " 00:10:00"
                 mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
-                                                          account_date=repay_date_settle, next_date=next_date)
+                                                          account_date=repay_date_settle, next_date=next_date,
+                                                          cutday_time=cut_time)
             with allure.step('新增资产卸数记录'):
                 mysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
 
