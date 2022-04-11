@@ -16,6 +16,7 @@ from datetime import datetime
 from functools import wraps
 
 from config.TestEnvInfo import TEST_ENV_INFO
+from utils.Identity import IdNumber
 from utils.Logger import MyLog
 
 from dateutil.relativedelta import relativedelta
@@ -53,12 +54,21 @@ def wait_time(sec):
 # # -----------------------------------------------------------
 # # - 用户四要素生成
 # # -----------------------------------------------------------
-def get_base_data(env, *project, back=20, **kwargs):
+def get_base_data(env, *project, back=20, age=None, **kwargs):
+    """
+    用户基础信息生成
+    @param env: 环境变量
+    @param project: 添加随机数
+    @param back: person文件存放数据最大条数 默认20
+    @param age: eg: age='2020-01-01'； age=None 随机生成大于16岁生日
+    @param kwargs: data字典中添加指定key-value值
+    @return:
+    """
     strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
     res = requests.get('http://10.10.100.153:8081/getTestData')
     data['name'] = eval(res.text)["姓名"]
-    data['cer_no'] = eval(res.text)["身份证号"]
+    data['cer_no'] = IdNumber.generate_id(age=age)
     data['bankid'] = eval(res.text)["银行卡号"]
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
@@ -94,12 +104,19 @@ def get_base_data(env, *project, back=20, **kwargs):
 # # -----------------------------------------------------------
 # # - 用户四要素生成（临时数据，不保存到文件）
 # # -----------------------------------------------------------
-def get_base_data_temp(*project, **kwargs):
+def get_base_data_temp(age=None, *project, **kwargs):
+    """
+    用户基础信息生成
+    @param project: 添加随机数
+    @param age: eg: age='2020-01-01'； age=None 随机生成大于16岁生日
+    @param kwargs: data字典中添加指定key-value值
+    @return:
+    """
     strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
     res = requests.get('http://10.10.100.153:8081/getTestData')
     data['name'] = eval(res.text)["姓名"]
-    data['cer_no'] = eval(res.text)["身份证号"]
+    data['cer_no'] = IdNumber.generate_id(age=age)
     data['bankid'] = eval(res.text)["银行卡号"]
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
@@ -488,6 +505,22 @@ def get_custom_day(day=0, date='2021-11-13'):
 
 
 # # -----------------------------------------------------------
+# # - 获取指定日期的前N年
+# # -----------------------------------------------------------
+def get_custom_year(year=0, date=None):
+    """
+    @param year: 跳转年数
+    @param date: 指定时间 '2021-11-13'
+    @return:
+    """
+    if not date:
+        date = time.strftime('%Y-%m-%d', time.localtime())
+    date = datetime.strptime(date, '%Y-%m-%d').date()
+    date = str(date - relativedelta(years=-int(year)))
+    return date
+
+
+# # -----------------------------------------------------------
 # # - 图片转为base64字符串
 # # -----------------------------------------------------------
 def get_base64_from_img(img_path):
@@ -513,7 +546,8 @@ if __name__ == "__main__":
     # r = get_base64_from_img(img_path)
     # r = get_before_month(2, date='2021-11-13')
     # r = update_sql_qurey_str(table='table', db='db', attr='a=b', a=1, b=2)
-    r = get_custom_day(40, date='2021-11-13')
+    # r = get_custom_year(-16)
+    r = get_base_data_temp()
     print(r)
     # r = get_sql_qurey_str('table', 'a', 'b', db='base')
 
