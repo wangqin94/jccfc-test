@@ -34,8 +34,7 @@ class TestCase(object):
             mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
         with allure.step("删除redis 大会计"):
-            redis.del_key('000:ACCT:SysInfo:BIGACCT')
-            redis.del_key('000:ACCT:AccountDate:BIGACCT')
+            redis.del_assert_repay_keys()
 
         with allure.step("执行账务日终任务"):
             job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
@@ -98,8 +97,7 @@ class TestCase(object):
             mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
         with allure.step("删除redis 大会计"):
-            redis.del_key('000:ACCT:SysInfo:BIGACCT')
-            redis.del_key('000:ACCT:AccountDate:BIGACCT')
+            redis.del_assert_repay_keys()
 
         with allure.step('生成按期还款文件并上传金山云'):
             bd = BaiduRepayFile(data=data, repay_date=repay_date_bill, repay_type='01', repay_term_no=2)
@@ -153,8 +151,7 @@ class TestCase(object):
             mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
         with allure.step("删除redis 大会计"):
-            redis.del_key('000:ACCT:SysInfo:BIGACCT')
-            redis.del_key('000:ACCT:AccountDate:BIGACCT')
+            redis.del_assert_repay_keys()
 
         with allure.step('生成提前结清还款文件并上传金山云'):
             bd = BaiduRepayFile(data=data, repay_date=repay_date_settle, repay_type='02', repay_term_no=3)

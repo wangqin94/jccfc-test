@@ -32,7 +32,7 @@ class TestCase(object):
 
         # 换卡
         elif flag == 2:
-            wld = WldBizImpl(data=data)
+            wld = WldBizImpl()
             wld.update_card(loanInvoiceId='000LI5669354082158501976569', idNo='320723198806148818', repaymentAccountNo='6217220211797716769')
 
         # 授信
@@ -57,8 +57,8 @@ class TestCase(object):
 
         # 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
         elif flag == 6:
-            wld = WldBizImpl(data=data, repay_term_no="3", repay_type="2", loan_invoice_id="000LI0001364906247323984107")
-            wld.repay()
+            wld = WldBizImpl(data=data)
+            wld.repay(repay_term_no="1", repay_type="1", loan_invoice_id="000LI0002137107007488200014",repay_date='2022-05-07')
             # wld.repay(repayAmount=685.90, repayPrincipal=685.90, repayInterest=0)
 
         # 批量造数

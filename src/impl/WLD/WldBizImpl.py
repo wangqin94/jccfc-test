@@ -19,21 +19,20 @@ class WldBizImpl(EnvInit):
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = wld.wld
-        self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
+        # self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
 
         # 获取四要素
         if data:
             self.data = data
+            # self.log.info('用户四要素信息 {}'.format(self.data))
 
         else:
             if person:
                 self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WLD.value), 'applyid')
             else:
                 self.data = get_base_data_temp('applyid')
-                print(data)
 
 
-        self.log.info('用户四要素信息 {}'.format(self.data))
 
 
         self.encrypt_flag = encrypt_flag
@@ -241,7 +240,7 @@ class WldBizImpl(EnvInit):
         loan_query_data['thirdApplyId'] = self.data['applyid']
 
         # 更新 payload 字段值
-        loan_query_data.update(kwargs)
+        loan_query_data.update(**kwargs)
         parser = DataUpdate(self.cfg['loan_query']['payload'], **loan_query_data)
         self.active_payload = parser.parser
 
@@ -319,7 +318,7 @@ class WldBizImpl(EnvInit):
                 repay_data['repayAmount'] = repay_data['repayPrincipal'] + repay_data["repayInterest"]  # 总金额
 
         # 更新 payload 字段值
-        repay_data.update(kwargs)
+        repay_data.update(**kwargs)
         parser = DataUpdate(self.cfg['repay']['payload'], **repay_data)
         self.active_payload = parser.parser
 
@@ -330,25 +329,7 @@ class WldBizImpl(EnvInit):
         return response
 
 
-    # 支用查询
-    def repay_result_query(self, repayApplySerialNo,):
-        lrepay_result_query = dict()
-        # head
-        lrepay_result_query['repayApplySerialNo'] = repayApplySerialNo
 
-        # body
-        lrepay_result_query['thirdApplyId'] = self.data['applyid']
-
-        # 更新 payload 字段值
-        lrepay_result_query.update(kwargs)
-        parser = DataUpdate(self.cfg['loan_query']['payload'], **lrepay_result_query)
-        self.active_payload = parser.parser
-
-        self.log.demsg('支用查询...')
-        url = self.host + self.cfg['loan_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-                                     encrypt_flag=self.encrypt_flag)
-        return response
 
 
 
