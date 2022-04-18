@@ -104,7 +104,7 @@ def get_base_data(env, *project, back=20, age=None, **kwargs):
 # # -----------------------------------------------------------
 # # - 用户四要素生成（临时数据，不保存到文件）
 # # -----------------------------------------------------------
-def get_base_data_temp(age=None, *project, **kwargs):
+def get_base_data_temp(*project, age=None, **kwargs):
     """
     用户基础信息生成
     @param project: 添加随机数

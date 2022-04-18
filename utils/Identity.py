@@ -85,7 +85,7 @@ class IdNumber(str):
             birth_days = datetime.strftime(age, "%Y%m%d")
         else:
             min_age = datetime.strftime(now_date - relativedelta(years=int(16)), "%Y-%m-%d")
-            start, end = datetime.strptime("1950-01-01", "%Y-%m-%d"), datetime.strptime(min_age, "%Y-%m-%d")
+            start, end = datetime.strptime("1975-01-01", "%Y-%m-%d"), datetime.strptime(min_age, "%Y-%m-%d")
             birth_days = datetime.strftime(start + timedelta(random.randint(0, (end - start).days + 1)), "%Y%m%d")
         id_number += str(birth_days)
         # 顺序码(2位数)
