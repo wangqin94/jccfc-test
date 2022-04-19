@@ -4,6 +4,8 @@ import time
 import allure
 import pytest
 
+from utils.Apollo import Apollo
+
 
 @allure.feature("支用申请查询")
 class TestCase(object):
@@ -24,6 +26,11 @@ class TestCase(object):
             zhiXinBizImpl.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                               cdKey=res['cdKey'])
 
+        # ocr配置默认不校验 (1：不验证，0：验证)
+        apollo_data = dict()
+        apollo_data['hj.channel.ocr.mock'] = "1"
+        Apollo().update_config(appId='loan2.1-hapi-web', namespace='000', **apollo_data)
+
         with allure.step("发起授信申请"):
             creditRes = json.loads(zhiXinBizImpl.credit().get('output'))
             creditApplyNo = creditRes['creditApplyNo']
@@ -32,7 +39,7 @@ class TestCase(object):
             checkBizImpl.check_credit_apply_status(thirdpart_apply_id=creditApplyNo)
 
         with allure.step("接口层校验授信结果是否符合预期"):
-            zhiXinCheckBizImpl.check_credit_apply_status(data, creditRes['userId'],
+            zhiXinCheckBizImpl.check_credit_apply_status(creditRes['userId'],
                                                          creditRes['creditApplyNo'])
 
         with allure.step("发起支用申请"):
@@ -44,7 +51,7 @@ class TestCase(object):
             assert EnumLoanStatus.ON_USE.value == status, '支用失败'
 
         with allure.step("接口层校验支用结果是否符合预期"):
-            status = zhiXinCheckBizImpl.check_loan_apply_status(data, loanRes['userId'],
+            status = zhiXinCheckBizImpl.check_loan_apply_status(loanRes['userId'],
                                                                 loanRes['loanApplyNo'])
             assert ZhiXinApiStatusEnum.SUCCESS.value == status, '支用失败'
 
