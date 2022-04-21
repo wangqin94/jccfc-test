@@ -1,6 +1,5 @@
 from src.enums.EnumZhiXin import ZhiXinApiStatusEnum
 from src.impl.common.CheckBizImpl import *
-import time
 import allure
 import pytest
 
@@ -17,14 +16,13 @@ class TestCase(object):
     @pytest.mark.smoke
     @allure.title("绑卡申请-绑卡校验-授信申请-授信查询-支用申请-支用查询")  # 标题
     @allure.step("绑卡申请-绑卡校验-授信申请-授信查询-支用申请-支用查询")  # 测试报告显示步骤
-    def test_loan(self, get_base_data_zhixin, zhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl):
+    def test_loan(self, zhiXinBizImpl, checkBizImpl, zhiXinCheckBizImpl):
         """ 测试步骤 """
-        data = get_base_data_zhixin
         with allure.step("绑卡申请"):
             res = json.loads(zhiXinBizImpl.applyCertification().get('output'))
         with allure.step("绑卡校验"):
             zhiXinBizImpl.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
-                              cdKey=res['cdKey'])
+                                     cdKey=res['cdKey'])
 
         # ocr配置默认不校验 (1：不验证，0：验证)
         apollo_data = dict()

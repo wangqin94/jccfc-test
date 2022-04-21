@@ -395,6 +395,18 @@ class MysqlBizImpl(MysqlInit):
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
+    def del_assert_repay_history_data(self, account_date):
+        """
+        清理资产日终跑批产生的历史数据
+        @param account_date: 资产日终跑批时间
+        @return:
+        """
+        self.log.info("清理asset流水记录")
+        self.delete_asset_database_info('asset_slice_batch_serial')
+        self.log.info("清理资产日终任务产生的历史数据")
+        self.delete_asset_database_info('asset_repay_plan_od', account_date=account_date)
+        self.delete_asset_database_info('asset_repay_plan_fee_detail_od', account_date=account_date)
+        self.delete_asset_database_info('asset_loan_invoice_info_od', account_date=account_date)
 
 
 if __name__ == '__main__':

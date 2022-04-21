@@ -120,7 +120,7 @@ class Apollo(object):
             # 校验
             if res.status_code == EnumStatusCode.SUCCESS.value:
                 _log.debug("请求[{}]的状态码为:{}:".format(url, res.status_code))
-                _log.warning("update content: {}".format(kwargs))
+        _log.warning("更新apollo配置: {}".format(kwargs))
         _log.info("update configuration success")
         #  执行发布
         self.releases(appId=appId, namespace=namespace)

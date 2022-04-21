@@ -339,6 +339,28 @@ class CheckBizImpl(EnvInit):
                 self.log.info("还款记录已入credit_ctrip_repay_notice_info表")
                 break
 
+    def check_asset_repay_plan_overdue_days(self, max_overdue_days, m=6, t=5, **kwargs):
+        """
+        查询支用状态
+        @param t: 每次时间间隔, 默认5S
+        @param max_overdue_days: 期望的最大逾期天数
+        @param m: 查询轮训次数 默认6次
+        @param kwargs: 查询条件
+        @return: overdue_days 逾期天数
+        """
+        self.log.demsg('获取还款计划表最大逾期天数...')
+        for i in range(m):
+            info = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",  **kwargs)
+            overdue_days = info['overdue_days']
+            if overdue_days >= max_overdue_days:
+                self.log.demsg('asset_repay_plan获取借据最大逾期天数[overdue_days：{}]'.format(overdue_days))
+                return overdue_days
+            else:
+                time.sleep(t)
+                if i == m - 1:
+                    self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    raise AssertionError('检验不符合期望，中断测试。当前逾期天数：{}'.format(overdue_days))
+
 
 if __name__ == '__main__':
     # CheckBizImpl().check_channel_repay_status(id=999)

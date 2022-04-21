@@ -43,7 +43,7 @@ class TestCase(object):
             with allure.step('清除分片流水'):
                 mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
                 mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-                mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
+                mysqlBizImpl.del_assert_repay_history_data(repay_date_ove)
 
             with allure.step("删除redis中资产账务时间 key=000:ACCT:SysInfo:BIGACCT、000:ACCT:AccountDate:BIGACCT"):
                 redis.del_assert_repay_keys()
@@ -56,6 +56,12 @@ class TestCase(object):
                 log.info('验当前借据状态')
                 status = mysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value,
                                                             thirdpart_user_id=data['userId'])
+                loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
+                credit_loan_invoice = mysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                            loan_apply_id=loan_apply_info[
+                                                                                'loan_apply_id'])
+                checkBizImpl.check_asset_repay_plan_overdue_days(max_overdue_days=2, current_num='1',
+                                                                 loan_invoice_id=credit_loan_invoice['loan_invoice_id'])
                 assert EnumLoanStatus.OVERDUE.value == status, '当前支用单状态不为逾期状态，请检查账务日终任务执行结果'
 
         with allure.step('准备还款条件'):
@@ -112,7 +118,6 @@ class TestCase(object):
             with allure.step('清除分片流水'):
                 mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
                 mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-                mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
             with allure.step('执行任务流下载还款对账文件入库'):
                 job.update_job('美团期数动账单解析任务流', executeBizDateType='CUSTOMER', executeBizDate=repay_date_bill)
@@ -163,7 +168,6 @@ class TestCase(object):
             with allure.step('清除分片流水'):
                 mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
                 mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-                mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
 
             with allure.step('执行任务流下载还款对账文件入库'):
                 job.update_job('美团期数动账单解析任务流', executeBizDateType='CUSTOMER', executeBizDate=repay_date_settle)

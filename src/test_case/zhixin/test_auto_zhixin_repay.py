@@ -36,7 +36,7 @@ def pre_loan_data(get_base_data_zhixin, zhiXinBizImpl, checkBizImpl, zhiXinCheck
                                                   account_date=account_date, next_date=next_date,
                                                   cutday_time=cut_time)
     with allure.step("清理asset流水记录"):
-        mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
+        mysqlBizImpl.del_assert_repay_history_data(account_date)
 
     with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
         redis.del_assert_repay_keys()
@@ -48,6 +48,11 @@ def pre_loan_data(get_base_data_zhixin, zhiXinBizImpl, checkBizImpl, zhiXinCheck
     with allure.step("校验当前借据是否已逾期：15s轮训等待"):
         zhiXinBizImpl.log.info('验当前借据状态')
         status = mysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value, thirdpart_user_id=data['userId'])
+        loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
+        credit_loan_invoice = mysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                    loan_apply_id=loan_apply_info['loan_apply_id'])
+        checkBizImpl.check_asset_repay_plan_overdue_days(max_overdue_days=20, current_num='1',
+                                                         loan_invoice_id=credit_loan_invoice['loan_invoice_id'])
         assert EnumLoanStatus.OVERDUE.value == status, '当前支用单状态不为逾期状态，请检查账务日终任务执行结果'
     return repay_date
 
