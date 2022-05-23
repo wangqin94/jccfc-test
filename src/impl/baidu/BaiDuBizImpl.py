@@ -2,8 +2,7 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
-from config.TestEnvInfo import TEST_ENV_INFO
-from src.impl.common.CommonBizImpl import post_with_encrypt
+from src.impl.common.CommonBizImpl import post_with_encrypt_baidu
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from engine.EnvInit import EnvInit
@@ -25,11 +24,11 @@ class BaiDuBizImpl(EnvInit):
         self.period = 3  # 借款期数, 默认3期
         self.loan_no = loan_no
         self.type = type
-        self.repay_mode = repay_mode   # repay_mode='02'随借随还，repay_mode='05'等额本息
+        self.repay_mode = repay_mode  # repay_mode='02'随借随还，repay_mode='05'等额本息
         self.encrypt_flag = encrypt_flag
 
-        # self.encrypt_url = self.host + EnumBaiDu.BaiDuEncryptPath.value
-        # self.decrypt_url = self.host + EnumBaiDu.BaiDuDecryptPath.value
+        self.encrypt_url = self.host + EnumBaiDuPath.BaiDuEncryptPath.value
+        self.decrypt_url = self.host + EnumBaiDuPath.BaiDuDecryptPath.value
 
         # 初始化payload变量
         self.credit_payload = {}
@@ -53,8 +52,10 @@ class BaiDuBizImpl(EnvInit):
 
         self.log.demsg('开始支用申请...')
         url = self.host + self.cfg['settlement']['interface']
-        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
-        # response['orderId'] = settlement_data['orderId']
+        response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                           encrypt_flag=True)
+        # response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
+        response['orderId'] = settlement_data['orderId']
         return response
 
     # 授信申请
@@ -82,12 +83,14 @@ class BaiDuBizImpl(EnvInit):
 
         self.log.demsg('开始授信申请...')
         url = self.host + self.cfg['credit']['interface']
-        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
+        response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                           encrypt_flag=True)
+        # response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         response['credit_apply_id'] = credit_data['reqSn']
         return response
 
     # 授信查询
-    def credit_query(self, credit_apply_id):
+    def credit_query(self, credit_apply_id, **kwargs):
         strings = str(int(round(time.time() * 1000)))
         credit_query_data = dict()
         credit_query_data['prcid'] = self.data['cer_no']
@@ -102,12 +105,15 @@ class BaiDuBizImpl(EnvInit):
         credit_query_data['expanding'] = {'reqSn': credit_apply_id}
 
         # 更新 payload 字段值
+        credit_query_data.update(kwargs)
         parser = DataUpdate(self.cfg['credit_query']['payload'], **credit_query_data)
         self.active_payload = parser.parser
 
         self.log.demsg('开始授信查询...')
         url = self.host + self.cfg['credit_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
+        response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                           encrypt_flag=True)
+        # response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         return response
 
     # 支用申请
@@ -147,12 +153,14 @@ class BaiDuBizImpl(EnvInit):
 
         self.log.demsg('开始支用申请...')
         url = self.host + self.cfg['loan']['interface']
-        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
+        response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                           encrypt_flag=True)
+        # response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         response['loan_apply_id'] = loan_data['reqSn']
         return response
 
     # 支用查询
-    def loan_query(self, loan_apply_id):
+    def loan_query(self, loan_apply_id, **kwargs):
         strings = str(int(round(time.time() * 1000)))
         loan_query_data = dict()
         loan_query_data['prcid'] = self.data['cer_no']
@@ -167,12 +175,15 @@ class BaiDuBizImpl(EnvInit):
         loan_query_data['expanding'] = {'reqSn': loan_apply_id}
 
         # 更新 payload 字段值
+        loan_query_data.update(kwargs)
         parser = DataUpdate(self.cfg['credit_query']['payload'], **loan_query_data)
         self.active_payload = parser.parser
 
         self.log.demsg('开始支用查询...')
         url = self.host + self.cfg['loan_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
+        response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                           encrypt_flag=True)
+        # response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         return response
 
     # 还款通知申请
@@ -210,7 +221,9 @@ class BaiDuBizImpl(EnvInit):
 
         self.log.demsg('开始通知申请...')
         url = self.host + self.cfg['notice']['interface']
-        response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
+        response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                           encrypt_flag=True)
+        # response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
         return response
 
     # 文件加密
@@ -223,7 +236,7 @@ class BaiDuBizImpl(EnvInit):
         file_data = dict()
         # 金山云存放文件路径
         file_data['file'] = 'hj/baidu/file/' + date
-        url = self.host + BaiDuPathEnum.BaiDuFileEncryptPath.value
+        url = self.host + EnumBaiDuPath.BaiDuFileEncryptPath.value
         file_data = json.dumps(file_data)
         response = requests.post(url=url, headers=headers, json=file_data)
         return response
@@ -231,4 +244,3 @@ class BaiDuBizImpl(EnvInit):
 
 if __name__ == '__main__':
     baidu = BaiDuBizImpl()
-

@@ -10,6 +10,8 @@ import string
 import json
 import time
 import os
+
+import demjson as demjson
 import requests
 from inspect import getcallargs
 from datetime import datetime
@@ -291,8 +293,8 @@ def encrypt(encrypt_url, headers, encrypt_payload):
     _log.info("开始请求加密接口对报文进行加密操作...")
     response = requests.post(url=encrypt_url, headers=headers, json=encrypt_payload)
     _log.info("报文加密操作结束！status code: %s", response.status_code)
-    res = response.json()
-    res = str(res).replace("'", '''"''').replace(" ", "")
+    res = demjson.encode(response.json())  # 将 Python 对象编码成 JSON 字符串
+    # res = str(res).replace("'", '''"''').replace(" ", "")
     _log.info(f"加密后的报文：{res}")
     return json.loads(res)
 
@@ -308,8 +310,8 @@ def decrypt(decrypt_url, headers, decrypt_payload):
     :return:                解密后的报文
     """
     _log.info("开始请求解密接口对报文进行解密操作...")
-    decrypt_payload = json.dumps(decrypt_payload)
-    response = requests.post(url=decrypt_url, headers=headers, data=decrypt_payload)
+    # decrypt_payload = json.dumps(decrypt_payload)
+    response = requests.post(url=decrypt_url, headers=headers, json=decrypt_payload)
     _log.info("报文解密操作结束！status code: %s", response.status_code)
     res = response.json()
     res1 = str(res).replace("'", '''"''').replace(" ", "")

@@ -1,8 +1,7 @@
-from src.enums.EnumZhiXin import ZhiXinApiStatusEnum
-from src.impl.common.CheckBizImpl import *
 import allure
 import pytest
 
+from src.impl.zhixin.ZhiXinSynBizImpl import *
 from utils.Apollo import Apollo
 
 
@@ -39,6 +38,13 @@ class TestCase(object):
         with allure.step("接口层校验授信结果是否符合预期"):
             zhiXinCheckBizImpl.check_credit_apply_status(creditRes['userId'],
                                                          creditRes['creditApplyNo'])
+
+        # 设置apollo放款mock时间 默认当前时间
+        loan_date = time.strftime('%Y-%m-%d', time.localtime())
+        apollo_data = dict()
+        apollo_data['credit.loan.trade.date.mock'] = "true"
+        apollo_data['credit.loan.date.mock'] = loan_date
+        Apollo().update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         with allure.step("发起支用申请"):
             loanRes = json.loads(zhiXinBizImpl.applyLoan(loanAmt='1000', term='6').get('output'))

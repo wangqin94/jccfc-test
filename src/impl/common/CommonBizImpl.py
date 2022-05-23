@@ -2,6 +2,7 @@
 # ------------------------------------------
 # 基于项目级业务层公共方法
 # ------------------------------------------
+from urllib import parse
 
 from utils.Models import *
 from config.globalConfig import *
@@ -26,6 +27,30 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
     if encrypt_flag:
         encrypt_payload = encrypt(encrypt_url, headers, payload)
         response = requests.post(url=url, headers=headers, json=encrypt_payload)
+        response = decrypt(decrypt_url, headers, response.json())
+    else:
+        response = requests.post(url=url, headers=headers, json=payload)
+        response = response.json()
+        _log.info(f"响应报文：{response}")
+    return response
+
+
+def post_with_encrypt_baidu(url, payload, encrypt_url='encrypt_url', decrypt_url='decrypt_url', encrypt_flag=True):
+    """
+
+    @param url: 接口请求地址
+    @param payload: 接口请求内容主体
+    @param encrypt_url: 加密接口请求地址
+    @param decrypt_url: 解密接口请求地址
+    @param encrypt_flag: 加密标识默认true
+    @return: response 接口响应参数 数据类型：json
+    """
+    data1 = json.dumps(payload)
+    _log.info("payload数据: {}".format(data1))
+
+    if encrypt_flag:
+        encrypt_payload = encrypt(encrypt_url, headers, payload)
+        response = requests.post(url=url, headers=headers_en, data=encrypt_payload)
         response = decrypt(decrypt_url, headers, response.json())
     else:
         response = requests.post(url=url, headers=headers, json=payload)
