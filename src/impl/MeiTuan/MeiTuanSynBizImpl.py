@@ -19,9 +19,10 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
     def __init__(self, data=None, encrypt_flag=True, person=False):
         super().__init__(data=data, encrypt_flag=encrypt_flag, person=person)
         self.job = JOB()
+        self.apollo = Apollo()
         self.globalMap = GlobalMap()
         self.CheckBizImpl = CheckBizImpl()
-        self.meiTuanCheckBizImpl = MeiTuanCheckBizImpl(data)
+        self.meiTuanCheckBizImpl = MeiTuanCheckBizImpl(self.data)
 
     # 准备借款数据
     def pre_meituan_Loan(self, loan_date=None, **kwargs):
@@ -42,14 +43,14 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
         apollo_data = dict()
         apollo_data['credit.loan.trade.date.mock'] = "true"
         apollo_data['credit.loan.date.mock'] = loan_date
-        Apollo().update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         # 发起支用申请
         res = self.loan(**kwargs)
         loanNo = res["body"]["APP_NO"]
 
         # 支用三方申请号loanNo写入全局变量
-        GlobalMap().set_map('meituan_loanNo', loanNo)
+        self.globalMap.set_map('meituan_loanNo', loanNo)
 
         # 数据库层校验支用结果是否符合预期
         self.CheckBizImpl.check_file_loan_apply_status(thirdpart_apply_id=loanNo)
@@ -81,7 +82,7 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
         credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
                                                                          loan_apply_id=loan_apply_info['loan_apply_id'])
         # 借据号invoiceNo写入全局变量
-        GlobalMap().set_map('meituan_loan_invoice_id', credit_loan_invoice['loan_invoice_id'])
+        self.globalMap.set_map('meituan_loan_invoice_id', credit_loan_invoice['loan_invoice_id'])
 
         loan_date_temp = str(loan_date).replace("-", '')
         self.MysqlBizImpl.update_asset_database_info('asset_loan_invoice_info', attr="loan_invoice_id='{}'".format(

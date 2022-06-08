@@ -18,7 +18,6 @@ class MeiTuanBizImpl(EnvInit):
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = MeiTuan.MeiTuan
-
         self.data = self.get_user_info(data=data, person=person)
         # 初始化定义用户apply信息
         self.user_credit_apply_info = {}
@@ -27,6 +26,7 @@ class MeiTuanBizImpl(EnvInit):
 
         # 初始化数据库查询公共类
         self.MysqlBizImpl = MysqlBizImpl()
+        self.apollo = Apollo()
         # 初始换加密标识
         self.encrypt_flag = encrypt_flag
 
@@ -128,7 +128,7 @@ class MeiTuanBizImpl(EnvInit):
         apollo_data = dict()
         creditAmt = int(self.active_payload['body']['APPLY_AMT'])/100
         apollo_data['hj.channel.risk.credit.line.amt.mock'] = str(creditAmt)
-        Apollo().update_config(appId='loan2.1-jcxf-credit', **apollo_data)
+        self.apollo.update_config(appId='loan2.1-jcxf-credit', **apollo_data)
 
         self.log.demsg('授信申请...')
         url = self.host + self.cfg['credit']['interface']

@@ -21,7 +21,11 @@ from utils.Redis import Redis
 class RepayPublicBizImpl:
     def __init__(self):
         self.MysqlBizImpl = MysqlBizImpl()
+        self.meiTuanSynBizImpl = MeiTuanSynBizImpl()
         self.log = MyLog().get_log()
+        self.redis = Redis()
+        self.job = JOB()
+        self.checkBizImpl = CheckBizImpl()
 
     def pre_overdue_repay_data(self, productId, loan_date=None):
         """
@@ -33,9 +37,9 @@ class RepayPublicBizImpl:
         loan_invoice_id = None
         loanNo = None
         if productId == ProductEnum.MEITUAN.value:
-            MeiTuanSynBizImpl().pre_meituan_Loan(loan_date=loan_date)
-            loan_invoice_id = MeiTuanSynBizImpl().globalMap.get('meituan_loan_invoice_id')
-            loanNo = MeiTuanSynBizImpl().globalMap.get('meituan_loanNo')
+            self.meiTuanSynBizImpl.pre_meituan_Loan(loan_date=loan_date)
+            loan_invoice_id = self.meiTuanSynBizImpl.globalMap.get('meituan_loan_invoice_id')
+            loanNo = self.meiTuanSynBizImpl.globalMap.get('meituan_loanNo')
 
         # 更新资产asset_loan_invoice_info放款时间,apply_loan_date=loan_date:
         loan_date_temp = str(loan_date).replace("-", '')
@@ -59,15 +63,15 @@ class RepayPublicBizImpl:
         self.MysqlBizImpl.del_assert_repay_history_data(repay_date_ove)
 
         self.log.info("删除redis中资产账务时间 key=000:ACCT:SysInfo:BIGACCT、000:ACCT:AccountDate:BIGACCT")
-        Redis().del_assert_repay_keys()
+        self.redis.del_assert_repay_keys()
 
         self.log.info("执行账务日终任务")
-        JOB().update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
-        JOB().trigger_job("资产日终任务流", group=6)
+        self.job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
+        self.job.trigger_job("资产日终任务流", group=6)
 
         self.log.info("校验当前借据是否已逾期：15s查证等待")
         status = self.MysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value,
                                                     thirdpart_apply_id=loanNo)
-        CheckBizImpl().check_asset_repay_plan_overdue_days(max_overdue_days=2, current_num='1',
+        self.checkBizImpl.check_asset_repay_plan_overdue_days(max_overdue_days=2, current_num='1',
                                                            loan_invoice_id=loan_invoice_id)
         assert EnumLoanStatus.OVERDUE.value == status, '当前支用单状态不为逾期状态，请检查账务日终任务执行结果'
