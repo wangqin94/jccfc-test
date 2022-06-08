@@ -15,7 +15,7 @@ class CtripCreditCheckBizImpl(EnvInit):
         """
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库授信结果校验...')
@@ -23,7 +23,7 @@ class CtripCreditCheckBizImpl(EnvInit):
         for i in range(flag + 1):
             creditApply = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
             if not creditApply:
-                self.log.info("credit_apply未查询到授信记录，启动3次轮训")
+                self.log.info("credit_apply未查询到授信记录，启动3次查证")
                 time.sleep(t)
                 if i == flag:
                     self.log.error("超过当前系统设置等待时间，授信异常，请手动查看结果....")

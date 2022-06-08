@@ -52,7 +52,7 @@ class TestCase(object):
                 job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
                 job.trigger_job("资产日终任务流", group=6)
 
-            with allure.step("校验当前借据是否已逾期：15s轮训等待"):
+            with allure.step("校验当前借据是否已逾期：15s查证等待"):
                 log.info('验当前借据状态')
                 status = mysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value,
                                                             thirdpart_user_id=data['userId'])

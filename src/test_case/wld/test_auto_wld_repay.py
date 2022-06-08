@@ -62,7 +62,7 @@ class TestCase(object):
         with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
             redis1.del_assert_repay_keys()
 
-        with allure.step("校验当前借据是否已逾期：15s轮训等待"):
+        with allure.step("校验当前借据是否已逾期：15s查证等待"):
             wldBizImpl.log.info('验当前借据状态')
             status = mysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value,
                                                         thirdpart_apply_id=data['applyid'])

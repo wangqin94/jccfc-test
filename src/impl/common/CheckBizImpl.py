@@ -22,14 +22,14 @@ class CheckBizImpl(EnvInit):
         """
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('支用结果校验...')
         for i in range(m):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
-                self.log.info("credit_loan_apply未查询到支用记录，启动轮训,当前第-{}-次".format(i))
+                self.log.info("credit_loan_apply未查询到支用记录，开始重试查证,当前第-{}-次".format(i))
                 time.sleep(t)
                 if i == m - 1:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")
@@ -70,38 +70,38 @@ class CheckBizImpl(EnvInit):
         @param expect_status: 期望状态
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('支用结果校验...')
         for j in range(m):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
-                self.log.info("credit_loan_apply未查询到支用记录，启动轮训,当前第-{}-次".format(j))
+                self.log.info("credit_loan_apply未查询到支用记录，开始重试查证,当前第-{}-次".format(j))
             else:
                 status = info['status']
                 if status == expect_status:
                     self.log.demsg('支用单状态校验成功，符合预期值[status={}]'.format(expect_status))
                     return status
                 else:
-                    self.log.demsg("支用单状态不符合逾期，期望值[{}]！= 实际值[{}]，当前第[{}]次轮训....".format(expect_status, status, j + 1))
+                    self.log.demsg("支用单状态不符合预期，期望值[{}]！= 实际值[{}]，当前第[{}]次查证....".format(expect_status, status, j + 1))
                     time.sleep(t)
                     if j == m - 1:
-                        self.log.error("超过当前系统设置等待时间，支用单状态不符合逾期，当前值[{}]！= 实际值[{}]".format(expect_status, status))
+                        self.log.error("超过当前系统设置等待时间，支用单状态不符合预期，当前值[{}]！= 实际值[{}]".format(expect_status, status))
                         raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m * t))
 
     def check_file_loan_apply_status(self, m=20, t=3, **kwargs):
         """
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('文件放款支用结果校验...')
         for i in range(m):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
-                self.log.info("credit_loan_apply未查询到支用记录，启动轮训,当前第-{}-次".format(i))
+                self.log.info("credit_loan_apply未查询到支用记录，开始重试查证,当前第-{}-次".format(i))
                 time.sleep(t)
                 if i == m - 1:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")
@@ -141,14 +141,14 @@ class CheckBizImpl(EnvInit):
         """
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库授信结果校验...')
         for i in range(m):
             info = self.MysqlBizImpl.get_credit_apply_info(**kwargs)
             if not info:
-                self.log.info("credit_apply未查询到授信记录，启动轮训,当前第-{}-次".format(i))
+                self.log.info("credit_apply未查询到授信记录，开始重试查证,当前第-{}-次".format(i))
                 time.sleep(t)
                 if i == m - 1:
                     self.log.error("超过当前系统设置等待时间，授信异常，请手动查看结果....")
@@ -179,14 +179,14 @@ class CheckBizImpl(EnvInit):
         还款表channel_repay结果校验
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库还款结果校验...')
         for i in range(m):
             info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
             if not info:
-                self.log.info("channel_repay未查询到还款记录，启动轮训,当前第-{}-次".format(i))
+                self.log.info("channel_repay未查询到还款记录，开始重试查证,当前第-{}-次".format(i))
                 time.sleep(t)
                 if i == m - 1:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
@@ -220,14 +220,14 @@ class CheckBizImpl(EnvInit):
         还款表credit_custom_payment_apply结果校验
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库还款结果校验...')
         for i in range(m):
             info = self.MysqlBizImpl.get_credit_database_info('credit_custom_payment_apply', **kwargs)
             if not info:
-                self.log.info("credit_custom_payment_apply未查询到还款记录，启动轮训,当前第-{}-次".format(i))
+                self.log.info("credit_custom_payment_apply未查询到还款记录，启动查证,当前第-{}-次".format(i))
                 time.sleep(3)
                 if i == m - 1:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
@@ -258,14 +258,14 @@ class CheckBizImpl(EnvInit):
         还款表credit_ctrip_repay_notice_info结果校验
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('数据库还款结果校验...')
         for i in range(m):
             info = self.MysqlBizImpl.get_credit_database_info('credit_ctrip_repay_notice_info', **kwargs)
             if not info:
-                self.log.info("credit_ctrip_repay_notice_info未查询到还款记录，启动轮训,当前第-{}-次".format(i))
+                self.log.info("credit_ctrip_repay_notice_info未查询到还款记录，开始重试查证,当前第-{}-次".format(i))
                 time.sleep(t)
                 if i == m - 1:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
@@ -304,7 +304,7 @@ class CheckBizImpl(EnvInit):
         for i in range(flag + 1):
             info = self.MysqlBizImpl.get_credit_database_info('credit_third_wait_loan_deal_info', **kwargs)
             if not info:
-                self.log.info("credit_third_wait_loan_deal_info未查询到还款记录，启动轮训,当前第-{}-次".format(i))
+                self.log.info("credit_third_wait_loan_deal_info未查询到还款记录，开始重试查证,当前第-{}-次".format(i))
                 time.sleep(t)
                 if i == flag:
                     self.log.error("超过当前系统设置等待时间，放款异常，请手动查看结果....")
@@ -321,8 +321,7 @@ class CheckBizImpl(EnvInit):
         """
         查询支用状态
         @param t: 每次时间间隔, 默认5S
-        @param exp_status: 需要查询的状态
-        @param m: 查询轮训次数 默认6次
+        @param m: 查证次数 默认6次
         @param kwargs: 查询条件
         @return: status 支用单状态
         """
@@ -330,7 +329,7 @@ class CheckBizImpl(EnvInit):
         for i in range(m):
             info = self.MysqlBizImpl.get_credit_database_info('credit_ctrip_repay_notice_info', **kwargs)
             if not info:
-                self.log.info("credit_ctrip_repay_notice_info未查询到还款记录，启动轮训,当前第-{}-次".format(i))
+                self.log.info("credit_ctrip_repay_notice_info未查询到还款记录，开始重试查证,当前第-{}-次".format(i))
                 time.sleep(t)
                 if i == m - 1:
                     self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
@@ -344,7 +343,7 @@ class CheckBizImpl(EnvInit):
         查询支用状态
         @param t: 每次时间间隔, 默认5S
         @param max_overdue_days: 期望的最大逾期天数
-        @param m: 查询轮训次数 默认6次
+        @param m: 查证次数 默认6次
         @param kwargs: 查询条件
         @return: overdue_days 逾期天数
         """

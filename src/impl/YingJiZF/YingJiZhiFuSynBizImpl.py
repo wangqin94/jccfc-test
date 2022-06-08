@@ -21,7 +21,7 @@ class YingJiZhiFuSynBizImpl(YingJiZFBizImpl):
         """
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('接口层锦程H5还款结果校验...')
@@ -34,13 +34,13 @@ class YingJiZhiFuSynBizImpl(YingJiZFBizImpl):
                 self.log.demsg('还款状态校验成功，符合预期值[tradeStatusCode={}]'.format(status))
                 break
             elif status == ApiPaymentResultStatusCodeEnum.FAIL.code:
-                self.log.demsg("还款状态不符合逾期，期望值[{}]！= 实际值[{}]".format(ApiPaymentResultStatusCodeEnum.FAIL.code, status))
+                self.log.demsg("还款状态不符合预期，期望值[{}]！= 实际值[{}]".format(ApiPaymentResultStatusCodeEnum.FAIL.code, status))
                 break
             elif status == ApiPaymentResultStatusCodeEnum.TO_DOING.code:
-                self.log.demsg("还款状态处理中，状态[{}]！当前第[{}]次轮训....".format(status, j + 1))
+                self.log.demsg("还款状态处理中，状态[{}]！当前第[{}]次查证....".format(status, j + 1))
                 time.sleep(t)
                 if j == m - 1:
-                    self.log.error("超过当前系统设置等待时间，支用单状态不符合逾期，还款一直处于处理中...")
+                    self.log.error("超过当前系统设置等待时间，支用单状态不符合预期，还款一直处于处理中...")
                     sys.exit(7)
 
 

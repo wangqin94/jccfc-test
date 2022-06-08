@@ -10,6 +10,7 @@ from src.impl.MeiTuan.MeiTuanCheckBizImpl import MeiTuanCheckBizImpl
 from src.impl.MeiTuan.MeiTuan_CreateFileBizImpl import MeiTuanLoanFile
 from utils.Apollo import *
 from src.impl.common.CheckBizImpl import CheckBizImpl
+from utils.GlobalVar import GlobalMap
 from utils.JobCenter import JOB
 from utils.Models import *
 
@@ -18,6 +19,7 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
     def __init__(self, data=None, encrypt_flag=True, person=False):
         super().__init__(data=data, encrypt_flag=encrypt_flag, person=person)
         self.job = JOB()
+        self.globalMap = GlobalMap()
         self.CheckBizImpl = CheckBizImpl()
         self.meiTuanCheckBizImpl = MeiTuanCheckBizImpl(data)
 
@@ -45,6 +47,10 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
         # 发起支用申请
         res = self.loan(**kwargs)
         loanNo = res["body"]["APP_NO"]
+
+        # 支用三方申请号loanNo写入全局变量
+        GlobalMap().set_map('meituan_loanNo', loanNo)
+
         # 数据库层校验支用结果是否符合预期
         self.CheckBizImpl.check_file_loan_apply_status(thirdpart_apply_id=loanNo)
         # 接口层校验支用结果是否符合预期
@@ -74,6 +80,9 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
         loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(thirdpart_apply_id=loanNo)
         credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
                                                                          loan_apply_id=loan_apply_info['loan_apply_id'])
+        # 借据号invoiceNo写入全局变量
+        GlobalMap().set_map('meituan_loan_invoice_id', credit_loan_invoice['loan_invoice_id'])
+
         loan_date_temp = str(loan_date).replace("-", '')
         self.MysqlBizImpl.update_asset_database_info('asset_loan_invoice_info', attr="loan_invoice_id='{}'".format(
             credit_loan_invoice['loan_invoice_id']), apply_loan_date=loan_date_temp)
@@ -81,6 +90,7 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
         data = dict()
         data['loan_date'] = loan_date
         data['loan_invoice_id'] = credit_loan_invoice['loan_invoice_id']
+        print(self.globalMap.map)
 
         return data
 

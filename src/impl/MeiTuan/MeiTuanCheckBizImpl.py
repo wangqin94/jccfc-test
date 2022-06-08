@@ -5,7 +5,6 @@
 @Author  ：jccfc
 @Date    ：2021/11/17 15:55
 """
-import json
 import time
 
 from src.enums.EnumMeiTuan import ApiStatusCodeEnum
@@ -22,7 +21,7 @@ class MeiTuanCheckBizImpl(MeiTuanBizImpl):
         """
         @param appNo:  授信申请单号
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return:
         """
         self.log.demsg('接口层授信结果校验...')
@@ -58,7 +57,7 @@ class MeiTuanCheckBizImpl(MeiTuanBizImpl):
         """
         @param appNo:  支用申请单号
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return:
         """
         self.log.demsg('接口层支用结果校验...')

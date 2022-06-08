@@ -30,7 +30,7 @@ class CtripLoanCheckBizImpl(EnvInit):
         """
         @param kwargs: 查询条件
         @param t: 每次时间间隔, 默认5S
-        @param m: 查询轮训次数 默认10次
+        @param m: 查证次数 默认10次
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('支用结果校验...')
@@ -38,7 +38,7 @@ class CtripLoanCheckBizImpl(EnvInit):
         for i in range(flag + 1):
             loanApply = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not loanApply:
-                self.log.info("credit_loan_apply未查询到支用记录，启动3次轮训")
+                self.log.info("credit_loan_apply未查询到支用记录，启动3次查证")
                 time.sleep(t)
                 if i == flag:
                     self.log.error("超过当前系统设置等待时间，支用异常，请手动查看结果....")

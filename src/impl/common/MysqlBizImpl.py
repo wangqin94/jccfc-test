@@ -342,7 +342,7 @@ class MysqlBizImpl(MysqlInit):
         查询支用状态
         @param t: 每次时间间隔, 默认5S
         @param exp_status: 需要查询的状态
-        @param m: 查询轮训次数 默认6次
+        @param m: 查证次数 默认6次
         @param kwargs: 查询条件
         @return: status 支用单状态
         """
@@ -357,7 +357,7 @@ class MysqlBizImpl(MysqlInit):
                 if n == m:
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
                     sys.exit(7)
-                self.log.demsg("credit_loan_apply获取支用单状态不符合预期,启动轮训查询")
+                self.log.demsg("credit_loan_apply获取支用单状态不符合预期,开始重试查证")
                 time.sleep(t)
 
     def get_asset_job_ctl_info(self, job_date, job_type='ASSET_BI_JOB_FINISH'):
