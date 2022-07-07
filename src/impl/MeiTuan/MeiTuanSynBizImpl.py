@@ -8,7 +8,6 @@
 from src.impl.MeiTuan.MeiTuanBizImpl import MeiTuanBizImpl
 from src.impl.MeiTuan.MeiTuanCheckBizImpl import MeiTuanCheckBizImpl
 from src.impl.MeiTuan.MeiTuan_CreateFileBizImpl import MeiTuanLoanFile
-from utils.Apollo import *
 from src.impl.common.CheckBizImpl import CheckBizImpl
 from utils.GlobalVar import GlobalMap
 from utils.JobCenter import JOB
@@ -19,7 +18,6 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
     def __init__(self, data=None, encrypt_flag=True, person=False):
         super().__init__(data=data, encrypt_flag=encrypt_flag, person=person)
         self.job = JOB()
-        self.apollo = Apollo()
         self.globalMap = GlobalMap()
         self.CheckBizImpl = CheckBizImpl()
         self.meiTuanCheckBizImpl = MeiTuanCheckBizImpl(self.data)
@@ -40,6 +38,9 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
 
         # 设置apollo放款mock时间 默认当前时间
         loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
+        # 借据号invoiceNo写入全局变量
+        self.globalMap.set_map('loan_date', loan_date)
+
         apollo_data = dict()
         apollo_data['credit.loan.trade.date.mock'] = "true"
         apollo_data['credit.loan.date.mock'] = loan_date
@@ -91,7 +92,6 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
         data = dict()
         data['loan_date'] = loan_date
         data['loan_invoice_id'] = credit_loan_invoice['loan_invoice_id']
-        print(self.globalMap.map)
 
         return data
 

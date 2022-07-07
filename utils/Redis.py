@@ -46,3 +46,4 @@ if __name__ == '__main__':
     r = Redis()
     # print(r.redis.get('000:ACCT:SysInfo:BIGACCT').decode('utf-8', errors='ignore'))
     r.del_key('000:ACCT:SysInfo:BIGACCT')
+    r.del_key('000:ACCT:AccountDate:BIGACCT')
