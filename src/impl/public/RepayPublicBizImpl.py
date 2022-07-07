@@ -7,13 +7,10 @@
 """
 import time
 
-import redis
-
 from src.enums.EnumsCommon import ProductEnum, EnumLoanStatus
 from src.impl.MeiTuan.MeiTuanSynBizImpl import MeiTuanSynBizImpl
 from src.impl.common.CheckBizImpl import CheckBizImpl
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from utils.GlobalVar import GlobalMap
 from utils.JobCenter import JOB
 from utils.Logger import MyLog
 from utils.Models import get_custom_day
@@ -36,6 +33,7 @@ class RepayPublicBizImpl:
         @return:
         """
         self.log.info("设置大会计时间,账务时间=repay_date")
+        repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         repay_date_format = repayDate.replace('-', '')
         last_date = str(get_custom_day(-1, repayDate)).replace("-", '')
         next_date = str(get_custom_day(1, repayDate)).replace("-", '')
