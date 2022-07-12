@@ -4,9 +4,6 @@
 @File    ：BankNo.py
 @Author  ：jccfc
 @Date    ：2022/7/12 9:52
-# 目前写死为工商银行卡 620200,620302,620402
-# 招商银行卡690755, 95555, 622580, 622588
-eg. card_no = bank_card.gen_bank_card('bank', '620200')
 """
 # -*- coding: utf-8 -*-
 
