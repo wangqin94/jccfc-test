@@ -18,6 +18,8 @@ from datetime import datetime
 from functools import wraps
 
 from config.TestEnvInfo import TEST_ENV_INFO
+from utils.BankNo import BankNo
+from utils.GenName import get_name
 from utils.Identity import IdNumber
 from utils.Logger import MyLog
 
@@ -56,9 +58,10 @@ def wait_time(sec):
 # # -----------------------------------------------------------
 # # - 用户四要素生成
 # # -----------------------------------------------------------
-def get_base_data(env, *project, back=20, age=None, **kwargs):
+def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
     """
     用户基础信息生成
+    @param bankName: 银行名称 eg:bankName='中国银行'; None:随机银行
     @param env: 环境变量
     @param project: 添加随机数
     @param back: person文件存放数据最大条数 默认20
@@ -68,10 +71,11 @@ def get_base_data(env, *project, back=20, age=None, **kwargs):
     """
     strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
-    res = requests.get('http://10.10.100.153:8081/getTestData')
-    data['name'] = eval(res.text)["姓名"]
+    # res = requests.get('http://10.10.100.153:8081/getTestData')
+    bank = BankNo()
+    data['bankid'] = bank.get_bank_card(bankName=bankName)
+    data['name'] = get_name()
     data['cer_no'] = IdNumber.generate_id(age=age)
-    data['bankid'] = eval(res.text)["银行卡号"]
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
 
@@ -106,9 +110,10 @@ def get_base_data(env, *project, back=20, age=None, **kwargs):
 # # -----------------------------------------------------------
 # # - 用户四要素生成（临时数据，不保存到文件）
 # # -----------------------------------------------------------
-def get_base_data_temp(*project, age=None, **kwargs):
+def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
     """
     用户基础信息生成
+    @param bankName: 银行名称 eg:bankName='中国银行'; None:随机银行
     @param project: 添加随机数
     @param age: eg: age='2020-01-01'； age=None 随机生成大于16岁生日
     @param kwargs: data字典中添加指定key-value值
@@ -116,10 +121,11 @@ def get_base_data_temp(*project, age=None, **kwargs):
     """
     strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
-    res = requests.get('http://10.10.100.153:8081/getTestData')
-    data['name'] = eval(res.text)["姓名"]
+    # res = requests.get('http://10.10.100.153:8081/getTestData')
+    bank = BankNo()
+    data['bankid'] = bank.get_bank_card(bankName=bankName)
+    data['name'] = get_name()
     data['cer_no'] = IdNumber.generate_id(age=age)
-    data['bankid'] = eval(res.text)["银行卡号"]
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
 
@@ -549,7 +555,7 @@ if __name__ == "__main__":
     # r = get_before_month(2, date='2021-11-13')
     # r = update_sql_qurey_str(table='table', db='db', attr='a=b', a=1, b=2)
     # r = get_custom_year(-16)
-    r = get_base_data_temp()
+    r = get_custom_month(0, '2022-02-03')
     print(r)
     # r = get_sql_qurey_str('table', 'a', 'b', db='base')
 
