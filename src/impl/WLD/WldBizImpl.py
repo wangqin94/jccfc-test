@@ -2,8 +2,6 @@
 # ------------------------------------------
 # 我来贷接口数据封装类
 # ------------------------------------------
-from datetime import datetime
-from config.TestEnvInfo import TEST_ENV_INFO
 from engine.EnvInit import EnvInit
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
@@ -143,8 +141,7 @@ class WldBizImpl(EnvInit):
         content = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key)
         update_card_data['loanInvoiceId'] = content['loan_invoice_id']
         update_card_data['idNo'] = self.data['cer_no']
-        res = requests.get('http://10.10.100.153:8081/getTestData')
-        update_card_data['repaymentAccountNo'] = eval(res.text)["银行卡号"]
+        update_card_data['repaymentAccountNo'] = BankNo().get_bank_card()
 
         # 更新 payload 字段值
         update_card_data.update(kwargs)

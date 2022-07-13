@@ -189,8 +189,7 @@ class JiKeBizImpl(MysqlInit):
         updateWithholdCard['idNo'] = self.data['cer_no']
         updateWithholdCard['loanInvoiceId'] = loanInvoiceId
         # 新银行卡号
-        res = requests.get('http://10.10.100.153:8081/getTestData')
-        updateWithholdCard['repaymentAccountNo'] = eval(res.text)["银行卡号"]
+        updateWithholdCard['repaymentAccountNo'] = BankNo().get_bank_card()
 
         # 更新 payload 字段值
         updateWithholdCard.update(kwargs)
