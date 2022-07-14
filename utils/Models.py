@@ -5,6 +5,7 @@
 # # -----------------------------------------------------------
 import base64
 import datetime as datetimes
+import hashlib
 import random
 import string
 import json
@@ -72,12 +73,12 @@ def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
     strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
     # res = requests.get('http://10.10.100.153:8081/getTestData')
-    bank = BankNo()
-    data['bankid'] = bank.get_bank_card(bankName=bankName)
+    # bank = BankNo()
     data['name'] = get_name()
     data['cer_no'] = IdNumber.generate_id(age=age)
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
+    data['bankid'] = BankNo().get_bank_card(bankName=bankName)
 
     # 读取文件行数，超过20行删除历史数据
     with open('person.py', "r", encoding='utf-8') as f:  # 打开文件
@@ -122,12 +123,12 @@ def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
     strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
     # res = requests.get('http://10.10.100.153:8081/getTestData')
-    bank = BankNo()
-    data['bankid'] = bank.get_bank_card(bankName=bankName)
     data['name'] = get_name()
     data['cer_no'] = IdNumber.generate_id(age=age)
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
+    bank = BankNo()
+    data['bankid'] = bank.get_bank_card(bankName=bankName)
 
     # project赋值后天从到data中
     if project:
@@ -539,6 +540,15 @@ def get_base64_from_img(img_path):
     with open(img_path, "rb") as f:  # 转为二进制格式
         base64_data = base64.b64encode(f.read())  # 使用base64进行加密
         return base64_data.decode()
+
+
+# # -----------------------------------------------------------
+# # - 字符串转MD5
+# # -----------------------------------------------------------
+def computeMD5(message):
+    m = hashlib.md5()
+    m.update(message.encode(encoding='utf-8'))
+    return m.hexdigest()
 
 
 def format_path(path):
