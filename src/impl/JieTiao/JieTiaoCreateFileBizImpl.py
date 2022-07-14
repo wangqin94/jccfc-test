@@ -67,7 +67,6 @@ class repayPlanFile(EnvInit):
             self.MysqlBizImpl.credit_database_name, self.MysqlBizImpl.credit_database_name, self.loan_invoice_id)
         # 获取查询内容
         values = self.MysqlBizImpl.mysql_credit.select(sql)
-        self.log.demsg("1111111111：{}".format(values[0][0]))
 
         self.repay_plan_template['loan_req_no'] = values[0][0]
 
@@ -91,9 +90,8 @@ class repayPlanFile(EnvInit):
 
         # 还款计划文件生成
     def get_repay_plan(self, value):
-
-        repay_plan = os.path.join(self.data_save_path, 'repay_plan.txt')
-        self.log.demsg("还款计划生成路径：{}".format(repay_plan))
+        repayPlanPath = '%s' % (time.strftime('%Y%m%d', time.localtime()))
+        repay_plan = os.path.join(self.data_save_path, 'PLAN'+repayPlanPath+'.txt')
 
         self.repay_plan_template['repay_num'] = value[0]
         self.repay_plan_template['current_num'] = value[1]
@@ -105,7 +103,7 @@ class repayPlanFile(EnvInit):
         self.repay_plan_template['actual_repay_date'] = value[2]
 
         val_list = map(str, [self.repay_plan_template[key] for key in self.repay_plan_keys])
-        strings = ','.join(val_list)
+        strings = '|'.join(val_list)
         with open(repay_plan, 'a+', encoding='utf-8') as f:
             f.write(strings)
             f.write('\n')
@@ -165,31 +163,50 @@ class repayDetailFile(EnvInit):
             'rpyChannel': ""
         }
 
-    def start_repayDetailFile(self,loan_req_no=''):
+    def start_repayDetailFile(self,withhold_id=''):
 
         # 查询sql语句
-        sql = "select loan_req_no,source_code,rpy_type,rpy_term,rpy_req_no,tran_no,rpy_date,rpy_prin_amt,rpy_int_amt,rpy_oint_amt,rpy_share_amt,rpy_deduct_amt,rpy_red_line_amt," \
-              "if_enough,rpy_share_amt_one,rpy_share_amt_two,rpy_share_amt_three,rpy_share_amt_four,rpy_channel from {}.channel_jietiao_repay_detail where loan_req_no='{}' ;".format(
-            self.MysqlBizImpl.op_channel_database_name, loan_req_no)
+        sql = "select   a.third_loan_id , 'QH' ,b.rpy_type ,a.repay_term ,a.third_repay_id ,a.third_withhold_id, DATE_FORMAT(repay_time,'%Y-%m-%d') , repay_principal,repay_interest, " \
+              "repay_overdue_fee,refund_amount ,market_amount ,red_line_amount ,settle_status , b.rpy_share_amt_one, b.rpy_share_amt_two, b.rpy_share_amt_three, b.rpy_share_amt_four, withhold_type " \
+              "from  {}.channel_repay a  left join {}.channel_jietiao_repay_info b on a.repay_id = b.repay_id  where a.withhold_id ='{}' ;".format(self.MysqlBizImpl.op_channel_database_name,self.MysqlBizImpl.op_channel_database_name,  withhold_id)
 
         # 获取查询内容
         values = self.MysqlBizImpl.mysql_op_channel.select(sql)
-        self.log.demsg("还款还款明细：{}".format(values))
+        self.log.demsg("还款明细：{}".format(values))
 
         # 开始写入还款计划文件
         for v in values:
             self.log.demsg("循环：{}".format(v))
             self.get_repay_detail(v)
 
+    def start(self,check_id=''):
 
-       # 还款明细文件生成
+        self.strings = str(int(round(time.time() * 1000)))
+        self.log.demsg("checkid：{}".format(check_id))
+        sql1 = "INSERT INTO channel_file_check(check_id, channel_no, merchant_id, product_id, user_id, user_name, certificate_type,certificate_no, relation_id, relation_id_type, thirdpart_apply_id, apply_date, deal_status, "\
+               " fail_reason, business_date, status, created, create_time, modified, update_time) "\
+               "VALUES ('{}', 'JIETIAO', 'F22E01360J', 'F22E011', '000UC02002022062700000013', '彭成瑶', '0', '230307195910188572', '000CA2022100400000004', '1', 'loanReqNo16563812597682', '2022-03-23 00:00:00', '03', '', "\
+               " '20220627', 0, 'system', '2022-06-28 09:54:21', 'system', '2022-06-29 14:54:15');".format(check_id)
+
+        self.MysqlBizImpl.mysql_op_channel.update(sql1)
+
+        sql = "INSERT INTO channel_file_check_detail (check_detail_id,check_id,file_type,file_url,deal_status,fail_reason,status,created,create_time,modified,update_time) " \
+              "VALUES ('" +self.strings + "DEF1" + "','{}','1','xdgl/hj/jietiao/2022/06/29/7DB8214930C941C987E9CF868E645CE9.jpg','03','',0,'system','2022-06-28 09:54:21','system','2022-06-29 14:55:38'), ".format(check_id) +\
+              " ('" +self.strings + "DEF2" + "','{}','2','xdgl/hj/jietiao/2022/06/29/81D8B612F0DB47C786CBD62FFB588978.jpg','03','',0,'system','2022-06-28 09:54:21','system','2022-06-29 14:55:38'), ".format(check_id)+ \
+              " ('" +self.strings + "DEF3" + "','{}','20','xdgl/hj/jietiao/2022/06/29/5B3EE12E75BF4F4D8BA5A5363E64FC36.jpg','03','',0,'system','2022-06-28 09:54:21','system','2022-06-29 15:28:12');	".format(check_id)
+        self.log.demsg("sql：{}".format(sql))
+        self.MysqlBizImpl.mysql_op_channel.update(sql)
+
+
+
+# 还款明细文件生成
     def get_repay_detail(self, value):
-
-        repay_detail = os.path.join(self.data_save_path, 'repay_detail.txt')
+        repayDetailPath = '%s' % (time.strftime('%Y%m%d', time.localtime()))
+        repay_detail = os.path.join(self.data_save_path, 'REPAY'+repayDetailPath+'.txt')
         self.log.demsg("还款明细生成路径：{}".format(repay_detail))
 
         val_list = map(str, [v for v in value])
-        strings = ','.join(val_list)
+        strings = '|'.join(val_list)
         with open(repay_detail, 'a+', encoding='utf-8') as f:
             f.write(strings)
             f.write('\n')

@@ -78,6 +78,7 @@ class TestCase(object):
 
         with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
            redis.del_key('000:ACCT:SysInfo:BIGACCT')
+           redis.del_key('000:ACCT:AccountDate:BIGACCT')
            time.sleep(5)
 
         log.info('按期还款日期---------------: {}'.format(account_date))
@@ -112,6 +113,7 @@ class TestCase(object):
 
         with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
             redis.del_key('000:ACCT:SysInfo:BIGACCT')
+            redis.del_key('000:ACCT:AccountDate:BIGACCT')
             time.sleep(1)
 
         with allure.step("执行资产日终任务"):
