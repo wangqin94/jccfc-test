@@ -38,8 +38,12 @@ class Redis(object):
             except Exception as err:
                 _log.error("delete redis key error {}".format(err))
 
+    def del_assert_repay_keys(self):
+        self.del_key('000:ACCT:SysInfo:BIGACCT', '000:ACCT:AccountDate:BIGACCT')
+
 
 if __name__ == '__main__':
     r = Redis()
     # print(r.redis.get('000:ACCT:SysInfo:BIGACCT').decode('utf-8', errors='ignore'))
     r.del_key('000:ACCT:SysInfo:BIGACCT')
+    r.del_key('000:ACCT:AccountDate:BIGACCT')

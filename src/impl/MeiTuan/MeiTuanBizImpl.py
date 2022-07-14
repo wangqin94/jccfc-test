@@ -3,13 +3,13 @@
 # 接口数据封装类
 # ------------------------------------------
 
-from config.TestEnvInfo import *
 from engine.EnvInit import EnvInit
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import MeiTuan
 from src.enums.EnumMeiTuan import *
 from src.impl.common.CommonBizImpl import *
 from src.enums.EnumsCommon import *
+from utils.Apollo import Apollo
 
 
 class MeiTuanBizImpl(EnvInit):
@@ -18,7 +18,6 @@ class MeiTuanBizImpl(EnvInit):
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = MeiTuan.MeiTuan
-
         self.data = self.get_user_info(data=data, person=person)
         # 初始化定义用户apply信息
         self.user_credit_apply_info = {}
@@ -27,6 +26,7 @@ class MeiTuanBizImpl(EnvInit):
 
         # 初始化数据库查询公共类
         self.MysqlBizImpl = MysqlBizImpl()
+        self.apollo = Apollo()
         # 初始换加密标识
         self.encrypt_flag = encrypt_flag
 
@@ -86,13 +86,6 @@ class MeiTuanBizImpl(EnvInit):
         info = [dict(zip(keys, item)) for item in res]
         self.user_credit_apply_info = info
 
-    def get_user_file_info(self, sql, table='credit', database=None):
-        database = self.MysqlBizImpl.credit_database_name if not database else database
-        # keys = self.mysql_credit.select_table_column(table_name=table, database=database)
-        # sql =
-        # values = self.mysql_credit.select(sql)
-        pass
-
     # 获取数据库支用申请用户信息
     def get_user_loan_apply_info(self, certificate_no, database=None):
         database = self.MysqlBizImpl.credit_database_name if not database else database
@@ -130,6 +123,12 @@ class MeiTuanBizImpl(EnvInit):
 
         # 校验用户是否在系统中已存在
         self.MysqlBizImpl.check_user_available(self.data)
+
+        # 配置风控mock返回建议额度与授信额度一致
+        apollo_data = dict()
+        creditAmt = int(self.active_payload['body']['APPLY_AMT'])/100
+        apollo_data['hj.channel.risk.credit.line.amt.mock'] = str(creditAmt)
+        self.apollo.update_config(appId='loan2.1-jcxf-credit', **apollo_data)
 
         self.log.demsg('授信申请...')
         url = self.host + self.cfg['credit']['interface']

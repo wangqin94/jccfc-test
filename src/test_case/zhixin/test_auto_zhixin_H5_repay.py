@@ -13,7 +13,6 @@ import pytest
 
 from src.impl.common.MysqlBizImpl import *
 from utils.Apollo import Apollo
-from utils.Redis import *
 from utils.JobCenter import *
 
 log = MyLog().get_log()
@@ -21,11 +20,10 @@ log = MyLog().get_log()
 
 @allure.step('前置操作：预置放款数据')
 @pytest.fixture(scope="class", autouse=True)
-def pre_loan_data(get_base_data_zhixin, zhiXinSynBizImpl, checkBizImpl, zhiXinCheckBizImpl, mysqlBizImpl):
+def pre_loan_data(get_base_data_zhixin, zhiXinSynBizImpl, checkBizImpl, zhiXinCheckBizImpl, mysqlBizImpl, redis):
     data = get_base_data_zhixin
     job = JOB()
     apollo = Apollo()
-    redis1 = Redis()
     with allure.step("前置条件-准备借据：借据逾期2期且为账单日"):
         bill_date = zhiXinSynBizImpl.preLoanapply(month=3)
     with allure.step("设置H5还款mock时间, 第二期账单日"):
@@ -47,21 +45,28 @@ def pre_loan_data(get_base_data_zhixin, zhiXinSynBizImpl, checkBizImpl, zhiXinCh
         account_date = repay_date.replace("-", '')
         last_date = str(get_custom_day(-1, repay_date)).replace("-", '')
         next_date = str(get_custom_day(1, repay_date)).replace("-", '')
+        cut_time = repay_date + " 00:10:00"
         mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
-                                                  account_date=account_date, next_date=next_date)
+                                                  account_date=account_date, next_date=next_date,
+                                                  cutday_time=cut_time)
     with allure.step("清理asset流水记录"):
-        mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
+        mysqlBizImpl.del_assert_repay_history_data(account_date)
 
     with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
-        redis1.del_key('000:ACCT:SysInfo:BIGACCT')
+        redis.del_assert_repay_keys()
 
     with allure.step("执行账务日终任务"):
         job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
         job.trigger_job("资产日终任务流", group=6)
 
-    with allure.step("校验当前借据是否已逾期：15s轮训等待"):
+    with allure.step("校验当前借据是否已逾期：15s查证等待"):
         log.info('验当前借据状态')
         status = mysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value, thirdpart_user_id=data['userId'])
+        loan_apply_info = mysqlBizImpl.get_loan_apply_info(thirdpart_user_id=data['userId'])
+        credit_loan_invoice = mysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                    loan_apply_id=loan_apply_info['loan_apply_id'])
+        checkBizImpl.check_asset_repay_plan_overdue_days(max_overdue_days=20, current_num='1',
+                                                         loan_invoice_id=credit_loan_invoice['loan_invoice_id'])
         assert EnumLoanStatus.OVERDUE.value == status, '当前支用单状态不为逾期状态，请检查账务日终任务执行结果'
     return repay_date
 

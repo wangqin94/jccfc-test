@@ -393,7 +393,7 @@ class YingJiZFBizImpl(EnvInit):
         if self.paymentType == "5":
             data['idNo'] = self.data['cer_no']
             data['bankAcctNo'] = self.data['bankid']
-            data['bankAcctName'] = '{}_{}_1009'.format(self.data['name'], "SUCCESS")
+            data['bankAcctName'] = '{}_{}_1022'.format(self.data['name'], "SUCCESS")
             data['phoneNum'] = self.data['telephone']
 
         # 更新 payload 字段值

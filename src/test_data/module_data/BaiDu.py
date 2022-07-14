@@ -3,7 +3,7 @@
 # -----------------------------------------------------------
 BaiDu = {
     'credit': {
-        'interface': '/api/v1/baidu/demo/credit/apply',
+        'interface': '/api/v1/baidu/credit/apply',
         'payload': {
             "type": "async",
             "reqSn": "credit_baidu502102002105001650",
@@ -50,7 +50,7 @@ BaiDu = {
         },
     },
     'credit_query': {
-        'interface': '/api/v1/baidu/demo/credit/query',
+        'interface': '/api/v1/baidu/credit/query',
         'payload': {
             "type": "sync",
             "reqSn": 'credit_baidu502102002105001650',
@@ -73,7 +73,7 @@ BaiDu = {
     },
 
     'loan': {
-        'interface': '/api/v1/baidu/demo/loan/apply',
+        'interface': '/api/v1/baidu/loan/apply',
         'payload': {
             "type": "async",
             "reqSn": '',
@@ -142,7 +142,7 @@ BaiDu = {
     },
 
     'loan_query': {
-        'interface': '/api/v1/baidu/demo/loan/query',
+        'interface': '/api/v1/baidu/loan/query',
         'payload': {
             "type": "sync",
             "reqSn": 'loan_baidu502102002105001650',
@@ -164,7 +164,7 @@ BaiDu = {
         }
     },
     'limitrestore': {
-        'interface': '/api/v1/baidu/demo/limit/restore',
+        'interface': '/api/v1/baidu/limit/restore',
         'payload': {
             "seq_no": "5562464134095184322",
             "cur_date": "20210728",
@@ -179,7 +179,7 @@ BaiDu = {
     },
 
     'notice': {
-        'interface': '/api/v1/baidu/demo/limit/restore',
+        'interface': '/api/v1/baidu/limit/restore',
         'payload': {
             "type": 3,
             "order_id": "${order_id}",
@@ -194,18 +194,17 @@ BaiDu = {
     },
 
     'settlement': {
-        'interface': '/api/v1/baidu/demo/settlement/applyInfo',
+        'interface': '/api/v1/baidu/settlement/applyInfo',
         'payload': {
                 "loanId": "5170535549454899682",
                 "query_flag": "",
                 "confirmDate": "2021-12-05",
                 "amount": "600",
                 "clearDate": "2021-12-03",
-                "prcid": "610102199905187862",  #  141100200905221670
+                "prcid": "610102199905187862",   # 141100200905221670
                 "reqsn": "",
                 "username": "",
                 "subLoanId": "12332122"
         }
     }
-
 }

@@ -21,13 +21,14 @@ def get_wld_bill_day():
     :return: 返回首期账单日
     """
     date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
+
     date_list = str(date).split('-')
     bill_year, bill_month, bill_day = map(int, date_list)
     bill_month += 1
     if bill_month > 12:
         bill_year += 1
         bill_month -= 12
-    bill_day = bill_day == 28 if bill_day > 28 else bill_day
+    bill_day =  28 if bill_day > 28 else bill_day
 
     bill_data = '{}-{}-{}'.format(str(bill_year), str("%02d" % bill_month), str("%02d" % bill_day))
     return bill_data
@@ -69,11 +70,12 @@ class WldSynBizImpl(WldBizImpl):
         # 授信校验-接口
         self.wldCheckBizImpl.check_credit_apply_status(thirdapplyid=creditApplyNo)
 
-        # 设置apollo放款mock时间 默认当前时间前两月日期month=3 eg:当前时间2022-01-13 放款时间2021-11-13 账单日2021-12-13
+        # 设置apollo放款mock时间 默认当前时间
         bill_date = bill_date if bill_date else get_wld_bill_day()
+        print(bill_date)
         loan_date = get_custom_month(month=-1, date=bill_date)
         apollo_data = dict()
-        apollo_data['credit.loan.trade.date.mock'] = "ture"
+        apollo_data['credit.loan.trade.date.mock'] = "true"
         apollo_data['credit.loan.date.mock'] = loan_date
         Apollo().update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
@@ -108,8 +110,10 @@ if __name__ == "__main__":
     # m = get_zhixin_bill
     # _day()
     # print(m)
-    WldBizImpl = WldSynBizImpl()
-    WldBizImpl.preLoanapply(month=0)
+    # WldBizImpl = WldSynBizImpl()
+    # WldBizImpl.preLoanapply(month=0)
+    a = get_wld_bill_day()
+    print(a)
 
 
 

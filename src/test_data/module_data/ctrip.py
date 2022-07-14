@@ -29,14 +29,14 @@ ctrip = {
                     "customerStickiness": "优质",
                     "institutionType": "microCredit",
                     "loanAppRating2": "1",
-                    "loanAppRating": None,
+                    "loanAppRating": '优',
                     "login_period": "0.1978,0.1626,0.1930,0.3240,0.1226",
                     "rest_regular": "96.5241",
                     "creditRating": "优质",
                     "flight_airport_tendency": "0.1429,0.1429,0.7143",
                     "car_prob": "0.9122",
                     "family_prob": None,
-                    "pbocQuery": "N",
+                    "pbocQuery": "Y",
                     "city_stable": "0.3855",
                     "house_prob": "0.6531",
                     "odc_prob": "0.9999",
@@ -107,7 +107,10 @@ ctrip = {
                     "mobile": "${手机号}",
                     "identity_card_image_1": "/test/wymid1.png",
                     "identity_card_image_2": "/test/wymid2.png",
-                    "face_image": "/test/wymface.png"
+                    "face_image": "/test/wymface.png",
+                    "risk_data": {
+
+                    }
                 }
             },
             "advice_rate_type": "${advice_rate_type}",
@@ -140,14 +143,14 @@ ctrip = {
                     "customerStickiness": "优质",
                     "institutionType": "microCredit",
                     "loanAppRating2": "1",
-                    "loanAppRating": None,
+                    "loanAppRating": "优",
                     "login_period": "0.1978,0.1626,0.1930,0.3240,0.1226",
                     "rest_regular": "96.5241",
                     "creditRating": "优质",
                     "flight_airport_tendency": "0.1429,0.1429,0.7143",
                     "car_prob": "0.9122",
                     "family_prob": None,
-                    "pbocQuery": "N",
+                    "pbocQuery": "Y",
                     "city_stable": "0.3855",
                     "house_prob": "0.6531",
                     "odc_prob": "0.9999",
@@ -218,7 +221,10 @@ ctrip = {
                     "mobile": "${手机号}",
                     "identity_card_image_1": "/xdgl/ctrip/test/gysid1.png",
                     "identity_card_image_2": "/xdgl/ctrip/test/gysid2.png",
-                    "face_image": "/xdgl/ctrip/test/gysface.png"
+                    "face_image": "/xdgl/ctrip/test/gysface.png",
+                    "risk_data": "{\"pbocQuery\":\"N\",\"pricingRating\":\"M999\",\"debtIncomeFactor\":\"(-7.2,-6.2]\","
+                                 "\"approvalRiskGrade\":\"E\",\"IncomeRating\":\"1\","
+                                 "\"institutionType\":\"traditional_ETB\",\"MultiApplicationRating\":\"1\"} "
                 }
             },
             "advice_rate_type": "${advice_rate_type}",
@@ -249,7 +255,7 @@ ctrip = {
             "bank_no": "CCB",
             "first_repay_date": "${__time(YMD,)}113538",
             "service": "LOAN_CASH",
-            "term": "3",
+            "term": "6",
             "bank_bind_mobile": "${手机号}",
             "repay_type": "ECI",
             "extend_param": {
@@ -274,8 +280,26 @@ ctrip = {
                 "identity_card_image_1": "5db0ea08059aa2955d005ac830510e6c",
                 "identity_card_image_2": "40d72516c9dd84bc75a0a73306250369",
                 "face_image": None,
-                "riskGrade": 1
+                "loanAppRating2": "1",
+                "loanAppRating": '优',
+                "riskGrade": 1,
+                "risk_data": "{\"masterGrade\":\"E\",\"pbocQuery\":\"Y\",\"MultiApplicationRating\":\"3\"}"
             }
+        }
+    },
+
+    'loan_query': {
+        'interface': '/api/v1/ctrip/demo/trade',
+        'payload': {
+            "service": "LOAN_APPLY_QUERY",
+            "loan_request_no": "${loan_request_no}",
+            "partner_loan_no": "${partner_loan_no}",
+            "result_code": "000000",
+            "loan_status": "0",
+            "result_msg": "成功 ",
+            "partner": "XXCASH",
+            "loan_rate": 0.0008,
+            "service_version": "1.0"
         }
     },
 

@@ -44,14 +44,14 @@ class Apollo(object):
         # 获取登陆接口生成的Set-Cookie
         try:
             if res.headers['Location'] == self.index_url:
-                _log.info("请求[{}]的状态码为:{}:".format(url, res.status_code))
-                _log.info("pre login apollo success, get cookies")
+                _log.debug("请求[{}]的状态码为:{}:".format(url, res.status_code))
+                _log.debug("pre login apollo success, get cookies")
                 cookie = res.cookies.get_dict()
                 # header中添加cookies后发起登陆重定向接口
                 res = self.session.get(url=self.host, cookies=cookie, allow_redirects=False)
                 if res.status_code == 200:
-                    _log.info("请求[{}]的状态码为:{}:".format(self.host, res.status_code))
-                    _log.info("login apollo success, Save cookies on the client")
+                    _log.debug("请求[{}]的状态码为:{}:".format(self.host, res.status_code))
+                    _log.debug("login apollo success, Save cookies on the client")
                     return cookie
                 else:
                     _log.error("login {} error".format(self.host))
@@ -99,7 +99,7 @@ class Apollo(object):
                                                                                             namespace)
         res = self.session.post(url=url, headers=json_headers, cookies=self.cookie, json=payload)
         if res.status_code == EnumStatusCode.SUCCESS.value:
-            _log.info("请求[{}]的状态码为:{}:".format(url, res.status_code))
+            _log.debug("请求[{}]的状态码为:{}:".format(url, res.status_code))
             _log.info("releases configuration success")
 
     def update_config(self, appId='loan2.1-jcxf-credit', namespace='000', **kwargs):
@@ -119,8 +119,8 @@ class Apollo(object):
             res = self.session.put(url=url, headers=json_headers, cookies=self.cookie, json=data)
             # 校验
             if res.status_code == EnumStatusCode.SUCCESS.value:
-                _log.info("请求[{}]的状态码为:{}:".format(url, res.status_code))
-                _log.warning("update content: {}".format(kwargs))
+                _log.debug("请求[{}]的状态码为:{}:".format(url, res.status_code))
+        _log.warning("更新apollo配置: {}".format(kwargs))
         _log.info("update configuration success")
         #  执行发布
         self.releases(appId=appId, namespace=namespace)
@@ -141,5 +141,5 @@ if __name__ == '__main__':
 
     # 设置放款mock时间
     kwargs['credit.loan.trade.date.mock'] = "true"
-    kwargs['credit.loan.date.mock'] = "2021-11-18"
+    kwargs['credit.loan.date.mock'] = "2022-03-18"
     apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **kwargs)

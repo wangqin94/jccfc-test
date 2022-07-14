@@ -50,6 +50,11 @@ class ZhiXinSynBizImpl(ZhiXinBizImpl):
         self.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                         cdKey=res['cdKey'])
 
+        # ocr配置默认不校验 (1：不验证，0：验证)
+        apollo_data = dict()
+        apollo_data['hj.channel.ocr.mock'] = "1"
+        Apollo().update_config(appId='loan2.1-hapi-web', namespace='000', **apollo_data)
+
         # 发起授信申请
         creditRes = json.loads(self.credit().get('output'))
         creditApplyNo = creditRes['creditApplyNo']

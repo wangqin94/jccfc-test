@@ -5,17 +5,23 @@
 # # -----------------------------------------------------------
 import base64
 import datetime as datetimes
+import hashlib
 import random
 import string
 import json
 import time
 import os
+
+import demjson as demjson
 import requests
 from inspect import getcallargs
 from datetime import datetime
 from functools import wraps
 
 from config.TestEnvInfo import TEST_ENV_INFO
+from utils.BankNo import BankNo
+from utils.GenName import get_name
+from utils.Identity import IdNumber
 from utils.Logger import MyLog
 
 from dateutil.relativedelta import relativedelta
@@ -53,15 +59,26 @@ def wait_time(sec):
 # # -----------------------------------------------------------
 # # - 用户四要素生成
 # # -----------------------------------------------------------
-def get_base_data(env, *project, back=20, **kwargs):
+def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
+    """
+    用户基础信息生成
+    @param bankName: 银行名称 eg:bankName='中国银行'; None:随机银行
+    @param env: 环境变量
+    @param project: 添加随机数
+    @param back: person文件存放数据最大条数 默认20
+    @param age: eg: age='2020-01-01'； age=None 随机生成大于16岁生日
+    @param kwargs: data字典中添加指定key-value值
+    @return:
+    """
     strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
-    res = requests.get('http://10.10.100.153:8081/getTestData')
-    data['name'] = eval(res.text)["姓名"]
-    data['cer_no'] = eval(res.text)["身份证号"]
-    data['bankid'] = eval(res.text)["银行卡号"]
+    # res = requests.get('http://10.10.100.153:8081/getTestData')
+    # bank = BankNo()
+    data['name'] = get_name()
+    data['cer_no'] = IdNumber.generate_id(age=age)
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
+    data['bankid'] = BankNo().get_bank_card(bankName=bankName)
 
     # 读取文件行数，超过20行删除历史数据
     with open('person.py', "r", encoding='utf-8') as f:  # 打开文件
@@ -94,15 +111,24 @@ def get_base_data(env, *project, back=20, **kwargs):
 # # -----------------------------------------------------------
 # # - 用户四要素生成（临时数据，不保存到文件）
 # # -----------------------------------------------------------
-def get_base_data_temp(*project, **kwargs):
+def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
+    """
+    用户基础信息生成
+    @param bankName: 银行名称 eg:bankName='中国银行'; None:随机银行
+    @param project: 添加随机数
+    @param age: eg: age='2020-01-01'； age=None 随机生成大于16岁生日
+    @param kwargs: data字典中添加指定key-value值
+    @return:
+    """
     strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
-    res = requests.get('http://10.10.100.153:8081/getTestData')
-    data['name'] = eval(res.text)["姓名"]
-    data['cer_no'] = eval(res.text)["身份证号"]
-    data['bankid'] = eval(res.text)["银行卡号"]
+    # res = requests.get('http://10.10.100.153:8081/getTestData')
+    data['name'] = get_name()
+    data['cer_no'] = IdNumber.generate_id(age=age)
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
+    bank = BankNo()
+    data['bankid'] = bank.get_bank_card(bankName=bankName)
 
     # project赋值后天从到data中
     if project:
@@ -274,8 +300,8 @@ def encrypt(encrypt_url, headers, encrypt_payload):
     _log.info("开始请求加密接口对报文进行加密操作...")
     response = requests.post(url=encrypt_url, headers=headers, json=encrypt_payload)
     _log.info("报文加密操作结束！status code: %s", response.status_code)
-    res = response.json()
-    res = str(res).replace("'", '''"''').replace(" ", "")
+    res = demjson.encode(response.json())  # 将 Python 对象编码成 JSON 字符串
+    # res = str(res).replace("'", '''"''').replace(" ", "")
     _log.info(f"加密后的报文：{res}")
     return json.loads(res)
 
@@ -291,8 +317,8 @@ def decrypt(decrypt_url, headers, decrypt_payload):
     :return:                解密后的报文
     """
     _log.info("开始请求解密接口对报文进行解密操作...")
-    decrypt_payload = json.dumps(decrypt_payload)
-    response = requests.post(url=decrypt_url, headers=headers, data=decrypt_payload)
+    # decrypt_payload = json.dumps(decrypt_payload)
+    response = requests.post(url=decrypt_url, headers=headers, json=decrypt_payload)
     _log.info("报文解密操作结束！status code: %s", response.status_code)
     res = response.json()
     res1 = str(res).replace("'", '''"''').replace(" ", "")
@@ -488,6 +514,22 @@ def get_custom_day(day=0, date='2021-11-13'):
 
 
 # # -----------------------------------------------------------
+# # - 获取指定日期的前N年
+# # -----------------------------------------------------------
+def get_custom_year(year=0, date=None):
+    """
+    @param year: 跳转年数
+    @param date: 指定时间 '2021-11-13'
+    @return:
+    """
+    if not date:
+        date = time.strftime('%Y-%m-%d', time.localtime())
+    date = datetime.strptime(date, '%Y-%m-%d').date()
+    date = str(date - relativedelta(years=-int(year)))
+    return date
+
+
+# # -----------------------------------------------------------
 # # - 图片转为base64字符串
 # # -----------------------------------------------------------
 def get_base64_from_img(img_path):
@@ -498,6 +540,15 @@ def get_base64_from_img(img_path):
     with open(img_path, "rb") as f:  # 转为二进制格式
         base64_data = base64.b64encode(f.read())  # 使用base64进行加密
         return base64_data.decode()
+
+
+# # -----------------------------------------------------------
+# # - 字符串转MD5
+# # -----------------------------------------------------------
+def computeMD5(message):
+    m = hashlib.md5()
+    m.update(message.encode(encoding='utf-8'))
+    return m.hexdigest()
 
 
 def format_path(path):
@@ -513,7 +564,8 @@ if __name__ == "__main__":
     # r = get_base64_from_img(img_path)
     # r = get_before_month(2, date='2021-11-13')
     # r = update_sql_qurey_str(table='table', db='db', attr='a=b', a=1, b=2)
-    r = get_custom_day(40, date='2021-11-13')
+    # r = get_custom_year(-16)
+    r = get_custom_month(0, '2022-02-03')
     print(r)
     # r = get_sql_qurey_str('table', 'a', 'b', db='base')
 
