@@ -21,7 +21,7 @@ class TestCase(object):
         # 支用： "featureCodes":["JC_loan_result","JC_loan_failCode","JC_loan_failReason"]
         if flag == 0:
             jt = JieBeiBizImpl(data=data)
-            jt.feature(featureCodes='["JC_cs_result","JC_cs_failCode","JC_cs_failReason"]')
+            jt.feature(featureCodes=["JC_cs_result","JC_cs_failCode","JC_cs_failReason"])
 
         # 初审数据准备
         elif flag == 1:

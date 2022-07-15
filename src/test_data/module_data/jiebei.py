@@ -3,8 +3,8 @@ jiebei = {
     'feature': {
         'interface': "/api/v1/antjb/featureservice/decision_feature",
         'payload': {
-            "applyNo": "applyNo1111111111113",  # 业务单号   是
-            "featureCodes": '["JC_cs_result","JC_cs_failCode","JC_cs_failReason"]' ,  # 特征编码列表                   是
+            "applyNo": "applyNo1111111111118",  # 业务单号   是
+            "featureCodes": ["JC_cs_result","JC_cs_failCode","JC_cs_failReason"] ,  # 特征编码列表                   是
             "appCode": "TIANCHENG",  # 请求来源默认“TIANCHENG”     是
             "idInfo": "",                   #     否
             "bizActionType": "",  # 申请类型，只区分支用场景  申请类型，⽀⽤“LOAN_DECISION”
