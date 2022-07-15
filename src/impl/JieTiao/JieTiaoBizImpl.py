@@ -67,8 +67,12 @@ class JieTiaoBizImpl(EnvInit):
 
     def payment(self, **kwargs):
         payment_data = dict()
+
+        payment_data['tranNo'] = 'repayReqNo' + self.strings + "1"
         payment_data['repayCstname'] = self.data['name']
         payment_data['repayRelcard'] = self.data['cer_no']
+        payment_data['repayBankAcct'] = self.data['bankid']
+        payment_data['repayRelphone'] = self.data['telephone']
 
         # 更新 payload 字段值
         payment_data.update(kwargs)
@@ -100,6 +104,7 @@ class JieTiaoBizImpl(EnvInit):
     def repay_notice(self, **kwargs):
         repay_notice_data = dict()
 
+        # repay_notice_data['rpyReqNo'] = 'rpyNoticeNo' + self.strings + "4"
         # 更新 payload 字段值
         repay_notice_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_notice']['payload'], **repay_notice_data)
