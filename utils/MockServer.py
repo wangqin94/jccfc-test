@@ -5,16 +5,26 @@
 @Author  ：jccfc
 @Date    ：2022/6/6 13:57 
 """
+import json
+import os
+import sys
+
+print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import requests
 from flask import jsonify, Flask, request
 
 from config.globalConfig import headers
-from utils.Models import decrypt
+from utils.BankNo import BankNo
+from utils.GenName import get_name
+from utils.Identity import IdNumber
+from utils.Models import decrypt, get_telephone
 
 app = Flask(__name__)  # 创建flask实例，用来接收web请求
 
 getMsg_loan_invoice_no16539809083830 = {
-    "data": "Ntp%2BNd0nrxTznFOcj79b%2BAut5uyK5LgHyWvYd4%2BQA2eZ%2BpiRgYh3xvi%2B6pRfkJGK3wE%2B6cfPEQB%2F%0ArG%2BKWIRrCDrTw7GNZIik2cuJI7x3SUnKFsuchoLBKNjlGEGgNJwDAhYmnB%2B8IqWfj9JA%2BS9Yy280%0AIkxziDec2SzuKhJsk9kmxxBux%2FOOQGA0%2B3P9LfOEP6keMdwC%2FfrmMP5DxgtrdEJDmo7cQBe%2FXKKF%0AaUxheG1EQopSzsdaJdXcjsZ%2F%2FIZpsVNQlqpieykMGdMVGkKyX9RiRv4AmhKo%2FxjQcjcww%2Fy2TpMe%0AcjIdD1o1GIYb103FJN%2F%2FDhoMpoHhu0YELNKmPhH2B%2Fj7JYrw0%2B1UnK7G21E1JYlIVU4BSia%2B45P%2F%0ADJdYtUgLke0yVUT0SO07gLd6K7%2F9071480ZZ%2BvyGKNG1AuJ4QPbMqOgSaiMl25SLS61wV2tkaZwd%0A6Nz6AVw0dJdHfe02%2FBe4cdccCGWXDCIpMlvz0ZHnYc%2FBWpfPufPXjdzU7Nbm4zGZLcK7ptY5NtPx%0A443gjQNx%2FpVYfwlpbdP7G5ttydCvscAkRAhxLba4B5%2FFoJ0BQ%2Bza0Bub9cvp0AQGR1a9KCUKCJr7%0AgpVH81LtcGg4BDyx89UJCEGhVSFCQ0qQ4dXcLcfWECflt1XQQOr3cpEIURbawKqCmkWkMDvoOtcI%0A%2FxYFZ5%2BYHm%2FUvUak4C2UiyVfxwQ8eCd0f8sM8IeomwAprCLsUODpriDXvWVxxzm8a32HOw0yns2s%0AyVnLYFwgvbbS0jKVsI%2FI3MrMLo2BM6X22aNuqZVrbXfD%2F1q8BuFi%2BTfQXEoO5bBLLPGDFcdTkRPc%0AFPPSIT%2BlhdAHoxyjiGSOPKcGe7crHfsOAv6vOjYlpzwHeKxfSDUm1hdsva2CmhmK912Zn69ltcQ5%0AfXEqqRDUoCKI6k7z709HhedJWFKG%2Fmy%2Fo8kLqi9tQIcDCB%2BWHBTAuAbieuzzTnMYDWfB9UPP1gha%0AYHi0ismvV%2FdZ1KQsINz5hXZB1q9cmRlC11SAkfSd0FtwHptlts9u165udQgF5%2BT7YVO6L6sMuga8%0AGrFu9YDc%2F6%2Blp78vpNFN1%2B9khZ99BIjP1G8YLxZFveltmxN%2BY8T%2FLO5JMPIFu%2BGpT2A3WgvqnV8a%0Ah96fWCs4qzvZqoBCk%2Bi6M44Ep1e4B%2BEMY9hWrijjJ8FVRwxpLJEpPHKYolwkckTJPy8jPQHTa%2FZt%0Avu4hqNaW9ruxC%2FfMzB35guY8u3yzNypyUTRlvdUYX5zoOZ1k0sJLvo%2Bp7u5N8%2BVEBSQMFg7n5KGx%0AaDmJJiDkLcV7Wo29Ptri7ts7rEQQtyjCEvGvf3drQpYGoOgc%2F2nUTlHVKO6lK8hX%2FO5HDy0dDw%3D%3D%0A",
-    "sign": "k9IS8SKwslftB1kpB4W6XDWTOwDg1cyk%2FdIDtNqDD9S2McAP1nPpPEfuagF2O9MRi%2FE3E64fbS%2F6%0A%2BbXU301jLeRrvzYJA0wvC3Jb7FUJ2P%2B9gObjbgcXz8uYHNlFRN24RoE65p8blKvz9eNg1JltSaJC%0AQeSdmwcTHR4%2BDakFN4vUyW1M1VpsyOVdXJCkJR9hAo4G6Npy%2FDpRq4qqAH9PvC55TNbN3AH5kJc3%0AQvt9WRMQkGj%2FnfLq6XsO6WLZOcqpeKYEpGVco%2Fap6gMSCfA9aeqEm%2BUATl6KH9UteswbFT0D1d6d%0AD45rt8LZKsqBHUqh25yKFjpwQl42qK0%2FMQm8fw%3D%3D%0A"
+    "data": "h9coJy%2FueB7AK7vGW%2FoXDf8or9x9qkUFjY1ryKI5Y3GvHLG7AVmyerDBcUaAbXYiympiGWB66yTk%0ArUbbtxkbDH5eSemY7EQlCoteOJS8fO73%2BACp4YuSVFk6Wj%2FE4GucJM0Rv4BzJc4FtUGMuxTtMF%2BN%0A%2BkRKKY0w4aCpIcZFph6JwQpsrwl8U3%2ByJMzJMwC3JqJM8FrGDIWE22Z8OYaEBMYI3d%2BOjEcHk4gu%0ASVPCbDWLop81CSP8x4dhbnvIgwM0%2FDzaC3fzvtCCFqWfsz6IP0vDZ2kwHsgsz4Zh0pHe9vmqnkV%2B%0AsnTqhKb%2Flh3OqgIiDC6g6zqQOpWTCtTaXzt4dlBWI4QGxdmbxHWsLslwPJqO%2BXmVwiPat6woM4kS%0AF3qjUadaaWDCl8NamRrDbc0ZkdqY7QkormDW5oY5egVp6ZHsrqj5%2BarWNSfE9EIABuU%2B2aNCSRXj%0AxaIcOn7t21tob0xza4gODBhHMWFyy9gpgltpM7amRLZIfXSxHg9lRu5fLOM%2BfXbVu5jONSf%2BYZYb%0A2QPDOXo7NngrvSScYxXD6hsMme%2Bngm7cdaZ89QDlobxYOk7OQ%2FDfhIyota3bEgvKrxUijaa2Mnpx%0AWoSv2XKOT00BOr8SdfF%2F1BoAA7zzi3jgfjmo36cCFItkOc%2BwOgHMwd%2B0Rj9JoJ7GKlRX8UkKsic1%0A83XjHB%2F3dWeTrm7uvmusFUCnNOHWOX%2FjhzDxpQ80e2oCjYNdIca71ngpok6VriPuYEwIZIN3dF1O%0Ap67Mcswz8xHlvHiquJurJaBX%2BvrSsVG%2BREuOcZArWUjROyOhpOX0OtN63TdIVvmPNh7G9ktnO49R%0A603LqC2YEe5GdNJLax5GxZPfgv64ijS6BYLbY8fwRVlZhQy7emJgFQLEoio4up3bpDQkLfdPUz4H%0ANTrbsGXq52M9%2BOi69HmTICno2loiPByrBZZQlKYsufHnVochZcqQ9UZza%2FKx5ABwM6w6J7kOLOCt%0ASFGGmpN%2F4NvlcYLeVpvaEMTt9AltH8PqhYmxoGSoys8DZteeqXtYQA2mEm1uOBq%2BHN6ySBw0Z7k6%0AOBMxtQx1YYzTLHmbre33g5n%2FczF3KToUFjsT2Ny2l4dv5SIlxG%2Fo5DAaJeKEEBBFd%2Fxc8pKb1I4H%0A%2BA4Un5cI5oDPDAGDfy3BoRcS673XR3ah%2F8QnpLdnlsjxJBxXwpWvKD5NCGzw4Qem7d3HpN00Qadu%0ADSfWBm7f8xcHbd26QE%2FMv4Gh%2B%2FbVifuRfbEeUGc8M1wqj8UZdhv6nJz1RnA9iABqdoEv6TzxYQQ4%0Au5NlZO7MhSdUyaGPu0bhKEbmK34LaX%2FUFqFNsrsBdHu7dNIgHd1MHejZlaZ0eTEQrwAjL1zMMA%3D%3D%0A",
+    "sign": "Bg27IYV2td%2Fqx%2Fq%2FELMIawTmV3EX9IOcO1rSV0ADQEkw%2Fjs5FhB%2BywSeHo2P6MXNabWiJ5Lj4DFd%0ANhKcBvof7v6hX3qRTN2cP8wTKKj8Nd%2B6aFab%2BwKAuDNXkxPQsOnN%2Fsy5jKs1lQ16gVfO74nOELuj%0AlzcGhXjzQwuaKKhR1SUXfq9Q0VGdIenSHs0MHqdMyD7LC39V17%2BUlS0qbwfWSH302jlExPdxVJoM%0A6ikXXpMx8kz1BqyV0yEw%2Bm2jQXMLFHrBXYSVNnunhT2FGP8CSFx4jF%2FawsCpYI1%2B7Tt21AQ9mj67%0AgiePWo%2B0mOa18w%2Ft62Ub89EG5WM3%2Ff8Wa4nHXw%3D%3D%0A"
 }
 
 loan_invoice_no16467313721115 = {
@@ -33,7 +43,7 @@ def get_mock():
     data = request.get_json()
     decrypt_url = "https://hapi-web-hsit.jccfc.com/api/v1/secret/thirdDecryptData/MEIT"
     response = decrypt(decrypt_url, headers, data)
-    if response['body']['LOAN_NO'] == 'loan_invoice_no16539809083830':
+    if response['body']['LOAN_NO'] == 'loan_invoice_no16540678704846':
         return jsonify(getMsg_loan_invoice_no16539809083830)
     if response['body']['LOAN_NO'] == 'loan_invoice_no16467313721115':
         return jsonify(loan_invoice_no16467313721115)
@@ -41,6 +51,21 @@ def get_mock():
         return jsonify(loan_invoice_no16467310568047)
     else:
         return jsonify("error")
+
+
+@app.route('/mock/getTestData', methods=['GET', 'POST'])  # delete
+def getTestData_mock():
+    data = {}
+    data['姓名：'] = get_name()
+    data['身份证号：'] = IdNumber.generate_id()
+    # 获取随机生成的手机号
+    data['手机号：'] = get_telephone()
+    bank = BankNo()
+    data['银行卡号：'] = bank.get_bank_card()
+    data['银行卡Bin：'] = bank.cardBin
+    data['银行卡Code：'] = bank.bankCode
+    print(str(data))
+    return json.dumps(data, ensure_ascii=False)
 
 
 delMsg = {
