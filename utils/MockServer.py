@@ -60,7 +60,10 @@ def getTestData_mock():
     data['身份证号：'] = IdNumber.generate_id()
     # 获取随机生成的手机号
     data['手机号：'] = get_telephone()
-    data['银行卡号：'] = BankNo().get_bank_card()
+    bank = BankNo()
+    data['银行卡号：'] = bank.get_bank_card()
+    data['银行卡Bin：'] = bank.cardBin
+    data['银行卡Code：'] = bank.bankCode
     print(str(data))
     return json.dumps(data, ensure_ascii=False)
 
