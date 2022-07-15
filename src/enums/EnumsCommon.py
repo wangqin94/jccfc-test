@@ -17,6 +17,7 @@ class ProductEnum(Enum):
     ZHIXIN = 'zhixin'
     JieTiao = 'jietiao'
     JIKE = 'jike'
+    JIEBEI = 'jiebei'
 
 
 @unique
@@ -27,7 +28,8 @@ class ProductIdEnum(Enum):
     FQL = 'F021108'
     WLD = 'F21E031'
     ZHIXIN = 'F21E041'
-    JieTiao = 'jietiao'
+    JieTiao = 'F22E011'
+    JieBei = 'F22C021'
 
 
 @unique
