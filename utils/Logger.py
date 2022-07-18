@@ -106,7 +106,7 @@ class Logs(object):
         # 初始文件日志句柄
         # file_handler = logging.FileHandler(os.path.join(self.logPath, log_file_name))
         # 写入文件，如果文件超过100个Bytes，仅保留5个文件。
-        file_handler = RotatingFileHandler(os.path.join(self.logPath, log_file_name), maxBytes=100*102400, backupCount=10)
+        file_handler = RotatingFileHandler(os.path.join(self.logPath, log_file_name), maxBytes=100*102400, backupCount=10, encoding='utf-8')
         formatter = logging.Formatter(_config.get_log('pattern'))
         file_handler.setFormatter(formatter)
         # 设置文件日志级别
