@@ -25,11 +25,15 @@ class JieBeiBizImpl(EnvInit):
         # 初始化payload变量
         self.active_payload = {}
 
-    def feature(self, **kwargs):
+    def feature(self,bizActionType, **kwargs):
         feature_data = dict()
+
+        if bizActionType == 'LOAN_DECISION':
+            feature_data['userName'] = self.data['name']
+            feature_data['certNo'] = self.data['cer_no']
+
         # 更新 payload 字段值
         feature_data.update(kwargs)
-        self.log.demsg('当前测试环境11111: {}'.format(feature_data))
         parser = DataUpdate(self.cfg['feature']['payload'], **feature_data)
         self.active_payload = parser.parser
 
@@ -41,6 +45,10 @@ class JieBeiBizImpl(EnvInit):
 
     def datapreCs(self, **kwargs):
         datapreCs_data = dict()
+
+        datapreCs_data['name'] = self.data['name']
+        datapreCs_data['certNo'] = self.data['cer_no']
+        datapreCs_data['mobileNo'] = self.data['telephone']
 
         # 更新 payload 字段值
         datapreCs_data.update(kwargs)
@@ -55,6 +63,10 @@ class JieBeiBizImpl(EnvInit):
 
     def datapreFs(self, **kwargs):
         datapreFs_data = dict()
+
+        datapreFs_data['name'] = self.data['name']
+        datapreFs_data['certNo'] = self.data['cer_no']
+        datapreFs_data['mobileNo'] = self.data['telephone']
 
         # 更新 payload 字段值
         datapreFs_data.update(kwargs)
