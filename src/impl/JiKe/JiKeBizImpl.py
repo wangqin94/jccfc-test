@@ -213,11 +213,11 @@ class JiKeBizImpl(MysqlInit):
         self.log.info('用户四要素信息: {}'.format(self.data))
         credit_data = dict()
         # head
-        credit_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        credit_data['requestSerialNo'] = 'requestNo' + self.strings + "_2000"
         credit_data['requestTime'] = self.date
         # body
 
-        credit_data['thirdApplyId'] = 'thirdApplyId' + self.strings + "_2000"
+        credit_data['thirdApplyId'] = 'thirdApplyId' + self.strings
         credit_data['interestRate'] = 23.4
         credit_data['applyAmount'] = applyAmount
 
@@ -241,7 +241,7 @@ class JiKeBizImpl(MysqlInit):
 
         # 配置风控mock返回建议额度与授信额度一致
         apollo_data = dict()
-        apollo_data['hj.channel.risk.credit.line.amt.mock'] = self.active_payload['applyAmount']
+        apollo_data['hj.channel.risk.credit.line.amt.mock'] = self.active_payload['body']['applyAmount']
         self.apollo.update_config(appId='loan2.1-jcxf-credit', **apollo_data)
 
         self.log.demsg('开始授信申请...')
@@ -260,7 +260,7 @@ class JiKeBizImpl(MysqlInit):
         """
         queryCreditResult_data = dict()
         # head
-        queryCreditResult_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        queryCreditResult_data['requestSerialNo'] = 'requestNo' + self.strings + "_3000"
         queryCreditResult_data['requestTime'] = self.date
 
         if not thirdApplyId:
@@ -293,7 +293,7 @@ class JiKeBizImpl(MysqlInit):
         self.log.info('用户四要素信息: {}'.format(self.data))
         applyLoan_data = dict()
         # head
-        applyLoan_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        applyLoan_data['requestSerialNo'] = 'requestNo' + self.strings + "_4000"
         applyLoan_data['requestTime'] = self.date
         # body
         if not thirdApplyId:
@@ -328,7 +328,7 @@ class JiKeBizImpl(MysqlInit):
         applyLoan_data['accountNo'] = self.data['bankid']
 
         # 担保合同号
-        applyLoan_data['guaranteeContractNo'] = 'ContractNo' + self.strings + "_2000"
+        applyLoan_data['guaranteeContractNo'] = 'ContractNo' + self.strings + "_5000"
 
         # 还款计划
         applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate,
@@ -355,7 +355,7 @@ class JiKeBizImpl(MysqlInit):
         """
         queryLoanResult_data = dict()
         # head
-        queryLoanResult_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        queryLoanResult_data['requestSerialNo'] = 'requestNo' + self.strings + "_6000"
         queryLoanResult_data['requestTime'] = self.date
 
         if not thirdApplyId:
@@ -383,7 +383,7 @@ class JiKeBizImpl(MysqlInit):
         """
         repayPlan_query_data = dict()
         # head
-        repayPlan_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        repayPlan_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_7000"
         repayPlan_query_data['requestTime'] = self.date
 
         # body
@@ -410,7 +410,7 @@ class JiKeBizImpl(MysqlInit):
         """
         loanContract_query_data = dict()
         # head
-        loanContract_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        loanContract_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_8000"
         loanContract_query_data['requestTime'] = self.date
 
         # body
@@ -441,7 +441,7 @@ class JiKeBizImpl(MysqlInit):
         self.log.info('用户四要素信息: {}'.format(self.data))
         repay_apply_data = dict()
         # head
-        repay_apply_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        repay_apply_data['requestSerialNo'] = 'requestNo' + self.strings + "_9000"
         repay_apply_data['requestTime'] = self.date
         # body
         repay_apply_data['repayApplySerialNo'] = 'repayApplySerialNo' + self.strings
@@ -500,7 +500,7 @@ class JiKeBizImpl(MysqlInit):
         """
         repay_query_data = dict()
         # head
-        repay_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        repay_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_1100"
         repay_query_data['requestTime'] = self.date
         # body
         repay_query_data['repayApplySerialNo'] = repayApplySerialNo
@@ -526,7 +526,7 @@ class JiKeBizImpl(MysqlInit):
         """
         returnGoods_apply_data = dict()
         # head
-        returnGoods_apply_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        returnGoods_apply_data['requestSerialNo'] = 'requestNo' + self.strings + "_1200"
         returnGoods_apply_data['requestTime'] = self.date
         # body
         returnGoods_apply_data['loanInvoiceId'] = loanInvoiceId
@@ -580,7 +580,7 @@ class JiKeBizImpl(MysqlInit):
         """
         file_data = dict()
         # head
-        file_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        file_data['requestSerialNo'] = 'requestNo' + self.strings + "_1300"
         file_data['requestTime'] = self.date
         # body
         file_data['thirdApplyId'] = thirdApplyId
@@ -612,7 +612,7 @@ class JiKeBizImpl(MysqlInit):
         """
         getAllAreaInfo_data = dict()
         # head
-        getAllAreaInfo_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        getAllAreaInfo_data['requestSerialNo'] = 'requestNo' + self.strings + "_1400"
         getAllAreaInfo_data['requestTime'] = self.date
         # body
 
@@ -636,7 +636,7 @@ class JiKeBizImpl(MysqlInit):
         """
         queryLprInfo_data = dict()
         # head
-        queryLprInfo_data['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        queryLprInfo_data['requestSerialNo'] = 'requestNo' + self.strings + "_1500"
         queryLprInfo_data['requestTime'] = self.date
         # body
 
