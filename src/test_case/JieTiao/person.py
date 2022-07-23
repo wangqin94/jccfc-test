@@ -1,0 +1,1 @@
+data = {'name': '仰小霜', 'cer_no': '653001199308199142', 'telephone': '13181025693', 'bankid': '6214831658220337', 'applyid': 'applyid16582208404543123'}  # hpre -> jietiao
