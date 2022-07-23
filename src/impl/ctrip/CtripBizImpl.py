@@ -171,7 +171,10 @@ class CtripBizImpl(EnvInit):
         # 根据openId查询支用信息
         key1 = "thirdpart_user_id = '{}'".format(self.data['open_id'])
         credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
-        apply_rate = credit_loan_apply["apply_rate"]
+        # 取资产执行利率
+        asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
+                                                                            loan_invoice_id=self.loan_invoice_id)
+        apply_rate = asset_loan_invoice_info["execute_rate"]
 
         # 根据支用申请单号查询借据信息
         if self.loan_invoice_id:
