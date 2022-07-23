@@ -31,7 +31,7 @@ class TestCase(object):
         CheckBizImpl.check_credit_apply_status(thirdpart_user_id=open_id)
         # 发起支用刚申请
         # ctrip.loan(loan_amount=600, first_repay_date=self.cur_time)
-        ctrip.loan(loan_amount=600, first_repay_date=self.cur_time)
+        ctrip.loan(loan_amount=10000, term=12, first_repay_date="20220701112233")
         # 检查支用状态
         time.sleep(5)
         CheckBizImpl.check_loan_apply_status(thirdpart_user_id=open_id)

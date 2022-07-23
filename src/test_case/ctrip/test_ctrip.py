@@ -18,20 +18,14 @@ class TestCase(object):
         """ 预置条件处理 """
         pass
 
-    # # [0: 授信, 1: 授信查询, 2:支
-    # 用申请, 3: 支用查询, 4: 授信失效]
-    def process(self, flag=0):
+    # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 还款通知]
+    def process(self, flag=2):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
             xc = CtripBizImpl(data=None)
-            xc.credit(advice_amount=12000)
+            xc.credit(advice_amount=10000)
 
-        if flag == 10:
-            xc = CtripBizImpl(data=None)
-            xc.pre_credit(advice_amount=12000)
-            # time.sleep(2)
-            # xc.credit(advice_amount=10000)
 
         # 授信查询
         elif flag == 1:
@@ -41,7 +35,7 @@ class TestCase(object):
         # 支用申请
         elif flag == 2:
             xc = CtripBizImpl(data=data)
-            xc.loan(loan_amount=600, first_repay_date="20210924121311")  # first_repay_date=首期还款时间
+            xc.loan(loan_amount=10000, term=12, first_repay_date="20220701112233")  # first_repay_date=首期还款时间
 
         # 支用查询
         elif flag == 3:
@@ -52,19 +46,18 @@ class TestCase(object):
         elif flag == 4:
             # repay_mode=还款类型: 必填参数 :1按期还款；2提前结清；3逾期还款
             # finish_time=实际还款时间： 提前结清必填参数"20210806"
-            xc = CtripBizImpl(data=data)
-            xc.repay_notice(repay_mode="3", repay_term_no="2",finish_time="20220526")
+            xc = CtripBizImpl(data=data, loan_invoice_id='000LI0001845942584803328036')
+            xc.repay_notice(repay_mode="2", repay_term_no="2", repay_date='2022-09-10')
 
         elif flag == 5:
             num = 1
             for i in range(0, num):
                 xc = CtripBizImpl(data=None)
-                xc.pre_credit(advice_amount=10000)
-                xc.credit(advice_amount=10000)
+                xc.credit(advice_amount=30000)
                 for n in range(10):
                     status = xc.MysqlBizImpl.credit_query()
                     if status == '03':
-                        xc.loan(loan_amount=600, first_repay_date="20210725121311")
+                        xc.loan(loan_amount=1200, first_repay_date="20220821112233")
                         break
                     else:
                         time.sleep(5)
