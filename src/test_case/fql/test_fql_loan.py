@@ -18,13 +18,13 @@ class MyTestCase(unittest.TestCase):
         # 授信-授信校验-放款-放款校验
         fql = FqlBizImpl(data=None)
         # 发起授信申请
-        self.applyId = fql.credit(creditAmount=10000, loanAmount=10000, loanTerm=6, interestRate='34')['applyId']
+        self.applyId = fql.credit(creditAmount=10000, loanAmount=10000, loanTerm=3, interestRate='23')['applyId']
         # 检查授信状态
         time.sleep(10)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.applyId)
         # 发起支用刚申请
         # orderType: 订单类型 1取现；2赊销
-        fql.loan(orderType=1, loanTerm=6, loanAmt=10000, firstRepayDate='2022-06-01', interestRate='34')
+        fql.loan(orderType=1, loanTerm=3, loanAmt=10000, firstRepayDate=self.cur_time, interestRate='23')
 
     """ 后置条件处理 """
     def tearDown(self):
