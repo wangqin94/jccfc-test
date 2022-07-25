@@ -17,10 +17,14 @@ _readconfig = Config()
 class KS3(object):
     def __init__(self):
         self.env = TEST_ENV_INFO
-        self.ak = _readconfig.get_ks3('ak')
-        self.sk = _readconfig.get_ks3('sk')
         self.bucket_name = json.loads(_readconfig.get_ks3('bucket_name'))[self.env]
         self.host = _readconfig.get_ks3('host')
+        if 'h' in self.bucket_name:
+            self.ak = _readconfig.get_ks3('ak')
+            self.sk = _readconfig.get_ks3('sk')
+        else:
+            self.ak = _readconfig.get_ks3('ak1')
+            self.sk = _readconfig.get_ks3('sk1')
 
     def __connection(self):
         """
