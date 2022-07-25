@@ -162,7 +162,7 @@ class TestCase(object):
             with allure.step("删除redis中的账务时间缓存"):
                 redis.del_assert_repay_keys()
 
-            with allure.step('生成逾期还款文件并上传SFTP'):
+            with allure.step('生成提前结清还款文件并上传SFTP'):
                 MeiTuanRepayFile(data, repay_type='02', repay_term_no='3', repay_date=repay_date)
 
             with allure.step('清除分片流水'):
