@@ -93,7 +93,7 @@ JiKe = {
                 "orderType": "2",  # 订单类型  固定传2-赊销(分期购物)
                 "goodsName": "美容贷",  # 商品名称  取现为：取现借款、分期购物为：商品名称
                 "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
-                "custInterestRate": 23.4,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
+                "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
                 "userBankCardNo": "0102",  # 用户银行卡号
                 "bankCode": "0102",  # 银行编码
                 "reserveMobile": "",  # 银行预留手机号
@@ -239,7 +239,7 @@ JiKe = {
                 "reserveMobile": "",  # 银行预留手机号
                 "orderType": "2",  # 订单类型  固定传2-赊销(分期购物)
                 "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
-                "custInterestRate": 23.4,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
+                "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "accountNo": "",  # 放款/还款银行卡号
                 "bankName": "工商银行",  # 还款银行名称

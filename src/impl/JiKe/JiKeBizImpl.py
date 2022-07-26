@@ -77,11 +77,11 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
         # 账单日
         repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
         # 本金
-        repaymentPlans['principalAmt'] = int(principal*100)
+        repaymentPlans['principalAmt'] = float(principal)
         # 利息
-        repaymentPlans['interestAmt'] = int(interest*100)
+        repaymentPlans['interestAmt'] = float(interest)
         # 服务费
-        repaymentPlans['guaranteeAmt'] = 111
+        repaymentPlans['guaranteeAmt'] = 1.11
         repayment_plan.append(repaymentPlans)
     return repayment_plan
 
@@ -268,7 +268,7 @@ class JiKeBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + self.strings
-        credit_data['interestRate'] = 23.4
+        credit_data['interestRate'] = 9.7
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '1' #应传2
@@ -332,7 +332,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loan_date=None, loanTerm=12, loanAmt=1000, thirdApplyId=None, rate=23.4, **kwargs):
+    def applyLoan(self, loan_date=None, loanTerm=12, loanAmt=1000, thirdApplyId=None, rate=9.7, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
