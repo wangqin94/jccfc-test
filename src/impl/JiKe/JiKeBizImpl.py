@@ -34,6 +34,56 @@ def get_jike_bill_day(loan_date=None):
     bill_data = '{}-{}-{}'.format(str(bill_year), str("%02d" % bill_month), str("%02d" % bill_day))
     return bill_data
 
+# # -----------------------------------------------------------
+# # - 等额本息计算2
+# # -----------------------------------------------------------
+def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
+    """
+    @param loanAmtDate: 首期账单日期
+    @param loanAmt: 放款总金额
+    @param repaymentRate: 年利率,如9.7%传9.7
+    @param loanNumber: 放款期数
+    @return: 还款计划列表
+    """
+    repayment_plan = []
+
+    # 月利率
+    monthRate = round(repaymentRate/100/12,20)
+    perPeriodAmountMultiply = loanAmt
+    perPeriodAmountMultiplicand = monthRate*(monthRate+1)**loanNumber
+    perPeriodAmountDivisor = (monthRate+1)**loanNumber-1
+    perPeriodAmountSum = round(perPeriodAmountMultiply*perPeriodAmountMultiplicand/perPeriodAmountDivisor,64)
+    # 剩余本金
+    residualPrincipalTotal = loanAmt
+    # 剩余利息
+    residualInterestTotal = perPeriodAmountSum*loanNumber-loanAmt
+
+    for i in range(1, loanNumber + 1):
+        isLastPeriod = i==loanNumber
+
+        interestMultiply = loanAmt*monthRate
+        interestMultiplicand = (monthRate+1)**loanNumber-(monthRate+1)**(i-1)
+        interestdDivisor = (monthRate+1)**loanNumber-1
+        interest = residualInterestTotal if isLastPeriod else round(interestMultiply*interestMultiplicand/interestdDivisor,64)
+        principal = residualPrincipalTotal if isLastPeriod else perPeriodAmountSum-interest
+        interest = round(interest,2)
+        principal = round(principal,2)
+        # 计算本金利息
+        residualPrincipalTotal = residualPrincipalTotal-principal
+        residualInterestTotal = residualInterestTotal-interest
+        repaymentPlans = {}
+        # 期次
+        repaymentPlans['period'] = i
+        # 账单日
+        repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
+        # 本金
+        repaymentPlans['principalAmt'] = int(principal*100)
+        # 利息
+        repaymentPlans['interestAmt'] = int(interest*100)
+        # 服务费
+        repaymentPlans['guaranteeAmt'] = 111
+        repayment_plan.append(repaymentPlans)
+    return repayment_plan
 
 # # -----------------------------------------------------------
 # # - 等额本息计算
@@ -220,6 +270,9 @@ class JiKeBizImpl(MysqlInit):
         credit_data['thirdApplyId'] = 'thirdApplyId' + self.strings
         credit_data['interestRate'] = 23.4
         credit_data['applyAmount'] = applyAmount
+        # 临时新增参数
+        credit_data['orderType'] = '1' #应传2
+        credit_data['storeCode'] = 'store20220725'
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -331,9 +384,8 @@ class JiKeBizImpl(MysqlInit):
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + self.strings + "_5000"
 
         # 还款计划
-        applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate,
-                                                             bill_date=firstRepayDate)
-
+        # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
+        applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate,loanAmt=loanAmt,repaymentRate=9.7,loanNumber=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
