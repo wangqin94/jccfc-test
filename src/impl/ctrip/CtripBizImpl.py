@@ -222,8 +222,6 @@ class CtripBizImpl(EnvInit):
         # 逾期还款
         elif repay_mode == "3":
             repay_notice['repay_type'] = repay_mode
-            print(asset_repay_plan["calc_overdue_fee_date"])
-            print(relativedelta(days=-int(1)))
             finish_time = asset_repay_plan["calc_overdue_fee_date"] - relativedelta(days=-int(1))
             repay_notice['finish_time'] = str(finish_time).replace("-", "") + "112233"
 
