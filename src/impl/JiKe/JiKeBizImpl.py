@@ -48,7 +48,7 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
     repayment_plan = []
 
     # 月利率
-    monthRate = round(repaymentRate/100/12,20)
+    monthRate = round(repaymentRate/100/12,64)
     perPeriodAmountMultiply = loanAmt
     perPeriodAmountMultiplicand = monthRate*(monthRate+1)**loanNumber
     perPeriodAmountDivisor = (monthRate+1)**loanNumber-1
