@@ -66,7 +66,7 @@ def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
     @param env: 环境变量
     @param project: 添加随机数
     @param back: person文件存放数据最大条数 默认20
-    @param age: eg: age='2020-01-01'； age=None 随机生成大于16岁生日
+    @param age: eg: age='2020-01-01'； age=None 随机生成大于18岁生日
     @param kwargs: data字典中添加指定key-value值
     @return:
     """

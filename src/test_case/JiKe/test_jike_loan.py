@@ -30,16 +30,16 @@ class MyTestCase(unittest.TestCase):
     def test_apply(self):
         """ 测试步骤 """
         # 绑卡签约
-        jike = JiKeBizImpl(data=None)
+        jike = JiKeBizImpl(data=self.data)
         jike.sharedWithholdingAgreement()
 
         # 发起授信申请
-        self.thirdApplyId = json.loads(jike.credit(applyAmount=1000).get('body'))['thirdApplyId']
+        self.thirdApplyId = jike.credit(applyAmount=1000).get('body')['thirdApplyId']
 
         # 数据库陈校验授信结果是否符合预期
-        status = self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId)
+        self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId)
         # 接口层校验授信结果是否符合预期
-        self.jikeCheckBizImpl.jike_check_credit_apply_status(self.thirdApplyId)
+        # self.jikeCheckBizImpl.jike_check_credit_apply_status(self.thirdApplyId)
 
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
         jike.applyLoan(loan_date=None, loanAmt=1000, term=12)

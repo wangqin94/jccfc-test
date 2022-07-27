@@ -19,7 +19,7 @@ JiKe = {
     },
     # 代扣申请接口
     'sharedWithholdingAgreement': {
-        'interface': '/api/v1/jike/common/sharedWithholdingAgreement',
+        'interface': '/api/v1/yl/common/sharedWithholdingAgreement',
         'payload': {
             "head": {
                 "merchantId": "G22E02JIKE",
@@ -41,7 +41,7 @@ JiKe = {
     },
     # 代扣申请结果查询
     'queryWithholdingAgreement': {
-        'interface': '/api/v1/jike/common/queryWithholdingAgreement',
+        'interface': '/api/v1/yl/common/queryWithholdingAgreement',
         'payload': {
             "head": {
                 "merchantId": "G22E02JIKE",
@@ -60,7 +60,7 @@ JiKe = {
     },
     # 换卡通知接口
     'updateWithholdCard': {
-        'interface': '/api/v1/jike/common/queryWithholdingAgreement',
+        'interface': '/api/v1/yl/common/queryWithholdingAgreement',
         'payload': {
             "head": {
                 "merchantId": "G22E02JIKE",
@@ -78,7 +78,7 @@ JiKe = {
     },
     # 授信请求接口
     'credit_apply': {
-        'interface': '/api/v1/jike/credit/apply',
+        'interface': '/api/v1/yl/common/credit/apply',
         'payload': {
             "head": {
                 "merchantId": "G22E02JIKE",
