@@ -321,6 +321,8 @@ class JiKeBizImpl(MysqlInit):
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'])
             queryCreditResult_data['thirdApplyId'] = credit_apply_info['thirdpart_apply_id']
+        else:
+            queryCreditResult_data['thirdApplyId'] = thirdApplyId
 
         # 更新 payload 字段值
         queryCreditResult_data.update(kwargs)
@@ -354,6 +356,8 @@ class JiKeBizImpl(MysqlInit):
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'], status='03')
             applyLoan_data['thirdApplyId'] = credit_apply_info['thirdpart_apply_id']
+        else:
+            applyLoan_data['thirdApplyId'] = thirdApplyId
 
         applyLoan_data['loanApplyNo'] = 'loanApplyNo' + self.strings
 
