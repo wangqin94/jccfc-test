@@ -101,17 +101,21 @@ def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
     @return:还款计划表
     """
     repayment_plan = []
-    repaymentPlans = {}
     # 月利率
     month_rate_jc = year_rate_jc / 1200
     month_rate_jk = year_rate_jk / 1200
     # 每月还款总额
     amtpermonth_jc = loanamt * month_rate_jc * pow((1 + month_rate_jc), term) / (pow((1 + month_rate_jc), term) - 1)
     amtpermonth_jk = loanamt * month_rate_jk * pow((1 + month_rate_jk), term) / (pow((1 + month_rate_jk), term) - 1)
+    # 还款总利息
+    sum_amtpermonth_jc = amtpermonth_jc*term-loanamt*term
+    left_month_principal = loanamt
+    left_month_interest = sum_amtpermonth_jc
     for i in range(1, term + 1):
+        repaymentPlans = {}
         if i == 1:
             # 第一个月还款利息
-            month_interest_jc = loanamt * month_rate_jc
+            month_interest_jc = round(loanamt * month_rate_jc, 64)
             month_interest_jk = loanamt * month_rate_jk
         else:
             # 第2-n个月还款利息
@@ -119,15 +123,24 @@ def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
                                                                                  (i - 1)) + amtpermonth_jc
             month_interest_jk = (loanamt * month_rate_jk - amtpermonth_jk) * pow((1 + month_rate_jc),
                                                                                  (i - 1)) + amtpermonth_jk
-        # 应还本金
+
+        # 第n个月应还本金
         month_principal = amtpermonth_jc - month_interest_jc
-        month_principal = round(month_principal, 2)
-        month_interest = round(month_interest_jc, 2)
+        month_principal = left_month_principal if i == term else month_principal
+
+        # 第n个月剩余应还本金
+        left_month_principal = left_month_principal - month_principal
+
+        # 第n个月应还利息
+        month_interest = left_month_interest if i == term+1 else month_interest_jc
+        # 第n个月剩余应还利息
+        left_month_interest = left_month_interest - month_interest_jc
+
         repaymentPlans['period'] = i
         repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
-        repaymentPlans['principalAmt'] = int(month_principal * 100)
-        repaymentPlans['interestAmt'] = int(month_interest * 100)
-        repaymentPlans['guaranteeAmt'] = int(round((month_interest_jk - month_interest_jc), 2) * 100)
+        repaymentPlans['principalAmt'] = round(month_principal, 2)
+        repaymentPlans['interestAmt'] = round(month_interest, 2)
+        repaymentPlans['guaranteeAmt'] = round((month_interest_jk - month_interest_jc), 2)
         repayment_plan.append(repaymentPlans)
     return repayment_plan
 
@@ -241,7 +254,8 @@ class JiKeBizImpl(MysqlInit):
         updateWithholdCard['idNo'] = self.data['cer_no']
         updateWithholdCard['loanInvoiceId'] = loanInvoiceId
         # 新银行卡号
-        updateWithholdCard['repaymentAccountNo'] = BankNo().get_bank_card()
+        bankNo = BankNo()
+        updateWithholdCard['repaymentAccountNo'] = bankNo.get_bank_card()
 
         # 更新 payload 字段值
         updateWithholdCard.update(kwargs)
@@ -420,6 +434,8 @@ class JiKeBizImpl(MysqlInit):
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'])
             queryLoanResult_data['thirdApplyId'] = credit_apply_info['thirdpart_apply_id']
+        else:
+            queryLoanResult_data['thirdApplyId'] = thirdApplyId
 
         # 更新 payload 字段值
         queryLoanResult_data.update(kwargs)
@@ -709,3 +725,7 @@ class JiKeBizImpl(MysqlInit):
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
+
+
+if __name__ == '__main__':
+    jike_loanByAvgAmt(bill_date='2022-06-01', loanamt=1000, year_rate_jc=9.7, year_rate_jk=24, term=12)

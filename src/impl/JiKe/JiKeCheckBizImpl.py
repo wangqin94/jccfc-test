@@ -27,15 +27,15 @@ class JiKeCheckBizImpl(JiKeBizImpl):
         flag = 6
         for n in range(flag):
             res = self.queryCreditResult(thirdApplyId=thirdApplyId)
-            head = json.loads(res.get('head'))
+            head = res['head']
             try:
                 if head['returnCode'] == StatusCodeEnum.SUCCESS.code and head['returnMessage'] == StatusCodeEnum.SUCCESS.msg:
-                    status = json.loads(res.get('body'))['creditResult']
+                    status = res['body']['creditResult']
                     if status == JiKeApiCreditStatusEnum.SUCCESS.value:
                         self.log.demsg('接口层查询：授信成功')
                         return status
                     elif status == JiKeApiCreditStatusEnum.FAIL.value:
-                        self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, json.loads(res.get('body'))['rejectMsg']))
+                        self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res['body']['rejectMsg']))
                         raise AssertionError('支用失败，接口层状态不符合预期')
                     elif status == JiKeApiCreditStatusEnum.TO_DOING.value:
                         self.log.demsg("授信审批状态处理中，请等待....")
@@ -58,15 +58,15 @@ class JiKeCheckBizImpl(JiKeBizImpl):
         flag = 6
         for n in range(flag):
             res = self.queryLoanResult(thirdApplyId=thirdApplyId)
-            head = json.loads(res.get('head'))
+            head = res['head']
             try:
                 if head['returnCode'] == StatusCodeEnum.SUCCESS.code and head['returnMessage'] == StatusCodeEnum.SUCCESS.msg:
-                    status = json.loads(res.get('body'))['loanResult']
+                    status = res['body']['loanResult']
                     if status == JiKeApiLoanStatusEnum.SUCCESS.value:
                         self.log.demsg('支用成功')
                         return status
                     elif status == JiKeApiLoanStatusEnum.FAIL.value:
-                        self.log.error('支用失败,状态：{},失败原因{}'.format(status, json.loads(res.get('body'))['loanResultDesc']))
+                        self.log.error('支用失败,状态：{},失败原因{}'.format(status, res['body']['loanResultDesc']))
                         raise AssertionError('支用失败，接口层状态不符合预期')
                     elif status == JiKeApiLoanStatusEnum.TO_DOING.value:
                         self.log.demsg("支用审批状态处理中，请等待....")
@@ -89,15 +89,15 @@ class JiKeCheckBizImpl(JiKeBizImpl):
         flag = 6
         for n in range(flag):
             res = self.repay_query(repayApplySerialNo=repayApplySerialNo)
-            head = json.loads(res.get('head'))
+            head = res['head']
             try:
                 if head['returnCode'] == StatusCodeEnum.SUCCESS.code and head['returnMessage'] == StatusCodeEnum.SUCCESS.msg:
-                    status = json.loads(res.get('body'))['repayStatus']
+                    status = res['body']['repayStatus']
                     if status == JiKeApiRepayStatusEnum.REPAY_SUCCESS.value:
                         self.log.demsg('还款成功')
                         return status
                     elif status == JiKeApiRepayStatusEnum.REPAY_FAIL.value:
-                        self.log.error('还款失败,状态：{},失败原因{}'.format(status, json.loads(res.get('body'))['repayStatusDesc']))
+                        self.log.error('还款失败,状态：{},失败原因{}'.format(status, res['body']['repayStatusDesc']))
                         raise AssertionError('支用失败，接口层状态不符合预期')
                     elif status == JiKeApiRepayStatusEnum.REPAY_REPAYING.value:
                         self.log.demsg("还款审批状态处理中，请等待....")
@@ -113,5 +113,5 @@ class JiKeCheckBizImpl(JiKeBizImpl):
 
 
 if __name__ == '__main__':
-
-    JiKeCheckBizImpl().jike_check_credit_apply_status("creditApplyNo16435111528004788")
+    pass
+    # JiKeCheckBizImpl().jike_check_credit_apply_status("creditApplyNo16435111528004788")
