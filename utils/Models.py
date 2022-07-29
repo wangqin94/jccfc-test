@@ -70,14 +70,15 @@ def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
     @param kwargs: data字典中添加指定key-value值
     @return:
     """
-    strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
+    strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     # res = requests.get('http://10.10.100.153:8081/getTestData')
     # bank = BankNo()
     data['name'] = get_name()
     data['cer_no'] = IdNumber.generate_id(age=age)
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
+    bankName = '工商银行'
     data['bankid'] = BankNo().get_bank_card(bankName=bankName)
 
     # 读取文件行数，超过20行删除历史数据
@@ -120,14 +121,15 @@ def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
     @param kwargs: data字典中添加指定key-value值
     @return:
     """
-    strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     data = {}
+    strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
     # res = requests.get('http://10.10.100.153:8081/getTestData')
     data['name'] = get_name()
     data['cer_no'] = IdNumber.generate_id(age=age)
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
     bank = BankNo()
+    bankName = '工商银行'
     data['bankid'] = bank.get_bank_card(bankName=bankName)
 
     # project赋值后天从到data中
