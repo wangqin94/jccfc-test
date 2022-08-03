@@ -287,8 +287,8 @@ class JiKeBizImpl(MysqlInit):
         credit_data['interestRate'] = 9.7
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
-        credit_data['orderType'] = '1'  # 应传2
-        credit_data['storeCode'] = 'store20220725'
+        credit_data['orderType'] = '2'  # 应传2
+        credit_data['storeCode'] = 'store2022072902'
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -350,7 +350,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loan_date=None, loanTerm=12, loanAmt=1000, thirdApplyId=None, rate=9.7, **kwargs):
+    def applyLoan(self, loan_date=None, loanTerm=12, loanAmt=20000, thirdApplyId=None, rate=9.7, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
@@ -381,6 +381,9 @@ class JiKeBizImpl(MysqlInit):
             apollo_data['credit.loan.trade.date.mock'] = "true"
             apollo_data['credit.loan.date.mock'] = loan_date
             self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
+            apollo_data['credit.loan.trade.date.mock'] = "true"
+            apollo_data['credit.loan.date.mock'] = loan_date
+            self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         else:
             loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
 
@@ -406,7 +409,9 @@ class JiKeBizImpl(MysqlInit):
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
         applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate, loanAmt=loanAmt,
-                                                              repaymentRate=9.7, loanNumber=loanTerm)
+                                                              repaymentRate=rate, loanNumber=loanTerm)
+
+
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -703,7 +708,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # LPR查询
-    def queryLprInfo(self, **kwargs):
+    def queryLprInfo(self, thirdApplyId=None, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
@@ -714,7 +719,11 @@ class JiKeBizImpl(MysqlInit):
         queryLprInfo_data['requestSerialNo'] = 'requestNo' + self.strings + "_1500"
         queryLprInfo_data['requestTime'] = self.date
         # body
-
+        if not thirdApplyId:
+            credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'], status='03')
+            queryLprInfo_data['thirdApplyId'] = credit_apply_info['thirdpart_apply_id']
+        else:
+            queryLprInfo_data['thirdApplyId'] = thirdApplyId
         # 更新 payload 字段值
         queryLprInfo_data.update(kwargs)
         parser = DataUpdate(self.cfg['queryLprInfo']['payload'], **queryLprInfo_data)

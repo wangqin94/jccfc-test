@@ -127,7 +127,7 @@ JiKe = {
                 "liveAreaName": "武侯区",  # 居住地址区名称
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
-                "storeCode": "H22A02ZHZX",  # 门店代码
+                "storeCode": "store2022072902",  # 门店代码
                 "goodsCategory1": "商品大分类",  # 商品大分类
                 "goodsCategory2": "商品小分类",  # 商品小分类
                 "contactRelationList": [
@@ -262,15 +262,15 @@ JiKe = {
                     }
                 ],
                 "featureField": {
-                    "shieldNumber": 9999,  # 近三个月同盾贷款数
-                    "shieldMonthLoan": 9999,  # 近一个月同盾贷款数
-                    "shieldWeekLoan": 9999,  # 近7天同盾贷款数
+                    "shieldNumber": 0,  # 近三个月同盾贷款数
+                    "shieldMonthLoan": 0,  # 近一个月同盾贷款数
+                    "shieldWeekLoan": 0,  # 近7天同盾贷款数
                     "whiteKnightBlacklist_xd": "N",  # 白骑士黑名单-信贷 Y 中标(名单中存在) N 未中标（名单中不存在）
                     "collectionNumber": 9999,  # 凭安-近期被催收的号码个数
                     "thawingScore": 9999,  # 百融-线下消费贷客群评分
                     "whiteKnightBlacklist_xyxf": "N",  # 白骑士黑名单-信用消费 Y 中标(名单中存在) N 未中标（名单中不存在）
                     "whiteKnightBlacklist_p2p": "N",  # 白骑士黑名单-P2P Y 中标(名单中存在) N 未中标（名单中不存在）
-                    "faceValues": 9999,  # 人脸识别分数
+                    "faceValues": 38.896,  # 人脸识别分数
                 }
             }
         }
@@ -473,6 +473,8 @@ JiKe = {
                 "tenantId": "000"
             },
             "body": {
+                "thirdApplyId": "",
+                "queryFlag": "loan"
             }
         }
     },
