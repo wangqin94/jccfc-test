@@ -408,14 +408,6 @@ class JiKeBizImpl(MysqlInit):
         applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate, loanAmt=loanAmt,
                                                               repaymentRate=rate, loanNumber=loanTerm)
 
-        # 测试临时代码------------start------------------
-        applyLoan_data['name'] = '张三'
-        applyLoan_data['idNo'] = '510105199408020696'
-        applyLoan_data['mobileNo'] = '13540111112'
-        applyLoan_data['reserveMobile'] = '13540111112'
-        # applyLoan_data['accountNo'] = '6226681659338331'
-        # 测试临时代码------------end------------------
-
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
