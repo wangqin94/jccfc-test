@@ -60,6 +60,7 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
 
     for i in range(1, loanNumber + 1):
         isLastPeriod = i == loanNumber
+        repaymentPlans = {}
 
         interestMultiply = loanAmt * monthRate
         interestMultiplicand = (monthRate + 1) ** loanNumber - (monthRate + 1) ** (i - 1)
@@ -72,7 +73,6 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
         # 计算本金利息
         residualPrincipalTotal = residualPrincipalTotal - principal
         residualInterestTotal = residualInterestTotal - interest
-        repaymentPlans = {}
         # 期次
         repaymentPlans['period'] = i
         # 账单日
@@ -376,13 +376,11 @@ class JiKeBizImpl(MysqlInit):
         applyLoan_data['loanApplyNo'] = 'loanApplyNo' + self.strings
 
         # 设置apollo放款mock时间 默认当前时间
-        if loan_date:
-            apollo_data = dict()
-            apollo_data['credit.loan.trade.date.mock'] = "true"
-            apollo_data['credit.loan.date.mock'] = loan_date
-            self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
-        else:
-            loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
+        loan_date = loan_date if not loan_date else time.strftime('%Y-%m-%d', time.localtime())
+        apollo_data = dict()
+        apollo_data['credit.loan.trade.date.mock'] = "true"
+        apollo_data['credit.loan.date.mock'] = loan_date
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         # 首期还款日
         firstRepayDate = get_jike_bill_day(loan_date)
@@ -406,8 +404,7 @@ class JiKeBizImpl(MysqlInit):
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
         applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate, loanAmt=loanAmt,
-                                                              repaymentRate=rate, loanNumber=loanTerm)
-
+                                                              repaymentRate=9.7, loanNumber=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -514,13 +511,14 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
-        self.log.info('用户四要素信息: {}'.format(self.data))
+        self.log.demsg('用户四要素信息: {}'.format(self.data))
         repay_apply_data = dict()
         # head
-        repay_apply_data['requestSerialNo'] = 'requestNo' + self.strings + "_9000"
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        repay_apply_data['requestSerialNo'] = 'requestNo' + strings
         repay_apply_data['requestTime'] = self.date
         # body
-        repay_apply_data['repayApplySerialNo'] = 'repayApplySerialNo' + self.strings
+        repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
         repay_apply_data['repayScene'] = repay_scene
 
