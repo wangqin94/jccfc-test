@@ -705,6 +705,7 @@ class JiKeBizImpl(MysqlInit):
     def queryLprInfo(self, thirdApplyId=None, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
+        @param thirdApplyId: 三方申请单号
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
