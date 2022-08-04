@@ -361,7 +361,7 @@ class MysqlBizImpl(MysqlInit):
                 time.sleep(t)
 
     def get_asset_job_ctl_info(self, job_date, job_type='ASSET_BI_JOB_FINISH'):
-        self.log.demsg('检查资产卸数时间，不存则新增一条记录...')
+        self.log.info('检查资产卸数时间，不存则新增一条记录...')
         data = self.get_asset_database_info('asset_job_ctl', job_date=job_date, job_type=job_type)
         if data:
             self.log.info('存在 job_date={} 资产卸数记录，无需新增'.format(job_date))
