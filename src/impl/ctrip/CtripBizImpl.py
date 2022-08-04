@@ -171,10 +171,6 @@ class CtripBizImpl(EnvInit):
         # 根据openId查询支用信息
         key1 = "thirdpart_user_id = '{}'".format(self.data['open_id'])
         credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
-        # 取资产执行利率
-        asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
-                                                                            loan_invoice_id=self.loan_invoice_id)
-        apply_rate = asset_loan_invoice_info["execute_rate"]
 
         # 根据支用申请单号查询借据信息
         if self.loan_invoice_id:
@@ -190,6 +186,10 @@ class CtripBizImpl(EnvInit):
             credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
             loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
 
+        # 取资产执行利率
+        asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
+                                                                            loan_invoice_id=loan_invoice_id)
+        execute_rate = asset_loan_invoice_info["execute_rate"]
         # 根据借据Id和期次获取还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, repay_term_no)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
@@ -239,7 +239,7 @@ class CtripBizImpl(EnvInit):
             else:
                 # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
                 days = get_day(asset_repay_plan["start_date"], repay_date)
-                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * apply_rate / (100 * 360)
+                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * execute_rate / (100 * 360)
                 repay_notice["repay_interest"] = float('{:.2f}'.format(paid_prin_amt))  # 利息
                 print(repay_notice["repay_interest"])
 
