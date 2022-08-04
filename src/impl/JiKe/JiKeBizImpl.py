@@ -276,7 +276,7 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
-        self.log.info('用户四要素信息: {}'.format(self.data))
+        self.log.demsg('用户四要素信息: {}'.format(self.data))
         credit_data = dict()
         # head
         credit_data['requestSerialNo'] = 'requestNo' + self.strings + "_2000"
@@ -361,7 +361,7 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
-        self.log.info('用户四要素信息: {}'.format(self.data))
+        self.log.demsg('用户四要素信息: {}'.format(self.data))
         applyLoan_data = dict()
         # head
         applyLoan_data['requestSerialNo'] = 'requestNo' + self.strings + "_4000"
@@ -376,7 +376,7 @@ class JiKeBizImpl(MysqlInit):
         applyLoan_data['loanApplyNo'] = 'loanApplyNo' + self.strings
 
         # 设置apollo放款mock时间 默认当前时间
-        loan_date = loan_date if not loan_date else time.strftime('%Y-%m-%d', time.localtime())
+        loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
         apollo_data = dict()
         apollo_data['credit.loan.trade.date.mock'] = "true"
         apollo_data['credit.loan.date.mock'] = loan_date
