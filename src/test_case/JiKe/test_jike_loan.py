@@ -1,4 +1,5 @@
 import unittest
+import warnings
 
 from config.TestEnvInfo import TEST_ENV_INFO
 from src.enums.EnumJiKe import JiKeApiLoanStatusEnum
@@ -18,6 +19,7 @@ class MyTestCase(unittest.TestCase):
     """ 预置条件处理 """
 
     def setUp(self):
+        warnings.simplefilter('ignore', ResourceWarning)
         # 初始化日志引擎模块
         self.env = TEST_ENV_INFO
         self.data = get_base_data(str(self.env))
@@ -42,9 +44,13 @@ class MyTestCase(unittest.TestCase):
         # 接口层校验授信结果是否符合预期
         self.jikeCheckBizImpl.jike_check_credit_apply_status(self.thirdApplyId)
 
+        # 发起LPR查询
+        jike.queryLprInfo(thirdpart_apply_id=self.thirdApplyId)
+
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
         self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
         jike.applyLoan(loan_date=self.loan_date, loanAmt=1000, term=12)
+        # jike.applyLoan(loan_date='2022-03-04', loanAmt=1000, term=12)
 
     """ 后置条件处理 """
 
