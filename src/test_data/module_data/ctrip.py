@@ -303,6 +303,19 @@ ctrip = {
         }
     },
 
+    'credit_query': {
+        'interface': '/api/v1/ctrip/demo/trade',
+        'payload': {
+            "service": "CREDIT_QUERY",
+            "request_no": "${credit_apply_serial_id}",
+            "open_id": "${thirdpart_user_id}",
+            "partner":"XXCASH",
+            "credit_type":0,
+            "product_no":"CASH",
+            "service_version":"1.0"
+        }
+    },
+
     'loan_repay_notice': {
         'interface': '/api/v1/ctrip/demo/trade',
         'payload': {
