@@ -108,7 +108,7 @@ def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
     amtpermonth_jc = loanamt * month_rate_jc * pow((1 + month_rate_jc), term) / (pow((1 + month_rate_jc), term) - 1)
     amtpermonth_jk = loanamt * month_rate_jk * pow((1 + month_rate_jk), term) / (pow((1 + month_rate_jk), term) - 1)
     # 还款总利息
-    sum_amtpermonth_jc = amtpermonth_jc*term-loanamt*term
+    sum_amtpermonth_jc = amtpermonth_jc * term - loanamt * term
     left_month_principal = loanamt
     left_month_interest = sum_amtpermonth_jc
     for i in range(1, term + 1):
@@ -132,7 +132,7 @@ def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
         left_month_principal = left_month_principal - month_principal
 
         # 第n个月应还利息
-        month_interest = left_month_interest if i == term+1 else month_interest_jc
+        month_interest = left_month_interest if i == term + 1 else month_interest_jc
         # 第n个月剩余应还利息
         left_month_interest = left_month_interest - month_interest_jc
 
@@ -501,9 +501,10 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 还款申请
-    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayGuaranteeFee=1, **kwargs):
+    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayGuaranteeFee=1.11, repayDate=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
+        @param repayDate: 还款时间，默认当天 eg:'2022-08-01'
         @param repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
         @param repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         @param loanInvoiceId: 借据号 必填
@@ -531,8 +532,7 @@ class JiKeBizImpl(MysqlInit):
             repay_apply_data['appAuthToken'] = 'appAuthToken' + self.strings
 
         repay_apply_data['repayType'] = repay_type
-        key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(
-            loanInvoiceId)
+        key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(loanInvoiceId)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
@@ -544,14 +544,18 @@ class JiKeBizImpl(MysqlInit):
 
         # 按期还款、提前当期
         if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee  # 总金额
+            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee, 2)  # 总金额
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
 
         # 提前结清
         if repay_type == "2":
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-            repay_apply_data["repayAmount"] = repay_apply_data["repayPrincipal"] + repay_apply_data[
-                "repayInterest"] + repayGuaranteeFee  # 总金额
+            repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
+            days = get_day(asset_repay_plan["start_date"], repayDate)
+            if days < 0:
+                repay_apply_data["repayInterest"] = 0  # 利息
+                repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
+                repay_apply_data["repayAmount"] = round(
+                    repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee, 2)  # 总金额
 
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
@@ -613,8 +617,7 @@ class JiKeBizImpl(MysqlInit):
         returnGoods_apply_data["returnGoodsPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
 
         # 计算退货应收利息=当期利息+未还期次利息
-        key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(
-            loanInvoiceId)
+        key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(loanInvoiceId)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
         dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
         repayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
