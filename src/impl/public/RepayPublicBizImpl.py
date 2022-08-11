@@ -88,3 +88,7 @@ class RepayPublicBizImpl(MysqlInit):
         self.checkBizImpl.check_asset_repay_plan_overdue_days(max_overdue_days=2, current_num='1',
                                                               loan_invoice_id=loan_invoice_id)
         assert EnumLoanStatus.OVERDUE.value == status, '当前支用单状态不为逾期状态，请检查账务日终任务执行结果'
+
+
+if __name__ == '__main__':
+    RepayPublicBizImpl().pre_repay_config()
