@@ -1,7 +1,7 @@
 import unittest
 import warnings
 
-from src.enums.EnumJiKe import JiKeApiRepayStatusEnum
+from src.enums.EnumJiKe import JiKeApiRepayStatusEnum, StatusCodeEnum
 from src.impl.JiKe.JiKeCheckBizImpl import JiKeCheckBizImpl
 import time
 from src.impl.JiKe.JiKeBizImpl import JiKeBizImpl
@@ -31,17 +31,17 @@ class MyTestCase(unittest.TestCase):
         # repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         # loanInvoiceId: 借据号 必填
         # repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
-        self.repayRes = jike.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId=credit_loan_invoice['loan_invoice_id']).get('body')  # 按期还款
+        self.repayRes = jike.repay_apply(repay_scene='01', repay_type='2', loanInvoiceId=credit_loan_invoice['loan_invoice_id']) # 按期还款
 
+        self.assertEqual(StatusCodeEnum.SUCCESS.code, self.repayRes['head']['returnCode'], '还款接口层失败')
         # 输入指定借据号
         # self.repayRes = json.loads(jike.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId="").get('body'))  # 按期还款
 
     """ 后置条件处理 """
     def tearDown(self):
         # 接口层校验授信结果是否符合预期
-        # status = self.jikeCheckBizImpl.jike_check_repay_status(self.repayRes['repayApplySerialNo'])
-        # self.assertEqual(JiKeApiRepayStatusEnum.SUCCESS.value, status, '还款失败')
-        pass
+        status = self.jikeCheckBizImpl.jike_check_repay_status(self.repayRes['body']['repayApplySerialNo'])
+        self.assertEqual(JiKeApiRepayStatusEnum.REPAY_SUCCESS.value, status, '还款失败')
 
 
 if __name__ == '__main__':
