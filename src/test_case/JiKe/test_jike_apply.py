@@ -1,6 +1,7 @@
 import unittest
 from src.impl.common.CheckBizImpl import *
 from src.impl.JiKe.JiKeBizImpl import JiKeBizImpl
+from src.test_case.JiKe.person import data
 
 
 class MyTestCase(unittest.TestCase):
@@ -19,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         jike.sharedWithholdingAgreement()
 
         # 发起授信申请
-        self.thirdApplyId = json.loads(jike.credit(applyAmount=1000).get('body'))['thirdApplyId']
+        self.thirdApplyId = jike.credit(applyAmount=1000)['body']['thirdApplyId']
 
     """ 后置条件处理 """
 

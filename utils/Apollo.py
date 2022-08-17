@@ -124,6 +124,7 @@ class Apollo(object):
         _log.info("update configuration success")
         #  执行发布
         self.releases(appId=appId, namespace=namespace)
+        time.sleep(1)
 
 
 if __name__ == '__main__':
