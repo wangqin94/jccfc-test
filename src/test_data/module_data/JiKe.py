@@ -140,18 +140,18 @@ JiKe = {
                 "fileInfos": [
                     {
                         "fileType": "1",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
-                        "fileName": "idcard_front_202000000948071964.jpg"
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqid1.png",
+                        "fileName": "cqid1.png"
                     },
                     {
                         "fileType": "2",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
-                        "fileName": "idcard_back_202000000948071964.jpg"
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqid2.png",
+                        "fileName": "cqid2.png"
                     },
                     {
                         "fileType": "3",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
-                        "fileName": "face_distinguish_202000000948071964.jpg"
+                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqface.png",
+                        "fileName": "cqface.png"
                     },
                     {
                         "fileType": "4",
