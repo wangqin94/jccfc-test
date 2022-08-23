@@ -378,7 +378,7 @@ class JiKeBizImpl(MysqlInit):
         # 设置apollo放款mock时间 默认当前时间
         loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
         apollo_data = dict()
-        apollo_data['credit.loan.trade.date.mock'] = "false"
+        apollo_data['credit.loan.trade.date.mock'] = "true"
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
@@ -520,14 +520,16 @@ class JiKeBizImpl(MysqlInit):
         repay_apply_data['requestTime'] = self.date
         # body
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
+        # repay_apply_data['repayApplySerialNo'] = "2108061522243664619354429"  # 支付宝存量订单
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
         repay_apply_data['repayScene'] = repay_scene
 
         repay_apply_data['repayType'] = repay_type
-        key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(loanInvoiceId)
+        key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(loanInvoiceId)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
+        # repay_apply_data['repayNum'] = 1
         repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
         repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
         repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
@@ -536,7 +538,7 @@ class JiKeBizImpl(MysqlInit):
         # 线下还款，担保费必须为0
         if repay_scene == '02':  # 线下还款
             repayGuaranteeFee = 0
-            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
+        repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
 
         # 按期还款、提前当期
         if repay_type == "1" or "7":
@@ -549,8 +551,8 @@ class JiKeBizImpl(MysqlInit):
             repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
             days = get_day(asset_repay_plan["start_date"], repayDate)
             # 如果当期已还款，提前还款利息应收0
-            repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days >= 0 else 0
-            repay_apply_data["repayInterest"] = 128.92
+            repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
+            # repay_apply_data["repayInterest"] = 33.45
             repay_apply_data["repayAmount"] = round(
                 repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee, 2)  # 总金额
 
@@ -563,7 +565,7 @@ class JiKeBizImpl(MysqlInit):
             repay_apply_data['appAuthToken'] = 'appAuthToken' + self.strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = repay_apply_data["repayAmount"]*100  # 总金额
+            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"]*100, 2)  # 总金额
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)

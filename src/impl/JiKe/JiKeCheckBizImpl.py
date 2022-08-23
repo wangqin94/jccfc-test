@@ -65,7 +65,7 @@ class JiKeCheckBizImpl(JiKeBizImpl):
                     elif status == JiKeApiLoanStatusEnum.FAIL.value:
                         self.log.error('支用失败,状态：{},失败原因:{}'.format(status, res['body']['loanResultDesc']))
                         raise AssertionError('支用失败，接口层状态不符合预期')
-                    elif status == JiKeApiLoanStatusEnum.TO_DOING.value:
+                    elif status == JiKeApiLoanStatusEnum.DEALING.value:
                         self.log.demsg("支用审批状态处理中，请等待....")
                         time.sleep(3)
                         if n == flag-1:
