@@ -272,7 +272,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 授信申请
-    def credit(self, applyAmount=1000, loanTerm=6, **kwargs):
+    def credit(self, applyAmount=1000, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
         @param loanTerm: 贷款期次
@@ -288,12 +288,11 @@ class JiKeBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + self.strings
-        credit_data['loanTerm'] = loanTerm
-        credit_data['interestRate'] = 9.7
+        credit_data['interestRate'] = 10.3
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
-        # credit_data['orderType'] = '2'  # 应传2
-        # credit_data['storeCode'] = 'store2022072903'
+        credit_data['orderType'] = '2'  # 应传2
+        credit_data['storeCode'] = 'store2022072903'
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -383,7 +382,7 @@ class JiKeBizImpl(MysqlInit):
         # 设置apollo放款mock时间 默认当前时间
         loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
         apollo_data = dict()
-        apollo_data['credit.loan.trade.date.mock'] = "false"
+        apollo_data['credit.loan.trade.date.mock'] = "true"
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
@@ -409,12 +408,7 @@ class JiKeBizImpl(MysqlInit):
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
         applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate, loanAmt=loanAmt,
-                                                              repaymentRate=rate, loanNumber=loanTerm)
-        # -----------------------临时测试字段-----------------------
-        # applyLoan_data['repaymentPlans'][5]['guaranteeAmt'] = '142.27'
-        # applyLoan_data['fixedRepayDay'] = '06'
-        # -----------------------临时测试字段-----------------------
-
+                                                              repaymentRate=9.7, loanNumber=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -445,7 +439,6 @@ class JiKeBizImpl(MysqlInit):
         else:
             queryLoanResult_data['thirdApplyId'] = thirdApplyId
 
-        queryLoanResult_data['thirdApplyId'] = None
         # 更新 payload 字段值
         queryLoanResult_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_query']['payload'], **queryLoanResult_data)

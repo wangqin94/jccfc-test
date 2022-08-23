@@ -32,7 +32,7 @@ class JiKeCheckBizImpl(JiKeBizImpl):
                         self.log.demsg('接口层查询：授信成功')
                         return status
                     elif status == JiKeApiCreditStatusEnum.FAIL.value:
-                        self.log.error('接口层授信失败,状态：{},失败原因{}'.format(status, res['body']['rejectMsg']))
+                        self.log.error('接口层授信失败,状态：{},失败原因:{}'.format(status, res['body']['rejectMsg']))
                         raise AssertionError('支用失败，接口层状态不符合预期')
                     elif status == JiKeApiCreditStatusEnum.TO_DOING.value:
                         self.log.demsg("授信审批状态处理中，请等待....")
@@ -63,7 +63,7 @@ class JiKeCheckBizImpl(JiKeBizImpl):
                         self.log.demsg('支用成功')
                         return status
                     elif status == JiKeApiLoanStatusEnum.FAIL.value:
-                        self.log.error('支用失败,状态：{},失败原因{}'.format(status, res['body']['loanResultDesc']))
+                        self.log.error('支用失败,状态：{},失败原因:{}'.format(status, res['body']['loanResultDesc']))
                         raise AssertionError('支用失败，接口层状态不符合预期')
                     elif status == JiKeApiLoanStatusEnum.TO_DOING.value:
                         self.log.demsg("支用审批状态处理中，请等待....")
@@ -91,27 +91,29 @@ class JiKeCheckBizImpl(JiKeBizImpl):
             try:
                 if returnCode == StatusCodeEnum.SUCCESS.code and returnMessage == StatusCodeEnum.SUCCESS.msg:
                     status = res['body']['repayStatus']
+                    repayStatusDesc = res['body']['repayStatusDesc']
                     if status == JiKeApiRepayStatusEnum.REPAY_SUCCESS.value:
                         self.log.demsg('还款成功')
                         return status
                     elif status == JiKeApiRepayStatusEnum.REPAY_FAIL.value:
-                        self.log.error('还款失败,状态：{},失败原因{}'.format(status, res['body']['repayStatusDesc']))
+                        self.log.error('还款失败,状态：{},失败原因:{}'.format(status, repayStatusDesc))
                         raise AssertionError('还款失败，接口层状态不符合预期')
+                    elif status == JiKeApiRepayStatusEnum.NO_BILL.value:
+                        self.log.error('还款失败,状态：{},失败原因:{}'.format(status, repayStatusDesc))
+                        raise AssertionError('还款失败，查无此单')
                     elif status == JiKeApiRepayStatusEnum.REPAY_REPAYING.value:
                         self.log.demsg("还款审批状态处理中，请等待....")
                         time.sleep(3)
                         if n == flag-1:
                             self.log.error("超过当前系统设置等待时间，请手动查看结果....")
                             raise AssertionError('还款失败，状态处理中，接口层状态不符合预期')
-                elif returnCode == StatusCodeEnum.SYS_ERROR.code and returnMessage == StatusCodeEnum.SYS_ERROR.msg:
-                    self.log.error('还款失败,状态：{},失败原因{}'.format(returnCode, returnMessage))
-                    raise AssertionError('系统服务错误')
-                elif returnCode == StatusCodeEnum.SYS_ERROR1.code and returnMessage == StatusCodeEnum.SYS_ERROR1.msg:
-                    self.log.error('还款失败,状态：{},失败原因{}'.format(returnCode, returnMessage))
-                    raise AssertionError('系统服务错误')
+                    else:
+                        raise AssertionError('业务层校验失败，失败原因：{}'.format(repayStatusDesc))
                 elif returnCode == StatusCodeEnum.NO_HOURLY.code and returnMessage == StatusCodeEnum.NO_HOURLY.msg:
                     self.log.demsg("请勿频繁请求，请等待....")
                     time.sleep(15)
+                else:
+                    raise AssertionError('接口层校验失败，失败原因：{}'.format(returnMessage))
             except Exception as r:
                 raise r
 

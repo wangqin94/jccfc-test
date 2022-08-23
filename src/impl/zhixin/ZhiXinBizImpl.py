@@ -2,14 +2,13 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
-import hashlib
 import sys
-from config.TestEnvInfo import TEST_ENV_INFO
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import zhixin
 from src.impl.common.CommonBizImpl import *
+from utils.Apollo import Apollo
 
 
 def computeMD5(message):
@@ -26,6 +25,7 @@ class ZhiXinBizImpl(MysqlInit):
         @param person: 若person=True四要输写入person文件，否则不写入
         """
         super().__init__()
+        self.apollo = Apollo()
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = zhixin.zhixin
@@ -119,7 +119,7 @@ class ZhiXinBizImpl(MysqlInit):
         return response
 
     # 授信申请
-    def credit(self, **kwargs):
+    def credit(self, adviceAmount=30000, **kwargs):
         self.log.info('用户四要素信息: {}'.format(self.data))
         # body
         credit_data = dict()
@@ -164,6 +164,11 @@ class ZhiXinBizImpl(MysqlInit):
         credit_data['bankCardNo'] = self.data['bankid']
 
         credit_data['ct'] = self.times
+
+        # 配置风控mock返回建议额度与授信额度一致
+        apollo_data = dict()
+        apollo_data['hj.channel.risk.credit.line.amt.mock'] = adviceAmount
+        self.apollo.update_config(appId='loan2.1-jcxf-credit', **apollo_data)
 
         # 更新 payload 字段值
         credit_data.update(kwargs)
@@ -523,10 +528,10 @@ class ZhiXinBizImpl(MysqlInit):
         return response
 
     # 信用评估申请payload
-    def applyQFICO(self, type='credit', **kwargs):
+    def applyQFICO(self, ywType='credit', **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
-        @param type: 业务类型 credit、loan
+        @param ywType: 业务类型 credit、loan
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
@@ -539,16 +544,16 @@ class ZhiXinBizImpl(MysqlInit):
 
         # 根据type类型取业务流水号和锦城申请号
         try:
-            if type == "credit":
+            if ywType == "credit":
                 credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['userId'])
                 qficoApply_data['applyId'] = credit_apply_info['credit_apply_id']
                 qficoApply_data['businessNo'] = credit_apply_info['thirdpart_apply_id']
-            if type == "loan":
+            if ywType == "loan":
                 loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(thirdpart_user_id=self.data['userId'])
                 qficoApply_data['applyId'] = loan_apply_info['loan_apply_id']
                 qficoApply_data['businessNo'] = loan_apply_info['thirdpart_apply_id']
-        except Exception as r:
-            self.log.error("未知错误{}".format(r))
+        except Exception as err:
+            self.log.error("未知错误{}".format(err))
             sys.exit()
 
         # 更新 payload 字段值

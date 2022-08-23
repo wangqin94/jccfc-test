@@ -111,6 +111,24 @@ class CtripBizImpl(EnvInit):
         response = post_with_encrypt(url, self.credit_payload, encrypt_flag=False)
         return response
 
+        # 授信查询
+    def credit_query(self, **kwargs):
+        credit_query_data = dict()
+        key = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['open_id'])
+        credit_query_data['request_no'] = key['credit_apply_serial_id']
+        credit_query_data['open_id'] = key['thirdpart_user_id']
+        # credit_query_data['request_no'] = 'request_no16599436045272'
+        # credit_query_data['open_id'] = 'open_id16599435145773753'
+        # 更新 payload 字段值
+        credit_query_data.update(kwargs)
+        parser = DataUpdate(self.cfg['credit_query']['payload'], **credit_query_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('授信查询...')
+        url = self.host + self.cfg['credit_query']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
+        return response
+
     # 支用申请payload
     def loan(self, **kwargs):
         """ # 支用申请payload字段装填

@@ -9,6 +9,7 @@ from src.enums.EnumsCommon import *
 from src.impl.common.CheckBizImpl import CheckBizImpl
 from src.impl.JiKe.JiKeBizImpl import JiKeBizImpl
 from src.impl.JiKe.JiKeCheckBizImpl import JiKeCheckBizImpl
+from src.impl.public.LoanPublicBizImpl import LoanPublicBizImpl
 from utils.JobCenter import JOB
 from utils.Logger import MyLog
 from utils.Models import get_base_data
@@ -35,27 +36,31 @@ class MyTestCase(unittest.TestCase):
         # 绑卡签约
         jike = JiKeBizImpl(data=self.data)
         jike.sharedWithholdingAgreement()
-
+        term = 18
         # 发起授信申请
-        self.thirdApplyId = jike.credit(applyAmount=1000).get('body')['thirdApplyId']
+        self.thirdApplyId = jike.credit(applyAmount=20000, loanTerm=term).get('body')['thirdApplyId']
 
         # 数据库陈校验授信结果是否符合预期
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId)
         # 接口层校验授信结果是否符合预期
         self.jikeCheckBizImpl.jike_check_credit_apply_status(self.thirdApplyId)
 
+        # 发起LPR查询
+        jike.queryLprInfo(thirdpart_apply_id=self.thirdApplyId)
+
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
         self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
-        jike.applyLoan(loan_date='2022-03-04', loanAmt=1000, term=12)
+        # self.loan_date = '2022-07-16'
+        jike.applyLoan(loan_date=self.loan_date, loanAmt=8000, loanTerm=term)
 
     """ 后置条件处理 """
 
     def tearDown(self):
         time.sleep(5)
         # 数据库陈校验授信结果是否符合预期
-        status = self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.TO_LOAN.value,
-                                                                       thirdpart_apply_id=self.thirdApplyId)
-        self.assertEqual(EnumLoanStatus.TO_LOAN.value, status, '支用失败')
+        # status = self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.TO_LOAN.value,
+        #                                                                thirdpart_apply_id=self.thirdApplyId)
+        # self.assertEqual(EnumLoanStatus.TO_LOAN.value, status, '支用失败')
         # 执行任务流放款
         self.job.update_job('线下自动放款', executeBizDate=self.loan_date.replace('-', ''))
         self.job.trigger_job('线下自动放款')
@@ -64,6 +69,10 @@ class MyTestCase(unittest.TestCase):
         # 接口层校验授信结果是否符合预期
         status = self.jikeCheckBizImpl.jike_check_loan_apply_status(self.thirdApplyId)
         self.assertEqual(JiKeApiLoanStatusEnum.SUCCESS.value, status, '支用失败')
+
+        # 更新放款时间
+        loanPublicBizImpl = LoanPublicBizImpl()
+        loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.thirdApplyId, loanDate=self.loan_date)
 
 
 if __name__ == '__main__':
