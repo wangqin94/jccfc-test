@@ -503,6 +503,7 @@ class JiKeBizImpl(MysqlInit):
         url = self.host + self.cfg['loanContract_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        self.Files.base64_to_file(response['body']['fileBase64'],'D:\\testdata\\testdata\\'+response['body']['fileName'])
         return response
 
     # 还款申请
