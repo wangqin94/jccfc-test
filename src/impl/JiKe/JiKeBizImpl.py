@@ -2,11 +2,14 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
+import logging
+
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import JiKe
 from src.impl.common.CommonBizImpl import *
+from utils.FileHandle import Files
 from utils.Apollo import Apollo
 
 
@@ -269,9 +272,10 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 授信申请
-    def credit(self, applyAmount=1000, **kwargs):
+    def credit(self, applyAmount=1000, loanTerm=6, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
+        @param loanTerm: 贷款期次
         @param applyAmount: 授信金额
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
@@ -284,11 +288,12 @@ class JiKeBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + self.strings
+        credit_data['loanTerm'] = loanTerm
         credit_data['interestRate'] = 9.7
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
-        credit_data['orderType'] = '2'  # 应传2
-        credit_data['storeCode'] = 'store2022072902'
+        # credit_data['orderType'] = '2'  # 应传2
+        # credit_data['storeCode'] = 'store2022072903'
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -350,7 +355,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loan_date=None, loanTerm=12, loanAmt=20000, thirdApplyId=None, rate=9.7, **kwargs):
+    def applyLoan(self,  loanTerm=6, loanAmt=1000, thirdApplyId=None,loan_date=None, rate=10.3, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
@@ -361,7 +366,7 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
-        self.log.demsg('用户四要素信息: {}'.format(self.data))
+        self.log.info('用户四要素信息: {}'.format(self.data))
         applyLoan_data = dict()
         # head
         applyLoan_data['requestSerialNo'] = 'requestNo' + self.strings + "_4000"
@@ -378,7 +383,7 @@ class JiKeBizImpl(MysqlInit):
         # 设置apollo放款mock时间 默认当前时间
         loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
         apollo_data = dict()
-        apollo_data['credit.loan.trade.date.mock'] = "true"
+        apollo_data['credit.loan.trade.date.mock'] = "false"
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
@@ -404,7 +409,12 @@ class JiKeBizImpl(MysqlInit):
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
         applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate, loanAmt=loanAmt,
-                                                              repaymentRate=9.7, loanNumber=loanTerm)
+                                                              repaymentRate=rate, loanNumber=loanTerm)
+        # -----------------------临时测试字段-----------------------
+        # applyLoan_data['repaymentPlans'][5]['guaranteeAmt'] = '142.27'
+        # applyLoan_data['fixedRepayDay'] = '06'
+        # -----------------------临时测试字段-----------------------
+
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -435,6 +445,7 @@ class JiKeBizImpl(MysqlInit):
         else:
             queryLoanResult_data['thirdApplyId'] = thirdApplyId
 
+        queryLoanResult_data['thirdApplyId'] = None
         # 更新 payload 字段值
         queryLoanResult_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_query']['payload'], **queryLoanResult_data)
@@ -482,12 +493,14 @@ class JiKeBizImpl(MysqlInit):
         @return: response 接口响应参数 数据类型：json
         """
         loanContract_query_data = dict()
+        self.Files = Files()
         # head
         loanContract_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_8000"
         loanContract_query_data['requestTime'] = self.date
 
         # body
         loanContract_query_data['loanInvoiceId'] = loanInvoiceId
+        loanContract_query_data['contractType'] = '6'
 
         # 更新 payload 字段值
         loanContract_query_data.update(kwargs)
@@ -498,6 +511,8 @@ class JiKeBizImpl(MysqlInit):
         url = self.host + self.cfg['loanContract_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        self.Files.base64_to_file(response['body']['fileBase64'],'D:\\testdata\\testdata\\'+response['body']['fileName'])
+
         return response
 
     # 还款申请
