@@ -2,11 +2,14 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
+import logging
+
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import JiKe
 from src.impl.common.CommonBizImpl import *
+from utils.FileHandle import Files
 from utils.Apollo import Apollo
 
 
@@ -108,7 +111,7 @@ def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
     amtpermonth_jc = loanamt * month_rate_jc * pow((1 + month_rate_jc), term) / (pow((1 + month_rate_jc), term) - 1)
     amtpermonth_jk = loanamt * month_rate_jk * pow((1 + month_rate_jk), term) / (pow((1 + month_rate_jk), term) - 1)
     # 还款总利息
-    sum_amtpermonth_jc = amtpermonth_jc * term - loanamt * term
+    sum_amtpermonth_jc = amtpermonth_jc*term-loanamt*term
     left_month_principal = loanamt
     left_month_interest = sum_amtpermonth_jc
     for i in range(1, term + 1):
@@ -132,7 +135,7 @@ def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
         left_month_principal = left_month_principal - month_principal
 
         # 第n个月应还利息
-        month_interest = left_month_interest if i == term + 1 else month_interest_jc
+        month_interest = left_month_interest if i == term+1 else month_interest_jc
         # 第n个月剩余应还利息
         left_month_interest = left_month_interest - month_interest_jc
 
@@ -272,6 +275,7 @@ class JiKeBizImpl(MysqlInit):
     def credit(self, applyAmount=1000, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
+        @param loanTerm: 贷款期次
         @param applyAmount: 授信金额
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
@@ -350,7 +354,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loan_date=None, loanTerm=12, loanAmt=20000, thirdApplyId=None, rate=10.3, **kwargs):
+    def applyLoan(self,  loanTerm=6, loanAmt=1000, thirdApplyId=None,loan_date=None, rate=10.3, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
@@ -361,7 +365,7 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
-        self.log.demsg('用户四要素信息: {}'.format(self.data))
+        self.log.info('用户四要素信息: {}'.format(self.data))
         applyLoan_data = dict()
         # head
         applyLoan_data['requestSerialNo'] = 'requestNo' + self.strings + "_4000"
@@ -404,7 +408,7 @@ class JiKeBizImpl(MysqlInit):
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
         applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate, loanAmt=loanAmt,
-                                                              repaymentRate=rate, loanNumber=loanTerm)
+                                                              repaymentRate=9.7, loanNumber=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -482,6 +486,7 @@ class JiKeBizImpl(MysqlInit):
         @return: response 接口响应参数 数据类型：json
         """
         loanContract_query_data = dict()
+        self.Files = Files()
         # head
         loanContract_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_8000"
         loanContract_query_data['requestTime'] = self.date
@@ -498,6 +503,7 @@ class JiKeBizImpl(MysqlInit):
         url = self.host + self.cfg['loanContract_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        self.Files.base64_to_file(response['body']['fileBase64'],'D:\\testdata\\testdata\\'+response['body']['fileName'])
         return response
 
     # 还款申请
@@ -627,7 +633,8 @@ class JiKeBizImpl(MysqlInit):
         returnGoods_apply_data["returnGoodsPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
 
         # 计算退货应收利息=当期利息+未还期次利息
-        key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(loanInvoiceId)
+        key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(
+            loanInvoiceId)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
         dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
         repayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
@@ -718,7 +725,6 @@ class JiKeBizImpl(MysqlInit):
     def queryLprInfo(self, thirdApplyId=None, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
-        @param thirdApplyId: 三方申请单号
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
