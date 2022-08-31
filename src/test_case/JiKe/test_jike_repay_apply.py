@@ -36,7 +36,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(StatusCodeEnum.SUCCESS.code, self.repayRes['head']['returnCode'], '还款接口层失败')
 
         # 自动入账
-        self.repayPublicBizImpl.job.trigger_job("自动入账处理任务流", group=13)
+        # self.repayPublicBizImpl.job.trigger_job("自动入账处理任务流", group=13)
         # 输入指定借据号
         # self.repayRes = json.loads(jike.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId="").get('body'))  # 按期还款
 

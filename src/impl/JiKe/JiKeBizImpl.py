@@ -2,8 +2,6 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
-import logging
-
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
@@ -275,7 +273,6 @@ class JiKeBizImpl(MysqlInit):
     def credit(self, applyAmount=1000, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
-        @param loanTerm: 贷款期次
         @param applyAmount: 授信金额
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
@@ -354,7 +351,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self,  loanTerm=6, loanAmt=1000, thirdApplyId=None,loan_date=None, rate=10.3, **kwargs):
+    def applyLoan(self,  loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=10.3, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
@@ -408,7 +405,7 @@ class JiKeBizImpl(MysqlInit):
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
         applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate, loanAmt=loanAmt,
-                                                              repaymentRate=9.7, loanNumber=loanTerm)
+                                                              repaymentRate=rate, loanNumber=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -486,7 +483,7 @@ class JiKeBizImpl(MysqlInit):
         @return: response 接口响应参数 数据类型：json
         """
         loanContract_query_data = dict()
-        self.Files = Files()
+        files = Files()
         # head
         loanContract_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_8000"
         loanContract_query_data['requestTime'] = self.date
@@ -503,7 +500,7 @@ class JiKeBizImpl(MysqlInit):
         url = self.host + self.cfg['loanContract_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
-        self.Files.base64_to_file(response['body']['fileBase64'],'D:\\testdata\\testdata\\'+response['body']['fileName'])
+        files.base64_to_file(response['body']['fileBase64'], 'D:\\testdata\\testdata\\'+response['body']['fileName'])
         return response
 
     # 还款申请
@@ -682,9 +679,10 @@ class JiKeBizImpl(MysqlInit):
         # 附件信息
         fileInfos = []
         fileInfo = {'fileType': "1", 'fileName': "cqid1.png"}
-        positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/cqid1.png'))
+        positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
         fileInfo['file'] = positive  # 身份证正面base64字符串
-        file_data['fileInfos'] = fileInfos.append(fileInfo)
+        fileInfos.append(fileInfo)
+        file_data['fileInfos'] = fileInfos
 
         # 更新 payload 字段值
         file_data.update(kwargs)
@@ -725,6 +723,7 @@ class JiKeBizImpl(MysqlInit):
     def queryLprInfo(self, thirdApplyId=None, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
+        @param thirdApplyId: 三方申请号
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
@@ -745,6 +744,35 @@ class JiKeBizImpl(MysqlInit):
 
         self.log.demsg('LPR查询...')
         url = self.host + self.cfg['queryLprInfo']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 授信额度取消
+    def cancelCreditLine(self, thirdApplyId=None, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param thirdApplyId: 三方申请号
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        cancelCreditLine_data = dict()
+        # head
+        cancelCreditLine_data['requestSerialNo'] = 'requestNo' + self.strings + "_1600"
+        cancelCreditLine_data['requestTime'] = self.date
+        # body
+        if not thirdApplyId:
+            credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'], status='03')
+            cancelCreditLine_data['thirdApplyId'] = credit_apply_info['thirdpart_apply_id']
+        else:
+            cancelCreditLine_data['thirdApplyId'] = thirdApplyId
+        # 更新 payload 字段值
+        cancelCreditLine_data.update(kwargs)
+        parser = DataUpdate(self.cfg['cancelCreditLine']['payload'], **cancelCreditLine_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('授信额度取消...')
+        url = self.host + self.cfg['cancelCreditLine']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response

@@ -479,4 +479,21 @@ JiKe = {
         }
     },
 
+    # 授信额度取消
+    'cancelCreditLine': {
+        'interface': '/api/v1/yl/common/cancellationCreditLine',
+        'payload': {
+            "head": {
+                "merchantId": "G22E02JIKE",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "thirdApplyId": "",
+                "reason": "授信额度取消-测试"
+            }
+        }
+    },
 }

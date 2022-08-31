@@ -1,7 +1,3 @@
-data = {'name': '臧婵', 'cer_no': '610729201010271863', 'bankid': '6222083252743681844', 'telephone': '17283520716', 'userId': 'userId1641794059644'}  # hqas -> zhixin
-data = {'name': '端思', 'cer_no': '120106199101301913', 'bankid': '6212813255838427591', 'telephone': '15682514703', 'userId': 'userId1641797154402'}  # hqas -> zhixin
-data = {'name': '乜眉', 'cer_no': '510603199901075695', 'bankid': '6217853257494005943', 'telephone': '19182357904', 'userId': 'userId1641798809979'}  # hqas -> zhixin
-data = {'name': '廖菊凝', 'cer_no': '220182199611284412', 'bankid': '6217853257556196978', 'telephone': '18770963154', 'userId': 'userId1641798872157'}  # hqas -> zhixin
 data = {'name': '经伟', 'cer_no': '152222201806207452', 'bankid': '6216663265114167698', 'telephone': '15180642739', 'userId': 'userId1641806430160'}  # hqas -> zhixin
 data = {'name': '仇荣玲', 'cer_no': '230708200106016202', 'bankid': '6217223328051921047', 'telephone': '15349721863', 'userId': 'userId1641869367586'}  # hqas -> zhixin
 data = {'name': '富勤芳', 'cer_no': '340503201403219265', 'bankid': '6217863338293128603', 'telephone': '14758362710', 'userId': 'userId1641879608197'}  # hqas -> zhixin
@@ -20,3 +16,6 @@ data = {'name': '荣钧', 'cer_no': '410326201004098752', 'bankid': '62172244681
 data = {'name': '芮育妍', 'cer_no': '140522200911176801', 'bankid': '6217224468326604199', 'telephone': '15616304758', 'userId': 'userId1643009643255'}  # hpre -> zhixin
 data = {'name': '皇兰', 'cer_no': '331123201305210542', 'bankid': '6217854470374613640', 'telephone': '18275826410', 'userId': 'userId1643011691278'}  # hpre -> zhixin
 data = {'name': '卫静', 'cer_no': '320115200506011438', 'bankid': '6216664540502734567', 'telephone': '17297583461', 'userId': 'userId1643081819091'}
+data = {'name': '胡雁卉', 'cer_no': '130922198705179227', 'telephone': '17206185342', 'bankid': '6212181660631790836', 'userId': 'userId16606317904906834'}  # hqas -> zhixin
+data = {'name': '邢代梅', 'cer_no': '412827200005086623', 'telephone': '14934950876', 'bankid': '6217231660794566394', 'userId': 'userId16607945661766093'}  # hqas -> zhixin
+data = {'name': '陈晓亦', 'cer_no': '130182199906022418', 'telephone': '18832190584', 'bankid': '6217221660805681457', 'userId': 'userId16608056807067754'}  # hqas -> zhixin

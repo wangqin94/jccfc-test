@@ -23,11 +23,11 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=1):
+    def process(self, flag=14):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            jike = JiKeBizImpl(data=None)
+            jike = JiKeBizImpl(data=data)
             jike.sharedWithholdingAgreement()
 
         # 绑卡查询
@@ -49,7 +49,7 @@ class TestCase(object):
         # 授信查询
         elif flag == 4:
             jike = JiKeBizImpl(data=data)
-            jike.queryCreditResult(thirdApplyId='')
+            jike.queryCreditResult(thirdApplyId='thirdApplyId166063196668864111')
 
         # 借款申请
         elif flag == 5:
@@ -84,7 +84,7 @@ class TestCase(object):
         # 附件补录
         elif flag == 11:
             jike = JiKeBizImpl(data=data)
-            jike.supplementAttachment(thirdApplyId='')
+            jike.supplementAttachment(thirdApplyId='thirdApplyId16617429251224753')
 
         # 省市区地址获取
         elif flag == 12:
@@ -94,7 +94,12 @@ class TestCase(object):
         # LPR查询
         elif flag == 13:
             jike = JiKeBizImpl(data=data)
-            jike.queryLprInfo()
+            jike.queryLprInfo("thirdApplyId16617429251224753")
+
+        # 授信额度取消
+        elif flag == 14:
+            jike = JiKeBizImpl(data=data)
+            jike.cancelCreditLine("thirdApplyId16618505481928376")
 
     def postprocess(self):
         """ 后置条件处理 """
