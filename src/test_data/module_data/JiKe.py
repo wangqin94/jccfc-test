@@ -186,9 +186,9 @@ JiKe = {
                     "quaternCerRst": "四元认证结果"  # 四元认证结果
                 },
                 "featureField": {
-                    "shieldNumber": 9999,  # 近三个月同盾贷款数
-                    "shieldMonthLoan": 9999,  # 近一个月同盾贷款数
-                    "shieldWeekLoan": 9999,  # 近7天同盾贷款数
+                    "shieldNumber": 10,  # 近三个月同盾贷款数
+                    "shieldMonthLoan": 9,  # 近一个月同盾贷款数
+                    "shieldWeekLoan": 8,  # 近7天同盾贷款数
                     "whiteKnightBlacklist_xd": "N",  # 白骑士黑名单-信贷 Y 中标(名单中存在) N 未中标（名单中不存在）
                     "collectionNumber": 9999,  # 凭安-近期被催收的号码个数
                     "thawingScore": 9999,  # 百融-线下消费贷客群评分

@@ -150,7 +150,7 @@ def get_day(time1, time2):
     """
     @param time1: 时间1
     @param time2: 时间2
-    :return: 差异天数
+    :return: 差异天数time2-time1
     """
     try:
         day1 = time.strptime(str(time1), '%Y-%m-%d')

@@ -9,6 +9,7 @@ from src.test_data.module_data import JiKe
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
+from dateutil.parser import parse
 
 
 def computeMD5(message):
@@ -109,7 +110,7 @@ def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
     amtpermonth_jc = loanamt * month_rate_jc * pow((1 + month_rate_jc), term) / (pow((1 + month_rate_jc), term) - 1)
     amtpermonth_jk = loanamt * month_rate_jk * pow((1 + month_rate_jk), term) / (pow((1 + month_rate_jk), term) - 1)
     # 还款总利息
-    sum_amtpermonth_jc = amtpermonth_jc*term-loanamt*term
+    sum_amtpermonth_jc = amtpermonth_jc * term - loanamt * term
     left_month_principal = loanamt
     left_month_interest = sum_amtpermonth_jc
     for i in range(1, term + 1):
@@ -133,7 +134,7 @@ def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
         left_month_principal = left_month_principal - month_principal
 
         # 第n个月应还利息
-        month_interest = left_month_interest if i == term+1 else month_interest_jc
+        month_interest = left_month_interest if i == term + 1 else month_interest_jc
         # 第n个月剩余应还利息
         left_month_interest = left_month_interest - month_interest_jc
 
@@ -351,7 +352,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self,  loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=10.3, **kwargs):
+    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=10.3, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
@@ -500,11 +501,12 @@ class JiKeBizImpl(MysqlInit):
         url = self.host + self.cfg['loanContract_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
-        files.base64_to_file(response['body']['fileBase64'], 'D:\\testdata\\testdata\\'+response['body']['fileName'])
+        files.base64_to_file(response['body']['fileBase64'], 'D:\\testdata\\testdata\\' + response['body']['fileName'])
         return response
 
     # 还款申请
-    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayGuaranteeFee=10, repayDate=None, **kwargs):
+    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayGuaranteeFee=10, repayDate=None,
+                    **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param repayDate: 还款时间，默认当天 eg:'2022-08-01'
@@ -528,7 +530,8 @@ class JiKeBizImpl(MysqlInit):
         repay_apply_data['repayScene'] = repay_scene
 
         repay_apply_data['repayType'] = repay_type
-        key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(loanInvoiceId)
+        key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
+            loanInvoiceId)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
@@ -545,7 +548,8 @@ class JiKeBizImpl(MysqlInit):
 
         # 按期还款、提前当期
         if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee, 2)  # 总金额
+            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
+                                                    2)  # 总金额
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
 
         # 提前结清
@@ -568,7 +572,8 @@ class JiKeBizImpl(MysqlInit):
             repay_apply_data['appAuthToken'] = 'appAuthToken' + self.strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"]*100, 2)  # 总金额
+            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
+                                                                             2)  # 总金额
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
@@ -608,9 +613,11 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 退货申请
-    def returnGoods_apply(self, loanInvoiceId, **kwargs):
+    def returnGoods_apply(self, loanInvoiceId, term, repayDate, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
+        @param term: 当前待还期次
+        @param repayDate: 退货时间
         @param loanInvoiceId: 借据号 必填
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
@@ -624,38 +631,62 @@ class JiKeBizImpl(MysqlInit):
         returnGoods_apply_data['returnGoodsSerialNo'] = 'GoodsSerialNo' + self.strings
 
         # 计算剩余应还本金(最早未还期次:期初计息余额before_calc_principal)
-        key = "loan_invoice_id = '{}' and (repay_plan_status = '1' or repay_plan_status = '4') ORDER BY 'current_num'".format(
+        key = "loan_invoice_id = '{}' and repay_plan_status in('1','4') ORDER BY 'current_num'".format(
             loanInvoiceId)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
         returnGoods_apply_data["returnGoodsPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
 
-        # 计算退货应收利息=当期利息+未还期次利息
-        key = "loan_invoice_id = '{}' and repay_plan_status = '1' ORDER BY 'current_num'".format(
-            loanInvoiceId)
-        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
-        dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
-        repayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                             'sum(pre_repay_interest)',
-                                                             'sum(pre_repay_overdue_fee)',
-                                                             loan_invoice_id=loanInvoiceId,
-                                                             repay_plan_status='4')
-        if repayAmt['sum(pre_repay_interest)']:
-            weihuan_interest = float("{:.2f}".format(repayAmt['sum(pre_repay_interest)']))  # 未还期次利息
-            pre_repay_overdue_fee = float("{:.2f}".format(repayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
-        else:
-            weihuan_interest = 0
-            pre_repay_overdue_fee = 0
-        returnGoods_apply_data['returnGoodsInterest'] = dangqi_interest + weihuan_interest
+        # 当期已还款，利息0
+        days = get_day(asset_repay_plan["start_date"], repayDate)
+        # 如果当期已还款，提前还款利息应收0
+        if days <= 0:
+            returnGoods_apply_data["returnGoodsInterest"] = 0
 
-        # 罚息
-        returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee
+        # 计算退货应收利息， 放款7日内退货不收罚息
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                         loan_invoice_id=loanInvoiceId)
+        loanDate = str(credit_loan_invoice['loan_pay_time']).split()[0]
+        # loanDate = datetime.strptime(loanDate, '%Y-%m-%d').date()
+        # date = datetime.strptime(date, '%Y-%m-%d').date()
+        loanDate = parse(loanDate)
+        repayDateFormat = parse(repayDate)
+        if 7 > int((repayDateFormat - loanDate).days):
+            returnGoods_apply_data['returnGoodsInterest'] = 0
+            returnGoods_apply_data['returnGoodsOverdueFee'] = 0
+        else:
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                         loan_invoice_id=loanInvoiceId,
+                                                                         repay_plan_status='1',
+                                                                         current_num=term)
+            dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
+            # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
+            key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
+                loanInvoiceId)
+            KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+            kuanxianqi_interest = float(KXQRepayAmt['pre_repay_interest']) if KXQRepayAmt else 0  # 宽限期利息
+            # 逾期借据=逾期期次利息+当期利息
+            oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                    'sum(pre_repay_interest)',
+                                                                    'sum(pre_repay_overdue_fee)',
+                                                                    loan_invoice_id=loanInvoiceId,
+                                                                    repay_plan_status='4')
+            if oveRepayAmt['sum(pre_repay_interest)']:
+                weihuan_interest = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_interest)']))  # 未还期次利息
+                pre_repay_overdue_fee = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
+            else:
+                weihuan_interest = 0
+                pre_repay_overdue_fee = 0
+            returnGoods_apply_data['returnGoodsInterest'] = dangqi_interest + weihuan_interest + kuanxianqi_interest
+
+            # 罚息
+            returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee
 
         # 更新 payload 字段值
         returnGoods_apply_data.update(kwargs)
         parser = DataUpdate(self.cfg['returnGoods_apply']['payload'], **returnGoods_apply_data)
         self.active_payload = parser.parser
 
-        self.log.demsg('还款查询请求...')
+        self.log.demsg('退货请求...')
         url = self.host + self.cfg['returnGoods_apply']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)

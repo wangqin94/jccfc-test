@@ -28,7 +28,7 @@ class RepayPublicBizImpl(MysqlInit):
     def pre_repay_config(self, repayDate=None):
         """
         预制各产品的逾期数据
-        @param repayDate: 放款时间 格式："2021-12-12", 默认当前时间
+        @param repayDate: 还款时间 格式："2021-12-12", 默认当前时间
         @return:
         """
         self.log.demsg("设置大会计时间,账务时间=repay_date")
@@ -91,4 +91,4 @@ class RepayPublicBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    RepayPublicBizImpl().pre_repay_config()
+    RepayPublicBizImpl().pre_repay_config(repayDate='2022-09-06')
