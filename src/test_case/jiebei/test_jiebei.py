@@ -22,22 +22,22 @@ class TestCase(object):
         # 支用： "featureCodes":["jc_loan_result","jc_loan_failCode","jc_loan_failReason"]    ⽀⽤bizActionType“LOAN_DECISION”
         if flag == 0:
             jt = JieBeiBizImpl(data=data)
-            jt.feature(bizActionType='LOAN_DECISION',featureCodes=["jc_loan_result","jc_loan_failCode","jc_loan_failReason"],applyNo='loanNo202208300000000000000005',creditNo='applyNo202208300000000000000004')
+            jt.feature(bizActionType='',featureCodes=["jc_loan_result","jc_loan_failCode","jc_loan_failReason"])
 
         # 初审数据准备
         elif flag == 1:
-            jt = JieBeiBizImpl(data=data)
-            jt.datapreCs(applyNo='applyNo202208310000000000000006')
+            jt = JieBeiBizImpl(data=None)
+            jt.datapreCs()
 
         # 复审数据准备
         elif flag == 2:
             jt = JieBeiBizImpl(data=data)
-            jt.datapreFs(applyNo='applyNo202208310000000000000006',creditNo='applyNo202208310000000000000006')
+            jt.datapreFs()
 
         #授信通知接口
         elif flag == 3:
             jt = JieBeiBizImpl(data=data)
-            jt.creditNotice(applyNo='applyNo202208250000000000000016')
+            jt.creditNotice()
 
         elif flag == 4:
             c = ('浙江省杭州市⻄湖区学院路128号A1座12').encode()

@@ -32,6 +32,11 @@ class JieBeiBizImpl(EnvInit):
             feature_data['userName'] = self.data['name']
             feature_data['certNo'] = self.data['cer_no']
             feature_data['bizActionType'] = 'LOAN_DECISION'
+            feature_data['creditNo'] = self.data['applyno']
+            feature_data['applyNo'] = "loanNo" + str(int(round(time.time() * 1000)))
+        else:
+            feature_data['applyNo'] = self.data['applyno']
+
 
         # 更新 payload 字段值
         feature_data.update(kwargs)
@@ -50,6 +55,7 @@ class JieBeiBizImpl(EnvInit):
         datapreCs_data['name'] = self.data['name']
         datapreCs_data['certNo'] = self.data['cer_no']
         datapreCs_data['mobileNo'] = self.data['telephone']
+        datapreCs_data['applyNo'] = self.data['applyno']
 
         # 更新 payload 字段值
         datapreCs_data.update(kwargs)
@@ -69,6 +75,8 @@ class JieBeiBizImpl(EnvInit):
         datapreFs_data['certNo'] = self.data['cer_no']
         datapreFs_data['mobileNo'] = self.data['telephone']
         datapreFs_data['cardNo'] = self.data['bankid']
+        datapreFs_data['applyNo'] = self.data['applyNo']
+        datapreFs_data['creditNo'] = self.data['applyNo']
 
         # 更新 payload 字段值
         datapreFs_data.update(kwargs)
@@ -88,6 +96,8 @@ class JieBeiBizImpl(EnvInit):
         creditNotice_data['certNo'] = self.data['cer_no']
         creditNotice_data['mobile'] = self.data['telephone']
         creditNotice_data['timestamp'] = int(time.time()*1000)
+        creditNotice_data['creditNo'] = self.data['applyNo']
+
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)
         parser = DataUpdate(self.cfg['creditNotice']['payload'], **creditNotice_data)

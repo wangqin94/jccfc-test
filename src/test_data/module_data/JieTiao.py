@@ -90,23 +90,23 @@ JieTiao = {
     'repay_notice': {
         'interface': '/api/v1/jietiao/repay/apply',
         'payload': {
-            "ifEnough":"1",
+            "ifEnough":"1",  #0:非足额 1:足额
             "loanReqNo":"346177553668492058625",
-            "rpyChannel":"1",
+            "rpyChannel":"1",  #0线下 1线上
             "rpyDate":"2022-07-13",
-            "rpyDeductAmt":0,
+            "rpyDeductAmt":0, #营销减免金额
             "rpyIntAmt":0.66000000,
             "rpyOintAmt":0,
             "rpyPrinAmt":1000,
-            "rpyRedLineAmt":0,
+            "rpyRedLineAmt":0,  #红线减免
             "rpyReqNo":"346242956052115002121615678",
-            "rpyShareAmt":1,
+            "rpyShareAmt":1, #返费
             "rpyShareAmtFour":2,
             "rpyShareAmtOne":3,
             "rpyShareAmtThree":4,
             "rpyShareAmtTwo":5,
             # "rpyTerm":7,
-            "rpyType":"01",
+            "rpyType":"01",   #提前还款:01(提前结清) 期供还款:02 (按指定期数进行还款，包含部分还款、提前还当期)   逾期还款：03（逾期还部分、逾期足额按期还）
             "sourceCode":"QH",
             "tranNo":"repayReqNo16576826171401"
         }
