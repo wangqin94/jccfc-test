@@ -62,3 +62,10 @@ sftp_path = {
         "bank_repay_loan": "/hj/xdgl/meituan/bank_repay_loan",
         "bank_repay_period": "/hj/xdgl/meituan/bank_repay_period"}
 }
+
+ks3_asset_path = {
+    'jike': {
+        "claimPath": "xdgl/xdnb/pl/accounting/asset/geexClaimFile",
+        "bayBackPath": "xdgl/xdnb/pl/accounting/asset/geexBuybackFile"
+    }
+}

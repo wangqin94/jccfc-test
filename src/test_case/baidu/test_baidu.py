@@ -19,12 +19,12 @@ class TestCase(object):
         pass
 
     # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效 , 5:结清证明, 6:放款全流程]
-    def process(self, flag=2):
+    def process(self, flag=6):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
-            # bd = BaiDuBizImpl(data=None)
-            bd = BaiDuBizImpl(data=data)
+            bd = BaiDuBizImpl(data=None)
+            # bd = BaiDuBizImpl(data=data)
             bd.credit(initialAmount=3000000)
 
         # 授信查询
@@ -36,7 +36,7 @@ class TestCase(object):
         elif flag == 2:
             # repay_mode='02'随借随还，repay_mode='05'等额本息；
             bd = BaiDuBizImpl(data=data, repay_mode='05')
-            bd.loan(cashAmount=80000)
+            bd.loan(cashAmount=1000000, term=6)
             # bd.loan(cashAmount=60000, dailyInterestRate='6.2', compreAnnualInterestRate='2232')
 
         # 支用查询
@@ -50,7 +50,7 @@ class TestCase(object):
             mt.settlement(query_flag=1, username="仰敬胜")
 
         elif flag == 6:
-            bd = BaiDuSynBizImpl(data=None)
+            bd = BaiDuSynBizImpl(data=None, loanamount=1000000, month=6, loan_date='2022-07-06')
             bd.loan_flow()
 
 

@@ -177,8 +177,8 @@ class BaiduFile(EnvInit):
             'cert_type': '01',
             'cert_no': self.cer_no,
             'loan_id': "",
-            'apply_date': self.apply_date,
-            'start_date': self.apply_date,
+            'apply_date': self.cur_date,
+            'start_date': self.cur_date,
             'end_date': self.period_list[-1],
             'seq_no': str(int(round(time.time() * 1000))),
             'encash_amt': int(self.info['apply_amount']) * 100,
@@ -335,7 +335,7 @@ class BaiduFile(EnvInit):
         """
         :return: 返回还款日期，账单日
         """
-        date_list = str(self.info['apply_time']).split()[0].split('-')
+        date_list = [self.cur_date[0:4], self.cur_date[4:6], self.cur_date[6:8]]
         bill_year, bill_month, bill_day = map(int, date_list)
         period_date_list = []
         bill_day = 23 if bill_day > 28 else bill_day
@@ -397,7 +397,7 @@ class BaiduFile(EnvInit):
         temple['end_date'] = self.period_date_list[term - 1]
         repay_plan = os.path.join(self.loan_file_path, 'repay_plan.csv')
         if term == 1:
-            temple['start_date'] = self.apply_date
+            temple['start_date'] = self.cur_date
             table_head = ','.join(self.repay_plan_csv_keys)
             with open(repay_plan, 'w', encoding='utf-8') as f:
                 f.write(table_head)

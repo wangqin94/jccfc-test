@@ -15,8 +15,9 @@ class TestCase(object):
     @allure.step("逾期还款")
     def test_overdue_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
         data = baiduBizSynImpl
+        period = 1
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
-                                                                loan_invoice_id=data['loan_no'], current_num=1)
+                                                                loan_invoice_id=data['loan_no'], current_num=period)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
         repay_date_ove = get_custom_day(10, repay_date_bill)
         with allure.step("设置大会计时间,账务时间=repay_date"):
@@ -47,7 +48,7 @@ class TestCase(object):
             assert EnumLoanInvoiceStatus.OVERDUE.value == info['loan_invoice_status'], "借据状态非逾期"
 
         with allure.step('生成逾期还款文件并上传金山云'):
-            bd = BaiduRepayFile(data=data, repay_date=repay_date_ove, repay_type='03', repay_term_no=1)
+            bd = BaiduRepayFile(data=data, repay_date=repay_date_ove, repay_type='03', repay_term_no=period)
             bd.start_repay_file()
 
         with allure.step('更新百度还款计划'):
@@ -72,15 +73,16 @@ class TestCase(object):
 
         with allure.step('检查是否还款成功'):
             info = mysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                        loan_invoice_id=data['loan_no'], current_num=1)
+                                                        loan_invoice_id=data['loan_no'], current_num=period)
             assert EnumRepayPlanStatus.OVERDUE_REPAY.value == info['repay_plan_status'], '还款失败'
 
     @pytest.mark.baidu
     @allure.step("按期还款")
     def test_billDate_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
         data = baiduBizSynImpl
+        period = 2
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
-                                                                loan_invoice_id=data['loan_no'], current_num=2)
+                                                                loan_invoice_id=data['loan_no'], current_num=period)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
         with allure.step("设置大会计时间,账务时间=repay_date"):
             account_date = repay_date_bill.replace("-", '')
@@ -100,7 +102,7 @@ class TestCase(object):
             redis.del_assert_repay_keys()
 
         with allure.step('生成按期还款文件并上传金山云'):
-            bd = BaiduRepayFile(data=data, repay_date=repay_date_bill, repay_type='01', repay_term_no=2)
+            bd = BaiduRepayFile(data=data, repay_date=repay_date_bill, repay_type='01', repay_term_no=period)
             bd.start_repay_file()
 
         with allure.step('更新百度还款计划'):
@@ -125,15 +127,16 @@ class TestCase(object):
 
         with allure.step('检查是否还款成功'):
             info = mysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                        loan_invoice_id=data['loan_no'], current_num=2)
+                                                        loan_invoice_id=data['loan_no'], current_num=period)
             assert EnumRepayPlanStatus.REPAY.value == info['repay_plan_status'], '还款失败'
 
     @pytest.mark.baidu
     @allure.step("提前结清")
     def test_settle_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
         data = baiduBizSynImpl
+        period = 3
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
-                                                            loan_invoice_id=data['loan_no'], current_num=3)
+                                                            loan_invoice_id=data['loan_no'], current_num=period)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
         repay_date_settle = get_custom_day(-1, repay_date_bill)
         with allure.step("设置大会计时间,账务时间=repay_date"):
@@ -154,7 +157,7 @@ class TestCase(object):
             redis.del_assert_repay_keys()
 
         with allure.step('生成提前结清还款文件并上传金山云'):
-            bd = BaiduRepayFile(data=data, repay_date=repay_date_settle, repay_type='02', repay_term_no=3)
+            bd = BaiduRepayFile(data=data, repay_date=repay_date_settle, repay_type='02', repay_term_no=period)
             bd.start_repay_file()
 
         with allure.step('更新百度还款计划'):

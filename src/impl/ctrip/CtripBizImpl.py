@@ -111,6 +111,24 @@ class CtripBizImpl(EnvInit):
         response = post_with_encrypt(url, self.credit_payload, encrypt_flag=False)
         return response
 
+        # 授信查询
+    def credit_query(self, **kwargs):
+        credit_query_data = dict()
+        key = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['open_id'])
+        credit_query_data['request_no'] = key['credit_apply_serial_id']
+        credit_query_data['open_id'] = key['thirdpart_user_id']
+        # credit_query_data['request_no'] = 'request_no16599436045272'
+        # credit_query_data['open_id'] = 'open_id16599435145773753'
+        # 更新 payload 字段值
+        credit_query_data.update(kwargs)
+        parser = DataUpdate(self.cfg['credit_query']['payload'], **credit_query_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('授信查询...')
+        url = self.host + self.cfg['credit_query']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
+        return response
+
     # 支用申请payload
     def loan(self, **kwargs):
         """ # 支用申请payload字段装填
@@ -171,7 +189,6 @@ class CtripBizImpl(EnvInit):
         # 根据openId查询支用信息
         key1 = "thirdpart_user_id = '{}'".format(self.data['open_id'])
         credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
-        apply_rate = credit_loan_apply["apply_rate"]
 
         # 根据支用申请单号查询借据信息
         if self.loan_invoice_id:
@@ -187,6 +204,10 @@ class CtripBizImpl(EnvInit):
             credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
             loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
 
+        # 取资产执行利率
+        asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
+                                                                            loan_invoice_id=loan_invoice_id)
+        execute_rate = asset_loan_invoice_info["execute_rate"]
         # 根据借据Id和期次获取还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, repay_term_no)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
@@ -219,8 +240,6 @@ class CtripBizImpl(EnvInit):
         # 逾期还款
         elif repay_mode == "3":
             repay_notice['repay_type'] = repay_mode
-            print(asset_repay_plan["calc_overdue_fee_date"])
-            print(relativedelta(days=-int(1)))
             finish_time = asset_repay_plan["calc_overdue_fee_date"] - relativedelta(days=-int(1))
             repay_notice['finish_time'] = str(finish_time).replace("-", "") + "112233"
 
@@ -238,7 +257,7 @@ class CtripBizImpl(EnvInit):
             else:
                 # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
                 days = get_day(asset_repay_plan["start_date"], repay_date)
-                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * apply_rate / (100 * 360)
+                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * execute_rate / (100 * 360)
                 repay_notice["repay_interest"] = float('{:.2f}'.format(paid_prin_amt))  # 利息
                 print(repay_notice["repay_interest"])
 

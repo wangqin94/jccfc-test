@@ -27,17 +27,13 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
 
     if encrypt_flag:
         encrypt_payload = encrypt(encrypt_url, headers, payload)
-        response = requests.post(url=url, headers=headers, json=encrypt_payload)
         _log.info("请求地址: {}".format(url))
+        response = requests.post(url=url, headers=headers, json=encrypt_payload)
+        _log.info("响应密文: {}".format(response.json()))
         response = decrypt(decrypt_url, headers, response.json())
     else:
         response = requests.post(url=url, headers=headers, json=payload)
-        _log.info(f"响应报文类型：{type(response)}")
         response = response.json()
-        _log.info(f"响应报文类型：{type(response)}")
-        # response = str(response).replace("'", '''"''').replace(" ", "")
-        # _log.info(res1)
-
         _log.info(f"响应报文：{response}")
     return response
 

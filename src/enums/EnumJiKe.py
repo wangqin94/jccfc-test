@@ -19,6 +19,7 @@ class StatusCodeEnum(Enum):
     NO_HOURLY = ("100003", "请求频繁")
     TO_DOING = ("100004", "交易处理中")
     SYS_ERROR = ("999999", "系统异常")
+    SYS_ERROR1 = ("RPC000009", "服务开小差了, 请稍后再试!")
 
     @property
     def code(self):

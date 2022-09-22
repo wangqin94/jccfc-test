@@ -58,7 +58,7 @@ class BaiDuSynBizImpl(object):
         # 检查是否入三方待建账信息
         self.CheckBizImpl.check_third_wait_loan_status(certificate_no=self.data['cer_no'])
         # 执行任务流放款
-        self.job.update_job('线下自动放款', executeBizDate=self.loan_date.replace('-', ''))
+        self.job.update_job('线下自动放款', executeBizDate=datetime.datetime.today().strftime('%Y%m%d'))
         self.job.trigger_job('线下自动放款')
         # 数据库层校验支用状态-使用中
         self.CheckBizImpl.check_loan_apply_status(loan_apply_serial_id=loan_apply_id)

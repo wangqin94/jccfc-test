@@ -34,7 +34,7 @@ class Redis(object):
             try:
                 if self.redis.exists(key) == 1:
                     self.redis.delete(key)
-                    _log.demsg("redis key:{} successfully delete".format(key))
+                    _log.info("redis key:{} successfully delete".format(key))
             except Exception as err:
                 _log.error("delete redis key error {}".format(err))
 

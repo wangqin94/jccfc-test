@@ -175,7 +175,7 @@ class JOB(object):
         data = res.json()
         try:
             if data['code'] == 200 and data['msg'] == "任务触发成功":
-                _log.demsg("任务:{}触发成功".format(job_id))
+                _log.info("任务:{}触发成功".format(job_id))
         except Exception as err:
             _log.error('trigger job failed! %s', err)
 

@@ -72,7 +72,7 @@ class IdNumber(str):
         """
         随机生成身份证号
         @param sex:  sex = 0表示女性，sex = 1表示男性
-        @param age:  eg: age='2020-01-01'； age=None 随机生成大于16岁生日
+        @param age:  eg: age='2020-01-01'； age=None 随机生成大于18岁生日
         @return:
         """
         # 随机生成一个区域码(6位数)
@@ -81,10 +81,10 @@ class IdNumber(str):
         now_date = datetime.strptime(datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d")
         if age:
             age = datetime.strptime(age, "%Y-%m-%d")
-            assert now_date > age + relativedelta(years=int(17)), '支付要求用户最小年龄不能小于16岁'
+            assert now_date > age + relativedelta(years=int(19)), '支付要求用户最小年龄不能小于18岁'
             birth_days = datetime.strftime(age, "%Y%m%d")
         else:
-            min_age = datetime.strftime(now_date - relativedelta(years=int(16)), "%Y-%m-%d")
+            min_age = datetime.strftime(now_date - relativedelta(years=int(18)), "%Y-%m-%d")
             start, end = datetime.strptime("1975-01-01", "%Y-%m-%d"), datetime.strptime(min_age, "%Y-%m-%d")
             birth_days = datetime.strftime(start + timedelta(random.randint(0, (end - start).days + 1)), "%Y%m%d")
         id_number += str(birth_days)

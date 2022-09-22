@@ -37,12 +37,12 @@ class TestCase(object):
         pass
 
     # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效]
-    def process(self, flag=0):
+    def process(self, flag=2):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
             fql = FqlBizImpl(data=None)
-            fql.credit(creditAmount=1000, loanAmount=1000, loanTerm=3)
+            fql.credit(creditAmount=10000, loanAmount=10000, loanTerm=24, interestRate='34')
 
         # 授信查询
         elif flag == 1:
@@ -53,7 +53,7 @@ class TestCase(object):
         elif flag == 2:
             fql = FqlBizImpl(data=data)
             # orderType: 订单类型 1取现；2赊销
-            fql.loan(loanTerm=3, loanAmt=600, orderType=1, firstRepayDate=self.cur_time)
+            fql.loan(loanTerm=24, loanAmt=10000, orderType=1, firstRepayDate='2022-04-02', interestRate='34')
 
         # 支用查询
         elif flag == 3:
