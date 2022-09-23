@@ -75,8 +75,8 @@ class JieBeiBizImpl(EnvInit):
         datapreFs_data['certNo'] = self.data['cer_no']
         datapreFs_data['mobileNo'] = self.data['telephone']
         datapreFs_data['cardNo'] = self.data['bankid']
-        datapreFs_data['applyNo'] = self.data['applyNo']
-        datapreFs_data['creditNo'] = self.data['applyNo']
+        datapreFs_data['applyNo'] = self.data['applyno']
+        datapreFs_data['creditNo'] = self.data['applyno']
 
         # 更新 payload 字段值
         datapreFs_data.update(kwargs)
@@ -96,7 +96,7 @@ class JieBeiBizImpl(EnvInit):
         creditNotice_data['certNo'] = self.data['cer_no']
         creditNotice_data['mobile'] = self.data['telephone']
         creditNotice_data['timestamp'] = int(time.time()*1000)
-        creditNotice_data['creditNo'] = self.data['applyNo']
+        creditNotice_data['creditNo'] = self.data['applyno']
 
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)
