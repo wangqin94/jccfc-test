@@ -11,6 +11,7 @@ from src.enums.EnumFql import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from src.test_data.module_data import fql
+from utils.FileHandle import *
 
 
 class FqlBizImpl(EnvInit):
@@ -20,6 +21,7 @@ class FqlBizImpl(EnvInit):
         # 解析项目特性配置
         self.cfg = fql.fql
         self.MysqlBizImpl = MysqlBizImpl()
+        self.Files = Files()
 
         self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQL.value), 'applyId')
 
@@ -192,6 +194,85 @@ class FqlBizImpl(EnvInit):
         parser = DataUpdate(self.cfg['credit_query']['payload'], **loan_data)
         self.active_payload = parser.parser
         url = self.host + self.cfg['loan_repay_notice']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    def fql_file_upload(self, remote, local):
+        """
+        分期乐渠道上传文件
+        :param remote: 渠道上传路径，不包含根目录（/xdgl/fql），例如/pl
+        :param local: 本地文件路径+文件名，例如C:\\Users\\jccfc\\Desktop\\aaa.jpg
+        :return:
+        """
+        upload_data = dict()
+        filename = os.path.basename(local)
+        content = self.Files.file_to_base64(local)
+        # header
+        upload_data['requestSerialNo'] = 'SerialNo' + self.strings + "2"
+
+        # body
+        upload_data['seqNo'] = self.strings
+        upload_data['path'] = remote
+        upload_data['fileName'] = filename
+        upload_data['content'] = content
+
+        # 更新 payload 字段值
+        parser = DataUpdate(self.cfg['fql_file_upload']['payload'], **upload_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('分期乐开始上传文件...')
+        url = self.host_api + self.cfg['fql_file_upload']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    def fql_file_download(self, remote, local):
+        """
+        分期乐渠道下载文件
+        :param remote: 需要下载的文件服务器目录+文件名，不包含根目录（/xdgl/fql），例如/pl/aaa.jpg
+        :param local: 下载到本地文件路径+文件名，例如C:\\Users\\jccfc\\Desktop\\aaa.jpg
+        :return:
+        """
+        download_data = dict()
+        # header
+        download_data['requestSerialNo'] = 'SerialNo' + self.strings + "2"
+
+        # body
+        download_data['seqNo'] = self.strings
+        download_data['path'] = remote
+
+        # 更新 payload 字段值
+        parser = DataUpdate(self.cfg['fql_file_download']['payload'], **download_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('分期乐开始下载文件...')
+        url = self.host_api + self.cfg['fql_file_download']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        content = response['content']
+        self.Files.base64_to_file(content, local)
+        return response
+
+    def fql_file_upload_result(self, seqNo):
+        """
+        分期乐渠道上传文件结果查询
+        :param seqNo: 渠道上传文件的seqNo
+        :return:
+        """
+        result_data = dict()
+        # header
+        result_data['requestSerialNo'] = 'SerialNo' + self.strings + "2"
+
+        # body
+        result_data['seqNo'] = seqNo
+
+        # 更新 payload 字段值
+        parser = DataUpdate(self.cfg['fql_file_upload_result']['payload'], **result_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('分期乐查询上传结果...')
+        url = self.host_api + self.cfg['fql_file_upload_result']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response

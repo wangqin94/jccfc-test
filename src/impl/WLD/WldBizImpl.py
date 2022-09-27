@@ -9,12 +9,14 @@ from utils.Models import *
 from src.enums.EnumsCommon import *
 from src.enums.EnumWld import *
 from src.test_data.module_data import wld
+from utils.FileHandle import *
 
 
 class WldBizImpl(EnvInit):
     def __init__(self,  data=None, person=True,encrypt_flag=True,**kwargs):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
+        self.Files = Files()
         # 解析项目特性配置
         self.cfg = wld.wld
         # self.log.demsg('当前测试环境 {}'.format(TEST_ENV_INFO))
@@ -29,9 +31,6 @@ class WldBizImpl(EnvInit):
                 self.data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WLD.value), 'applyid')
             else:
                 self.data = get_base_data_temp('applyid')
-
-
-
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
@@ -325,9 +324,84 @@ class WldBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
+    def wld_file_upload(self, remote, local):
+        """
+        我来贷渠道上传文件
+        :param remote: 渠道上传路径，不包含根目录（/xdgl/hj/wld），例如/credit
+        :param local: 本地文件路径+文件名，例如C:\\Users\\jccfc\\Desktop\\aaa.jpg
+        :return:
+        """
+        upload_data = dict()
+        filename = os.path.basename(local)
+        content = self.Files.file_to_base64(local)
+        # header
+        upload_data['requestSerialNo'] = 'SerialNo' + self.strings + "2"
 
+        # body
+        upload_data['seqNo'] = self.strings
+        upload_data['path'] = remote
+        upload_data['fileName'] = filename
+        upload_data['content'] = content
 
+        # 更新 payload 字段值
+        parser = DataUpdate(self.cfg['wld_file_upload']['payload'], **upload_data)
+        self.active_payload = parser.parser
 
+        self.log.demsg('我来贷开始上传文件...')
+        url = self.host + self.cfg['wld_file_upload']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    def wld_file_download(self, remote, local):
+        """
+        我来贷渠道下载文件
+        :param remote: 需要下载的文件服务器目录+文件名，不包含根目录（/xdgl/hj/wld），例如/credit/aaa.jpg
+        :param local: 下载到本地文件路径+文件名，例如C:\\Users\\jccfc\\Desktop\\aaa.jpg
+        :return:
+        """
+        download_data = dict()
+        # header
+        download_data['requestSerialNo'] = 'SerialNo' + self.strings + "2"
+
+        # body
+        download_data['seqNo'] = self.strings
+        download_data['path'] = remote
+
+        # 更新 payload 字段值
+        parser = DataUpdate(self.cfg['wld_file_download']['payload'], **download_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('我来贷开始下载文件...')
+        url = self.host + self.cfg['wld_file_download']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        content = response['body']['content']
+        self.Files.base64_to_file(content, local)
+        return response
+
+    def wld_file_upload_result(self, seqNo):
+        """
+        我来贷渠道上传文件结果查询
+        :param seqNo: 渠道上传文件的seqNo
+        :return:
+        """
+        result_data = dict()
+        # header
+        result_data['requestSerialNo'] = 'SerialNo' + self.strings + "2"
+
+        # body
+        result_data['seqNo'] = seqNo
+
+        # 更新 payload 字段值
+        parser = DataUpdate(self.cfg['wld_file_upload_result']['payload'], **result_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('我来贷查询上传结果...')
+        url = self.host + self.cfg['wld_file_upload_result']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
 
 
 if __name__ == '__main__':

@@ -94,34 +94,35 @@ fql = {
                 "manualApproval": "false",
                 "liveArea": "510000-510100-510107",
                 "companyArea": "510000-510100-510107",
-                "fileInfos": [{
-                    "fileType": "1",
-                    "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
-                    "fileName": "idcard_front_202000000948071964.jpg"
+                "fileInfos": [
+                    {
+                        "fileType": "1",
+                        "fileUrl": "http://ks3-cn-shanghai-2.cloud.jccfc.com/jccfc-huat/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
+                        "fileName": "idcard_front_202000000948071964.jpg"
                     },
                     {
                         "fileType": "2",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_back_202000000948071964.jpg",
+                        "fileUrl": "xdgl/fql/yw/idcard_back_202000000948071964.jpg",
                         "fileName": "idcard_back_202000000948071964.jpg"
                     },
                     {
                         "fileType": "3",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
+                        "fileUrl": "xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
                         "fileName": "face_distinguish_202000000948071964.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
+                        "fileUrl": "xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
                         "fileName": "JC_userauth_202000000948071964.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
+                        "fileUrl": "xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
                         "fileName": "JC_non_student_202000000948071964.pdf"
                     },
                     {
                         "fileType": "7",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_third_auth_202000000948071964.pdf",
+                        "fileUrl": "xdgl/fql/yw/JC_third_auth_202000000948071964.pdf",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
                     }
 
@@ -183,11 +184,6 @@ fql = {
                 "debitOpenAccountBank": "中国银行",
                 "debitAccountNo": "6212268611367176969",
                 "debitOpenAccountBankCode": "121"
-                # "fileInfos": [{
-                #     "fileType": "5",
-                #     "fileUrl": "http://jccfc-hsit.ks3-cn-beijing.ksyun.com/xdgl/fql/yw/JC_contract_202000001209703817.pdf",
-                #     "fileName": "JC_contract_202000001209703817.pdf"
-                # }]
             }
         }
     },
@@ -231,6 +227,58 @@ fql = {
                 "repay_penalty_amount": "${应还罚息_1}",
                 "actual_repay_amount": "${应还总额_1}",
                 "repay_fee": 0
+            }
+        }
+    },
+    'fql_file_upload': {
+        'interface': '/api/v1/fql/file/upload',
+        'payload': {
+            "body": {
+                "seqNo": "${seqNo}",
+                "path": "/",
+                "fileName": "${filename}",
+                "content": "${content}"
+            },
+            "head": {
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "tenantId": "000",
+                "token": "resuiyfie59743949gjkfdk",
+                "merchantId": "58347954739",
+                "requestTime": "2019-05-29 21:00:00"
+            }
+        }
+    },
+    'fql_file_download': {
+        'interface': '/api/v1/fql/file/download',
+        'payload': {
+            "body": {
+                "seqNo": "${seqNo}",
+                "path": "/"
+            },
+            "head": {
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "tenantId": "000",
+                "token": "resuiyfie59743949gjkfdk",
+                "merchantId": "58347954739",
+                "requestTime": "2019-05-29 21:00:00"
+            }
+        }
+    },
+    'fql_file_upload_result': {
+        'interface': '/api/v1/fql/file/upload/result',
+        'payload': {
+            "body": {
+                "seqNo": "${seqNo}"
+            },
+            "head": {
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "tenantId": "000",
+                "token": "resuiyfie59743949gjkfdk",
+                "merchantId": "58347954739",
+                "requestTime": "2019-05-29 21:00:00"
             }
         }
     }

@@ -2,7 +2,7 @@ import unittest
 from src.impl.common.CheckBizImpl import *
 import time
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
-
+from person import *
 
 class MyTestCase(unittest.TestCase):
     """ 预置条件处理 """
@@ -21,7 +21,7 @@ class MyTestCase(unittest.TestCase):
         zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                           cdKey=res['cdKey'])
         # 发起授信申请
-        self.creditApplyNo = json.loads(zhixin.credit(userMobile='13999999999').get('output'))['creditApplyNo']
+        self.creditApplyNo = json.loads(zhixin.credit(userMobile='18380446510').get('output'))['creditApplyNo']
 
     """ 后置条件处理 """
 

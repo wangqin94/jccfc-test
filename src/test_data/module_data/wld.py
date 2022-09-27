@@ -151,32 +151,27 @@ wld = {
                     {
                         "fileType": "1",
                         "fileName": "idz-1.jpg",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/idz-1.jpg"
+                        "fileUrl": "xdgl/hj/wld/credit/test/idz-1.jpg"
                     },
                     {
                         "fileType": "2",
-                        "fileName": "idz-1.jpg",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/idz-1.jpg"
+                        "fileName": "idf-1.jpg",
+                        "fileUrl": "xdgl/hj/wld/credit/test/idf-1.jpg"
                     },
                     {
                         "fileType": "3",
-                        "fileName": "face_distinguish.jpg",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/face_distinguish.jpg"
+                        "fileName": "id_face.jpg",
+                        "fileUrl": "xdgl/hj/wld/credit/test/id_face.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileName": "授权书.pdf",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/授权书.pdf"
-                    },
-                    {
-                        "fileType": "6",
-                        "fileName": "JC_third_auth_202110120000099.pdf",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/JC_third_auth_202110120000099.pdf"
+                        "fileName": "征信查询授权书-1.pdf",
+                        "fileUrl": "xdgl/hj/wld/credit/test/征信查询授权书-1.pdf"
                     },
                     {
                         "fileType": "7",
-                        "fileName": "JC_userauth_202000000948071999.pdf",
-                        "fileUrl": "http://jccfc-hpre.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/hj/wld/credit/test/JC_userauth_202000000948071999.pdf"
+                        "fileName": "三方数据查询授权书-1.pdf",
+                        "fileUrl": "xdgl/hj/wld/credit/test/三方数据查询授权书-1.pdf"
                     }
                 ]
             }
@@ -306,5 +301,56 @@ wld = {
             }
         }
     },
-
+    'wld_file_upload': {
+        'interface': '/api/v1/welab/file/upload',
+        'payload': {
+            "body": {
+                "seqNo": "${seqNo}",
+                "path": "/",
+                "fileName": "${filename}",
+                "content": "${content}"
+            },
+            "head": {
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "tenantId": "000",
+                "token": "resuiyfie59743949gjkfdk",
+                "merchantId": "F21E03WOLD",
+                "requestTime": "2019-05-29 21:00:00"
+            }
+        }
+    },
+    'wld_file_download': {
+        'interface': '/api/v1/welab/file/download',
+        'payload': {
+            "body": {
+                "seqNo": "${seqNo}",
+                "path": "/"
+            },
+            "head": {
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "tenantId": "000",
+                "token": "resuiyfie59743949gjkfdk",
+                "merchantId": "F21E03WOLD",
+                "requestTime": "2019-05-29 21:00:00"
+            }
+        }
+    },
+    'wld_file_upload_result': {
+        'interface': '/api/v1/welab/file/upload/result',
+        'payload': {
+            "body": {
+                "seqNo": "${seqNo}"
+            },
+            "head": {
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "tenantId": "000",
+                "token": "resuiyfie59743949gjkfdk",
+                "merchantId": "F21E03WOLD",
+                "requestTime": "2019-05-29 21:00:00"
+            }
+        }
+    }
 }

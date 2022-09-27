@@ -5,6 +5,8 @@
 @Author  ：jccfc
 @Date    ：2022/1/13 9:51 
 """
+import datetime
+
 from src.impl.MeiTuan.MeiTuanBizImpl import MeiTuanBizImpl
 from src.impl.MeiTuan.MeiTuanCheckBizImpl import MeiTuanCheckBizImpl
 from src.impl.MeiTuan.MeiTuan_CreateFileBizImpl import MeiTuanLoanFile
@@ -72,7 +74,7 @@ class MeiTuanSynBizImpl(MeiTuanBizImpl):
         self.CheckBizImpl.check_third_wait_loan_status(thirdpart_apply_id=loanNo)
 
         # 执行任务流放款
-        self.job.update_job('线下自动放款', executeBizDateType='CUSTOMER', executeBizDate=loan_date.replace('-', ''))
+        self.job.update_job('线下自动放款', executeBizDateType='CUSTOMER', executeBizDate=datetime.today().strftime('%Y%m%d'))
         self.job.trigger_job('线下自动放款')
 
         # 数据库层校验支用状态-使用中

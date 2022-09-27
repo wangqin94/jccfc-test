@@ -47,9 +47,9 @@ MeiTuan = {
                     "ID_NAME_OCR": "name",
                     #"ID_NAME_OCR": "陈祺",
                     # "ID_NAME_OCR": "陈祺",
-                    "ID_VALIDITY_OCR": "20160225-20260225",
-                    "ID_FACE_PIC_PATH": "/hj/xdgl/meituan/cqid1.png",     # /hj/xdgl/meituan/cqid1
-                    "ID_BACK_PIC_PATH": "/hj/xdgl/meituan/cqid2.png",     # /hj/xdgl/meituan/cqid2.png  /hj/xdgl/meituan/owxbackerror.jpg
+                    "ID_VALIDITY_OCR": "20201220-20301220",
+                    "ID_FACE_PIC_PATH": "/hj/xdgl/meituan/idz-1.jpg",     # /hj/xdgl/meituan/cqid1
+                    "ID_BACK_PIC_PATH": "/hj/xdgl/meituan/idf-1.jpg",     # /hj/xdgl/meituan/cqid2.png  /hj/xdgl/meituan/owxbackerror.jpg
                     # /hj/xdgl/meituan/cqid2.png  /hj/xdgl/meituan/owxbackerror.jpg
                     # "ID_FACE_PIC_PATH": "/hj/xdgl/meituan/wymid1.png",
                     # "ID_BACK_PIC_PATH": "",

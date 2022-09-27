@@ -46,7 +46,7 @@ class MyTestCase(unittest.TestCase):
         self.zhiXinCheckBizImpl.check_credit_apply_status(creditRes['userId'], creditRes['creditApplyNo'])
 
         # 发起支用申请
-        self.loanRes = json.loads(zhixin.applyLoan(loanAmt='1000', term='12').get('output'))
+        self.loanRes = json.loads(zhixin.applyLoan(loanAmt='10000', term='12').get('output'))
         self.loanApplyNo = self.loanRes['loanApplyNo']
 
     """ 后置条件处理 """
