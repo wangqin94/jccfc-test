@@ -10,7 +10,7 @@ from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
 from dateutil.parser import parse
-
+_log = MyLog.get_log()
 
 def computeMD5(message):
     m = hashlib.md5()
@@ -38,6 +38,7 @@ def get_jike_bill_day(loan_date=None):
 
 # # -----------------------------------------------------------
 # # - 等额本息计算2
+# # - 最后1期次月供
 # # -----------------------------------------------------------
 def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
     """
@@ -50,11 +51,11 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
     repayment_plan = []
 
     # 月利率
-    monthRate = round(repaymentRate / 100 / 12, 64)
+    monthRate = round(repaymentRate / 100 / 12, 6)
     perPeriodAmountMultiply = loanAmt
     perPeriodAmountMultiplicand = monthRate * (monthRate + 1) ** loanNumber
     perPeriodAmountDivisor = (monthRate + 1) ** loanNumber - 1
-    perPeriodAmountSum = round(perPeriodAmountMultiply * perPeriodAmountMultiplicand / perPeriodAmountDivisor, 64)
+    perPeriodAmountSum = round(perPeriodAmountMultiply * perPeriodAmountMultiplicand / perPeriodAmountDivisor, 2)
     # 剩余本金
     residualPrincipalTotal = loanAmt
     # 剩余利息
@@ -68,7 +69,7 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
         interestMultiplicand = (monthRate + 1) ** loanNumber - (monthRate + 1) ** (i - 1)
         interestdDivisor = (monthRate + 1) ** loanNumber - 1
         interest = residualInterestTotal if isLastPeriod else round(
-            interestMultiply * interestMultiplicand / interestdDivisor, 64)
+            interestMultiply * interestMultiplicand / interestdDivisor, 2)
         principal = residualPrincipalTotal if isLastPeriod else perPeriodAmountSum - interest
         interest = round(interest, 2)
         principal = round(principal, 2)
@@ -79,6 +80,8 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
         repaymentPlans['period'] = i
         # 账单日
         repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
+        #月供
+        repaymentPlans['perPeriodAmountSum'] = perPeriodAmountSum
         # 本金
         repaymentPlans['principalAmt'] = float(principal)
         # 利息
@@ -88,6 +91,64 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
         repayment_plan.append(repaymentPlans)
     return repayment_plan
 
+
+# # -----------------------------------------------------------
+# # - 等额本息计算3
+# # - 最后1期月供计算，先算“最后1期利息=剩余本金*月利率”，“最后1月还款=月利息+剩余本金”
+# # -----------------------------------------------------------
+def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
+    """
+    @param bill_date: 首期账单日期
+    @param loanAmt: 放款总金额
+    @param repaymentRate: 年利率,如9.7%传9.7
+    @param loanNumber: 放款期数
+    @return: 还款计划列表
+    """
+    repayment_plan = []
+
+    # 月利率
+    monthRate = round(repaymentRate / 100 / 12, 6)
+    perPeriodAmountMultiply = loanAmt
+    perPeriodAmountMultiplicand = monthRate * (monthRate + 1) ** loanNumber
+    perPeriodAmountDivisor = (monthRate + 1) ** loanNumber - 1
+    #每期应还款总额
+    perPeriodAmountSum = round(perPeriodAmountMultiply * perPeriodAmountMultiplicand / perPeriodAmountDivisor, 2)
+    # 剩余本金
+    residualPrincipalTotal = loanAmt
+    # 剩余利息
+    residualInterestTotal = perPeriodAmountSum * loanNumber - loanAmt
+
+    for i in range(1, loanNumber + 1):
+        #是否最后1期
+        isLastPeriod = i == loanNumber
+        repaymentPlans = {}
+
+        interestMultiply = loanAmt * monthRate
+        interestMultiplicand = (monthRate + 1) ** loanNumber - (monthRate + 1) ** (i - 1)
+        interestdDivisor = (monthRate + 1) ** loanNumber - 1
+
+        interest = round(interestMultiply * interestMultiplicand / interestdDivisor, 2)
+        principal = residualPrincipalTotal if isLastPeriod else perPeriodAmountSum - interest
+        interest = round(interest, 2)
+        principal = round(principal, 2)
+        # 计算本金
+        residualPrincipalTotal = residualPrincipalTotal - principal
+        # 计算利息
+        residualInterestTotal = residualInterestTotal - interest
+        # 期次
+        repaymentPlans['period'] = i
+        # 账单日
+        repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
+        # 月供
+        repaymentPlans['perPeriodAmountSum'] = round(principal + principal * monthRate,2) if isLastPeriod else perPeriodAmountSum
+        # 本金
+        repaymentPlans['principalAmt'] = float(principal)
+        # 利息
+        repaymentPlans['interestAmt'] = float(interest)
+        # 服务费
+        repaymentPlans['guaranteeAmt'] = 1.11
+        repayment_plan.append(repaymentPlans)
+    return repayment_plan
 
 # # -----------------------------------------------------------
 # # - 等额本息计算
@@ -380,7 +441,7 @@ class JiKeBizImpl(MysqlInit):
         # 设置apollo放款mock时间 默认当前时间
         loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
         apollo_data = dict()
-        apollo_data['credit.loan.trade.date.mock'] = "true"
+        apollo_data['credit.loan.trade.date.mock'] = "false"
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
@@ -551,6 +612,8 @@ class JiKeBizImpl(MysqlInit):
             repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
                                                     2)  # 总金额
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
+            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
+
 
         # 提前结清
         if repay_type == "2":
@@ -562,6 +625,8 @@ class JiKeBizImpl(MysqlInit):
             # repay_apply_data["repayInterest"] = 33.45
             repay_apply_data["repayAmount"] = round(
                 repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee, 2)  # 总金额
+            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
+
 
         if repay_scene == '01':  # 线上还款
             repay_apply_data['repaymentAccountNo'] = self.data['bankid']
@@ -572,8 +637,7 @@ class JiKeBizImpl(MysqlInit):
             repay_apply_data['appAuthToken'] = 'appAuthToken' + self.strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
-                                                                             2)  # 总金额
+            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"]*100,2)  # 总金额
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
@@ -810,4 +874,6 @@ class JiKeBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    jike_loanByAvgAmt(bill_date='2022-06-01', loanamt=1000, year_rate_jc=9.7, year_rate_jk=24, term=12)
+    # jike_loanByAvgAmt(bill_date='2022-06-01', loanamt=1000, year_rate_jc=9.7, year_rate_jk=24, term=12)
+    # _log.info(jike_loanByAvgAmt2(bill_date='2022-09-27', loanAmt=10000, repaymentRate=10.3, loanNumber=6 ))
+    _log.info(jike_loanByAvgAmt3(bill_date='2022-09-27', loanAmt=10000, repaymentRate=16, loanNumber=6))
