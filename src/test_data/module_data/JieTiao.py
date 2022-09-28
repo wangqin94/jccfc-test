@@ -22,15 +22,15 @@ JieTiao = {
                 "dbAcct": "",  # 放款卡号
                 "dbAcctName": "",  # 放款银行卡账户名
                 "loanDate": "",  # 放款申请时间  YYYY-MM-DD HH24:MI:SS
-                "loanAmt": "",  # 放款金额         500-30000  ----------------------
-                "lnTerm": "",  # 期数    3/6/12/18/24       -------------------
-                "creditAmt": "",  # 授信额度              -------------
+                "loanAmt": "10000",  # 放款金额         500-30000  ----------------------
+                "lnTerm": "6",  # 期数    3/6/12/18/24       -------------------
+                "creditAmt": "10000",  # 授信额度              -------------
                 "loanPurpose": "08",  # 贷款用途    08装修房屋09购置大宗消费品10支付教育支出11支付医疗支出12支付旅游支出13支付其他消费款   ----
-                "feeRate": "",  # 费率          ---------------
-                "yearRate": "",  # 年化利率        -----------
+                "feeRate": "0.00065452",  # 费率          ---------------
+                "yearRate": "0.2389",  # 年化利率        -----------
                 "mobileNo": "",  # 注册手机号       -------------------
-                "idValidDateStart": "",  # 身份证有效期起始日    ---------------------
-                "idValidDateEnd": "",  # 身份证有效期结束日  YYYY-MM-DD --------------------
+                "idValidDateStart": "2022-01-10",  # 身份证有效期起始日    ---------------------
+                "idValidDateEnd": "2023-10-12",  # 身份证有效期结束日  YYYY-MM-DD --------------------
                 "idAddress": "四川省成都市高新区天府三街",  # 身份证地址   -----------------
                 "agency": "成都高新派出所",  # 身份证签发机关        ---------------
                 "cardMobileNo": "13855139654",  # 银行卡绑定手机号  ---------------
@@ -90,23 +90,23 @@ JieTiao = {
     'repay_notice': {
         'interface': '/api/v1/jietiao/repay/apply',
         'payload': {
-            "ifEnough":"1",
+            "ifEnough":"1",  #0:非足额 1:足额
             "loanReqNo":"346177553668492058625",
-            "rpyChannel":"1",
+            "rpyChannel":"1",  #0线下 1线上
             "rpyDate":"2022-07-13",
-            "rpyDeductAmt":0,
+            "rpyDeductAmt":0, #营销减免金额
             "rpyIntAmt":0.66000000,
             "rpyOintAmt":0,
             "rpyPrinAmt":1000,
-            "rpyRedLineAmt":0,
+            "rpyRedLineAmt":0,  #红线减免
             "rpyReqNo":"346242956052115002121615678",
-            "rpyShareAmt":1,
+            "rpyShareAmt":1, #返费
             "rpyShareAmtFour":2,
             "rpyShareAmtOne":3,
             "rpyShareAmtThree":4,
             "rpyShareAmtTwo":5,
             # "rpyTerm":7,
-            "rpyType":"01",
+            "rpyType":"01",   #提前还款:01(提前结清) 期供还款:02 (按指定期数进行还款，包含部分还款、提前还当期)   逾期还款：03（逾期还部分、逾期足额按期还）
             "sourceCode":"QH",
             "tranNo":"repayReqNo16576826171401"
         }

@@ -5,6 +5,7 @@ test case script
 
 import time
 from src.impl.MeiTuan.MeiTuanBizImpl import MeiTuanBizImpl
+from src.impl.MeiTuan.MeiTuanSynBizImpl import MeiTuanSynBizImpl
 from person import *
 from utils.Logger import MyLog
 
@@ -23,7 +24,7 @@ class TestCase(object):
         """预置条件处理"""
         pass
 
-    #   [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效]
+    #   [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 放款全流程]
     def process(self, flag=0):
         """测试步骤"""
         m = 1
@@ -49,6 +50,11 @@ class TestCase(object):
             elif flag == 3:
                 mt = MeiTuanBizImpl(data=data)
                 mt.loan_query(app_no='MTAPP_NO16312605132121002')
+
+            # 放款全流程
+            elif flag == 4:
+                mt = MeiTuanSynBizImpl(data=None)
+                mt.pre_meituan_Loan(loan_date='2022-02-02')
 
     def postprocess(self):
         """后置条件处理"""

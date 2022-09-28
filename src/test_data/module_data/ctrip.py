@@ -116,7 +116,7 @@ ctrip = {
             "advice_rate_type": "${advice_rate_type}",
             "advice_rate": {
                 "ECI": {
-                    "3": "0.36"
+                    "3": "0.2376"
                 }
             }
 
@@ -216,11 +216,11 @@ ctrip = {
                     "user_name": "${姓名}",
                     "contacts_mobile": "15210120098",
                     "id_type": "IDENTITYCARD",
-                    "idcard_ocr_validity": "2019.06.08-2029.06.08",
+                    "idcard_ocr_validity": "2020.12.20-2030.12.20",
                     "contact_name": "数据流二",
                     "mobile": "${手机号}",
-                    "identity_card_image_1": "/xdgl/ctrip/test/gysid1.png",
-                    "identity_card_image_2": "/xdgl/ctrip/test/gysid2.png",
+                    "identity_card_image_1": "xdgl/ctrip/test/gysid1.png",
+                    "identity_card_image_2": "xdgl/ctrip/test/gysid2.png",
                     "face_image": "/xdgl/ctrip/test/gysface.png",
                     "risk_data": "{\"pbocQuery\":\"N\",\"pricingRating\":\"M999\",\"debtIncomeFactor\":\"(-7.2,-6.2]\","
                                  "\"approvalRiskGrade\":\"E\",\"IncomeRating\":\"1\","
@@ -309,10 +309,10 @@ ctrip = {
             "service": "CREDIT_QUERY",
             "request_no": "${credit_apply_serial_id}",
             "open_id": "${thirdpart_user_id}",
-            "partner":"XXCASH",
-            "credit_type":0,
-            "product_no":"CASH",
-            "service_version":"1.0"
+            "partner": "XXCASH",
+            "credit_type": 0,
+            "product_no": "CASH",
+            "service_version": "1.0"
         }
     },
 

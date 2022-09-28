@@ -14,12 +14,12 @@ class TestCase(object):
         pass
 
     # # [0: 放款请求接口,1:放款结果查询接口,2:代扣申请接口, 3:代扣申请结果查询,4:还款通知接口 5: 还款查询接口]
-    def process(self, flag=4):
+    def process(self, flag=0):
         """ 测试步骤 """
         # 放款请求接口
         if flag == 0:
-            jt = JieTiaoBizImpl(data=data)
-            jt.loan(loanDate='2022-03-23 00:00:00', loanAmt='1000', lnTerm='24', creditAmt='20', feeRate='0.00065452', yearRate='0.2389', idValidDateStart='2022-01-10', idValidDateEnd='2023-10-12')
+            jt = JieTiaoBizImpl(data=None)
+            jt.loan(loanAmt='10000', lnTerm='6')
 
         # 放款结果查询接口
         elif flag == 1:
@@ -29,7 +29,7 @@ class TestCase(object):
         # 代扣申请接口
         elif flag == 2:
             jt = JieTiaoBizImpl(data=data)
-            jt.payment(totalAmt='200113')
+            jt.payment(totalAmt='1785.98')
 
         #代扣申请结果查询
         elif flag == 3:
@@ -38,8 +38,9 @@ class TestCase(object):
 
         # 还款通知接口
         elif flag == 4:
-            jt = JieTiaoBizImpl(data=None)
-            jt.repay_notice(loanReqNo='', rpyType='', rpyTerm='', rpyReqNo='', tranNo='', rpyDate='', rpyPrinAmt='', rpyIntAmt='', rpyOintAmt='', rpyDeductAmt='', rpyRedLineAmt='', ifEnough='',rpyChannel='')
+            jt = JieTiaoBizImpl(data=data)
+            # repay_type还款类别，01-提前结清，02-期供还款（指定期数进行还款，包含部分还款、提前还当期），03-逾期还款（逾期还部分、逾期足额按期还）
+            jt.repay_notice(repay_date='2022-09-23', repay_type='02', repay_num='1', rpyPrinAmt='1586.56', rpyIntAmt='196.50')
 
         # 还款查询
         elif flag == 5:

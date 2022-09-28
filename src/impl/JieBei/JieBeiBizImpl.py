@@ -14,7 +14,7 @@ class JieBeiBizImpl(EnvInit):
         # 解析项目特性配置
         self.cfg = jiebei.jiebei
 
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JIEBEI.value), "applyid")
+        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JIEBEI.value), "applyno")
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
@@ -31,6 +31,12 @@ class JieBeiBizImpl(EnvInit):
         if bizActionType == 'LOAN_DECISION':
             feature_data['userName'] = self.data['name']
             feature_data['certNo'] = self.data['cer_no']
+            feature_data['bizActionType'] = 'LOAN_DECISION'
+            feature_data['creditNo'] = self.data['applyno']
+            feature_data['applyNo'] = "loanNo" + str(int(round(time.time() * 1000)))
+        else:
+            feature_data['applyNo'] = self.data['applyno']
+
 
         # 更新 payload 字段值
         feature_data.update(kwargs)
@@ -49,6 +55,7 @@ class JieBeiBizImpl(EnvInit):
         datapreCs_data['name'] = self.data['name']
         datapreCs_data['certNo'] = self.data['cer_no']
         datapreCs_data['mobileNo'] = self.data['telephone']
+        datapreCs_data['applyNo'] = self.data['applyno']
 
         # 更新 payload 字段值
         datapreCs_data.update(kwargs)
@@ -63,10 +70,13 @@ class JieBeiBizImpl(EnvInit):
 
     def datapreFs(self, **kwargs):
         datapreFs_data = dict()
-
+        #
         datapreFs_data['name'] = self.data['name']
         datapreFs_data['certNo'] = self.data['cer_no']
         datapreFs_data['mobileNo'] = self.data['telephone']
+        datapreFs_data['cardNo'] = self.data['bankid']
+        datapreFs_data['applyNo'] = self.data['applyno']
+        datapreFs_data['creditNo'] = self.data['applyno']
 
         # 更新 payload 字段值
         datapreFs_data.update(kwargs)
@@ -81,6 +91,12 @@ class JieBeiBizImpl(EnvInit):
 
     def creditNotice(self, **kwargs):
         creditNotice_data = dict()
+
+        creditNotice_data['name'] = self.data['name']
+        creditNotice_data['certNo'] = self.data['cer_no']
+        creditNotice_data['mobile'] = self.data['telephone']
+        creditNotice_data['timestamp'] = int(time.time()*1000)
+        creditNotice_data['creditNo'] = self.data['applyno']
 
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)

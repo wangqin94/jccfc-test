@@ -172,7 +172,7 @@ class MeiTuanBizImpl(EnvInit):
         loan_data['CONTRACT_NO'] = 'CONTRACT_NO' + strings + "1002"
         loan_data["TRADE_TIME"] = time.strftime('%Y%m%d%H%M%S')
         loan_data['TRADE_AMOUNT'] = self.loan_amount
-        loan_data["TRADE_PERIOD"] = 3  # 默认3期
+        loan_data["TRADE_PERIOD"] = 12  # 默认3期
         loan_data["CREDIT_LIMIT"] = 30000  # 单位元
         loan_data["AVAILABLE_LIMIT"] = 30000  # 单位元
         loan_data["USED_LIMIT"] = 0

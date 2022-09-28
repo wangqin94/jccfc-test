@@ -2,12 +2,11 @@
 # -----------------------------------------------------
 # KS3工具类
 # -----------------------------------------------------
-import socket
 
 from ks3.connection import Connection
-from utils.Logger import *
 from utils.ReadConfig import *
-from config.TestEnvInfo import TEST_ENV_INFO
+from utils.FileHandle import *
+from utils.Apollo import *
 
 _log = MyLog.get_log()
 __all__ = ['KS3']
@@ -25,6 +24,9 @@ class KS3(object):
         else:
             self.ak = _readconfig.get_ks3('ak1')
             self.sk = _readconfig.get_ks3('sk1')
+        self.gfsflag = Apollo().get_config(key='ks3.gfs.flag', appId='loan2.1-public', namespace='JCXF.system')
+        self.file = Files()
+        self.host_op_channel = API['op-channel_host'].format(self.env)
 
     def __connection(self):
         """
@@ -41,16 +43,25 @@ class KS3(object):
         :param remote: 远程文件路径，相对路径，如xdgl/test/img.png
         :return:
         """
-        self.__connection()
         try:
-            key = self.bucket.new_key(remote)
-            ret = key.set_contents_from_filename(local)
-            if ret and ret.status == 200:
-                _log.demsg("ks3文件上传成功")
-            else:
-                _log.info(ret)
+            flag = self.gfsflag['value']
         except Exception as e:
-            print("上传失败, Error: %s  " % e)
+            print("ks3.gfs.flag未配置: %s" % e)
+            flag = None
+        if flag == 'gfs':
+            remote1 = remote[4:]
+            self.file.gfs_upload_file(self.host_op_channel, local, remote1)
+        else:
+            self.__connection()
+            try:
+                key = self.bucket.new_key(remote)
+                ret = key.set_contents_from_filename(local)
+                if ret and ret.status == 200:
+                    _log.demsg("ks3文件上传成功")
+                else:
+                    _log.info(ret)
+            except Exception as e:
+                print("上传失败, Error: %s  " % e)
 
 
 if __name__ == '__main__':
