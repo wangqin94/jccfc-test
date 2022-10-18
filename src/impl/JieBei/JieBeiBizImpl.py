@@ -96,7 +96,7 @@ class JieBeiBizImpl(EnvInit):
         creditNotice_data['certNo'] = self.data['cer_no']
         creditNotice_data['mobile'] = self.data['telephone']
         creditNotice_data['timestamp'] = int(time.time()*1000)
-        creditNotice_data['creditNo'] = self.data['applyno']
+        creditNotice_data['applyNo'] = self.data['applyno']
 
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)

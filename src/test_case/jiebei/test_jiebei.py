@@ -15,14 +15,14 @@ class TestCase(object):
         pass
 
     # # [0: 特征取数接口  1:初审数据准备 2:复审数据准备 3.授信通知接口]
-    def process(self, flag=2):
+    def process(self, flag=3):
         """ 测试步骤 """
         # 特征取数接口  初审："featureCodes":["jc_cs_result","jc_cs_failCode","jc_cs_failReason"]
         # 复审："featureCodes":["jc_fs_result","jc_fs_failCode","jc_fs_failReason","jc_fs_pbocBlankAccLevel"]   ........
         # 支用： "featureCodes":["jc_loan_result","jc_loan_failCode","jc_loan_failReason"]    ⽀⽤bizActionType“LOAN_DECISION”
         if flag == 0:
             jt = JieBeiBizImpl(data=data)
-            jt.feature(bizActionType='',featureCodes=["jc_loan_result","jc_loan_failCode","jc_loan_failReason"])
+            jt.feature(bizActionType='LOAN_DECISION',featureCodes=["jc_loan_result","jc_loan_failCode","jc_loan_failReason"])
 
         # 初审数据准备
         elif flag == 1:

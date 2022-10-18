@@ -20,7 +20,7 @@ class JieTiaoBizImpl(EnvInit):
         # 解析项目特性配置
         self.cfg = JieTiao.JieTiao
 
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JieTiao.value), "applyid")
+        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JieTiao.value), "loanReqNo")
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
@@ -34,13 +34,11 @@ class JieTiaoBizImpl(EnvInit):
     def loan(self, **kwargs):
         loan_data = dict()
 
-        loan_data['loanReqNo'] = 'loanReqNo' + self.strings + "2"
-        loan_data['custName'] = self.data['name']
-        loan_data['dbAcctName'] = self.data['name']
+        loan_data['loanReqNo'] = self.data['loanReqNo']
+        loan_data['custName'] ,loan_data['dbAcctName'] = self.data['name'],self.data['name']
         loan_data['id'] = self.data['cer_no']
         loan_data['dbAcct'] = self.data['bankid']
         loan_data['mobileNo'] = self.data['telephone']
-        loan_data['loanDate'] = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
 
         # 更新 payload 字段值
         loan_data.update(kwargs)
@@ -56,6 +54,7 @@ class JieTiaoBizImpl(EnvInit):
     def loan_query(self, **kwargs):
         loan_query_data = dict()
 
+        loan_query_data['loanReqNo'] = self.data['loanReqNo']
         # 更新 payload 字段值
         loan_query_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_query']['payload'], **loan_query_data)
@@ -102,17 +101,12 @@ class JieTiaoBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def repay_notice(self, repay_date, repay_type, repay_num, **kwargs):
+
+    def repay_notice(self, **kwargs):
         repay_notice_data = dict()
-        result = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply', certificate_no=self.data['cer_no'])
-        repay_notice_data['loanReqNo'] = result['thirdpart_apply_id']
-        repay_notice_data['rpyReqNo'] = 'rpyReqNo' + self.strings + "4"
-        repay_notice_data['tranNo'] = 'tranNo' + self.strings + "4"
-        repay_notice_data['rpyDate'] = repay_date
-        repay_notice_data['rpyType'] = repay_type
-        repay_notice_data['rpyTerm'] = int(repay_num)
 
-
+        # repay_notice_data['rpyReqNo'] = 'rpyNoticeNo' + self.strings + "4"
+        repay_notice_data['loanReqNo'] = self.data['loanReqNo']
         # 更新 payload 字段值
         repay_notice_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_notice']['payload'], **repay_notice_data)

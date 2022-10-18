@@ -90,7 +90,7 @@ JieTiao = {
     'repay_notice': {
         'interface': '/api/v1/jietiao/repay/apply',
         'payload': {
-            "ifEnough":"1",  #0:非足额 1:足额
+            "ifEnough":"0",  #0:非足额 1:足额
             "loanReqNo":"346177553668492058625",
             "rpyChannel":"1",  #0线下 1线上
             "rpyDate":"2022-07-13",
