@@ -20,11 +20,31 @@ _log = MyLog.get_log()
 _readconfig = ReadConfig.Config()
 
 
+def getApolloEnv(env):
+    hj = ['hsit', 'huat', 'hdev', 'hqas', 'hpre']
+    credit = ['uat', 'rts', 'dev', 'sit']
+    # apolloEnv = None
+    try:
+        if env in hj:
+            apolloEnv = _readconfig.get_apollo('envCredit')
+            return apolloEnv
+        elif env in credit:
+            apolloEnv = _readconfig.get_apollo('envAsset')
+            return apolloEnv
+        else:
+            raise Exception("[{}] not in env list".format(env))
+    except Exception as err:
+        _log.error("env error. {}".format(err))
+        raise err
+        # sys.exit()
+
+
 class Apollo(object):
-    def __init__(self, apollo_env='hdev'):
+    def __init__(self):
         self.env = TEST_ENV_INFO
-        self.host = API['request_apollo_host'].format(apollo_env)
-        self.index_url = API['apollo_index_host'].format(apollo_env)
+        self.apolloEnv = getApolloEnv(self.env)
+        self.host = API['request_apollo_host'].format(self.apolloEnv)
+        self.index_url = API['apollo_index_host'].format(self.apolloEnv)
         self.userName = _readconfig.get_apollo('userName')
         self.password = _readconfig.get_apollo('password')
         self.session = requests.session()
@@ -142,5 +162,5 @@ if __name__ == '__main__':
 
     # 设置放款mock时间
     kwargs['credit.loan.trade.date.mock'] = "true"
-    kwargs['credit.loan.date.mock'] = "2022-03-18"
+    kwargs['credit.loan.date.mock'] = "2022-10-27"
     apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **kwargs)

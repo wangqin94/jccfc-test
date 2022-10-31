@@ -174,10 +174,10 @@ class JiKeRepayFile(EnvInit):
         temple['loan_period'] = creditLoanInvoiceInfo['installment_num']
         temple['loan_amt'] = creditLoanInvoiceInfo['loan_amount']
         temple['loan_date'] = str(creditLoanInvoiceInfo['loan_pay_time']).split()[0].replace('-', '')
-        temple['repay_amt'] = str(asset_repay_plan["pre_repay_amount"])  # 总金额
         temple['paid_prin_amt'] = str(asset_repay_plan["pre_repay_principal"])  # 本金
         temple['paid_int_amt'] = str(asset_repay_plan["pre_repay_interest"])  # 利息
         temple['left_repay_amt'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
+        temple['repay_amt'] = str(asset_repay_plan["pre_repay_principal"] + asset_repay_plan["pre_repay_interest"])  # 总金额
 
         # 文件赋值
         self.bankClaimTemple.update(temple)

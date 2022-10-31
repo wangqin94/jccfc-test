@@ -15,11 +15,11 @@ class MyTestCase(unittest.TestCase):
     """ 测试步骤 """
     def test_repay_apply(self):
         """ 测试步骤 """
-        loanInvoiceId = None
+        loanInvoiceId = '000LI0002174662201688194001'
         if not loanInvoiceId:
             credit_loan_invoice = self.jike.MysqlBizImpl.get_credit_database_info('credit_loan_invoice', certificate_no=data['cer_no'])
             loanInvoiceId = credit_loan_invoice['loan_invoice_id']
-        self.jike.returnGoods_apply(loanInvoiceId=loanInvoiceId, term=2, repayDate='2022-09-06')
+        self.jike.returnGoods_apply(loanInvoiceId=loanInvoiceId, term=1, repayDate='2022-07-01')
 
     """ 后置条件处理 """
     def tearDown(self):

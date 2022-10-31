@@ -1,4 +1,6 @@
 import unittest
+import warnings
+
 from src.impl.common.CheckBizImpl import *
 from src.impl.JiKe.JiKeBizImpl import JiKeBizImpl
 from src.test_case.JiKe.person import data
@@ -9,6 +11,7 @@ class MyTestCase(unittest.TestCase):
     """ 预置条件处理 """
 
     def setUp(self):
+        warnings.simplefilter('ignore', ResourceWarning)
         self.CheckBizImpl = CheckBizImpl()
 
     """ 测试步骤 """
@@ -16,11 +19,11 @@ class MyTestCase(unittest.TestCase):
     def test_apply(self):
         """ 测试步骤 """
         # 绑卡签约
-        jike = JiKeBizImpl(data=None)
+        jike = JiKeBizImpl(data=data)
         jike.sharedWithholdingAgreement()
 
         # 发起授信申请
-        self.thirdApplyId = jike.credit(applyAmount=1000)['body']['thirdApplyId']
+        self.thirdApplyId = jike.credit(applyAmount=5000)['body']['thirdApplyId']
 
     """ 后置条件处理 """
 

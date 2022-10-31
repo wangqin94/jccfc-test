@@ -23,7 +23,7 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=14):
+    def process(self, flag=11):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
@@ -42,34 +42,34 @@ class TestCase(object):
 
         # 授信
         elif flag == 3:
-            jike = JiKeBizImpl(data=None)
-            jike.sharedWithholdingAgreement()
+            jike = JiKeBizImpl(data=data)
+            jike.sharedWithholdingAgreement(liveAddress=None)
             jike.credit(applyAmount=1000)
 
         # 授信查询
         elif flag == 4:
             jike = JiKeBizImpl(data=data)
-            jike.queryCreditResult(thirdApplyId='thirdApplyId166063196668864111')
+            jike.queryCreditResult(thirdApplyId='thirdApplyId16654556161833516')
 
         # 借款申请
         elif flag == 5:
             jike = JiKeBizImpl(data=data)
-            jike.applyLoan(loanAmt=1000, term=12)
+            jike.applyLoan(loanAmt=1000, loanTerm=12, thirdApplyId='thirdApplyId16661464674479646')
 
         # 借款查询
         elif flag == 6:
             jike = JiKeBizImpl(data=data)
-            jike.queryLoanResult(thirdApplyId='')
+            jike.queryLoanResult(thirdApplyId='202210131431422562436865')
 
         # 还款计划查询
         elif flag == 7:
             jike = JiKeBizImpl(data=data)
-            jike.repayPlan_query(loanInvoiceId='')
+            jike.repayPlan_query(loanInvoiceId='000LI0002174662201688190001')
 
         # 借据合同查询
         elif flag == 8:
             jike = JiKeBizImpl(data=data)
-            jike.loanContract_query(loanInvoiceId='')
+            jike.loanContract_query(loanInvoiceId='000LI0001408714913972228005')
 
         # 还款查询
         elif flag == 9:
@@ -79,12 +79,12 @@ class TestCase(object):
         # 退货申请
         elif flag == 10:
             jike = JiKeBizImpl(data=data)
-            jike.returnGoods_apply(loanInvoiceId='')
+            jike.returnGoods_apply(loanInvoiceId='', term='', repayDate='')
 
         # 附件补录
         elif flag == 11:
             jike = JiKeBizImpl(data=data)
-            jike.supplementAttachment(thirdApplyId='thirdApplyId16617429251224753')
+            jike.supplementAttachment(thirdApplyId='thirdApplyId16669445241678573')
 
         # 省市区地址获取
         elif flag == 12:
@@ -94,12 +94,19 @@ class TestCase(object):
         # LPR查询
         elif flag == 13:
             jike = JiKeBizImpl(data=data)
-            jike.queryLprInfo("thirdApplyId16617429251224753")
+            jike.queryLprInfo("thirdApplyId16660821110787033")
 
         # 授信额度取消
         elif flag == 14:
             jike = JiKeBizImpl(data=data)
-            jike.cancelCreditLine("thirdApplyId16618505481928376")
+            jike.cancelCreditLine("thirdApplyId16618478194785960")
+
+        # 代偿结果查询
+        elif flag == 15:
+            jike = JiKeBizImpl(data=data)
+            # jike.queryAccountResult("GoodsSerialNo16624470361285455", loanInvoiceId='000LI0001739049438658571059', term=2)
+            # jike.queryAccountResult("GoodsSerialNo16624470361285455", term=2)
+            jike.queryAccountResult(loanInvoiceId='000LI0001408714913972228005', term=2)
 
     def postprocess(self):
         """ 后置条件处理 """

@@ -78,7 +78,7 @@ def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
     data['cer_no'] = IdNumber.generate_id(age=age)
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
-    bankName = '工商银行'
+    bankName = bankName if bankName else '工商银行'
     data['bankid'] = BankNo().get_bank_card(bankName=bankName)
 
     # 读取文件行数，超过20行删除历史数据
@@ -129,7 +129,7 @@ def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
     bank = BankNo()
-    bankName = '工商银行'
+    bankName = bankName if bankName else '工商银行'
     data['bankid'] = bank.get_bank_card(bankName=bankName)
 
     # project赋值后天从到data中
@@ -559,6 +559,43 @@ def format_path(path):
     @return: response 返回标准化路径 eg: /hj/xdgl/meituan/bank_loan_create/20220401
     """
     return path.replace('\\', '/').replace('\\\\', '/').replace('..', '.').replace('/./', '/')
+
+
+def assetAnnuity(loanAmt, term, year_rate_jc, bill_date):
+    """
+    非最后一期，每期期供是用等额本息的公式计算出来的，然后对应的利息是等于剩余本金*月利率，本金=期供-利息；只有最后一期，是用的剩余本金+利息，计算的期供
+    @param loanAmt:         借款金额
+    @param term:            期数
+    @param year_rate_jc:    锦程实收利率
+    @param bill_date:       用户首期账单日
+    @return:还款计划表
+    """
+    repayment_plan = []
+    # 月利率
+    jcMonthRate = round(year_rate_jc / 1200, 6)
+    # 剩余应还本金
+    jcLeftPrePrincipal = loanAmt
+    for i in range(1, term + 1):
+        repaymentPlans = {}
+        # 每月还款总额
+        if i == term:
+            jcAmtpermonth = jcLeftPrePrincipal + jcLeftPrePrincipal * jcMonthRate
+        else:
+            jcAmtpermonth = round(loanAmt * jcMonthRate * pow((1 + jcMonthRate), term) / (pow((1 + jcMonthRate), term) - 1), 2)
+
+        # 每期应还利息
+        jcMonthInterest = jcLeftPrePrincipal * jcMonthRate
+        # 每期应还本金
+        jcMonthPrincipal = jcAmtpermonth - jcMonthInterest
+        # 剩余还款本金
+        jcLeftPrePrincipal = jcLeftPrePrincipal - jcMonthPrincipal
+
+        repaymentPlans['period'] = i
+        repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
+        repaymentPlans['principalAmt'] = round(jcMonthPrincipal, 2)
+        repaymentPlans['interestAmt'] = round(jcMonthInterest, 2)
+        repayment_plan.append(repaymentPlans)
+    return json.dumps(repayment_plan)
 
 
 if __name__ == "__main__":

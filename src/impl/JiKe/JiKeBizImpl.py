@@ -352,6 +352,7 @@ class JiKeBizImpl(MysqlInit):
         # 临时新增参数
         credit_data['orderType'] = '2'  # 应传2
         credit_data['storeCode'] = 'store2022072903'
+        # credit_data['storeCode'] = 'Store222666'
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -566,10 +567,11 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 还款申请
-    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayGuaranteeFee=10, repayDate=None,
+    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10, repayDate=None,
                     **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
+        @param repayTerm: 还款期次，默认取当前借据最早未还期次
         @param repayDate: 还款时间，默认当天 eg:'2022-08-01'
         @param repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
         @param repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
@@ -586,14 +588,18 @@ class JiKeBizImpl(MysqlInit):
         repay_apply_data['requestTime'] = self.date
         # body
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
-        # repay_apply_data['repayApplySerialNo'] = "2108061522243664619354429"  # 支付宝存量订单
+        # repay_apply_data['repayApplySerialNo'] = "2022093022001425270501810521"  # 支付宝存量订单
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
         repay_apply_data['repayScene'] = repay_scene
-
         repay_apply_data['repayType'] = repay_type
-        key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
-            loanInvoiceId)
-        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+        if repayTerm:
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                         loan_invoice_id=loanInvoiceId,
+                                                                         current_num=repayTerm)
+        else:
+            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
+                loanInvoiceId)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
         # repay_apply_data['repayNum'] = 1
@@ -633,7 +639,7 @@ class JiKeBizImpl(MysqlInit):
         if repay_scene == '02' or '05':  # 线下还款、逾期还款
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + self.strings
         if repay_scene == '04':  # 支付宝还款
-            repay_apply_data['thirdWithholdId'] = repay_apply_data['repayApplySerialNo']
+            repay_apply_data['thirdWithholdId'] = "2022100922001425270501813838"  # 支付宝存量订单
             repay_apply_data['appAuthToken'] = 'appAuthToken' + self.strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
@@ -745,6 +751,13 @@ class JiKeBizImpl(MysqlInit):
             # 罚息
             returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee
 
+        # 更新退货mock时间
+        apollo_data = dict()
+        apollo_data['yinliu.return.goods.trade.date.mock'] = "true"
+        apollo_data['yinliu.return.goods.date.mock'] = str(repayDate).replace('-', '')
+        self.apollo.update_config(appId='jccfc-op-channel', namespace='000', **apollo_data)
+        time.sleep(3)
+
         # 更新 payload 字段值
         returnGoods_apply_data.update(kwargs)
         parser = DataUpdate(self.cfg['returnGoods_apply']['payload'], **returnGoods_apply_data)
@@ -773,7 +786,7 @@ class JiKeBizImpl(MysqlInit):
 
         # 附件信息
         fileInfos = []
-        fileInfo = {'fileType': "1", 'fileName': "cqid1.png"}
+        fileInfo = {'fileType': "2", 'fileName': "cqid1.png"}
         positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
         fileInfo['file'] = positive  # 身份证正面base64字符串
         fileInfos.append(fileInfo)
@@ -868,6 +881,34 @@ class JiKeBizImpl(MysqlInit):
 
         self.log.demsg('授信额度取消...')
         url = self.host + self.cfg['cancelCreditLine']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 代偿结果查询
+    def queryAccountResult(self, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        queryAccountResult_data = dict()
+        # head
+        queryAccountResult_data['requestSerialNo'] = 'requestNo' + self.strings + "_1600"
+        queryAccountResult_data['requestTime'] = self.date
+        # body
+        # if not thirdApplyId:
+        #     credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'], status='03')
+        #     queryAccountResult_data['thirdApplyId'] = credit_apply_info['thirdpart_apply_id']
+        # else:
+        #     queryAccountResult_data['thirdApplyId'] = thirdApplyId
+        # 更新 payload 字段值
+        queryAccountResult_data.update(kwargs)
+        parser = DataUpdate(self.cfg['queryAccountResult']['payload'], **queryAccountResult_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('代偿结果查询...')
+        url = self.host + self.cfg['queryAccountResult']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
