@@ -105,7 +105,7 @@ JiKe = {
                 "education": "11",  # 学历 EnumEduLevel
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
-                "idExpiryDate": "1990.1.1-2099.12.31",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
+                "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
                 "idCardAddr": "四川省成都市高新区天府三街",  # 身份证地址
                 "issuingAuth": "成都高新派出所",  # 发证机关
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
@@ -117,13 +117,13 @@ JiKe = {
                 "duties": "A",  # 职务 EnumPost
                 "companyNature": "A",  # 单位性质 EnumUnitProperty
                 "industryCategory": "A",  # 行业类别 EnumIndustryType
-                "workAddrAddress": "工作单位地址成都市武侯区中航城市广场",  # 工作详细地址
-                "workAddrProvinceName": "四川",  # 工作地址省份名称
-                "workAddrCityName": "成都",  # 工作地址市级名称
+                "workAddrAddress": "工作单位地址中航城市广场",  # 工作详细地址
+                "workAddrProvinceName": "四川省",  # 工作地址省份名称
+                "workAddrCityName": "成都市",  # 工作地址市级名称
                 "workAddrAreaName": "武侯区",  # 工作地址区名称
-                "liveAddress": "居住地址成都市武侯区中航城市广场",  # 工作详细地址
-                "liveProvinceName": "四川",  # 居住地址省份名称
-                "liveCityName": "成都",  # 居住地址市级名称
+                "liveAddress": "工作单位地址中航城市广场",  # 工作详细地址
+                "liveProvinceName": "四川省",  # 居住地址省份名称
+                "liveCityName": "成都市",  # 居住地址市级名称
                 "liveAreaName": "武侯区",  # 居住地址区名称
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
@@ -139,33 +139,38 @@ JiKe = {
                 ],
                 "fileInfos": [
                     {
-                        "fileType": "1",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqid1.png",
+                        "fileType": "1",  # 身份证正面
+                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqid1.png",
                         "fileName": "cqid1.png"
                     },
                     {
-                        "fileType": "2",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqid2.png",
+                        "fileType": "2",  # 身份证反面
+                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqid2.png",
                         "fileName": "cqid2.png"
                     },
                     {
-                        "fileType": "3",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqface.png",
+                        "fileType": "3",  # 人脸
+                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqface.png",
                         "fileName": "cqface.png"
                     },
                     {
-                        "fileType": "4",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
-                        "fileName": "JC_userauth_202000000948071964.pdf"
+                        "fileType": "4",  # 征信查询授权书
+                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileName": "jikeloancontract.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
+                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_non_student_202000000948071964.pdf"
                     },
                     {
                         "fileType": "7",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/JC_third_auth_202000000948071964.pdf",
+                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileName": "JC_third_auth_202000000948071964.pdf"
+                    },
+                    {
+                        "fileType": "10",
+                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
                     }
                 ],
@@ -186,15 +191,15 @@ JiKe = {
                     "quaternCerRst": "四元认证结果"  # 四元认证结果
                 },
                 "featureField": {
-                    "shieldNumber": 10,  # 近三个月同盾贷款数
-                    "shieldMonthLoan": 9,  # 近一个月同盾贷款数
-                    "shieldWeekLoan": 8,  # 近7天同盾贷款数
+                    "shieldNumber": 20,  # 近三个月同盾贷款数
+                    "shieldMonthLoan": 15,  # 近一个月同盾贷款数
+                    "shieldWeekLoan": 12,  # 近7天同盾贷款数
                     "whiteKnightBlacklist_xd": "N",  # 白骑士黑名单-信贷 Y 中标(名单中存在) N 未中标（名单中不存在）
                     "collectionNumber": 9999,  # 凭安-近期被催收的号码个数
                     "thawingScore": 9999,  # 百融-线下消费贷客群评分
                     "whiteKnightBlacklist_xyxf": "N",  # 白骑士黑名单-信用消费 Y 中标(名单中存在) N 未中标（名单中不存在）
                     "whiteKnightBlacklist_p2p": "N",  # 白骑士黑名单-P2P Y 中标(名单中存在) N 未中标（名单中不存在）
-                    "faceValues": 9999,  # 人脸识别分数
+                    "faceValues": 38.862,  # 人脸识别分数
                 }
             }
         }
@@ -248,8 +253,8 @@ JiKe = {
                 "fileInfos": [
                     {
                         "fileType": "9",
-                        "fileUrl": "http://jccfc-huat.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/fql/yw/idcard_danbaohetong_202000000948071964.jpg",
-                        "fileName": "idcard_danbaohetong_202000000948071964.jpg"
+                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileName": "C20JIKEloancontract.pdf"
                     }
                 ],
                 "repaymentPlans": [
@@ -270,7 +275,7 @@ JiKe = {
                     "thawingScore": 9999,  # 百融-线下消费贷客群评分
                     "whiteKnightBlacklist_xyxf": "N",  # 白骑士黑名单-信用消费 Y 中标(名单中存在) N 未中标（名单中不存在）
                     "whiteKnightBlacklist_p2p": "N",  # 白骑士黑名单-P2P Y 中标(名单中存在) N 未中标（名单中不存在）
-                    "faceValues": 38.896,  # 人脸识别分数
+                    "faceValues": 2,  # 人脸识别分数38.862
                 }
             }
         }
@@ -493,6 +498,25 @@ JiKe = {
             "body": {
                 "thirdApplyId": "",
                 "reason": "授信额度取消-测试"
+            }
+        }
+    },
+
+    # 代偿结果查询
+    'queryAccountResult': {
+        'interface': '/api/v1/yl/common/compensation/queryAccountResult',
+        'payload': {
+            "head": {
+                "merchantId": "G22E02JIKE",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "thirdApplyId": "",
+                "loanInvoiceId": "",  # 与三方申请号二选一必传
+                "term": ""
             }
         }
     },

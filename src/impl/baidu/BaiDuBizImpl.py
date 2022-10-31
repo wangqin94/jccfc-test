@@ -4,6 +4,7 @@
 # ------------------------------------------
 from src.impl.common.CommonBizImpl import post_with_encrypt_baidu
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
+from utils.Apollo import Apollo
 from utils.Models import *
 from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import *
@@ -77,6 +78,11 @@ class BaiDuBizImpl(EnvInit):
         credit_data.update(kwargs)
         parser = DataUpdate(self.cfg['credit']['payload'], **credit_data)
         self.active_payload = parser.parser
+
+        # 配置风控mock返回建议额度与授信额度一致
+        apollo_data = dict()
+        apollo_data['hj.channel.risk.credit.line.amt.mock'] = self.active_payload['message']['expanding']['initialAmount']
+        Apollo().update_config(appId='loan2.1-jcxf-credit', **apollo_data)
 
         # 校验用户是否已存在
         self.MysqlBizImpl.check_user_available(self.data)

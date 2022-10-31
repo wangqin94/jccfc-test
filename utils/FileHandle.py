@@ -12,6 +12,7 @@ class Files(object):
     """
     文件处理
     """
+
     def __init__(self):
         pass
 
