@@ -101,6 +101,7 @@ class Apollo(object):
                     return item['item']
             if flag == 0:
                 _log.error('config error, namespaces:{} cannot get config:{}'.format(namespace, key))
+                return None
         except Exception as err:
             _log.error('search  failed! system exception:{}'.format(err))
 

@@ -24,7 +24,8 @@ class KS3(object):
         else:
             self.ak = _readconfig.get_ks3('ak1')
             self.sk = _readconfig.get_ks3('sk1')
-        self.gfsflag = Apollo().get_config(key='ks3.gfs.flag', appId='loan2.1-public', namespace='JCXF.system')
+        flag = self.gfsflag = Apollo().get_config(key='ks3.gfs.flag', appId='loan2.1-public', namespace='JCXF.system')
+        self.gfsflag = flag if flag else "ks3"
         self.file = Files()
         self.host_op_channel = API['op-channel_host'].format(self.env)
 
