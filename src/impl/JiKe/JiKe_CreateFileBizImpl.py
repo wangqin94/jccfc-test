@@ -211,14 +211,14 @@ class JiKeRepayFile(EnvInit):
         temple['loan_period'] = totalTerm
         temple['loan_amt'] = creditLoanInvoiceInfo['loan_amount']
         temple['loan_date'] = str(creditLoanInvoiceInfo['loan_pay_time']).split()[0].replace('-', '')
-        temple['repay_amt'] = str(asset_repay_plan["pre_repay_amount"])  # 总金额
         termNo = int(self.repayTermNo)
         while int(totalTerm) >= termNo:
             # 根据借据Id和期次获取资产侧还款计划
             key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loanInvoiceId, str(termNo))
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
+            temple['repay_amt'] = str(asset_repay_plan["pre_repay_principal"])  # 总金额
             temple['paid_prin_amt'] = str(asset_repay_plan["pre_repay_principal"])  # 本金
-            temple['paid_int_amt'] = str(asset_repay_plan["pre_repay_interest"])  # 利息
+            temple['paid_int_amt'] = '0'  # 利息
             temple['left_repay_amt'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
             temple['business_no'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))  # 流水号
             temple['current_period'] = str(termNo)  # 期次
