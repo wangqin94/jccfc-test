@@ -17,17 +17,17 @@ class MyTestCase(unittest.TestCase):
     """ 测试步骤 """
     def test_repay_apply(self):
         """ 测试步骤 """
-        repayDate = '2022-09-06'
+        repayDate = '2022-11-01'
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
         # 还款环境配置,清理缓存配置账务时间
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
-        jiKeRepayFile = JiKeRepayFile(data, repayTermNo='3', repayDate=repayDate)
+        jiKeRepayFile = JiKeRepayFile(data, repayTermNo='5', repayDate=repayDate)
         jiKeRepayFile.creditBuyBackFile()
 
-        self.repayPublicBizImpl.job.update_job('即科回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job('即科回购清单文件分片任务流', group=13)
+        self.repayPublicBizImpl.job.update_job('【即科】回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.trigger_job('【即科】回购清单文件分片任务流', group=13)
         time.sleep(3)
 
         # 自动入账
