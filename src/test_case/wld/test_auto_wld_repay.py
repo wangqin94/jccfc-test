@@ -39,7 +39,7 @@ class TestCase(object):
             apollo_data = dict()
             apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
             apollo_data['credit.mock.repay.date'] = "{} 00:00:00".format(repay_date)
-            apollo.update_config(**apollo_data)
+            apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         repay_time = str(get_custom_day(-1, repay_date)).replace("-", '')
 
@@ -74,7 +74,7 @@ class TestCase(object):
         u_id = mysqlBizImpl.get_loan_apply_info(thirdpart_apply_id=data['applyid'])['user_id']
 
         loan_invoiceid = mysqlBizImpl.get_loan_invoice_info(user_id=u_id)['loan_invoice_id']
-
+        time.sleep(5)
         repayRes = wldBizImpl.repay(repay_term_no="1", repay_type="4", loan_invoice_id=loan_invoiceid,
                                     repay_date=repay_date)
 
@@ -114,7 +114,7 @@ class TestCase(object):
             apollo_data = dict()
             apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
             apollo_data['credit.mock.repay.date'] = "{} 00:00:00".format(repay_date)
-            apollo.update_config(**apollo_data)
+            apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         with allure.step("设置大会计时间,账务时间=repay_date"):
             account_date = repay_date.replace("-", '')
@@ -186,7 +186,7 @@ class TestCase(object):
             apollo_data = dict()
             apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
             apollo_data['credit.mock.repay.date'] = "{} 00:00:00".format(repay_date)
-            apollo.update_config(**apollo_data)
+            apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         with allure.step("设置大会计时间,账务时间=repay_date"):
             account_date = repay_date.replace("-", '')
