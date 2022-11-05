@@ -38,7 +38,7 @@ class MyTestCase(unittest.TestCase):
         jike = JiKeBizImpl(data=self.data)
         jike.sharedWithholdingAgreement()
         term = 3
-        amount = 40000
+        amount = 2000
         # 发起授信申请
         self.thirdApplyId = jike.credit(applyAmount=amount, loanTerm=term).get('body')['thirdApplyId']
 
@@ -52,7 +52,7 @@ class MyTestCase(unittest.TestCase):
 
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
         # self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
-        self.loan_date = '2022-10-25'
+        self.loan_date = '2022-11-04'
         jike.applyLoan(loan_date=self.loan_date, loanAmt=amount, loanTerm=term, thirdApplyId=self.thirdApplyId)
 
     """ 后置条件处理 """
@@ -64,7 +64,7 @@ class MyTestCase(unittest.TestCase):
                                                                        thirdpart_apply_id=self.thirdApplyId)
         self.assertEqual(EnumLoanStatus.TO_LOAN.value, status, '支用失败')
         # 执行任务流放款
-        self.job.update_job('线下自动放款', executeBizDate=self.loan_date.replace('-', ''))
+        self.job.update_job('线下自动放款', executeBizDateType='TODAY')
         self.job.trigger_job('线下自动放款')
         self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.ON_USE.value,
                                                               thirdpart_apply_id=self.thirdApplyId)

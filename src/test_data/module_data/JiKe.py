@@ -127,7 +127,7 @@ JiKe = {
                 "liveAreaName": "武侯区",  # 居住地址区名称
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
-                "storeCode": "store2022072902",  # 门店代码
+                "storeCode": "JKStore01",  # 门店代码
                 "goodsCategory1": "商品大分类",  # 商品大分类
                 "goodsCategory2": "商品小分类",  # 商品小分类
                 "contactRelationList": [

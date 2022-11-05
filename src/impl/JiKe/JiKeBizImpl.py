@@ -290,8 +290,8 @@ class JiKeBizImpl(MysqlInit):
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '2'  # 应传2
-        credit_data['storeCode'] = 'store2022072903'
-        # credit_data['storeCode'] = 'Store222666'
+        # credit_data['storeCode'] = 'store2022072903'
+        # credit_data['storeCode'] = 'JKStore01'
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -574,7 +574,7 @@ class JiKeBizImpl(MysqlInit):
         if repay_scene == '02' or '05':  # 线下还款、逾期还款
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + self.strings
         if repay_scene == '04':  # 支付宝还款
-            repay_apply_data['thirdWithholdId'] = "2022100922001425270501813838"  # 支付宝存量订单
+            repay_apply_data['thirdWithholdId'] = "2022100922001425270501813659"  # 支付宝存量订单
             repay_apply_data['appAuthToken'] = 'appAuthToken' + self.strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
