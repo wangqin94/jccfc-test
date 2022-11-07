@@ -520,6 +520,7 @@ class JiKeBizImpl(MysqlInit):
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('用户四要素信息: {}'.format(self.data))
+        repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         repay_apply_data = dict()
         # head
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
@@ -561,7 +562,6 @@ class JiKeBizImpl(MysqlInit):
         # 提前结清
         if repay_type == "2":
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-            repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
             days = get_day(asset_repay_plan["start_date"], repayDate)
             # 如果当期已还款，提前还款利息应收0
             repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
@@ -581,6 +581,12 @@ class JiKeBizImpl(MysqlInit):
             apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
                                                                              2)  # 总金额
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
+
+        # 配置还款mock时间
+        apollo_data = dict()
+        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
+        apollo_data['credit.mock.repay.date'] = "{} 00:00:00".format(repayDate)
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_apply']['payload'], **repay_apply_data)
