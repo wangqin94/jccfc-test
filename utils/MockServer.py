@@ -56,14 +56,14 @@ def get_mock():
 @app.route('/mock/getTestData', methods=['GET', 'POST'])  # delete
 def getTestData_mock():
     data = {}
-    data['姓名：'] = get_name()
-    data['身份证号：'] = IdNumber.generate_id()
+    data['姓名'] = get_name()
+    data['身份证号'] = IdNumber.generate_id()
     # 获取随机生成的手机号
-    data['手机号：'] = get_telephone()
+    data['手机号'] = get_telephone()
     bank = BankNo()
-    data['银行卡号：'] = bank.get_bank_card()
-    data['银行卡Bin：'] = bank.cardBin
-    data['银行卡Code：'] = bank.bankCode
+    data['银行卡号'] = bank.get_bank_card(bankName='工商银行')
+    data['银行卡Bin'] = bank.cardBin
+    data['银行卡Code'] = bank.bankCode
     print(str(data))
     return json.dumps(data, ensure_ascii=False)
 
