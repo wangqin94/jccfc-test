@@ -24,7 +24,7 @@ class KS3(object):
         else:
             self.ak = _readconfig.get_ks3('ak1')
             self.sk = _readconfig.get_ks3('sk1')
-        flag = self.gfsflag = Apollo().get_config(key='ks3.gfs.flag', appId='loan2.1-public', namespace='JCXF.system')
+        flag = Apollo().get_config(key='ks3.gfs.flag', appId='loan2.1-public', namespace='JCXF.system')
         self.gfsflag = flag if flag else "ks3"
         self.file = Files()
         self.host_op_channel = API['op-channel_host'].format(self.env)
@@ -50,7 +50,7 @@ class KS3(object):
             print("ks3.gfs.flag未配置: %s" % e)
             flag = None
         if flag == 'gfs':
-            remote1 = remote[4:]
+            remote1 = os.path.dirname(remote)[4:]
             self.file.gfs_upload_file(self.host_op_channel, local, remote1)
         else:
             self.__connection()
