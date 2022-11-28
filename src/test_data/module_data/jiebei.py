@@ -51,23 +51,23 @@ jiebei = {
     "datapreFs": {
         "interface": "/api/v1/antjb/featureservice/init_feature",
         "payload": {
-            "applyNo":"2022081100200000000100792S",
-            "dataType":"JC_FS",
-            "customParams":{
-                "applyType":"ADMIT_APPLY",
-                "certType":"01",
-                "address":"{\"area\":\"浦东新区\",\"areaCode\":\"310115\",\"address\":\"5LiK5rW35LiK5rW35biC5rWm5Lic5paw5Yy65LiK5rW3LeS4iua1t+W4gi3mtabkuJzmlrDljLot6ZmG5a625Zi06KGX6YGT5oGS55Sf6ZO26KGM5aSn5Y6mMzXmpbzmgZLnlJ/pk7booYw=\",\"provCode\":\"310000\",\"city\":\"上海市\",\"cityCode\":\"310100\",\"prov\":\"上海市\"}",
-                "mobileNo":"13547359285",
-                "certNo":"34298719870021647X",
-                "bankCardInfo":"{\"cardType\":\"DC\",\"bankReservedMobileNo\":\"13173671201\",\"bankName\":\"招商银行\",\"cardNo\":\"123456789101110\"}",
-                "suggestAmtMax":"2000000",
-                "suggestRateMax":"0.00015",
-                "name":"张三",
-                "suggestAmtMin":"2000000",
-                "suggestRateMin":"0.00015",
-                "creditNo":"2022081100200000000100792S",
-                "certValidEndDate":"2022-12-02 11:12:00",
-                "tc_NoSource_ToPlatformOne":"Y"  # Y就是一期的新客，N就是二转一的老客
+            "applyNo": "2022081100200000000100792S",
+            "dataType": "JC_FS",
+            "customParams": {
+                "applyType": "ADMIT_APPLY",
+                "certType": "01",
+                "address": "{\"area\":\"浦东新区\",\"areaCode\":\"310115\",\"address\":\"5LiK5rW35LiK5rW35biC5rWm5Lic5paw5Yy65LiK5rW3LeS4iua1t+W4gi3mtabkuJzmlrDljLot6ZmG5a625Zi06KGX6YGT5oGS55Sf6ZO26KGM5aSn5Y6mMzXmpbzmgZLnlJ/pk7booYw=\",\"provCode\":\"310000\",\"city\":\"上海市\",\"cityCode\":\"310100\",\"prov\":\"上海市\"}",
+                "mobileNo": "13547359285",
+                "certNo": "34298719870021647X",
+                "bankCardInfo": "{\"cardType\":\"DC\",\"bankReservedMobileNo\":\"13173671201\",\"bankName\":\"招商银行\",\"cardNo\":\"123456789101110\"}",
+                "suggestAmtMax": "2000000",
+                "suggestRateMax": "0.00015",
+                "name": "张三",
+                "suggestAmtMin": "2000000",
+                "suggestRateMin": "0.00015",
+                "creditNo": "2022081100200000000100792S",
+                "certValidEndDate": "2022-12-02 11:12:00",
+                "tc_NoSource_ToPlatformOne": "Y"  # Y就是一期的新客，N就是二转一的老客
             },  # 自定义
             # "signType": "RSA2",  # 签名类型 RSA2
             "sign": "YEjsLnpe6H44gR0exMp6kEDG7ZCpqiez0Np5aIUcc2S+12koFrNs7nO9moAIF8fMqApMPmaFIOG4IromyR/7h/gxxFC5f6HrMlO87sh66FHGwkzgXuCfnmZdfckHY0JJFJ8I14t6/HhAjUFECTCthffej0+YvgcFXxufOJUZPl6Hg6mSQ874NFrGrYcTkpwvuRO/yrdTOdf5B0J63F0fCKt5a5W9mwXRGu6N9R32KafoUJwNSRgsqHUWDjapAf5pSW+egxtW8wYh8jW7GnEwIXJhLutUrreMugGNZ9n2eDKKT9+U92+9C9vCdzCBX5Yjihw4mCcwO3FhubYA0wBL1Q\u003d\u003d"  # 签名结果

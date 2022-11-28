@@ -13,7 +13,8 @@ class MyTestCase(unittest.TestCase):
         gl._init()
         # 按期还款，提前结清（按日计息），提前结清
         # repay_mode:  还款模式，1：按期还款；3：提前结清；5；逾期还款
-        fqlRepayFile(data, repay_date='2022-05-19', term_no="1", repay_mode='1')
+        # repay_type:  还款类型，1：清分；2：代扣
+        fqlRepayFile(data, repay_date='2022-09-30', term_no="1", repay_mode='5')
 
 
 if __name__ == '__main__':

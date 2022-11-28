@@ -34,7 +34,6 @@ BaiDu = {
                     "phoneNormalScoreExp3": "92",
                     "taxMonthlyIncomeSection": "-9999",
                     "ocrExpdate": "20280203",
-                    # "r21P12FinallyInterest": "6.5",
                     "r21P12FinallyInterest": "6.5",
                     "dxmDScore": "575",
                     "careerType": "02",
@@ -108,10 +107,10 @@ BaiDu = {
                     # "idpicture1": "5D0CA08AB4CA8512C230358A6849DF58",
                     # "livingPhoto": "5D0CA08AB4CA8512C230358A6849DF58",
                     "unionLoanUsed": "01",
-                    "idpicture0": "/xdgl/hj/baidu/test/id_front.jpg",
-                    "idpicture1": "/xdgl/hj/baidu/test/id_back.jpg",
-                    "livingPhoto": "/xdgl/hj/baidu/test/id_face.jpg",
-                    "loanUse": "1",
+                    "idpicture0": "/xdgl/hj/baidu/picture/cqid1.png",
+                    "idpicture1": "/xdgl/hj/baidu/picture/cqid2.png",
+                    "livingPhoto": "/xdgl/hj/baidu/picture/cqface.png",
+                    "loanUse": "5",
                     "taxMonthlyIncomeSection": "01",
                     "ocrExpdate": "20301220",
                     "term": '3',
@@ -128,8 +127,8 @@ BaiDu = {
                     # "ocrAddress": "重庆市江北区府城大道中段87号",
                     "careerType": "",  # 职业
                     "ocrAddress": "",  # 身份地址
-                    "userHomeAddress": "家庭地址重庆市江北区府城大道中段87号",  # 家庭地址
-                    "zxPermanentAddress": "户籍地址重庆市江北区府城大道中段87号",  # 征信户籍地址
+                    "userHomeAddress": "重庆市江北区府城大道中段87号",  # 家庭地址
+                    "zxPermanentAddress": "重庆市江北区府城大道中段87号",  # 征信户籍地址
                     "zxsDomicile": "",  # 征信居住地址
                     "zxMailingAddress": "",  # 征信通讯地址
                     "zxsCareer": "",  # 征信职业

@@ -117,10 +117,10 @@ wld = {
                 "compName": "蜗牛文化传媒有限公司",   # 单位名称
                 "compPhone": "028-6868-6688",  # 单位电话
                 "workTime": "2",  # 在现工作单位时间
-                "userOccupation": "1",  # 职业 EnumVocationType
+                "userOccupation": "3",  # 职业 EnumVocationType
                 "duties": "B",  # 职务 EnumPost
                 "companyNature": "B",  # 单位性质
-                "industryCategory": "B",  # 行业类别
+                "industryCategory": "F",  # 行业类别
                 "workAddrAddress": "四川省成都市高新区泰和二街123号",  # 工作详细地址
                 "workAddrProvinceCode": "510000",  # 工作地址省份代码
                 "workAddrProvinceName": "四川省",  # 工作地址省份名称
@@ -150,28 +150,28 @@ wld = {
                 "fileInfos": [
                     {
                         "fileType": "1",
-                        "fileName": "idz-1.jpg",
-                        "fileUrl": "xdgl/hj/wld/credit/test/idz-1.jpg"
+                        "fileName": "idcard_front.jpg",
+                        "fileUrl": "xdgl/hj/wld/credit/test/idcard_front.jpg"
                     },
                     {
                         "fileType": "2",
-                        "fileName": "idf-1.jpg",
-                        "fileUrl": "xdgl/hj/wld/credit/test/idf-1.jpg"
+                        "fileName": "idcard_back.jpg",
+                        "fileUrl": "xdgl/hj/wld/credit/test/idcard_back.jpg"
                     },
                     {
                         "fileType": "3",
-                        "fileName": "id_face.jpg",
-                        "fileUrl": "xdgl/hj/wld/credit/test/id_face.jpg"
+                        "fileName": "face_distinguish.jpg",
+                        "fileUrl": "xdgl/hj/wld/credit/test/face_distinguish.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileName": "征信查询授权书-1.pdf",
-                        "fileUrl": "xdgl/hj/wld/credit/test/征信查询授权书-1.pdf"
+                        "fileName": "JC_userauth.pdf",
+                        "fileUrl": "xdgl/hj/wld/credit/test/JC_userauth.pdf"
                     },
                     {
                         "fileType": "7",
-                        "fileName": "三方数据查询授权书-1.pdf",
-                        "fileUrl": "xdgl/hj/wld/credit/test/三方数据查询授权书-1.pdf"
+                        "fileName": "JC_third_auth.pdf",
+                        "fileUrl": "xdgl/hj/wld/credit/test/JC_third_auth.pdf"
                     }
                 ]
             }

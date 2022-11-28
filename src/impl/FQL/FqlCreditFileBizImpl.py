@@ -20,12 +20,13 @@ if not os.path.exists(_FilePath):
 
 
 class fqlRepayFile(EnvInit):
-    def __init__(self, data, repay_mode='1', term_no='1', repay_date='2021-08-09'):
+    def __init__(self, data, repay_mode='1', term_no='1', repay_date='2021-08-09', repay_type='1'):
         """
         @param data:  四要素
         @param repay_mode:  还款模式，1：按期还款；3：提前结清；5；逾期还款
         @param term_no:     还款期数
         @param repay_date:    还款时间
+        @param repay_type:    还款类型，1：清分；2：代扣
         """
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
@@ -38,6 +39,7 @@ class fqlRepayFile(EnvInit):
         self.repay_filename = ""
         self.current_date = time.strftime('%Y-%m-%d', time.localtime())
         self.data = data
+        self.repayType = repay_type
 
         # 还款 字段名列表，(文件生成时字符串拼接使用)
         self.repay_key_temple = [
@@ -49,6 +51,7 @@ class fqlRepayFile(EnvInit):
             'paid_int_amt',
             'repay_mode',
             'reserve',
+            'repayType',
         ]
 
         # 还款 键值对字典数据模板
@@ -61,6 +64,7 @@ class fqlRepayFile(EnvInit):
             'paid_int_amt': "",  # 还款罚息
             'repay_mode': "",  # 还款方式
             'reserve': "",  # 备注字段
+            'repayType': "",  # 还款类型
         }
         # 执行
         self.start()
@@ -109,6 +113,7 @@ class fqlRepayFile(EnvInit):
         temple['applyId'] = self.applyId
         temple['repay_mode'] = self.repay_mode
         temple['term_no'] = self.term_no
+        temple['repayType'] = self.repayType
 
         # 根据applyId查询还款计划中的借据号
         key1 = "apply_id = '{}'".format(self.applyId)

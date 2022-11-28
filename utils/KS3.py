@@ -58,7 +58,7 @@ class KS3(object):
                 key = self.bucket.new_key(remote)
                 ret = key.set_contents_from_filename(local)
                 if ret and ret.status == 200:
-                    _log.demsg("ks3文件上传成功")
+                    _log.demsg("文件上传成功")
                 else:
                     _log.info(ret)
             except Exception as e:

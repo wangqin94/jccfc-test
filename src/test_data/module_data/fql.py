@@ -64,7 +64,7 @@ fql = {
                 "contactMobile1": "15908118645",
                 "contactRel1": "1",
                 "goodsName": "取现借款",
-                "loanUse": "5",
+                "loanUse": "1",
                 "firstRepayDate": "2021-06-11",
                 "schoolName": "四川音乐学院",
                 "schoolProvince": "510000",
@@ -74,7 +74,7 @@ fql = {
                 "graduationYear": "2013",
                 "companyAddress": "成都市武侯区府城大道中段85号",
                 "userOccupation": "0",
-                "userIndustryCategory": "2",
+                "userIndustryCategory": "0",
                 "registerMobileLocation": "成都",
                 "hasOverdueEver": "false",
                 "totalOverdueCount": "0",
@@ -97,33 +97,33 @@ fql = {
                 "fileInfos": [
                     {
                         "fileType": "1",
-                        "fileUrl": "http://ks3-cn-shanghai-2.cloud.jccfc.com/jccfc-huat/xdgl/fql/yw/idcard_front_202000000948071964.jpg",
-                        "fileName": "idcard_front_202000000948071964.jpg"
+                        "fileUrl": "xdgl/fql/yw/idcard_front.jpg",
+                        "fileName": "idcard_front.jpg"
                     },
                     {
                         "fileType": "2",
-                        "fileUrl": "xdgl/fql/yw/idcard_back_202000000948071964.jpg",
-                        "fileName": "idcard_back_202000000948071964.jpg"
+                        "fileUrl": "xdgl/fql/yw/idcard_back.jpg",
+                        "fileName": "idcard_back.jpg"
                     },
                     {
                         "fileType": "3",
-                        "fileUrl": "xdgl/fql/yw/face_distinguish_202000000948071964.jpg",
-                        "fileName": "face_distinguish_202000000948071964.jpg"
+                        "fileUrl": "xdgl/fql/yw/face_distinguish.jpg",
+                        "fileName": "face_distinguish.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileUrl": "xdgl/fql/yw/JC_userauth_202000000948071964.pdf",
-                        "fileName": "JC_userauth_202000000948071964.pdf"
+                        "fileUrl": "xdgl/fql/yw/JC_userauth.pdf",
+                        "fileName": "JC_userauth.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "xdgl/fql/yw/JC_non_student_202000000948071964.pdf",
-                        "fileName": "JC_non_student_202000000948071964.pdf"
+                        "fileUrl": "xdgl/fql/yw/JC_non_student.pdf",
+                        "fileName": "JC_non_student.pdf"
                     },
                     {
                         "fileType": "7",
-                        "fileUrl": "xdgl/fql/yw/JC_third_auth_202000000948071964.pdf",
-                        "fileName": "JC_third_auth_202000000948071964.pdf"
+                        "fileUrl": "xdgl/fql/yw/JC_third_auth.pdf",
+                        "fileName": "JC_third_auth.pdf"
                     }
 
                 ]
@@ -280,6 +280,142 @@ fql = {
                 "merchantId": "58347954739",
                 "requestTime": "2019-05-29 21:00:00"
             }
+        }
+    },
+
+    # 还款试算
+    'repay_trial': {
+        'interface': '/api/fql/v1/repay/repayTrial',
+        'payload': {
+            "head": {
+                "tenantId": "000",
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "requestTime": "2022-11-14 21:00:00",
+                "merchantId": "000UC010000006268"
+
+            },
+            "body": {
+                "partnerCode": "000UC010000006268",
+                "capitalLoanNo": "",  # 锦程放款成功的借据申请号
+                "repayDate": "2022-11-04",  # yyyy-MM-dd(一般是调用接口的时间)
+                "loanTerm": "",  # 提前结清传结清账单的最小期数
+                "repayType": "",  # 还款类别 10:按期（正常）还款 30:全部提前结清 40:逾期还款
+            }
+        }
+    },
+
+    # 代扣申请
+    'payment': {
+        'interface': '/api/fql/v1/repay/applyRepay',
+        'payload': {
+            "head": {
+                "tenantId": "000",
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "requestTime": "2019-05-29 21:00:00",
+                "merchantId": "000UC010000006268"
+            },
+            "body": {
+                "withholdSerialNo": "12346",  # 代扣请求流水号--直接透传交易侧的请求流水号,退款/查询这批数据的状态需要
+                "partnerCode": "000UC010000006268",  # 合作方代码
+                "withholdAmt": "693.51",  # 代扣总金额=用户代扣金额+补差金额---保留两位有效数字(单位:元
+                "marketingAmount": "0",  # 补差金额----保留两位有效数字(单位:元)
+                "bindCardInfo": {
+                    "userName": "",
+                    "cardNo": "",
+                    "bankType": "03040000",
+                    "idType": "1",  # 1、身份证
+                    "idNo": "",
+                    "phoneNo": ""
+                },
+                "signNum": "123456",  # 签约协议号,交易侧透传给接入
+                "payMode": "0",  # 支付模式: 0:银行卡支付
+                "subMerchantId": "000UC010000006268",  # 分期乐在通联生态圈的商户号
+                "sepOutInfo": [       # 出账信息
+                    {
+                        "type": "1",  # 用户账户出账
+                        "amt": "693.51",
+                        "account": "1313"
+                    },
+                    # {
+                    #     "type": "2",  # 补差账户出账
+                    #     "amt": "0",
+                    #     "account": "1346"
+                    # }
+                ],
+                "encryptContent": "16646",  # 通联需要的加密报文
+                "bankCode": "03040000",
+                "withholdDetail": [{
+                    "assetId": "applyId16674462572948120",  # 贷款申请编号-----分期乐资产号,每笔借款唯一
+                    "capitalLoanNo": "000LI0001909130144309268037",  # 资金方放款编号/借据号---资金方订单唯一标识
+                    "rpyTotalAmt": 693.51,  # 实还总额--单笔订单代扣的总额--------保留两位有效数字(单位:元)
+                    "rpyType": "10",  # 还款类型  10-正常还款  30-提前结清, 40-逾期还款，
+                    "rpyDate": "2022-11-25",  # 代扣时间   用户实还日（yyyy-MM-dd）
+                    "billDetails": [{
+                        "rpyAmt": 346.76,  # 还款总额：单笔账单本利罚之和:保留两位有效数字(单位:元)
+                        "rpyPrincipal": 326.75,  # 实还本金,保留两位有效数字(单位:元)
+                        "rpyFeeAmt": 20.01,  # 实还利息,保留两位有效数字(单位:元)
+                        "rpyMuclt": 0,  # 实还罚息,保留两位有效数字(单位:元)}
+                        "otherInfo": {    # 其他科目金额
+                            "repayFee": "0.00",  # 费用（如果没有就给默认值0.00）
+                            "repayCompoundInterest": "0.00"  # 复利（如果没有就给默认值0.00）
+                            },
+                        "rpyTerm": "1"  # 还款期数
+                        },
+                        # {
+                        # "rpyAmt": 346.75,  # 还款总额-单笔账单本利罚之和:保留两位有效数字(单位:元)
+                        # "rpyPrincipal": 333.28,  # 实还本金,保留两位有效数字(单位:元)
+                        # "rpyFeeAmt": 13.47,  # 实还利息,保留两位有效数字(单位:元)
+                        # "rpyMuclt": 0,  # 实还罚息,保留两位有效数字(单位:元)}
+                        # "otherInfo": {    # 其他科目金额
+                        #     "repayFee": "0.00",  # 费用（如果没有就给默认值0.00）
+                        #     "repayCompoundInterest": "0.00"  # 复利（如果没有就给默认值0.00）
+                        #     },
+                        # "rpyTerm": "2"  # 还款期数
+                        # }
+                    ]  # 还款账单明细
+                }]  # 代扣明细
+            }
+        }
+    },
+
+    # 代扣结果查询
+    'payment_query':{
+        'interface': '/api/fql/v1/repay/queryRepayResult',
+        'payload': {
+            "head": {
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "tenantId": "000",
+                # "token": "resuiyfie59743949gjkfdk",
+                "merchantId": "58347954739",
+                "requestTime": "2019-05-29 21:00:00"
+
+            },
+            "body":{
+                "withholdSerialNo": "",  # 代扣请求流水号
+                "partnerCode": "000UC010000006268"
+            }
+        }
+    },
+
+    # 还款计划查询
+    'repay_play_query': {
+        'interface': '/api/fql/v1/repay/queryRepayPlan',
+        'payload': {
+            "head": {
+                "tenantId": "000",
+                "channelNo": "01",
+                "requestSerialNo": "111111111111",
+                "requestTime": "2019-05-29 21:00:00",
+                "merchantId": "000UC010000006268"
+            },
+            "body": {
+                "partnerCode": "000UC010000006267",  # 000UC010000006268
+                "capitalLoanNo": ""  # 借据号,放款成功返
+            }
+
         }
     }
 }

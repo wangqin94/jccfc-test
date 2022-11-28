@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 @allure.step('前置操作：预置放款数据')
 @pytest.fixture(scope="class")
-def pre_loan_repay_data(ctripBizImpl, ctripCreditCheckBizImpl,ctripLoanCheckBizImpl,):
+def pre_loan_repay_data(ctripBizImpl, ctripCreditCheckBizImpl,ctripLoanCheckBizImpl):
     """ 测试步骤 """
     with allure.step("修改apollo放款mock"):
         apollo_data = dict()
@@ -201,4 +201,4 @@ class TestCase(object):
             assert info["repay_plan_status"] == "3", "还款成功"
 
 if __name__ == '__main__':
-    pytest.main(['test_auto_ctrip_repay1.py'])
+    pytest.main(['test_auto_ctrip_repay.py'])

@@ -140,37 +140,37 @@ JiKe = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqid1.png",
+                        "fileUrl": "xdgl/jike/test/cqid1.png",
                         "fileName": "cqid1.png"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqid2.png",
+                        "fileUrl": "xdgl/jike/test/cqid2.png",
                         "fileName": "cqid2.png"
                     },
                     {
                         "fileType": "3",  # 人脸
-                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/cqface.png",
+                        "fileUrl": "xdgl/jike/test/cqface.png",
                         "fileName": "cqface.png"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "jikeloancontract.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_non_student_202000000948071964.pdf"
                     },
                     {
                         "fileType": "7",
-                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
                     },
                     {
                         "fileType": "10",
-                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
                     }
                 ],
