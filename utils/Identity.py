@@ -81,7 +81,7 @@ class IdNumber(str):
         now_date = datetime.strptime(datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d")
         if age:
             age = datetime.strptime(age, "%Y-%m-%d")
-            assert now_date > age + relativedelta(years=int(19)), '支付要求用户最小年龄不能小于18岁'
+            assert now_date > age + relativedelta(years=int(18)), '支付要求用户最小年龄不能小于18岁'
             birth_days = datetime.strftime(age, "%Y%m%d")
         else:
             min_age = datetime.strftime(now_date - relativedelta(years=int(18)), "%Y-%m-%d")
@@ -108,3 +108,8 @@ if __name__ == '__main__':
     # print(IdNumber('410326199507103197').get_sex())  # 性别:1(男)
     # print(IdNumber('410326199507103197').get_check_digit())  # 校验码:7
     print(IdNumber.verify_id(id1))  # 检验身份证是否正确:False
+    # now_date = datetime.strptime(datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d")
+    # min_age = datetime.strftime(now_date - relativedelta(years=int(18)), "%Y-%m-%d")
+    # start, end = datetime.strptime("2004-11-23", "%Y-%m-%d"), datetime.strptime(min_age, "%Y-%m-%d")
+    # birth_days = datetime.strftime(start + timedelta(random.randint(0, (end - start).days)), "%Y%m%d")
+    # print(min_age, birth_days)

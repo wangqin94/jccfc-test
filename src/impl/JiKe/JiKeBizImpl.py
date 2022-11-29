@@ -221,7 +221,6 @@ class JiKeBizImpl(MysqlInit):
         # 解析项目特性配置
         self.cfg = JiKe.JiKe
         self.encrypt_flag = encrypt_flag
-        self.strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
@@ -250,12 +249,13 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         sharedWithholdingAgreement = dict()
         # head
-        sharedWithholdingAgreement['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        sharedWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
         sharedWithholdingAgreement['requestTime'] = self.date
         # body
-        sharedWithholdingAgreement['aggrementNum'] = 'aggrementNum' + self.strings
+        sharedWithholdingAgreement['aggrementNum'] = 'aggrementNum' + strings
         sharedWithholdingAgreement['payerIdNum'] = self.data['cer_no']
         sharedWithholdingAgreement['payer'] = self.data['name']
         sharedWithholdingAgreement['payerBankCardNum'] = self.data['bankid']
@@ -280,9 +280,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         queryWithholdingAgreement = dict()
         # head
-        queryWithholdingAgreement['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        queryWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
         queryWithholdingAgreement['requestTime'] = self.date
         # body
         queryWithholdingAgreement['payerIdNum'] = self.data['cer_no']
@@ -308,9 +309,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return:
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         updateWithholdCard = dict()
         # head
-        updateWithholdCard['requestSerialNo'] = 'requestNo' + self.strings + "_1000"
+        updateWithholdCard['requestSerialNo'] = 'requestNo' + strings + "_1000"
         updateWithholdCard['requestTime'] = self.date
 
         # body
@@ -340,13 +342,14 @@ class JiKeBizImpl(MysqlInit):
         @return: response 接口响应参数 数据类型：json
         """
         self.log.demsg('用户四要素信息: {}'.format(self.data))
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         credit_data = dict()
         # head
-        credit_data['requestSerialNo'] = 'requestNo' + self.strings + "_2000"
+        credit_data['requestSerialNo'] = 'requestNo' + strings + "_2000"
         credit_data['requestTime'] = self.date
         # body
 
-        credit_data['thirdApplyId'] = 'thirdApplyId' + self.strings
+        credit_data['thirdApplyId'] = 'thirdApplyId' + strings
         credit_data['interestRate'] = 10.3
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
@@ -391,9 +394,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         queryCreditResult_data = dict()
         # head
-        queryCreditResult_data['requestSerialNo'] = 'requestNo' + self.strings + "_3000"
+        queryCreditResult_data['requestSerialNo'] = 'requestNo' + strings + "_3000"
         queryCreditResult_data['requestTime'] = self.date
 
         if not thirdApplyId:
@@ -426,9 +430,10 @@ class JiKeBizImpl(MysqlInit):
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
         self.log.info('用户四要素信息: {}'.format(self.data))
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         applyLoan_data = dict()
         # head
-        applyLoan_data['requestSerialNo'] = 'requestNo' + self.strings + "_4000"
+        applyLoan_data['requestSerialNo'] = 'requestNo' + strings + "_4000"
         applyLoan_data['requestTime'] = self.date
         # body
         if not thirdApplyId:
@@ -437,7 +442,7 @@ class JiKeBizImpl(MysqlInit):
         else:
             applyLoan_data['thirdApplyId'] = thirdApplyId
 
-        applyLoan_data['loanApplyNo'] = 'loanApplyNo' + self.strings
+        applyLoan_data['loanApplyNo'] = 'loanApplyNo' + strings
 
         # 设置apollo放款mock时间 默认当前时间
         loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
@@ -463,7 +468,7 @@ class JiKeBizImpl(MysqlInit):
         applyLoan_data['accountNo'] = self.data['bankid']
 
         # 担保合同号
-        applyLoan_data['guaranteeContractNo'] = 'ContractNo' + self.strings + "_5000"
+        applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
 
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
@@ -489,8 +494,9 @@ class JiKeBizImpl(MysqlInit):
         @return: response 接口响应参数 数据类型：json
         """
         queryLoanResult_data = dict()
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         # head
-        queryLoanResult_data['requestSerialNo'] = 'requestNo' + self.strings + "_6000"
+        queryLoanResult_data['requestSerialNo'] = 'requestNo' + strings + "_6000"
         queryLoanResult_data['requestTime'] = self.date
 
         if not thirdApplyId:
@@ -518,9 +524,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         repayPlan_query_data = dict()
         # head
-        repayPlan_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_7000"
+        repayPlan_query_data['requestSerialNo'] = 'requestNo' + strings + "_7000"
         repayPlan_query_data['requestTime'] = self.date
 
         # body
@@ -545,10 +552,11 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         loanContract_query_data = dict()
         files = Files()
         # head
-        loanContract_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_8000"
+        loanContract_query_data['requestSerialNo'] = 'requestNo' + strings + "_8000"
         loanContract_query_data['requestTime'] = self.date
 
         # body
@@ -580,6 +588,7 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         repay_apply_data = dict()
@@ -637,10 +646,10 @@ class JiKeBizImpl(MysqlInit):
         if repay_scene == '01':  # 线上还款
             repay_apply_data['repaymentAccountNo'] = self.data['bankid']
         if repay_scene == '02' or '05':  # 线下还款、逾期还款
-            repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + self.strings
+            repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
         if repay_scene == '04':  # 支付宝还款
-            repay_apply_data['thirdWithholdId'] = "2022100922001425270501813659"  # 支付宝存量订单
-            repay_apply_data['appAuthToken'] = 'appAuthToken' + self.strings
+            repay_apply_data['thirdWithholdId'] = "2022093022001425270501809997"  # 支付宝存量订单
+            repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
             apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"]*100,2)  # 总金额
@@ -670,9 +679,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         repay_query_data = dict()
         # head
-        repay_query_data['requestSerialNo'] = 'requestNo' + self.strings + "_1100"
+        repay_query_data['requestSerialNo'] = 'requestNo' + strings + "_1100"
         repay_query_data['requestTime'] = self.date
         # body
         repay_query_data['repayApplySerialNo'] = repayApplySerialNo
@@ -698,13 +708,14 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         returnGoods_apply_data = dict()
         # head
-        returnGoods_apply_data['requestSerialNo'] = 'requestNo' + self.strings + "_1200"
+        returnGoods_apply_data['requestSerialNo'] = 'requestNo' + strings + "_1200"
         returnGoods_apply_data['requestTime'] = self.date
         # body
         returnGoods_apply_data['loanInvoiceId'] = loanInvoiceId
-        returnGoods_apply_data['returnGoodsSerialNo'] = 'GoodsSerialNo' + self.strings
+        returnGoods_apply_data['returnGoodsSerialNo'] = 'GoodsSerialNo' + strings
 
         # 计算剩余应还本金(最早未还期次:期初计息余额before_calc_principal)
         key = "loan_invoice_id = '{}' and repay_plan_status in('1','4') ORDER BY 'current_num'".format(
@@ -752,7 +763,8 @@ class JiKeBizImpl(MysqlInit):
             else:
                 weihuan_interest = 0
                 pre_repay_overdue_fee = 0
-            returnGoods_apply_data['returnGoodsInterest'] = dangqi_interest + weihuan_interest + kuanxianqi_interest
+            returnGoods_apply_data['returnGoodsInterest'] = float("{:.2f}".format(dangqi_interest + weihuan_interest +
+                                                                                  kuanxianqi_interest))
 
             # 罚息
             returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee
@@ -763,6 +775,11 @@ class JiKeBizImpl(MysqlInit):
         apollo_data['yinliu.return.goods.date.mock'] = str(repayDate).replace('-', '')
         self.apollo.update_config(appId='jccfc-op-channel', namespace='000', **apollo_data)
         time.sleep(3)
+        # 配置还款mock时间
+        apollo_data = dict()
+        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
+        apollo_data['credit.mock.repay.date'] = "{} 00:00:00".format(repayDate)
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         # 更新 payload 字段值
         returnGoods_apply_data.update(kwargs)
@@ -783,16 +800,17 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         file_data = dict()
         # head
-        file_data['requestSerialNo'] = 'requestNo' + self.strings + "_1300"
+        file_data['requestSerialNo'] = 'requestNo' + strings + "_1300"
         file_data['requestTime'] = self.date
         # body
         file_data['thirdApplyId'] = thirdApplyId
 
         # 附件信息
         fileInfos = []
-        fileInfo = {'fileType': "2", 'fileName': "cqid1.png"}
+        fileInfo = {'fileType': "10", 'fileName': "cqid1.png"}
         positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
         fileInfo['file'] = positive  # 身份证正面base64字符串
         fileInfos.append(fileInfo)
@@ -816,9 +834,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         getAllAreaInfo_data = dict()
         # head
-        getAllAreaInfo_data['requestSerialNo'] = 'requestNo' + self.strings + "_1400"
+        getAllAreaInfo_data['requestSerialNo'] = 'requestNo' + strings + "_1400"
         getAllAreaInfo_data['requestTime'] = self.date
         # body
 
@@ -841,9 +860,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         queryLprInfo_data = dict()
         # head
-        queryLprInfo_data['requestSerialNo'] = 'requestNo' + self.strings + "_1500"
+        queryLprInfo_data['requestSerialNo'] = 'requestNo' + strings + "_1500"
         queryLprInfo_data['requestTime'] = self.date
         # body
         if not thirdApplyId:
@@ -870,9 +890,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         cancelCreditLine_data = dict()
         # head
-        cancelCreditLine_data['requestSerialNo'] = 'requestNo' + self.strings + "_1600"
+        cancelCreditLine_data['requestSerialNo'] = 'requestNo' + strings + "_1600"
         cancelCreditLine_data['requestTime'] = self.date
         # body
         if not thirdApplyId:
@@ -898,9 +919,10 @@ class JiKeBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         queryAccountResult_data = dict()
         # head
-        queryAccountResult_data['requestSerialNo'] = 'requestNo' + self.strings + "_1600"
+        queryAccountResult_data['requestSerialNo'] = 'requestNo' + strings + "_1600"
         queryAccountResult_data['requestTime'] = self.date
         # body
         # if not thirdApplyId:

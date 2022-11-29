@@ -16,7 +16,7 @@ class StatusCodeEnum(Enum):
     INVALID_PARAMETER = ("100000", "黑名单")
     AUTH_FAIL = ("100001", "验签失败")
     REPEAT_REQUEST = ("100002", "流水重复")
-    NO_HOURLY = ("100003", "请求频繁")
+    NO_HOURLY = ("100003", "请勿频繁请求")
     TO_DOING = ("100004", "交易处理中")
     SYS_ERROR = ("999999", "系统异常")
     SYS_ERROR1 = ("RPC000009", "服务开小差了, 请稍后再试!")
