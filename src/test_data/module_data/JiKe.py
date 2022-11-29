@@ -106,7 +106,7 @@ JiKe = {
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
                 "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
-                "idCardAddr": "四川省成都市高新区天府三街",  # 身份证地址
+                "idCardAddr": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证地址
                 "issuingAuth": "成都高新派出所",  # 发证机关
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
                 "compName": "单位名称",  # 单位名称
@@ -117,11 +117,11 @@ JiKe = {
                 "duties": "A",  # 职务 EnumPost
                 "companyNature": "A",  # 单位性质 EnumUnitProperty
                 "industryCategory": "A",  # 行业类别 EnumIndustryType
-                "workAddrAddress": "工作单位地址中航城市广场",  # 工作详细地址
+                "workAddrAddress": "茂业中心A座",  # 工作详细地址
                 "workAddrProvinceName": "四川省",  # 工作地址省份名称
                 "workAddrCityName": "成都市",  # 工作地址市级名称
                 "workAddrAreaName": "武侯区",  # 工作地址区名称
-                "liveAddress": "工作单位地址中航城市广场",  # 工作详细地址
+                "liveAddress": "中航城市广场",  # 工作详细地址
                 "liveProvinceName": "四川省",  # 居住地址省份名称
                 "liveCityName": "成都市",  # 居住地址市级名称
                 "liveAreaName": "武侯区",  # 居住地址区名称
