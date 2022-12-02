@@ -253,7 +253,7 @@ JiKe = {
                 "fileInfos": [
                     {
                         "fileType": "9",
-                        "fileUrl": "http://jccfc-hqas.ks3-cn-shanghai-2.cloud.jccfc.com/xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
                     }
                 ],
