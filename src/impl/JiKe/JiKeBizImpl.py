@@ -10,7 +10,7 @@ from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
 from dateutil.parser import parse
-_log = MyLog.get_log()
+
 
 def computeMD5(message):
     m = hashlib.md5()
@@ -80,7 +80,7 @@ def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
         repaymentPlans['period'] = i
         # 账单日
         repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
-        #月供
+        # 月供
         repaymentPlans['perPeriodAmountSum'] = perPeriodAmountSum
         # 本金
         repaymentPlans['principalAmt'] = float(principal)
@@ -111,7 +111,7 @@ def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
     perPeriodAmountMultiply = loanAmt
     perPeriodAmountMultiplicand = monthRate * (monthRate + 1) ** loanNumber
     perPeriodAmountDivisor = (monthRate + 1) ** loanNumber - 1
-    #每期应还款总额
+    # 每期应还款总额
     perPeriodAmountSum = round(perPeriodAmountMultiply * perPeriodAmountMultiplicand / perPeriodAmountDivisor, 2)
     # 剩余本金
     residualPrincipalTotal = loanAmt
@@ -119,7 +119,7 @@ def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
     residualInterestTotal = perPeriodAmountSum * loanNumber - loanAmt
 
     for i in range(1, loanNumber + 1):
-        #是否最后1期
+        # 是否最后1期
         isLastPeriod = i == loanNumber
         repaymentPlans = {}
 
@@ -140,7 +140,8 @@ def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
         # 账单日
         repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
         # 月供
-        repaymentPlans['perPeriodAmountSum'] = round(principal + principal * monthRate,2) if isLastPeriod else perPeriodAmountSum
+        repaymentPlans['perPeriodAmountSum'] = round(principal + principal * monthRate,
+                                                     2) if isLastPeriod else perPeriodAmountSum
         # 本金
         repaymentPlans['principalAmt'] = float(principal)
         # 利息
@@ -149,6 +150,7 @@ def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
         repaymentPlans['guaranteeAmt'] = 1.11
         repayment_plan.append(repaymentPlans)
     return repayment_plan
+
 
 # # -----------------------------------------------------------
 # # - 等额本息计算
@@ -575,8 +577,8 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 还款申请
-    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10, repayDate=None,
-                    **kwargs):
+    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
+                    repayDate=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param repayTerm: 还款期次，默认取当前借据最早未还期次
@@ -593,7 +595,6 @@ class JiKeBizImpl(MysqlInit):
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         repay_apply_data = dict()
         # head
-        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         repay_apply_data['requestSerialNo'] = 'requestNo' + strings
         repay_apply_data['requestTime'] = self.date
         # body
@@ -630,7 +631,6 @@ class JiKeBizImpl(MysqlInit):
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
 
-
         # 提前结清
         if repay_type == "2":
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
@@ -642,7 +642,6 @@ class JiKeBizImpl(MysqlInit):
                 repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee, 2)  # 总金额
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
 
-
         if repay_scene == '01':  # 线上还款
             repay_apply_data['repaymentAccountNo'] = self.data['bankid']
         if repay_scene == '02' or '05':  # 线下还款、逾期还款
@@ -652,7 +651,8 @@ class JiKeBizImpl(MysqlInit):
             repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"]*100,2)  # 总金额
+            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
+                                                                             2)  # 总金额
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
 
         # 配置还款mock时间
@@ -943,6 +943,4 @@ class JiKeBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    # jike_loanByAvgAmt(bill_date='2022-06-01', loanamt=1000, year_rate_jc=9.7, year_rate_jk=24, term=12)
-    # _log.info(jike_loanByAvgAmt2(bill_date='2022-09-27', loanAmt=10000, repaymentRate=10.3, loanNumber=6 ))
-    _log.info(jike_loanByAvgAmt3(bill_date='2022-09-27', loanAmt=10000, repaymentRate=16, loanNumber=6))
+    jike_loanByAvgAmt(bill_date='2022-06-01', loanamt=1000, year_rate_jc=9.7, year_rate_jk=24, term=12)

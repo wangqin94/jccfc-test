@@ -203,8 +203,6 @@ class JiKeRepayFile(EnvInit):
         loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
 
         # 根据借据Id和期次获取资产侧还款计划
-        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loanInvoiceId, self.repayTermNo)
-        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
         totalTerm = creditLoanInvoiceInfo['installment_num']
         temple['repay_date'] = self.repayDate.replace('-', '')
         temple['loan_no'] = loanInvoiceId
