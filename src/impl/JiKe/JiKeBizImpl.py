@@ -260,6 +260,7 @@ class JiKeBizImpl(MysqlInit):
         sharedWithholdingAgreement['aggrementNum'] = 'aggrementNum' + strings
         sharedWithholdingAgreement['payerIdNum'] = self.data['cer_no']
         sharedWithholdingAgreement['payer'] = self.data['name']
+        sharedWithholdingAgreement['mobileNo'] = self.data['telephone']
         sharedWithholdingAgreement['payerBankCardNum'] = self.data['bankid']
         sharedWithholdingAgreement['payerPhoneNum'] = self.data['telephone']
         sharedWithholdingAgreement['agreementTime'] = self.date

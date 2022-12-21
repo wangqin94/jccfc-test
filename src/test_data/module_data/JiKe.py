@@ -30,6 +30,7 @@ JiKe = {
             },
             "body": {
                 "payer": "QH",  # 付款方姓名
+                "mobileNo": "",  # 注册手机号
                 "payerPhoneNum": "",  # 付款方银行卡预留手机号
                 "payerIdNum": "",  # 付款方身份证号
                 "payerBankCardNum": "",  # 付款方银行卡号
@@ -120,11 +121,11 @@ JiKe = {
                 "workAddrAddress": "茂业中心A座",  # 工作详细地址
                 "workAddrProvinceName": "四川省",  # 工作地址省份名称
                 "workAddrCityName": "成都市",  # 工作地址市级名称
-                "workAddrAreaName": "武侯区",  # 工作地址区名称
-                "liveAddress": "中航城市广场",  # 工作详细地址
-                "liveProvinceName": "四川省",  # 居住地址省份名称
-                "liveCityName": "成都市",  # 居住地址市级名称
-                "liveAreaName": "武侯区",  # 居住地址区名称
+                "workAddrAreaName": "邛崃市",  # 工作地址区名称
+                "liveAddress": "新疆科技学院(东校区)",  # 工作详细地址
+                "liveProvinceName": "新疆维吾尔自治区",  # 居住地址省份名称
+                "liveCityName": "巴音郭楞蒙古自治州",  # 居住地址市级名称
+                "liveAreaName": "库尔勒市",  # 居住地址区名称
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
                 "storeCode": "NJKStore01",  # 门店代码
