@@ -49,8 +49,8 @@ JieTiao = {
             "ascore": "1000",  # A卡分  0-1000       -------------
             "bscore": "100",  # B卡分  0-1000    -------------
             "occupation": "2",        # 职业 1 党的机关、国家机关、群众团体和社会组织、企事业单位负责人2 专业技术人员3 办事人员和有关人员4 社会生产服务和生活服务人员5 农、林、牧、渔业生产及辅助人员6 生产制造及有关人员7 军人8 不便分类的其他从业人员 ----
-            "rpyType": "01",            # 还款方式 01等额本息  ------
-            "creditDataNo": "346291876879586557952",
+            "rpyType": "01",            # 还款方式 01等额本息
+            "creditDataNo": "346316688247242358784",
             "directlyDataFlag": "N",
             "ocr1": "/upload/ocr/test/idcard_front.jpg",   # 身份证人像面
             "ocr2": "/upload/ocr/test/idcard_back.jpg",    # 身份证国徽面
@@ -95,25 +95,25 @@ JieTiao = {
     'repay_notice': {
         'interface': '/api/v1/jietiao/repay/apply',
         'payload': {
-            "ifEnough":"0",  #0:非足额 1:足额
-            "loanReqNo":"346177553668492058625",
-            "rpyChannel":"1",  #0线下 1线上
-            "rpyDate":"2022-07-13",
-            "rpyDeductAmt":0, #营销减免金额
-            "rpyIntAmt":0.66000000,
-            "rpyOintAmt":0,
-            "rpyPrinAmt":1000,
-            "rpyRedLineAmt":0,  #红线减免
-            "rpyReqNo":"346242956052115002121615678",
-            "rpyShareAmt":1, #返费
-            "rpyShareAmtFour":2,
-            "rpyShareAmtOne":3,
-            "rpyShareAmtThree":4,
-            "rpyShareAmtTwo":5,
-            # "rpyTerm":7,
-            "rpyType":"01",   #提前还款:01(提前结清) 期供还款:02 (按指定期数进行还款，包含部分还款、提前还当期)   逾期还款：03（逾期还部分、逾期足额按期还）
-            "sourceCode":"QH",
-            "tranNo":"repayReqNo16576826171401"
+            "ifEnough": "1",  # 0:非足额 1:足额
+            "loanReqNo": "346177553668492058625",
+            "rpyChannel": "0",  # 0线下 1线上
+            "rpyDate": "2022-07-13",  # 还款日期
+            "rpyDeductAmt": 0,  # 营销减免金额
+            "rpyIntAmt": 0.66000000,  # 利息
+            "rpyOintAmt": 0,  # 罚息
+            "rpyPrinAmt": 1000,  # 本金
+            "rpyRedLineAmt": 0,  # 红线减免
+            "rpyReqNo": "346242956052115002121615678",
+            "rpyShareAmt": 1,  # 返费
+            "rpyShareAmtFour": 2,
+            "rpyShareAmtOne": 3,
+            "rpyShareAmtThree": 4,
+            "rpyShareAmtTwo": 5,
+            "rpyTerm": 7,  # 还款期数，期供还款该字段必填，提前结清期数为空
+            "rpyType": "01",   # 提前还款:01(提前结清) 期供还款:02 (按指定期数进行还款，包含部分还款、提前还当期)   逾期还款：03（逾期还部分、逾期足额按期还）
+            "sourceCode": "QH",
+            "tranNo": "repayReqNo16576826171401"
         }
     },
     # 还款查询接口

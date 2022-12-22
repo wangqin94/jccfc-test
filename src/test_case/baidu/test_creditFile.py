@@ -12,7 +12,7 @@ class MyTestCase(unittest.TestCase):
         # 生成借据文件、费率文件、还款计划
         if flag == 0:
             # repay_mode='02'随借随还，repay_mode='05'等额本息； cur_date放款时间；loan_record支用查询列表
-            bd = BaiduFile(data, cur_date='20211026', loan_record=0, repay_mode='05')
+            bd = BaiduFile(data, cur_date='20221121', loan_record=0, repay_mode='02')
             bd.start()
 
         # 支用状态使用中方可生成还款文件
@@ -27,8 +27,8 @@ class MyTestCase(unittest.TestCase):
             # prin_amt: 还款本金，随借随还部分还款必填
             # int_amt: 还款利息，随借随还部分还款必填
             # pnlt_int_amt: 还款罚息，随借随还部分还款必填
-            bd = BaiduRepayFile(data, repay_mode='05', repay_date="2021-11-26", repay_term_no=2,
-                                repay_type='02', loan_invoice_id=None)
+            bd = BaiduRepayFile(data, repay_mode='02', repay_date="20221221", repay_term_no=1,
+                                repay_type='02', loan_invoice_id="000LI0002150232428396608019")
             bd.start_repay_file()
 
 

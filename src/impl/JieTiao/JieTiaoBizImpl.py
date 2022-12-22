@@ -14,7 +14,13 @@ from src.enums.EnumsCommon import *
 
 
 class JieTiaoBizImpl(EnvInit):
-    def __init__(self, *, data=None, encrypt_flag=True):
+    def __init__(self, *, data=None, encrypt_flag=True, loan_invoice_id=None):
+        '''
+
+        :param data:
+        :param encrypt_flag: 加密
+        :param loan_invoice_id: 借据号为None取用户第一笔借据，否则取自定义值
+        '''
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
@@ -24,6 +30,7 @@ class JieTiaoBizImpl(EnvInit):
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
+        self.loan_invoice_id = loan_invoice_id
 
         self.encrypt_url = self.host + JieTiaoEnum.JieTiaoEncryptPath.value
         self.decrypt_url = self.host + JieTiaoEnum.JieTiaoDecryptPath.value
@@ -35,10 +42,11 @@ class JieTiaoBizImpl(EnvInit):
         loan_data = dict()
 
         loan_data['loanReqNo'] = self.data['loanReqNo']
-        loan_data['custName'] ,loan_data['dbAcctName'] = self.data['name'],self.data['name']
+        loan_data['custName'], loan_data['dbAcctName'] = self.data['name'],self.data['name']
         loan_data['id'] = self.data['cer_no']
         loan_data['dbAcct'] = self.data['bankid']
         loan_data['mobileNo'] = self.data['telephone']
+        loan_data['loanDate'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         # 更新 payload 字段值
         loan_data.update(kwargs)
@@ -101,12 +109,73 @@ class JieTiaoBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-
-    def repay_notice(self, **kwargs):
+    def repay_notice(self, rpyTerm="1", rpyType="02", rpyDate="2022-07-01", **kwargs):
+        '''
+        还款通知
+        :param rpyTerm: 还款期数
+        :param rpyType: 还款类型：提前还款:01 期供还款:02 逾期还款：03
+        :param rpyDate: 还款日期
+        :param kwargs:
+        :return:
+        '''
         repay_notice_data = dict()
 
-        # repay_notice_data['rpyReqNo'] = 'rpyNoticeNo' + self.strings + "4"
+        repay_notice_data['rpyReqNo'] = 'rpyNoticeNo' + self.strings + "4"
         repay_notice_data['loanReqNo'] = self.data['loanReqNo']
+        repay_notice_data['tranNo'] = 'tranNo' + self.strings + "5"
+        repay_notice_data['rpyTerm'] = rpyTerm
+        repay_notice_data['rpyType'] = rpyType
+
+        # 根据idNo查询支用信息
+        key1 = "certificate_no = '{}'".format(self.data['cer_no'])
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
+        # 根据支用申请单号查询借据信息
+        if self.loan_invoice_id:
+            loan_invoice_id = self.loan_invoice_id
+            key2 = "loan_invoice_id = '{}'".format(loan_invoice_id)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            loan_apply_id = credit_loan_invoice["loan_apply_id"]
+            key21 = "loan_apply_id = '{}'".format(loan_apply_id)
+            credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key21)
+        else:
+            loan_apply_id = credit_loan_apply["loan_apply_id"]
+            key2 = "loan_apply_id = '{}'".format(loan_apply_id)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
+
+        # 取资产执行利率
+        asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
+                                                                            loan_invoice_id=loan_invoice_id)
+        execute_rate = asset_loan_invoice_info["execute_rate"]
+
+        # 根据借据Id和期次获取还款计划
+        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, rpyTerm)
+        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
+
+        repay_notice_data["rpyPrinAmt"] = float(asset_repay_plan['left_repay_principal'])  # 本金
+        repay_notice_data["rpyIntAmt"] = float(asset_repay_plan['left_repay_interest'])  # 利息
+        repay_notice_data["rpyOintAmt"] = float(asset_repay_plan['left_repay_overdue_fee'])  # 逾期罚息
+
+        if rpyType == '02':
+            repay_notice_data['rpyDate'] = str(asset_repay_plan["pre_repay_date"])
+        if rpyType == '03':
+            finish_time = asset_repay_plan["calc_overdue_fee_date"] - relativedelta(days=-int(1))
+            repay_notice_data['rpyDate'] = str(finish_time)
+        if rpyType == '01':
+            repay_notice_data['rpyDate'] = rpyDate
+            repay_notice_data["rpyPrinAmt"] = float('{:.2f}'.format(asset_repay_plan['before_calc_principal']))  # 本金
+
+            pre_repay_date = str(asset_repay_plan["start_date"])
+            pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
+            repay_date = datetime.strptime(rpyDate, "%Y-%m-%d").date()
+            if pre_repay_date > repay_date:
+                repay_notice_data["rpyIntAmt"] = 0  # 如果还款时间小于账单日，利息应该为0
+            else:
+                # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
+                days = get_day(asset_repay_plan["start_date"], repay_date)
+                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * execute_rate / (100 * 360)
+                repay_notice_data["rpyIntAmt"] = float('{:.2f}'.format(paid_prin_amt))  # 利息
+
         # 更新 payload 字段值
         repay_notice_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_notice']['payload'], **repay_notice_data)

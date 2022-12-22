@@ -177,6 +177,24 @@ BaiDu = {
         },
     },
 
+    'notifyCloseLimit': {
+        'interface': '/api/v1/baidu/notifyCloseLimit',
+        'payload': {
+            "type": "sync",
+            "reqSn": '20170601195302_A322848157456107161',
+            "message": {
+                "sessionId": '20170601195302_A322848157456107161',
+                "transactionType": "notifyCloseLimit",
+                "timestamp": '1496317989595',
+                "basicInfo": {
+                    "prcid": ''
+                },
+                "expanding": {
+                }
+            }
+        }
+    },
+
     'notice': {
         'interface': '/api/v1/baidu/limit/restore',
         'payload': {
