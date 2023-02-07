@@ -20,7 +20,7 @@ if not os.path.exists(_FilePath):
 
 
 class BaiduFile(EnvInit):
-    def __init__(self, data, cur_date=None, loan_record=0, repay_mode='02'):
+    def __init__(self, data, cur_date=None, loan_record=0, repay_mode='05'):
         """ # 百度对账文件
         @param data:                用户四要素
         @param cur_date:            账务日期，默认None 为当前日期

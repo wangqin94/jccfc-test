@@ -16,7 +16,7 @@ from config.globalConfig import *
 
 
 class BaiDuBizImpl(EnvInit):
-    def __init__(self, data=None, type=1, repay_mode='02', loan_no=None, encrypt_flag=False):
+    def __init__(self, data=None, type=1, repay_mode='05', loan_no=None, encrypt_flag=False):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
