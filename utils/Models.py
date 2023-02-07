@@ -561,18 +561,18 @@ def format_path(path):
     return path.replace('\\', '/').replace('\\\\', '/').replace('..', '.').replace('/./', '/')
 
 
-def assetAnnuity(loanAmt, term, year_rate_jc, bill_date):
+def assetAnnuity(loanAmt, term, yearRate, billDate):
     """
     非最后一期，每期期供是用等额本息的公式计算出来的，然后对应的利息是等于剩余本金*月利率，本金=期供-利息；只有最后一期，是用的剩余本金+利息，计算的期供
     @param loanAmt:         借款金额
     @param term:            期数
-    @param year_rate_jc:    锦程实收利率
-    @param bill_date:       用户首期账单日
+    @param yearRate:        锦程实收利率
+    @param billDate:       用户首期账单日
     @return:还款计划表
     """
     repayment_plan = []
     # 月利率
-    jcMonthRate = round(year_rate_jc / 1200, 6)
+    jcMonthRate = round(yearRate / 1200, 6)
     # 剩余应还本金
     jcLeftPrePrincipal = loanAmt
     for i in range(1, term + 1):
@@ -591,7 +591,7 @@ def assetAnnuity(loanAmt, term, year_rate_jc, bill_date):
         jcLeftPrePrincipal = jcLeftPrePrincipal - jcMonthPrincipal
 
         repaymentPlans['period'] = i
-        repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
+        repaymentPlans['billDate'] = get_custom_month(i - 1, billDate)
         repaymentPlans['principalAmt'] = round(jcMonthPrincipal, 2)
         repaymentPlans['interestAmt'] = round(jcMonthInterest, 2)
         repayment_plan.append(repaymentPlans)
