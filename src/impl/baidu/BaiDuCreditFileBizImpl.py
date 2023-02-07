@@ -20,7 +20,7 @@ if not os.path.exists(_FilePath):
 
 
 class BaiduFile(EnvInit):
-    def __init__(self, data, cur_date=None, loan_record=0, repay_mode='02'):
+    def __init__(self, data, cur_date=None, loan_record=0, repay_mode='05'):
         """ # 百度对账文件
         @param data:                用户四要素
         @param cur_date:            账务日期，默认None 为当前日期
@@ -476,6 +476,10 @@ class BaiduRepayFile(BaiduFile):
         self.get_reduce_csv(self.reduce_csv_template)
         self.log.demsg("还款文件生成路径：{}".format(_FilePath))
         self.baidu_upload_repay_file()
+        # 更新百度还款计划batch_date
+        key = "loan_id = '" + self.loan_no + "'"
+        self.MysqlBizImpl.update_credit_database_info('credit_baid_repay_plan_info',
+                                                      batch_date=self.repay_date.replace('-', ''), attr=key)
 
     def get_invoice_info(self):
         """

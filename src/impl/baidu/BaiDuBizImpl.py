@@ -2,6 +2,8 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
+import datetime
+
 from src.impl.common.CommonBizImpl import post_with_encrypt_baidu
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Apollo import Apollo
@@ -14,7 +16,7 @@ from config.globalConfig import *
 
 
 class BaiDuBizImpl(EnvInit):
-    def __init__(self, data=None, type=1, repay_mode='02', loan_no=None, encrypt_flag=False):
+    def __init__(self, data=None, type=1, repay_mode='05', loan_no=None, encrypt_flag=False):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
@@ -81,7 +83,7 @@ class BaiDuBizImpl(EnvInit):
 
         # 配置风控mock返回建议额度与授信额度一致
         apollo_data = dict()
-        apollo_data['hj.channel.risk.credit.line.amt.mock'] = self.active_payload['message']['expanding']['initialAmount']
+        apollo_data['hj.channel.risk.credit.line.amt.mock'] = float(self.active_payload['message']['expanding']['initialAmount'])/100
         Apollo().update_config(appId='loan2.1-jcxf-credit', **apollo_data)
 
         # 校验用户是否已存在
@@ -245,6 +247,30 @@ class BaiDuBizImpl(EnvInit):
         url = self.host + EnumBaiDuPath.BaiDuFileEncryptPath.value
         file_data = json.dumps(file_data)
         response = requests.post(url=url, headers=headers, json=file_data)
+        return response
+
+    # 额度失效
+    def notifyCloseLimit(self, idNo, **kwargs):
+        """
+        额度失效
+        :param idNo: 用户身份证号
+        :param kwargs:
+        :return:
+        """
+        strings = str(int(round(time.time() * 10000)))
+        closelimitdata = dict()
+        closelimitdata['reqSn'] = datetime.now().strftime('%Y%m%d%H%M%S') + "_A" + strings
+        closelimitdata['sessionId'] = datetime.now().strftime('%Y%m%d%H%M%S') + "_A" + strings
+        closelimitdata['sessionId'] = strings
+        closelimitdata['prcid'] = idNo
+        closelimitdata.update(kwargs)
+        parser = DataUpdate(self.cfg['notifyCloseLimit']['payload'], **closelimitdata)
+        self.active_payload = parser.parser
+
+        self.log.demsg('开始额度失效...')
+        url = self.host + self.cfg['notifyCloseLimit']['interface']
+        response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                           encrypt_flag=True)
         return response
 
 
