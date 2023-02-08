@@ -83,13 +83,11 @@ class XiaoXBizImpl(MysqlInit):
         getCardRealNameMessage['requestSerialNo'] = 'requestNo' + strings + "_1000"
         getCardRealNameMessage['requestTime'] = self.date
         # body
-        getCardRealNameMessage['aggrementNum'] = 'aggrementNum' + strings
         getCardRealNameMessage['payerIdNum'] = self.data['cer_no']
         getCardRealNameMessage['payer'] = self.data['name']
         getCardRealNameMessage['mobileNo'] = self.data['telephone']
         getCardRealNameMessage['payerBankCardNum'] = self.data['bankid']
         getCardRealNameMessage['payerPhoneNum'] = self.data['telephone']
-        getCardRealNameMessage['agreementTime'] = self.date
 
         # 更新 payload 字段值
         getCardRealNameMessage.update(kwargs)
