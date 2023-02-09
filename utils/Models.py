@@ -595,7 +595,50 @@ def assetAnnuity(loanAmt, term, yearRate, billDate):
         repaymentPlans['principalAmt'] = round(jcMonthPrincipal, 2)
         repaymentPlans['interestAmt'] = round(jcMonthInterest, 2)
         repayment_plan.append(repaymentPlans)
-    return json.dumps(repayment_plan)
+    return repayment_plan
+
+
+# # -----------------------------------------------------------
+# # - 老核心等额本息还款计划计算
+# # -----------------------------------------------------------
+def OldSysLoanByAvgAmt(loanAmt, term, yearRate, billDate, guaranteeAmt=1.11):
+    """
+    非最后一期，每期期供是用等额本息的公式计算出来的，然后对应的利息是等于剩余本金*月利率，本金=期供-利息；只有最后一期，是用的剩余本金+利息，计算的期供
+    @param loanAmt:         借款金额
+    @param term:            期数
+    @param yearRate:        锦程实收利率
+    @param billDate:        用户首期账单日
+    @param guaranteeAmt:    服务费
+    @return:还款计划表
+    """
+    repayment_plan = []
+    # 月利率
+    jcMonthRate = round(yearRate / 1200, 6)
+    # 剩余应还本金
+    jcLeftPrePrincipal = loanAmt
+    for i in range(1, term + 1):
+        repaymentPlans = {}
+        isLastPeriod = i == term
+        # 每月还款总额
+        if isLastPeriod:
+            jcAmtpermonth = jcLeftPrePrincipal + jcLeftPrePrincipal * jcMonthRate
+        else:
+            jcAmtpermonth = round(loanAmt * jcMonthRate * pow((1 + jcMonthRate), term) / (pow((1 + jcMonthRate), term) - 1), 2)
+
+        # 每期应还利息
+        jcMonthInterest = jcLeftPrePrincipal * jcMonthRate
+        # 每期应还本金
+        jcMonthPrincipal = jcLeftPrePrincipal if isLastPeriod else jcAmtpermonth - jcMonthInterest
+        # 剩余还款本金
+        jcLeftPrePrincipal = jcLeftPrePrincipal - jcMonthPrincipal
+
+        repaymentPlans['period'] = i  # 期次
+        repaymentPlans['billDate'] = get_custom_month(i - 1, billDate)  # 还款日
+        repaymentPlans['principalAmt'] = round(jcMonthPrincipal, 2)  # 本金
+        repaymentPlans['interestAmt'] = round(jcMonthInterest, 2)  # 利息
+        repaymentPlans['guaranteeAmt'] = guaranteeAmt  # 服务费
+        repayment_plan.append(repaymentPlans)
+    return repayment_plan
 
 
 if __name__ == "__main__":

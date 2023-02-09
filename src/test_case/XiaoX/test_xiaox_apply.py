@@ -24,7 +24,7 @@ class MyTestCase(unittest.TestCase):
         XiaoX.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # 发起授信申请
-        self.thirdApplyId = XiaoX.credit(applyAmount=5000)['body']['thirdApplyId']
+        self.thirdApplyId = XiaoX.credit(applyAmount=5000, loanTerm=3)['body']['thirdApplyId']
 
     """ 后置条件处理 """
 

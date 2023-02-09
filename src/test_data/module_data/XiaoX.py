@@ -131,13 +131,20 @@ XiaoX = {
                 "workAddrCityCode": "110100",  # 工作地址市级代码
                 "workAddrAreaName": "海淀区",  # 工作地址区名称
                 "workAddrAreaCode": "110108",  # 工作地址区代码
-                "liveAddress": "新疆科技学院(东校区)",  # 工作详细地址
-                "liveProvinceName": "新疆维吾尔自治区",  # 居住地址省份名称
-                "liveProvinceCode": "650000",  # 居住地址省份代码
-                "liveCityName": "巴音郭楞蒙古自治州",  # 居住地址市级名称
-                "liveCityCode": "652800",  # 居住地址市级代码
-                "liveAreaName": "库尔勒市",  # 居住地址区名称
-                "liveAreaCode": "652801",  # 居住地址区代码
+                "liveAddress": "北京市海淀医院",  # 工作详细地址
+                "liveProvinceName": "北京市",  # 居住地址省份名称
+                "liveProvinceCode": "110000",  # 居住地址省份代码
+                "liveCityName": "北京市",  # 居住地址市级名称
+                "liveCityCode": "110100",  # 居住地址市级代码
+                "liveAreaName": "海淀区",  # 居住地址区名称
+                "liveAreaCode": "110108",  # 居住地址区代码
+                # "liveAddress": "新疆科技学院(东校区)",  # 工作详细地址
+                # "liveProvinceName": "新疆维吾尔自治区",  # 居住地址省份名称
+                # "liveProvinceCode": "650000",  # 居住地址省份代码
+                # "liveCityName": "巴音郭楞蒙古自治州",  # 居住地址市级名称
+                # "liveCityCode": "652800",  # 居住地址市级代码
+                # "liveAreaName": "库尔勒市",  # 居住地址区名称
+                # "liveAreaCode": "652801",  # 居住地址区代码
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
                 "contactRelationList": [
@@ -256,13 +263,13 @@ XiaoX = {
                 "idNo": "",  # 证件号码
                 "mobileNo": "0102",  # 手机号码
                 "reserveMobile": "",  # 银行预留手机号
-                "orderType": "2",  # 订单类型  固定传2-赊销(分期购物)
+                "orderType": "1",  # 订单类型  固定传1-取现
                 "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
                 "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "accountNo": "",  # 放款/还款银行卡号
                 "bankName": "工商银行",  # 还款银行名称
-                "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
+                "loanPurpose": "1",  # 贷款用途 EnumLoanPurpose
                 "guaranteeContractNo": "",  # 担保合同号
                 "fileInfos": [
                     {

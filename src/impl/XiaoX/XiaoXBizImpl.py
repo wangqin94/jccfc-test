@@ -18,7 +18,7 @@ def computeMD5(message):
     return m.hexdigest()
 
 
-def get_jike_bill_day(loan_date=None):
+def get_bill_day(loan_date=None):
     """
     @param loan_date: 放款时间，如果放款时间空，则默认当前时间 eg:2022-01-01
     @return: 返回首期账单日
@@ -168,7 +168,7 @@ class XiaoXBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
-        credit_data['interestRate'] = 10.3
+        credit_data['interestRate'] = 9.5
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '1'  # 固定传1-取现
@@ -234,7 +234,7 @@ class XiaoXBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=10.3, **kwargs):
+    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=9.5, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
@@ -268,7 +268,7 @@ class XiaoXBizImpl(MysqlInit):
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         # 首期还款日
-        firstRepayDate = get_jike_bill_day(loan_date)
+        firstRepayDate = get_bill_day(loan_date)
         applyLoan_data['firstRepayDate'] = firstRepayDate
         applyLoan_data['fixedRepayDay'] = firstRepayDate.split('-')[2]
 
@@ -287,8 +287,8 @@ class XiaoXBizImpl(MysqlInit):
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
 
         # 还款计划
-        applyLoan_data['repaymentPlans'] = assetAnnuity(billDate=firstRepayDate, loanAmt=loanAmt,
-                                                        yearRate=rate, term=loanTerm)
+        applyLoan_data['repaymentPlans'] = OldSysLoanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
+                                                              yearRate=rate, term=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -756,4 +756,5 @@ class XiaoXBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    assetAnnuity(billDate='2022-06-01', loanAmt=1000, yearRate=9.7, term=12)
+    s = OldSysLoanByAvgAmt(billDate='2023-03-09', loanAmt=1000, yearRate=9.5, term=3)
+    print(json.dumps(s))
