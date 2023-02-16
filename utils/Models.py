@@ -626,11 +626,11 @@ def OldSysLoanByAvgAmt(loanAmt, term, yearRate, billDate, guaranteeAmt=1.11):
             jcAmtpermonth = round(loanAmt * jcMonthRate * pow((1 + jcMonthRate), term) / (pow((1 + jcMonthRate), term) - 1), 2)
 
         # 每期应还利息
-        jcMonthInterest = jcLeftPrePrincipal * jcMonthRate
+        jcMonthInterest = round(jcLeftPrePrincipal * jcMonthRate, 2)
         # 每期应还本金
         jcMonthPrincipal = jcLeftPrePrincipal if isLastPeriod else jcAmtpermonth - jcMonthInterest
         # 剩余还款本金
-        jcLeftPrePrincipal = jcLeftPrePrincipal - jcMonthPrincipal
+        jcLeftPrePrincipal = round((jcLeftPrePrincipal - jcMonthPrincipal), 2)
 
         repaymentPlans['period'] = i  # 期次
         repaymentPlans['billDate'] = get_custom_month(i - 1, billDate)  # 还款日

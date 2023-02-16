@@ -90,6 +90,7 @@ XiaoX = {
             },
             "body": {
                 "thirdApplyId": "",  # 三方授信申请编号  与放款申请编号保持一致
+                "thirdApplyTime": "",  # 客户三方申请时间  yyyyMMddHHmmss
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "orderType": "1",  # 订单类型  固定传1-取现
                 "goodsName": "美容贷",  # 商品名称  取现为：取现借款、分期购物为：商品名称
@@ -147,6 +148,7 @@ XiaoX = {
                 # "liveAreaCode": "652801",  # 居住地址区代码
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
+                "familyMonthIncome": 2000,  # 家庭月收入  元
                 "contactRelationList": [
                     {
                         "contactName": "配偶姓名",  # 联系人姓名

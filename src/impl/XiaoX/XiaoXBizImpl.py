@@ -168,6 +168,7 @@ class XiaoXBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
+        credit_data['thirdApplyTime'] = self.date
         credit_data['interestRate'] = 9.5
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
@@ -756,5 +757,5 @@ class XiaoXBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    s = OldSysLoanByAvgAmt(billDate='2023-03-09', loanAmt=1000, yearRate=9.5, term=3)
+    s = OldSysLoanByAvgAmt(billDate='2022-12-20', loanAmt=12300, yearRate=9.5, term=3)
     print(json.dumps(s))
