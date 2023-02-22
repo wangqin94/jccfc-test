@@ -12,8 +12,8 @@ from src.impl.XiaoX.XiaoXBizImpl import XiaoXBizImpl
 
 
 class XiaoXCheckBizImpl(XiaoXBizImpl):
-    def __init__(self, data=None, encrypt_flag=True, person=False):
-        super().__init__(data=data, encrypt_flag=encrypt_flag, person=person)
+    def __init__(self, merchantId, data=None, encrypt_flag=True, person=False):
+        super().__init__(merchantId=merchantId, data=data, encrypt_flag=encrypt_flag, person=person)
 
     def XiaoX_check_credit_apply_status(self, thirdApplyId):
         """

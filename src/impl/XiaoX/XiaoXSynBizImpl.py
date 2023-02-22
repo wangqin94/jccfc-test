@@ -13,8 +13,8 @@ from utils.Models import *
 
 
 class XiaoXSynBizImpl(XiaoXBizImpl):
-    def __init__(self, data=None, encrypt_flag=True, person=False):
-        super().__init__(data=data, encrypt_flag=encrypt_flag, person=person)
+    def __init__(self, merchantId, data=None, encrypt_flag=True, person=False):
+        super().__init__(merchantId=merchantId, data=data, encrypt_flag=encrypt_flag, person=person)
         self.CheckBizImpl = CheckBizImpl()
         self.XiaoXCheckBizImpl = XiaoXCheckBizImpl(data)
 
@@ -40,7 +40,7 @@ class XiaoXSynBizImpl(XiaoXBizImpl):
         thirdApplyId = json.loads(XiaoX.credit(applyAmount=1000).get('body'))['thirdApplyId']
 
         # 数据库陈校验授信结果是否符合预期
-        status = self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=thirdApplyId)
+        self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=thirdApplyId)
         # 接口层校验授信结果是否符合预期
         self.XiaoXCheckBizImpl.XiaoX_check_credit_apply_status(thirdApplyId)
 
@@ -65,5 +65,5 @@ class XiaoXSynBizImpl(XiaoXBizImpl):
 
 
 if __name__ == "__main__":
-    XiaoXBizImpl = XiaoXSynBizImpl()
+    XiaoXBizImpl = XiaoXSynBizImpl(merchantId='G23E02XIAX')
     XiaoXBizImpl.preLoanapply(term=3)

@@ -16,7 +16,8 @@ class MyTestCase(unittest.TestCase):
         warnings.simplefilter('ignore', ResourceWarning)
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.repayPublicBizImpl = RepayPublicBizImpl()
-        self.XiaoXCheckBizImpl = XiaoXCheckBizImpl(data)
+        self.merchantId = 'G23E02XIAX'
+        self.XiaoXCheckBizImpl = XiaoXCheckBizImpl(self.merchantId, data)
 
     """ 测试步骤 """
     def test_repay_apply(self):
@@ -25,7 +26,7 @@ class MyTestCase(unittest.TestCase):
         # 还款环境配置
         self.repayPublicBizImpl.pre_repay_config(repayDate='2023-01-08')
 
-        XiaoX = XiaoXBizImpl(data=data)
+        XiaoX = XiaoXBizImpl(self.merchantId, data=data)
         credit_loan_invoice = XiaoX.MysqlBizImpl.get_credit_database_info('credit_loan_invoice', certificate_no=data['cer_no'])
         # repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
         # repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
