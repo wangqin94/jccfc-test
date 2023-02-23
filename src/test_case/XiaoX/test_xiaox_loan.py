@@ -37,7 +37,7 @@ class MyTestCase(unittest.TestCase):
     def test_apply(self):
         """ 测试步骤 """
         # 绑卡签约
-        XiaoX = XiaoXBizImpl(merchantId='G23E02XIAX', data=self.data)
+        XiaoX = XiaoXBizImpl(merchantId=self.merchantId, data=self.data)
         res = XiaoX.getCardRealNameMessage().get('body')
         XiaoX.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
         term = 3
