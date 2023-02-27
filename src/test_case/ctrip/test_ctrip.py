@@ -19,23 +19,23 @@ class TestCase(object):
         pass
 
     # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 还款通知]
-    def process(self, flag=2):
+    def process(self, flag=0):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
             xc = CtripBizImpl(data=None)
-            xc.credit(advice_amount=10000)
-
+            xc.credit(advice_amount=30000)
+            xc.update_apollo_amount()
 
         # 授信查询
         elif flag == 1:
             xc = CtripBizImpl(data=data)
-            xc.MysqlBizImpl.credit_query()
+            xc.credit_query()
 
         # 支用申请
         elif flag == 2:
             xc = CtripBizImpl(data=data)
-            xc.loan(loan_amount=10000, term=12, first_repay_date="20220701112233")  # first_repay_date=首期还款时间
+            xc.loan(loan_amount=600, term=6, first_repay_date="20230325000000")  # first_repay_date=首期还款时间
 
         # 支用查询
         elif flag == 3:
