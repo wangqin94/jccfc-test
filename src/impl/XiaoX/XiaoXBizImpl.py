@@ -37,8 +37,9 @@ def get_bill_day(loan_date=None):
 
 
 class XiaoXBizImpl(MysqlInit):
-    def __init__(self, data=None, encrypt_flag=True, person=True):
+    def __init__(self, merchantId, data=None, encrypt_flag=True, person=True):
         """
+        @param merchantId: 商户ID
         @param data: 四要素 为空系统随机获取，若person=True四要输写入person文件
         @param encrypt_flag: 接口加密标识，默认加密
         @param person: 若person=True四要输写入person文件，否则不写入
@@ -53,6 +54,8 @@ class XiaoXBizImpl(MysqlInit):
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
 
+        # 初始化产品
+        self.merchantId = merchantId
         # 初始化payload变量
         self.active_payload = {}
 
@@ -82,6 +85,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         getCardRealNameMessage['requestSerialNo'] = 'requestNo' + strings + "_1000"
         getCardRealNameMessage['requestTime'] = self.date
+        getCardRealNameMessage['merchantId'] = self.merchantId
         # body
         getCardRealNameMessage['payerIdNum'] = self.data['cer_no']
         getCardRealNameMessage['payer'] = self.data['name']
@@ -107,6 +111,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         bindCardRealName_data['requestSerialNo'] = 'requestNo' + strings + "_1000"
         bindCardRealName_data['requestTime'] = self.date
+        bindCardRealName_data['merchantId'] = self.merchantId
         # body
         bindCardRealName_data['tradeSerialNo'] = tradeSerialNo  # 同发起代扣签约返回的交易流水号
         bindCardRealName_data['mobileNo'] = self.data['telephone']
@@ -135,6 +140,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         queryWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
         queryWithholdingAgreement['requestTime'] = self.date
+        queryWithholdingAgreement['merchantId'] = self.merchantId
         # body
         queryWithholdingAgreement['payerIdNum'] = self.data['cer_no']
         queryWithholdingAgreement['payer'] = self.data['name']
@@ -165,6 +171,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         credit_data['requestSerialNo'] = 'requestNo' + strings + "_2000"
         credit_data['requestTime'] = self.date
+        credit_data['merchantId'] = self.merchantId
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
@@ -216,6 +223,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         queryCreditResult_data['requestSerialNo'] = 'requestNo' + strings + "_3000"
         queryCreditResult_data['requestTime'] = self.date
+        queryCreditResult_data['merchantId'] = self.merchantId
 
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'])
@@ -252,6 +260,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         applyLoan_data['requestSerialNo'] = 'requestNo' + strings + "_4000"
         applyLoan_data['requestTime'] = self.date
+        applyLoan_data['merchantId'] = self.merchantId
         # body
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'], status='03')
@@ -314,6 +323,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         queryLoanResult_data['requestSerialNo'] = 'requestNo' + strings + "_6000"
         queryLoanResult_data['requestTime'] = self.date
+        queryLoanResult_data['merchantId'] = self.merchantId
 
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'])
@@ -345,6 +355,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         repayPlan_query_data['requestSerialNo'] = 'requestNo' + strings + "_7000"
         repayPlan_query_data['requestTime'] = self.date
+        repayPlan_query_data['merchantId'] = self.merchantId
 
         # body
         repayPlan_query_data['loanInvoiceId'] = loanInvoiceId
@@ -374,7 +385,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         loanContract_query_data['requestSerialNo'] = 'requestNo' + strings + "_8000"
         loanContract_query_data['requestTime'] = self.date
-
+        loanContract_query_data['merchantId'] = self.merchantId
         # body
         loanContract_query_data['loanInvoiceId'] = loanInvoiceId
 
@@ -411,6 +422,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         repay_apply_data['requestSerialNo'] = 'requestNo' + strings
         repay_apply_data['requestTime'] = self.date
+        repay_apply_data['merchantId'] = self.merchantId
         # body
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
         # repay_apply_data['repayApplySerialNo'] = "2022093022001425270501810521"  # 支付宝存量订单
@@ -498,6 +510,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         repay_query_data['requestSerialNo'] = 'requestNo' + strings + "_1100"
         repay_query_data['requestTime'] = self.date
+        repay_query_data['merchantId'] = self.merchantId
         # body
         repay_query_data['repayApplySerialNo'] = repayApplySerialNo
 
@@ -527,6 +540,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         returnGoods_apply_data['requestSerialNo'] = 'requestNo' + strings + "_1200"
         returnGoods_apply_data['requestTime'] = self.date
+        returnGoods_apply_data['merchantId'] = self.merchantId
         # body
         returnGoods_apply_data['loanInvoiceId'] = loanInvoiceId
         returnGoods_apply_data['returnGoodsSerialNo'] = 'GoodsSerialNo' + strings
@@ -619,6 +633,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         file_data['requestSerialNo'] = 'requestNo' + strings + "_1300"
         file_data['requestTime'] = self.date
+        file_data['merchantId'] = self.merchantId
         # body
         file_data['thirdApplyId'] = thirdApplyId
 
@@ -653,6 +668,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         getAllAreaInfo_data['requestSerialNo'] = 'requestNo' + strings + "_1400"
         getAllAreaInfo_data['requestTime'] = self.date
+        getAllAreaInfo_data['merchantId'] = self.merchantId
         # body
 
         # 更新 payload 字段值
@@ -679,6 +695,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         queryLprInfo_data['requestSerialNo'] = 'requestNo' + strings + "_1500"
         queryLprInfo_data['requestTime'] = self.date
+        queryLprInfo_data['merchantId'] = self.merchantId
         # body
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'], status='03')
@@ -709,6 +726,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         cancelCreditLine_data['requestSerialNo'] = 'requestNo' + strings + "_1600"
         cancelCreditLine_data['requestTime'] = self.date
+        cancelCreditLine_data['merchantId'] = self.merchantId
         # body
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'], status='03')
@@ -738,6 +756,7 @@ class XiaoXBizImpl(MysqlInit):
         # head
         queryAccountResult_data['requestSerialNo'] = 'requestNo' + strings + "_1600"
         queryAccountResult_data['requestTime'] = self.date
+        queryAccountResult_data['merchantId'] = self.merchantId
         # body
         # if not thirdApplyId:
         #     credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'], status='03')

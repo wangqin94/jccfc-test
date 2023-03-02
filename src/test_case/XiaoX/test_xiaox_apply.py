@@ -3,7 +3,6 @@ import warnings
 
 from src.impl.common.CheckBizImpl import *
 from src.impl.XiaoX.XiaoXBizImpl import XiaoXBizImpl
-from src.test_case.XiaoX.person import data
 
 
 class MyTestCase(unittest.TestCase):
@@ -19,12 +18,12 @@ class MyTestCase(unittest.TestCase):
     def test_apply(self):
         """ 测试步骤 """
         # 绑卡签约
-        XiaoX = XiaoXBizImpl(data=None)
+        XiaoX = XiaoXBizImpl(merchantId='G23E02XIAX', data=None)
         res = XiaoX.getCardRealNameMessage().get('body')
         XiaoX.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # 发起授信申请
-        self.thirdApplyId = XiaoX.credit(applyAmount=5000, loanTerm=3)['body']['thirdApplyId']
+        self.thirdApplyId = XiaoX.credit(applyAmount=20000, loanTerm=3)['body']['thirdApplyId']
 
     """ 后置条件处理 """
 

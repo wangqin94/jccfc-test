@@ -28,15 +28,16 @@ class MyTestCase(unittest.TestCase):
         # self.data = {'name': '羿春儿', 'cer_no': '441500198108116985', 'telephone': '15958294017', 'bankid': '6200861676366329139'}
         self.log = MyLog.get_log()
         self.job = JOB()
+        self.merchantId = 'G23E02XIAX'
         self.CheckBizImpl = CheckBizImpl()
-        self.XiaoXCheckBizImpl = XiaoXCheckBizImpl(self.data)
+        self.XiaoXCheckBizImpl = XiaoXCheckBizImpl(self.merchantId, self.data)
 
     """ 测试步骤 """
 
     def test_apply(self):
         """ 测试步骤 """
         # 绑卡签约
-        XiaoX = XiaoXBizImpl(data=self.data)
+        XiaoX = XiaoXBizImpl(merchantId=self.merchantId, data=self.data)
         res = XiaoX.getCardRealNameMessage().get('body')
         XiaoX.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
         term = 3

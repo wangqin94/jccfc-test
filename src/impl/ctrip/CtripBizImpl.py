@@ -24,8 +24,8 @@ class CtripBizImpl(EnvInit):
 
         self.strings = str(int(round(time.time() * 1000)))
 
-        self.credit_amount = 3000000  # 授信申请金额, 默认3000000  单位分
-        self.loan_amount = 60000  # 支用申请金额, 默认1000000  单位分
+        self.credit_amount = 30000  # 授信申请金额, 默认30000  单位元
+        self.loan_amount = 1000  # 支用申请金额, 默认1000  单位元
         self.period = 3  # 借款期数, 默认3期
         # self.repay_term_no = repay_term_no
         # self.repay_mode = repay_mode
@@ -101,17 +101,29 @@ class CtripBizImpl(EnvInit):
         self.credit_payload['user_data']['Platform']['user_name'] = self.data['name']
         self.credit_payload['user_data']['Platform']['mobile'] = self.data['telephone']
 
-        # 配置风控mock返回建议额度与授信额度一致
-        apollo_data = dict()
-        apollo_data['hj.channel.risk.credit.line.amt.mock'] = self.credit_payload['advice_amount']
-        Apollo().update_config(appId='loan2.1-jcxf-credit', **apollo_data)
-
         self.log.demsg('授信申请...')
         url = self.host + self.cfg['credit']['interface']
         response = post_with_encrypt(url, self.credit_payload, encrypt_flag=False)
         return response
 
-        # 授信查询
+    def update_apollo_amount(self):
+        # 配置风控mock返回建议额度与授信额度一致
+        apollo_data = dict()
+        result = self.MysqlBizImpl.get_credit_database_info("credit_apply", certificate_no=self.data['cer_no'])
+        i = 1
+        while result is None:
+            time.sleep(5)
+            result = self.MysqlBizImpl.get_credit_database_info("credit_apply", certificate_no=self.data['cer_no'])
+            try:
+                apollo_data['hj.channel.risk.credit.line.amt.mock'] = float(result['apply_amount'])
+                Apollo().update_config(appId='loan2.1-jcxf-credit', **apollo_data)
+            except:
+                pass
+            i += 1
+            if i == 5:
+                break
+
+    # 授信查询
     def credit_query(self, **kwargs):
         credit_query_data = dict()
         key = self.MysqlBizImpl.get_credit_apply_info(thirdpart_user_id=self.data['open_id'])
