@@ -18,6 +18,8 @@ class ProductEnum(Enum):
     JieTiao = 'jietiao'
     JIKE = 'jike'
     JIEBEI = 'jiebei'
+    XIAOX = 'xiaoxiang'
+    YINLIU = 'yinliu'
 
 
 @unique
@@ -44,9 +46,8 @@ class EnumMerchantId(Enum):
 class EnumCreditStatus(Enum):
     SUCCESS = '03'  # 成功
     TO_CREDIT = '02'  # 审批中
-    FAIL = '04'        #失败
-    AUDITING = '00'      #待审核
-
+    FAIL = '04'       # 失败
+    AUDITING = '00'    # 待审核
 
 
 @unique
@@ -60,7 +61,7 @@ class EnumLoanStatus(Enum):
     AUDITING = '06'  # 审核中
     LOANING = '16'  # 放款中
     LOAN_AUDITING = '23'  # 放款审核中
-    INITIALIZATION = '01'  #初始化
+    INITIALIZATION = '01'  # 初始化
 
 
 @unique

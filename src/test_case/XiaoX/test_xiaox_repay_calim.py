@@ -2,7 +2,7 @@ import unittest
 import warnings
 
 import time
-from src.impl.XiaoX.XiaoXCreateFileBizImpl import XiaoXRepayFile
+from src.impl.common.YinLiuCreateFileBizImpl import YinLiuRepayFile
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_case.XiaoX.person import data
 
@@ -15,19 +15,19 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl = RepayPublicBizImpl()
 
     """ 测试步骤 """
-    def test_repay_apply(self):
+    # 银鼎 G23E011 中智信 G23E021
+    def test_repay_apply(self, productId='G23E011', repayDate='2022-09-06'):
         """ 测试步骤 """
-        repayDate = '2022-09-06'
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
         # 还款环境配置,清理缓存配置账务时间
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
-        xiaoXRepayFile = XiaoXRepayFile(data, repayTermNo='3', repayDate=repayDate)
-        xiaoXRepayFile.creditClaimFile()
+        yinLiuRepayFile = YinLiuRepayFile(data, productId, repayTermNo='3', repayDate=repayDate)
+        yinLiuRepayFile.creditClaimFile()
 
-        self.repayPublicBizImpl.job.update_job('即科代偿文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job('即科代偿文件分片任务流', group=13)
+        self.repayPublicBizImpl.job.update_job('引流代偿文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.trigger_job('引流代偿文件分片任务流', group=13)
         time.sleep(3)
 
         # 自动入账

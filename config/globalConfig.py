@@ -68,5 +68,9 @@ ks3_asset_path = {
     'jike': {
         "claimPath": "xdgl/xdnb/pl/accounting/asset/geexClaimFile",
         "bayBackPath": "xdgl/xdnb/pl/accounting/asset/geexBuybackFile"
+    },
+    'yinliu': {
+        "claimPath": "xdgl/xdnb/pl/accounting/asset/geexClaimFile",
+        "bayBackPath": "xdgl/xdnb/pl/accounting/asset/geexBuybackFile"
     }
 }
