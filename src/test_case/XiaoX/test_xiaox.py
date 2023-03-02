@@ -11,6 +11,7 @@ from multiprocessing import Process
 from src.impl.XiaoX.XiaoXBizImpl import XiaoXBizImpl
 from person import *
 from utils.Logger import MyLog
+from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 
 
 class TestCase(object):
@@ -23,10 +24,9 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=7):
+    def process(self, flag=7, merchantId = 'G23E02XIAX'):
         """ 测试步骤 """
         # 绑卡
-        merchantId = 'G23E02XIAX'
         if flag == 0:
             XiaoX = XiaoXBizImpl(merchantId, data=None)
             XiaoX.getCardRealNameMessage()
@@ -113,6 +113,22 @@ class TestCase(object):
             # XiaoX.queryAccountResult("GoodsSerialNo16624470361285455", loanInvoiceId='000LI0001739049438658571059', term=2)
             # XiaoX.queryAccountResult("GoodsSerialNo16624470361285455", term=2)
             XiaoX.queryAccountResult(loanInvoiceId='000LI0001408714913972228005', term=2)
+
+        # 统一还款
+        elif flag == 16:
+            XiaoX = XiaoXBizImpl(merchantId,data=data)
+            repayType = '02'
+            if(repayType !='02'):
+                XiaoX.repay_apply(loanInvoiceId='000LI0001900746367639750011', repay_scene=repayType, repay_type='1',repayTerm=None, repayGuaranteeFee=1.11, repayDate=None)
+            else:
+                i = 0
+                while i < 5:
+                    i += 1
+                    XiaoX.repay_apply(loanInvoiceId='000LI0001900746367639750011', repay_scene=repayType, repay_type='1', repayTerm=None,repayGuaranteeFee=1.11, repayDate=None)
+                    # 自动入账
+                    self.repayPublicBizImpl = RepayPublicBizImpl()
+                    self.repayPublicBizImpl.job.trigger_job("自动入账处理任务流", group=13)
+                    time.sleep(3)
 
     def postprocess(self):
         """ 后置条件处理 """
