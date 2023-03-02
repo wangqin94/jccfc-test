@@ -37,62 +37,6 @@ def get_jike_bill_day(loan_date=None):
 
 
 # # -----------------------------------------------------------
-# # - 等额本息计算2
-# # - 最后1期次月供
-# # -----------------------------------------------------------
-def jike_loanByAvgAmt2(bill_date, loanAmt, repaymentRate, loanNumber):
-    """
-    @param bill_date: 首期账单日期
-    @param loanAmt: 放款总金额
-    @param repaymentRate: 年利率,如9.7%传9.7
-    @param loanNumber: 放款期数
-    @return: 还款计划列表
-    """
-    repayment_plan = []
-
-    # 月利率
-    monthRate = round(repaymentRate / 100 / 12, 6)
-    perPeriodAmountMultiply = loanAmt
-    perPeriodAmountMultiplicand = monthRate * (monthRate + 1) ** loanNumber
-    perPeriodAmountDivisor = (monthRate + 1) ** loanNumber - 1
-    perPeriodAmountSum = round(perPeriodAmountMultiply * perPeriodAmountMultiplicand / perPeriodAmountDivisor, 2)
-    # 剩余本金
-    residualPrincipalTotal = loanAmt
-    # 剩余利息
-    residualInterestTotal = perPeriodAmountSum * loanNumber - loanAmt
-
-    for i in range(1, loanNumber + 1):
-        isLastPeriod = i == loanNumber
-        repaymentPlans = {}
-
-        interestMultiply = loanAmt * monthRate
-        interestMultiplicand = (monthRate + 1) ** loanNumber - (monthRate + 1) ** (i - 1)
-        interestdDivisor = (monthRate + 1) ** loanNumber - 1
-        interest = residualInterestTotal if isLastPeriod else round(
-            interestMultiply * interestMultiplicand / interestdDivisor, 2)
-        principal = residualPrincipalTotal if isLastPeriod else perPeriodAmountSum - interest
-        interest = round(interest, 2)
-        principal = round(principal, 2)
-        # 计算本金利息
-        residualPrincipalTotal = residualPrincipalTotal - principal
-        residualInterestTotal = residualInterestTotal - interest
-        # 期次
-        repaymentPlans['period'] = i
-        # 账单日
-        repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
-        # 月供
-        repaymentPlans['perPeriodAmountSum'] = perPeriodAmountSum
-        # 本金
-        repaymentPlans['principalAmt'] = float(principal)
-        # 利息
-        repaymentPlans['interestAmt'] = float(interest)
-        # 服务费
-        repaymentPlans['guaranteeAmt'] = 1.11
-        repayment_plan.append(repaymentPlans)
-    return repayment_plan
-
-
-# # -----------------------------------------------------------
 # # - 等额本息计算3
 # # - 最后1期月供计算，先算“最后1期利息=剩余本金*月利率”，“最后1月还款=月利息+剩余本金”
 # # -----------------------------------------------------------
@@ -105,43 +49,29 @@ def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
     @return: 还款计划列表
     """
     repayment_plan = []
-
-    # 月利率
+    # 计算每期应还
     monthRate = round(repaymentRate / 100 / 12, 6)
     perPeriodAmountMultiply = loanAmt
     perPeriodAmountMultiplicand = monthRate * (monthRate + 1) ** loanNumber
     perPeriodAmountDivisor = (monthRate + 1) ** loanNumber - 1
-    # 每期应还款总额
     perPeriodAmountSum = round(perPeriodAmountMultiply * perPeriodAmountMultiplicand / perPeriodAmountDivisor, 2)
-    # 剩余本金
+    # 剩余本金 = 放款本金
     residualPrincipalTotal = loanAmt
-    # 剩余利息
-    residualInterestTotal = perPeriodAmountSum * loanNumber - loanAmt
 
     for i in range(1, loanNumber + 1):
-        # 是否最后1期
-        isLastPeriod = i == loanNumber
         repaymentPlans = {}
-
-        interestMultiply = loanAmt * monthRate
-        interestMultiplicand = (monthRate + 1) ** loanNumber - (monthRate + 1) ** (i - 1)
-        interestdDivisor = (monthRate + 1) ** loanNumber - 1
-
-        interest = round(interestMultiply * interestMultiplicand / interestdDivisor, 2)
-        principal = residualPrincipalTotal if isLastPeriod else perPeriodAmountSum - interest
-        interest = round(interest, 2)
-        principal = round(principal, 2)
-        # 计算本金
-        residualPrincipalTotal = residualPrincipalTotal - principal
-        # 计算利息
-        residualInterestTotal = residualInterestTotal - interest
+        #是否最后1期
+        isLastPeriod = i == loanNumber
+        interest = round(residualPrincipalTotal * monthRate, 2)
+        principal = residualPrincipalTotal if isLastPeriod else round(perPeriodAmountSum - interest,2)
+        # 剩余本金
+        residualPrincipalTotal = round(residualPrincipalTotal - principal,2)
         # 期次
         repaymentPlans['period'] = i
         # 账单日
         repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
         # 月供
-        repaymentPlans['perPeriodAmountSum'] = round(principal + principal * monthRate,
-                                                     2) if isLastPeriod else perPeriodAmountSum
+        repaymentPlans['perPeriodAmountSum'] = round(principal + principal * monthRate,2) if isLastPeriod else perPeriodAmountSum
         # 本金
         repaymentPlans['principalAmt'] = float(principal)
         # 利息
@@ -150,7 +80,6 @@ def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
         repaymentPlans['guaranteeAmt'] = 1.11
         repayment_plan.append(repaymentPlans)
     return repayment_plan
-
 
 # # -----------------------------------------------------------
 # # - 等额本息计算
@@ -475,7 +404,7 @@ class JiKeBizImpl(MysqlInit):
 
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
-        applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt2(bill_date=firstRepayDate, loanAmt=loanAmt,
+        applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt3(bill_date=firstRepayDate, loanAmt=loanAmt,
                                                               repaymentRate=rate, loanNumber=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
@@ -944,4 +873,4 @@ class JiKeBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    jike_loanByAvgAmt(bill_date='2022-06-01', loanamt=1000, year_rate_jc=9.7, year_rate_jk=24, term=12)
+    print(jike_loanByAvgAmt3(bill_date='2022-06-01', loanAmt=11100, repaymentRate=9.7,  loanNumber=12))
