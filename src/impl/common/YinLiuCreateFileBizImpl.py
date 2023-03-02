@@ -11,7 +11,7 @@ from src.impl.common.CommonBizImpl import *
 
 _log = Logs()
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
-_FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.JIKE.value, TEST_ENV_INFO)  # 文件存放目录
+_FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.YINLIU.value, TEST_ENV_INFO)  # 文件存放目录
 if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)
 
@@ -30,7 +30,7 @@ def write_repay_file(filename, **repay_temple):
         f.write('\n')
 
 
-class XiaoXRepayFile(EnvInit):
+class YinLiuRepayFile(EnvInit):
     def __init__(self, userData, productId, loanInvoiceId=None, repayTermNo='1', repayDate="2021-08-06"):
         """
         eg: 账单日还款
@@ -98,7 +98,7 @@ class XiaoXRepayFile(EnvInit):
         # 遍历需要上传的文件
         filePath = "claimPath" if fileType == 0 else "bayBackPath"
         loaclPath = self.get_filename(self.repayDate)[filePath]
-        remote = os.path.join(ks3_asset_path['jike'][filePath], self.repayDate.split('-')[0],
+        remote = os.path.join(ks3_asset_path[ProductEnum.YINLIU.value][filePath], self.repayDate.split('-')[0],
                               self.repayDate.split('-')[1], self.repayDate.split('-')[2])
 
         fileList = []
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     # 美团按期还款、提前结清，按日收息
     data1 = {'name': '汲半芹', 'cer_no': '430224199608242714', 'telephone': '17157209368',
              'bankid': '6215591662020086765'}  # hqas
-    t = XiaoXRepayFile(data1, "G23E011", repayTermNo='5', repayDate='2022-05-24')
+    t = YinLiuRepayFile(data1, "G23E011", repayTermNo='5', repayDate='2022-05-24')
     # t.creditClaimFile()
     t.creditBuyBackFile()
     # t.bill_day_repay_file(repay_term_no='2')
