@@ -90,13 +90,13 @@ XiaoX = {
             },
             "body": {
                 "thirdApplyId": "",  # 三方授信申请编号  与放款申请编号保持一致
-                "thirdApplyTime": "",  # 客户三方申请时间  yyyyMMddHHmmss
+                "thirdApplyTime": "",  # 客户三方申请时间  yyyyMMddHHmmss ，老核心要求渠道必传
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "orderType": "1",  # 订单类型  固定传1-取现
-                "goodsName": "美容贷",  # 商品名称  取现为：取现借款、分期购物为：商品名称
-                "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
+                "goodsName": "取现借款",  # 商品名称  取现为：取现借款、分期购物为：商品名称
+                "interestRate": 9.5,  # 年化利率(百分比，比如 17.56 表示 17.56%)
                 "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
-                "userBankCardNo": "0102",  # 用户银行卡号
+                "userBankCardNo": "",  # 用户银行卡号
                 "bankCode": "0102",  # 银行编码
                 "reserveMobile": "",  # 银行预留手机号
                 "loanTerm": 12,  # 贷款期数
@@ -116,7 +116,7 @@ XiaoX = {
                 "idCardAddrCityName": "成都市",  # 身份证地址市级名称
                 "idCardAddrAreaCode": "510107",  # 身份证地址区代码
                 "idCardAddrAreaName": "武侯区",  # 身份证地址区名称
-                "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
+                "loanPurpose": "1",  # 贷款用途 EnumLoanPurpose
                 "compName": "单位名称",  # 单位名称
                 "compPhone": "13812345689",  # 单位电话
                 "workTime": 1000,  # 在现工作单位时间 单位：月
@@ -148,7 +148,7 @@ XiaoX = {
                 # "liveAreaCode": "652801",  # 居住地址区代码
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
-                "familyMonthIncome": 2000,  # 家庭月收入  元
+                "familyMonthIncome":10000,  # 家庭月收入  元
                 "contactRelationList": [
                     {
                         "contactName": "配偶姓名",  # 联系人姓名
@@ -159,38 +159,28 @@ XiaoX = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "xdgl/jike/test/cqid1.png",
+                        "fileUrl": "xdgl/xiax/test/cqid1.png",
                         "fileName": "cqid1.png"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "xdgl/jike/test/cqid2.png",
+                        "fileUrl": "xdgl/xiax/test/cqid2.png",
                         "fileName": "cqid2.png"
                     },
                     {
                         "fileType": "3",  # 人脸
-                        "fileUrl": "xdgl/jike/test/cqface.png",
+                        "fileUrl": "xdgl/xiax/test/cqface.png",
                         "fileName": "cqface.png"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "jikeloancontract.pdf"
+                        "fileUrl": "xdgl/xiax/test/C3-V01-20210826个人信用信息基础数据库查询使用授权书.pdf",
+                        "fileName": "C3-V01-20210826个人信用信息基础数据库查询使用授权书.pdf"
                     },
                     {
-                        "fileType": "6",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_non_student_202000000948071964.pdf"
-                    },
-                    {
-                        "fileType": "7",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_third_auth_202000000948071964.pdf"
-                    },
-                    {
-                        "fileType": "10",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_third_auth_202000000948071964.pdf"
+                        "fileType": "7",  # 三方信息查询授权书
+                        "fileUrl": "xdgl/xiax/test/C27-V02-20220520个人信息查询使用授权书.pdf",
+                        "fileName": "C27-V02-20220520个人信息查询使用授权书.pdf"
                     }
                 ],
                 "authenticationInfo": {
@@ -205,9 +195,9 @@ XiaoX = {
                     "livingBodyReqTime": "20210101 121010",  # 活体识别认证请求时间
                     "livingBodyRspTime": "20210101 131010",  # 活体识别认证结果返回时间
                     "livingBodyRst": "公安认证认证结果",  # 活体识别认证结果
-                    "quaternCerReqTime": "20210101 141010",  # 四元认证请求时间
-                    "quaternCerRspTime": "20210101 151010",  # 四元认证响应时间
-                    "quaternCerRst": "四元认证结果"  # 四元认证结果
+                    # "quaternCerReqTime": "20210101 141010",  # 非必填 四元认证请求时间
+                    # "quaternCerRspTime": "20210101 151010",  # 非必填 四元认证响应时间
+                    # "quaternCerRst": "四元认证结果"  # 非必填 四元认证结果
                 },
                 "featureField": {
                     "livingTime": "20200828171641",  # 人脸识别时间
@@ -260,13 +250,13 @@ XiaoX = {
                 "loanAmt": 1000,  # 借款金额
                 "firstRepayDate": "",  # 首期还款日期 yyyy-MM-dd
                 "fixedRepayDay": "",  # 固定还款日  例：3，就是每月的3号,取值范围0-28，若29、30、31日放款，传28
-                "loanTerm": 12,  # 贷款期数
+                "loanTerm": 6,  # 贷款期数
                 "name": "",  # 借款人姓名
                 "idNo": "",  # 证件号码
                 "mobileNo": "0102",  # 手机号码
                 "reserveMobile": "",  # 银行预留手机号
                 "orderType": "1",  # 订单类型  固定传1-取现
-                "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
+                "interestRate": 9.5,  # 年化利率(百分比，比如 17.56 表示 17.56%)
                 "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "accountNo": "",  # 放款/还款银行卡号
@@ -276,8 +266,8 @@ XiaoX = {
                 "fileInfos": [
                     {
                         "fileType": "9",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "C20JIKEloancontract.pdf"
+                        "fileUrl": "xdgl/xiax/test/loancontract.pdf",
+                        "fileName": "loancontract.pdf"
                     }
                 ],
                 "repaymentPlans": [
