@@ -11,7 +11,7 @@ from src.impl.common.CommonBizImpl import *
 
 _log = Logs()
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
-_FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.JIKE.value, TEST_ENV_INFO)  # 文件存放目录
+_FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.XIAOX.value, TEST_ENV_INFO)  # 文件存放目录
 if not os.path.exists(_FilePath):
     os.makedirs(_FilePath)
 
@@ -98,7 +98,7 @@ class XiaoXRepayFile(EnvInit):
         # 遍历需要上传的文件
         filePath = "claimPath" if fileType == 0 else "bayBackPath"
         loaclPath = self.get_filename(self.repayDate)[filePath]
-        remote = os.path.join(ks3_asset_path['jike'][filePath], self.repayDate.split('-')[0],
+        remote = os.path.join(ks3_asset_path[ProductEnum.XIAOX.value][filePath], self.repayDate.split('-')[0],
                               self.repayDate.split('-')[1], self.repayDate.split('-')[2])
 
         fileList = []

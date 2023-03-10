@@ -20,6 +20,7 @@ class ProductEnum(Enum):
     JIEBEI = 'jiebei'
     XIAOX = 'xiaoxiang'
     YINLIU = 'yinliu'
+    HaLo = 'halo'
 
 
 @unique
@@ -32,6 +33,7 @@ class ProductIdEnum(Enum):
     ZHIXIN = 'F21E041'
     JieTiao = 'F22E011'
     JieBei = 'F22C021'
+    HALO = 'G23E031'
 
 
 @unique
@@ -40,6 +42,7 @@ class EnumMerchantId(Enum):
     MEITUAN = 'F21C01MEIT'
     FQL = '000UC010000006268'
     WLD = 'F21E03WOLD'
+    HALO = 'G23E03HALO'
 
 
 @unique
