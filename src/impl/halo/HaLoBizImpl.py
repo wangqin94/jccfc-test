@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------
-# 小象接口数据封装类
+# 哈喽接口数据封装类
 # ------------------------------------------
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import XiaoX
+from src.test_data.module_data import HaLo
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
@@ -36,10 +36,10 @@ def get_bill_day(loan_date=None):
     return bill_data
 
 
-class XiaoXBizImpl(MysqlInit):
-    def __init__(self, merchantId, data=None, encrypt_flag=True, person=True):
+class HaLoBizImpl(MysqlInit):
+    def __init__(self, merchantId=None, data=None, encrypt_flag=True, person=True):
         """
-        @param merchantId: 商户ID
+        @param merchantId: 商户ID 默认值：G23E03HALO
         @param data: 四要素 为空系统随机获取，若person=True四要输写入person文件
         @param encrypt_flag: 接口加密标识，默认加密
         @param person: 若person=True四要输写入person文件，否则不写入
@@ -48,14 +48,14 @@ class XiaoXBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         # 解析项目特性配置
-        self.cfg = XiaoX.XiaoX
+        self.cfg = HaLo.HaLo
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
 
         # 初始化产品
-        self.merchantId = merchantId
+        self.merchantId = merchantId if merchantId else EnumMerchantId.HALO.value
         # 初始化payload变量
         self.active_payload = {}
 
@@ -74,56 +74,34 @@ class XiaoXBizImpl(MysqlInit):
         return base_data
 
     # 发起代扣协议申请
-    def getCardRealNameMessage(self, **kwargs):
+    def sharedWithholdingAgreement(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        getCardRealNameMessage = dict()
+        sharedWithholdingAgreement = dict()
         # head
-        getCardRealNameMessage['requestSerialNo'] = 'requestNo' + strings + "_1000"
-        getCardRealNameMessage['requestTime'] = self.date
-        getCardRealNameMessage['merchantId'] = self.merchantId
+        sharedWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
+        sharedWithholdingAgreement['requestTime'] = self.date
+        sharedWithholdingAgreement['merchantId'] = self.merchantId
         # body
-        getCardRealNameMessage['payerIdNum'] = self.data['cer_no']
-        getCardRealNameMessage['payer'] = self.data['name']
-        getCardRealNameMessage['mobileNo'] = self.data['telephone']
-        getCardRealNameMessage['payerBankCardNum'] = self.data['bankid']
-        getCardRealNameMessage['payerPhoneNum'] = self.data['telephone']
+        sharedWithholdingAgreement['aggrementNum'] = 'aggrementNum' + strings
+        sharedWithholdingAgreement['payerIdNum'] = self.data['cer_no']
+        sharedWithholdingAgreement['payer'] = self.data['name']
+        sharedWithholdingAgreement['mobileNo'] = self.data['telephone']
+        sharedWithholdingAgreement['payerBankCardNum'] = self.data['bankid']
+        sharedWithholdingAgreement['payerPhoneNum'] = self.data['telephone']
+        sharedWithholdingAgreement['agreementTime'] = self.date
 
         # 更新 payload 字段值
-        getCardRealNameMessage.update(kwargs)
-        parser = DataUpdate(self.cfg['getCardRealNameMessage']['payload'], **getCardRealNameMessage)
+        sharedWithholdingAgreement.update(kwargs)
+        parser = DataUpdate(self.cfg['sharedWithholdingAgreement']['payload'], **sharedWithholdingAgreement)
         self.active_payload = parser.parser
 
         self.log.demsg('发起绑卡请求...')
-        url = self.host + self.cfg['getCardRealNameMessage']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-                                     encrypt_flag=self.encrypt_flag)
-        return response
-
-    # 确认绑卡申请payload
-    def bindCardRealName(self, tradeSerialNo, **kwargs):
-        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        bindCardRealName_data = dict()
-        # head
-        bindCardRealName_data['requestSerialNo'] = 'requestNo' + strings + "_1000"
-        bindCardRealName_data['requestTime'] = self.date
-        bindCardRealName_data['merchantId'] = self.merchantId
-        # body
-        bindCardRealName_data['tradeSerialNo'] = tradeSerialNo  # 同发起代扣签约返回的交易流水号
-        bindCardRealName_data['mobileNo'] = self.data['telephone']
-        bindCardRealName_data['payerPhoneNum'] = self.data['telephone']
-
-        # 更新 payload 字段值
-        bindCardRealName_data.update(kwargs)
-        parser = DataUpdate(self.cfg['bindCardRealName']['payload'], **bindCardRealName_data)
-        self.active_payload = parser.parser
-
-        self.log.demsg('确认绑卡请求...')
-        url = self.host + self.cfg['bindCardRealName']['interface']
+        url = self.host + self.cfg['sharedWithholdingAgreement']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
@@ -639,8 +617,8 @@ class XiaoXBizImpl(MysqlInit):
 
         # 附件信息
         fileInfos = []
-        fileInfo = {'fileType': "10", 'fileName': "cqid1.jpg"}
-        positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
+        fileInfo = {'fileType': "13", 'fileName': "userInfo.txt"}
+        positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/temp/userInfo.txt'))
         fileInfo['file'] = positive  # 身份证正面base64字符串
         fileInfos.append(fileInfo)
         file_data['fileInfos'] = fileInfos
@@ -776,5 +754,5 @@ class XiaoXBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    s = OldSysLoanByAvgAmt(billDate='2022-12-20', loanAmt=12300, yearRate=9.5, term=3)
+    s = OldSysLoanByAvgAmt(billDate='2023-02-28', loanAmt=5100, yearRate=9.5, term=3)
     print(json.dumps(s))
