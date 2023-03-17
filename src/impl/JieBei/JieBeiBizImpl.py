@@ -68,14 +68,21 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def datapreFs(self, **kwargs):
+    def datapreFs(self, applyType,**kwargs):
         datapreFs_data = dict()
         #
         datapreFs_data['name'] = self.data['name']
         datapreFs_data['certNo'] = self.data['cer_no']
         datapreFs_data['mobileNo'] = self.data['telephone']
         datapreFs_data['cardNo'] = self.data['bankid']
-        datapreFs_data['applyNo'] = self.data['applyno']
+        datapreFs_data['applyType'] = applyType
+
+        if applyType == 'ADJUST_AMT_APPLY' or applyType == 'DECREASE_AMT_APPLY':
+            datapreFs_data['applyNo'] = "amtNo" + str(int(round(time.time() * 1000)))
+            # datapreFs_data['applyNo'] = "amtNo1678695062765"
+        else:
+            datapreFs_data['applyNo'] = self.data['applyno']
+
         datapreFs_data['creditNo'] = self.data['applyno']
 
         # 更新 payload 字段值
@@ -89,7 +96,7 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def creditNotice(self, **kwargs):
+    def creditNotice(self,bizType, **kwargs):
         creditNotice_data = dict()
 
         creditNotice_data['name'] = self.data['name']
@@ -97,6 +104,7 @@ class JieBeiBizImpl(EnvInit):
         creditNotice_data['mobile'] = self.data['telephone']
         creditNotice_data['timestamp'] = int(time.time()*1000)
         creditNotice_data['applyNo'] = self.data['applyno']
+        creditNotice_data['bizType'] = bizType
 
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)
@@ -105,6 +113,31 @@ class JieBeiBizImpl(EnvInit):
 
         self.log.demsg('授信通知接口...')
         url = self.host + self.cfg['creditNotice']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+
+    def pdf_to_base64(pdf_path):
+        with open(pdf_path, "rb") as pdf_file:
+           encoded_string = base64.b64encode(pdf_file.read())
+        return encoded_string
+
+
+    def certificationSend(self, **kwargs):
+        certificationSend_data = dict()
+
+        certificationSend_data['certifyNo'] = 'certifyNo' + self.strings + "A"
+        certificationSend_data['name'] = self.data['name']
+        certificationSend_data['certNo'] = self.data['cer_no']
+
+        # 更新 payload 字段值
+        certificationSend_data.update(kwargs)
+        parser = DataUpdate(self.cfg['certificationSend']['payload'], **certificationSend_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('结清证明接口...')
+        url = self.host + self.cfg['certificationSend']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
