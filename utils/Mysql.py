@@ -48,7 +48,8 @@ class Mysql(object):
 
     def select_table_column(self, *args, table_name='credit_apply', database='hsit_credit'):
         column_key = []
-        sql_column = "select COLUMN_NAME from information_schema.COLUMNS where table_name='{}' and table_schema='{}';".format(table_name, database)
+        sql_column = "select COLUMN_NAME from information_schema.COLUMNS where table_name='{}' and table_schema='{}';".format(
+            table_name, database)
         try:
             self.cursor.execute(sql_column)
         except Exception as e:
@@ -64,7 +65,10 @@ class Mysql(object):
 
     def select(self, sql):
         try:
+            # 执行SQL语句
             self.cursor.execute(sql)
+            # 提交到数据库执行
+            self.__mysql.commit()
         except Exception as e:
             print(e)
         res_values = self.cursor.fetchall()
@@ -111,5 +115,4 @@ class Mysql(object):
 
 
 if __name__ == '__main__':
-    t = Mysql().select_table_column()
-
+    pass
