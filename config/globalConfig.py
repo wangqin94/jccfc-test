@@ -6,13 +6,13 @@
 
 
 API = {
-    'request_host': "http://hapi-web-{}.corp.jccfc.com",
-    'request_host_api': "http://api-web-{}.jccfc.com",
+    'request_host': "https://hapi-web-{}.corp.jccfc.com",
+    'request_host_api': "https://api-web-{}.jccfc.com",
     'eureka_host': "https://eureka-{}.corp.jccfc.com/eureka/apps/",
-    'request_job_host': "http://job-admin-{}.corp.jccfc.com",
+    'request_job_host': "https://job-admin-{}.corp.jccfc.com",
     'request_apollo_host': "https://apollo-{}.corp.jccfc.com",
-    'apollo_index_host': "http://apollo-{}.corp.jccfc.com/",
-    'op-channel_host': "http://op-channel-{}.corp.jccfc.com"
+    'apollo_index_host': "https://apollo-{}.corp.jccfc.com/",
+    'op-channel_host': "https://op-channel-{}.corp.jccfc.com"
 }
 
 headers = {
