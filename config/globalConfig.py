@@ -11,7 +11,7 @@ API = {
     'eureka_host': "https://eureka-{}.corp.jccfc.com/eureka/apps/",
     'request_job_host': "https://job-admin-{}.corp.jccfc.com",
     'request_apollo_host': "https://apollo-{}.corp.jccfc.com",
-    'apollo_index_host': "https://apollo-{}.corp.jccfc.com/",
+    'apollo_index_host': "http://apollo-{}.corp.jccfc.com/",
     'op-channel_host': "https://op-channel-{}.corp.jccfc.com"
 }
 
