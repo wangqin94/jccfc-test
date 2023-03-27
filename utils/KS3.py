@@ -24,8 +24,7 @@ class KS3(object):
         else:
             self.ak = _readconfig.get_ks3('ak1')
             self.sk = _readconfig.get_ks3('sk1')
-        flag = Apollo().get_config(key='ks3.gfs.flag', appId='loan2.1-public', namespace='JCXF.system')
-        self.gfsflag = flag if flag else "ks3"
+        self.ks3gfsFlag = self.get_ks3_gfs_flag()
         self.file = Files()
         self.host_op_channel = API['op-channel_host'].format(self.env)
 
@@ -37,36 +36,45 @@ class KS3(object):
         conn = Connection(self.ak, self.sk, host=self.host)
         self.bucket = conn.get_bucket(self.bucket_name)
 
-    def upload_file(self, local, remote):
+    @staticmethod
+    def get_ks3_gfs_flag():
+        try:
+            flag = Apollo().get_config(key='ks3.gfs.flag', appId='loan2.1-public', namespace='JCXF.system')
+            return flag["value"] if flag else "ks3"
+        except Exception as err:
+            raise ValueError(err)
+
+    def upload_file(self, localUrl, remoteUrl):
         """
         金山云上传文件
-        :param local: 本地文件路径
-        :param remote: 远程文件路径，相对路径，如xdgl/test/img.png
+        :param localUrl: 本地文件路径
+        :param remoteUrl: 远程文件路径，相对路径，如xdgl/test/img.png
         :return:
         """
         try:
-            flag = self.gfsflag['value']
+            flag = self.ks3gfsFlag
         except Exception as e:
-            print("ks3.gfs.flag未配置: %s" % e)
+            _log.error("ks3.gfs.flag未配置: %s" % e)
             flag = None
         if flag == 'gfs':
-            remote1 = os.path.dirname(remote)[4:]
-            self.file.gfs_upload_file(self.host_op_channel, local, remote1)
+            remote1 = os.path.dirname(remoteUrl)[4:]
+            self.file.gfs_upload_file(self.host_op_channel, localUrl, remote1)
         else:
             self.__connection()
             try:
-                key = self.bucket.new_key(remote)
-                ret = key.set_contents_from_filename(local)
+                key = self.bucket.new_key(remoteUrl)
+                ret = key.set_contents_from_filename(localUrl)
                 if ret and ret.status == 200:
                     _log.demsg("文件上传成功")
                 else:
                     _log.info(ret)
             except Exception as e:
-                print("上传失败, Error: %s  " % e)
+                _log.error("上传失败, Error: %s  " % e)
 
 
 if __name__ == '__main__':
     loacl = "D:\\jccfc-test\\utils\\img.png"
     remote = "xdgl/test/img.png"
     m = KS3()
-    m.upload_file(loacl, remote)
+    # m.upload_file(loacl, remote)
+    m.get_ks3_gfs_flag()
