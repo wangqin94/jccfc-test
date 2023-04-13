@@ -40,7 +40,7 @@ class YinLiuRepayFile(EnvInit):
         @param repayTermNo:        还款期次    必填参数
         """
         super().__init__()
-        self.log.demsg('当前测试环境 %s', self.env)
+        self.log.demsg('生成理赔/回购文件')
         # 初始化ks3连接
         self.ks3 = KS3()
         self.MysqlBizImpl = MysqlBizImpl()
@@ -148,7 +148,7 @@ class YinLiuRepayFile(EnvInit):
             key1 = "loan_invoice_id = '{}'".format(loan_invoice_id)
             sqlCreditLoanInvoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key1)
         else:
-            key2 = "user_name = '{}'".format(self.userData['name'])
+            key2 = "user_name = '{}' and certificate_no ='{}'".format(self.userData['name'],self.userData['cer_no'])
             sqlCreditLoanInvoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
         return sqlCreditLoanInvoice
 
@@ -157,11 +157,14 @@ class YinLiuRepayFile(EnvInit):
         """
         @return:
         """
+        # self.log.demsg('理赔文件生成开始。。。')
         temple = {}
         # 初始化理赔文件
         claimFileName = self.get_filename(self.repayDate)['claimFileName']
+        # self.log.demsg('理赔文件名称:%s',claimFileName)
         if os.path.exists(claimFileName):
             os.remove(claimFileName)
+            # self.log.demsg('理赔文件: %s 已存在，删除！', claimFileName)
         # 获取用户借据信息
         creditLoanInvoiceInfo = self.getInvoiceInfo()
         loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
