@@ -25,11 +25,11 @@ class MyTestCase(unittest.TestCase):
         # 初始化日志引擎模块
         self.env = TEST_ENV_INFO
         self.data = get_base_data(str(self.env))
-        # self.data = {'name': '冀平蝶', 'cer_no': '420702200501181694', 'telephone': '13269532017', 'bankid': '6212881678180245997'}  # hqas
+        # self.data = {'name': '鞠惜文', 'cer_no': '140430199903033121', 'telephone': '17725049631', 'bankid': '6212261681437589712'}
         self.log = MyLog.get_log()
         self.job = JOB()
         self.CheckBizImpl = CheckBizImpl()
-        self.HaLoCheckBizImpl = HaLoCheckBizImpl(self.data)
+        self.HaLoCheckBizImpl = HaLoCheckBizImpl(merchantId=None, data=self.data)
 
     """ 测试步骤 """
 
@@ -40,8 +40,8 @@ class MyTestCase(unittest.TestCase):
         HaLo.sharedWithholdingAgreement()
 
         term = 6
-        amount = random.randrange(1000, 30000, 100)
-        # amount = 20000
+        # amount = random.randrange(1000, 10000, 100)
+        amount = 5000
 
         # 发起授信申请
         self.thirdApplyId = HaLo.credit(applyAmount=amount, loanTerm=term).get('body')['thirdApplyId']
@@ -55,8 +55,8 @@ class MyTestCase(unittest.TestCase):
         HaLo.queryLprInfo(thirdApplyId=self.thirdApplyId)
 
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
-        # self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
-        self.loan_date = '2023-02-08'
+        self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
+        # self.loan_date = '2022-12-31'
         HaLo.applyLoan(loan_date=self.loan_date, loanAmt=amount, loanTerm=term, thirdApplyId=self.thirdApplyId)
 
     """ 后置条件处理 """

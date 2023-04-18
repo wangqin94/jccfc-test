@@ -60,18 +60,18 @@ def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
 
     for i in range(1, loanNumber + 1):
         repaymentPlans = {}
-        #是否最后1期
+        # 是否最后1期
         isLastPeriod = i == loanNumber
         interest = round(residualPrincipalTotal * monthRate, 2)
-        principal = residualPrincipalTotal if isLastPeriod else round(perPeriodAmountSum - interest,2)
+        principal = residualPrincipalTotal if isLastPeriod else round(perPeriodAmountSum - interest, 2)
         # 剩余本金
-        residualPrincipalTotal = round(residualPrincipalTotal - principal,2)
+        residualPrincipalTotal = round(residualPrincipalTotal - principal, 2)
         # 期次
         repaymentPlans['period'] = i
         # 账单日
         repaymentPlans['billDate'] = get_custom_month(i - 1, bill_date)
         # 月供
-        repaymentPlans['perPeriodAmountSum'] = round(principal + principal * monthRate,2) if isLastPeriod else perPeriodAmountSum
+        repaymentPlans['perPeriodAmountSum'] = round(principal + principal * monthRate, 2) if isLastPeriod else perPeriodAmountSum
         # 本金
         repaymentPlans['principalAmt'] = float(principal)
         # 利息
@@ -81,12 +81,12 @@ def jike_loanByAvgAmt3(bill_date, loanAmt, repaymentRate, loanNumber):
         repayment_plan.append(repaymentPlans)
     return repayment_plan
 
+
 # # -----------------------------------------------------------
 # # - 等额本息计算
 # # -----------------------------------------------------------
 def jike_loanByAvgAmt(loanamt, term, year_rate_jc, year_rate_jk, bill_date):
     """
-
     @param loanamt:         借款金额
     @param term:            期数
     @param year_rate_jc:    锦程实收利率
@@ -282,7 +282,7 @@ class JiKeBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
-        credit_data['interestRate'] = 10.3
+        credit_data['interestRate'] = 9.8
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '2'  # 应传2
@@ -350,7 +350,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=10.3, **kwargs):
+    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=9.8, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
@@ -404,8 +404,8 @@ class JiKeBizImpl(MysqlInit):
 
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
-        applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt3(bill_date=firstRepayDate, loanAmt=loanAmt,
-                                                              repaymentRate=rate, loanNumber=loanTerm)
+        applyLoan_data['repaymentPlans'] = OldSysLoanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
+                                                              yearRate=rate, term=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -577,7 +577,7 @@ class JiKeBizImpl(MysqlInit):
         if repay_scene == '02' or '05':  # 线下还款、逾期还款
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
         if repay_scene == '04':  # 支付宝还款
-            repay_apply_data['thirdWithholdId'] = "2022093022001425270501809997"  # 支付宝存量订单
+            repay_apply_data['thirdWithholdId'] = "2108041506202974975937967"  # 支付宝存量订单
             repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
@@ -588,7 +588,7 @@ class JiKeBizImpl(MysqlInit):
         # 配置还款mock时间
         apollo_data = dict()
         apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        apollo_data['credit.mock.repay.date'] = "{} 00:00:00".format(repayDate)
+        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
