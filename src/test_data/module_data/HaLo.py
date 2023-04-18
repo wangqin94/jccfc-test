@@ -77,7 +77,7 @@ HaLo = {
                 "orderType": "1",  # 订单类型  固定传1-取现
                 "goodsName": "美容贷",  # 商品名称  取现为：取现借款、分期购物为：商品名称
                 "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
-                "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
+                "custInterestRate": 23.99,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
                 "userBankCardNo": "0102",  # 用户银行卡号
                 "bankCode": "0102",  # 银行编码
                 "reserveMobile": "",  # 银行预留手机号
@@ -89,7 +89,7 @@ HaLo = {
                 "education": "11",  # 学历 EnumEduLevel
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
-                "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
+                "idExpiryDate": "1990.1.1-2053.06.25",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
                 "issuingAuth": "成都高新派出所",  # 发证机关
                 "idCardAddrAddress": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证地址
                 "idCardAddrProvinceCode": "510000",  # 身份证地址省份代码
@@ -141,23 +141,23 @@ HaLo = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "xdgl/jike/test/cqid1.png",
-                        "fileName": "cqid1.png"
+                        "fileUrl": "xdgl/jike/test/front.jpg",
+                        "fileName": "front.png"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "xdgl/jike/test/cqid2.png",
-                        "fileName": "cqid2.png"
+                        "fileUrl": "xdgl/jike/test/back.jpg",
+                        "fileName": "back.png"
                     },
                     {
                         "fileType": "3",  # 人脸
-                        "fileUrl": "xdgl/jike/test/cqface.png",
-                        "fileName": "cqface.png"
+                        "fileUrl": "xdgl/jike/test/face.jpg",
+                        "fileName": "face.png"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "jikeloancontract.pdf"
+                        "fileUrl": "xdgl/jike/test/credit.pdf",
+                        "fileName": "credit.pdf"
                     },
                     {
                         "fileType": "6",
@@ -165,9 +165,9 @@ HaLo = {
                         "fileName": "JC_non_student_202000000948071964.pdf"
                     },
                     {
-                        "fileType": "7",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_third_auth_202000000948071964.pdf"
+                        "fileType": "7",  # 三方查询授权书
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     },
                     {
                         "fileType": "10",
