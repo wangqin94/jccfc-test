@@ -7,7 +7,6 @@ from src.enums.EnumsCommon import ProductIdEnum
 from src.impl.common.YinLiuCreateFileBizImpl import YinLiuRepayFile
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_case.halo.person import data
-from utils.Apollo import Apollo
 
 
 class MyTestCase(unittest.TestCase):
@@ -22,12 +21,6 @@ class MyTestCase(unittest.TestCase):
     def test_repay_apply(self, productId=ProductIdEnum.HALO.value, repayDate='2023-03-15'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
-
-        # 配置还款mock时间
-        updateKeys = dict()
-        updateKeys['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        updateKeys['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
-        Apollo().update_config(appId='loan2.1-public', namespace='JCXF.system', **updateKeys)
 
         # 还款环境配置,清理缓存配置账务时间
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
