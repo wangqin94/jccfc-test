@@ -45,7 +45,6 @@ class RepayPublicBizImpl(MysqlInit):
                                                        cutday_time=cut_time)
         # 配置还款mock时间
         apollo_data = dict()
-        repayMock = "true" if repayMock else "false"
         apollo_data['credit.mock.repay.trade.date'] = repayMock  # credit.mock.repay.trade.date
         apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
@@ -100,4 +99,4 @@ class RepayPublicBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    RepayPublicBizImpl().pre_repay_config(repayDate='2023-06-17')
+    RepayPublicBizImpl().pre_repay_config(repayDate='2023-05-18')
