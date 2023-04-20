@@ -6,14 +6,7 @@
 @Date    ：2022/6/6 13:57 
 """
 import json
-import os
-import sys
-
-print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import requests
 from flask import jsonify, Flask, request
-
 from config.globalConfig import headers
 from utils.BankNo import BankNo
 from utils.GenName import get_name
@@ -55,17 +48,246 @@ def get_mock():
 
 @app.route('/mock/getTestData', methods=['GET', 'POST'])  # delete
 def getTestData_mock():
-    data = {}
-    data['姓名'] = get_name()
-    data['身份证号'] = IdNumber.generate_id()
+    data = {'姓名': get_name(), '身份证号': IdNumber.generate_id(), '手机号': get_telephone()}
     # 获取随机生成的手机号
-    data['手机号'] = get_telephone()
     bank = BankNo()
     data['银行卡号'] = bank.get_bank_card(bankName='工商银行')
     data['银行卡Bin'] = bank.cardBin
     data['银行卡Code'] = bank.bankCode
     print(str(data))
     return json.dumps(data, ensure_ascii=False)
+
+
+@app.route('/api/fileCheck/batchFileCheck', methods=['GET', 'POST'])  # delete
+def batchFileCheck_mock():
+    batchFileCheckMsg = {
+        "state": "true",
+        "code": "0000",
+        "message": "成功",
+        "data": "None"
+    }
+    return jsonify(batchFileCheckMsg)
+
+
+@app.route('/api/fileCheck/query', methods=['GET', 'POST'])  # delete
+def fileCheckQuery_mock():
+    fileCheckQueryMsg = {
+        "state": True,
+        "code": "0000",
+        "message": "成功",
+        "data": [
+            {
+                "orderNo": "000CA2023041900000005",
+                "checkNo": None,
+                "orderCheckStatus": 0,
+                "fileCheckList": [
+                    {
+                        "fileType": "06",
+                        "file": "xdgl/jike/test/third.pdf",
+                        "id": "26530",
+                        "checkTime": "2023-04-18 10:00:27",
+                        "checkStatus": 1,
+                        "ruleList": [
+                            {
+                                "fileType": None,
+                                "ruleId": "RT01",
+                                "ruleName": "授权书是否存在",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RT02",
+                                "ruleName": "授权书版本号校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RT03",
+                                "ruleName": "授权主体校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RT04",
+                                "ruleName": "申请人姓名校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RT05",
+                                "ruleName": "申请人身份证号校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RT06",
+                                "ruleName": "授权日期校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RT07",
+                                "ruleName": "三方授信签章校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            }
+                        ],
+                        "fileComment": None,
+                        "rmk": None
+                    },
+                    {
+                        "fileType": "01",
+                        "file": "xdgl/jike/test/front.jpg",
+                        "id": "26527",
+                        "checkTime": "2023-04-18 10:00:23",
+                        "checkStatus": 0,
+                        "ruleList": [
+                            {
+                                "fileType": None,
+                                "ruleId": "RB01",
+                                "ruleName": "身份证人像页是否存在",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RB02",
+                                "ruleName": "身份证号校验",
+                                "checkStatus": 0,
+                                "checkComment": "error"
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RB03",
+                                "ruleName": "姓名校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            }
+                        ],
+                        "fileComment": None,
+                        "rmk": None
+                    },
+                    {
+                        "fileType": "04",
+                        "file": "xdgl/jike/test/credit.pdf",
+                        "id": "26528",
+                        "checkTime": "2023-04-18 10:00:26",
+                        "checkStatus": 1,
+                        "ruleList": [
+                            {
+                                "fileType": None,
+                                "ruleId": "RE01",
+                                "ruleName": "授权书是否存在",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RE02",
+                                "ruleName": "授权书版本号校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RE03",
+                                "ruleName": "授权主体校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RE04",
+                                "ruleName": "申请人姓名校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RE05",
+                                "ruleName": "申请人身份证号校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RE06",
+                                "ruleName": "授权日期校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RE07",
+                                "ruleName": "授信签章校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            }
+                        ],
+                        "fileComment": None,
+                        "rmk": None
+                    },
+                    {
+                        "fileType": "03",
+                        "file": "xdgl/jike/test/face.jpg",
+                        "id": "26529",
+                        "checkTime": "2023-04-18 10:00:25",
+                        "checkStatus": 1,
+                        "ruleList": [
+                            {
+                                "fileType": None,
+                                "ruleId": "RD01",
+                                "ruleName": "自拍照是否存在",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RD03",
+                                "ruleName": "人脸比对校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            }
+                        ],
+                        "fileComment": None,
+                        "rmk": None
+                    },
+                    {
+                        "fileType": "02",
+                        "file": "xdgl/jike/test/back.jpg",
+                        "id": "26526",
+                        "checkTime": "2023-04-18 10:00:24",
+                        "checkStatus": 1,
+                        "ruleList": [
+                            {
+                                "fileType": None,
+                                "ruleId": "RC01",
+                                "ruleName": "身份证国徽页是否存在",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            },
+                            {
+                                "fileType": None,
+                                "ruleId": "RC02",
+                                "ruleName": "身份证有效期校验",
+                                "checkStatus": 1,
+                                "checkComment": ""
+                            }
+                        ],
+                        "fileComment": None,
+                        "rmk": None
+                    }
+                ]
+            }
+        ]
+    }
+    return jsonify(fileCheckQueryMsg)
 
 
 delMsg = {
