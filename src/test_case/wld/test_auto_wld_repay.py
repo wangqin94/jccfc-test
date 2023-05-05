@@ -50,10 +50,6 @@ class TestCase(object):
             mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
                                                       account_date=account_date, next_date=next_date)
 
-        with allure.step("执行账务日终任务"):
-            job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
-            job.trigger_job("资产日终任务流", group=6)
-
         with allure.step("清理分片流水"):
             mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
             mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
@@ -62,6 +58,11 @@ class TestCase(object):
         with allure.step("删除redis 大会计 key=000:ACCT:SysInfo:BIGACCT"):
             redis1.del_assert_repay_keys()
 
+        with allure.step("执行账务日终任务"):
+            job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
+            job.trigger_job("资产日终任务流", group=6)
+
+        time.sleep(10)
         with allure.step("校验当前借据是否已逾期：15s查证等待"):
             wldBizImpl.log.info('验当前借据状态')
             status = mysqlBizImpl.get_loan_apply_status(EnumLoanStatus.OVERDUE.value,
@@ -88,7 +89,7 @@ class TestCase(object):
 
         # 数据库层验证
         with allure.step("数据库层校验还款结果是否符合预期"):
-            time.sleep(5)
+            time.sleep(10)
             status = mysqlBizImpl.get_asset_database_info('asset_repay_plan', loan_invoice_id=loan_invoiceid,
                                                           current_num=1)['repay_plan_status']
 

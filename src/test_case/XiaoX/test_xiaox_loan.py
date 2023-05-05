@@ -25,7 +25,7 @@ class MyTestCase(unittest.TestCase):
         # 初始化日志引擎模块
         self.env = TEST_ENV_INFO
         self.data = get_base_data(str(self.env))
-        # self.data = {'name': '羿春儿', 'cer_no': '441500198108116985', 'telephone': '15958294017', 'bankid': '6200861676366329139'}
+        # self.data = {'name': '冀平蝶', 'cer_no': '420702200501181694', 'telephone': '13269532017', 'bankid': '6212881678180245997'}  # hqas
         self.log = MyLog.get_log()
         self.job = JOB()
         self.merchantId = 'G23E02XIAX'
@@ -40,9 +40,9 @@ class MyTestCase(unittest.TestCase):
         XiaoX = XiaoXBizImpl(merchantId=self.merchantId, data=self.data)
         res = XiaoX.getCardRealNameMessage().get('body')
         XiaoX.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
-        term = 3
+        term = 6
         amount = random.randrange(1000, 30000, 100)
-        # amount = 10000
+        # amount = 20000
 
         # 发起授信申请
         self.thirdApplyId = XiaoX.credit(applyAmount=amount, loanTerm=term).get('body')['thirdApplyId']
@@ -56,8 +56,8 @@ class MyTestCase(unittest.TestCase):
         XiaoX.queryLprInfo(thirdApplyId=self.thirdApplyId)
 
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
-        self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
-        # self.loan_date = '2023-01-30'
+        # self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
+        self.loan_date = '2023-02-08'
         XiaoX.applyLoan(loan_date=self.loan_date, loanAmt=amount, loanTerm=term, thirdApplyId=self.thirdApplyId)
 
     """ 后置条件处理 """
