@@ -379,7 +379,7 @@ class JiKeBizImpl(MysqlInit):
         # 设置apollo放款mock时间 默认当前时间
         loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
         apollo_data = dict()
-        apollo_data['credit.loan.trade.date.mock'] = False
+        apollo_data['credit.loan.trade.date.mock'] = True
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 

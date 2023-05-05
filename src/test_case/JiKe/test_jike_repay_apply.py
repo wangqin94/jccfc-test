@@ -20,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         self.jikeCheckBizImpl = JiKeCheckBizImpl(data)
 
     """ 测试步骤 """
-    def test_repay_apply(self, repayDate="2023-04-17"):
+    def test_repay_apply(self, repayDate="2023-05-05"):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         # 还款环境配置
@@ -32,8 +32,8 @@ class MyTestCase(unittest.TestCase):
         # repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         # loanInvoiceId: 借据号 必填
         # repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
-        # self.repayRes = jike.repay_apply(repay_scene='02', repay_type='7', loanInvoiceId=credit_loan_invoice['loan_invoice_id'], repayGuaranteeFee=30, repayDate=repayDate)  # 按期还款
-        self.repayRes = jike.repay_apply(repay_scene='04', repay_type='7', repayTerm=1, loanInvoiceId='000LI0001362535425950508001', repayGuaranteeFee=10, repayDate=repayDate)  # 按期还款
+        self.repayRes = jike.repay_apply(repay_scene='02', repay_type='2', loanInvoiceId=credit_loan_invoice['loan_invoice_id'], repayGuaranteeFee=30, repayDate=repayDate)  # 按期还款
+        # self.repayRes = jike.repay_apply(repay_scene='01', repay_type='1', repayTerm=1, loanInvoiceId='000LI0001362535425950508001', repayGuaranteeFee=10, repayDate=repayDate)  # 按期还款
 
         self.assertEqual(StatusCodeEnum.SUCCESS.code, self.repayRes['head']['returnCode'], '还款接口层失败')
 

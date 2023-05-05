@@ -439,14 +439,14 @@ class BaiduFile(EnvInit):
 
 
 class BaiduRepayFile(BaiduFile):
-    def __init__(self, data, repay_mode='02', repay_date="2021-08-06", repay_term_no=1, repay_type='01',
+    def __init__(self, data, repay_mode='05', repay_date="2021-08-06", repay_term_no=1, repay_type='01',
                  loan_invoice_id=None, prin_amt=100, int_amt=0, pnlt_int_amt=0):
         """ # 百度还款对账文件
         @param data:                四要素
         @param repay_mode:          还款方式，02：随借随还；05：等额本息
         @param repay_date:          账务日期"2021-08-06"，提前结清必填
         @param repay_term_no:       还款期次
-        @param repay_type:          还款类型，01：按期还款；02：提前结清；03：逾期还款
+        @param repay_type:          还款类型，01：按期还款；02：提前结清；03：逾期还款；05提前部分还款
         @param loan_invoice_id:     借据号为None取用户第一笔借据，否则取自定义值
         @param prin_amt:            还款本金，随借随还部分还款必填
         @param int_amt:             还款利息，随借随还部分还款必填

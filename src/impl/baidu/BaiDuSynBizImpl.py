@@ -13,12 +13,12 @@ from utils.JobCenter import *
 
 
 class BaiDuSynBizImpl(object):
-    def __init__(self, data=None, loanamount=100000, month=6, repay_mode='02', loan_date=None):
+    def __init__(self, data=None, loanamount=100000, month=6, repay_mode='05', loan_date=None):
         self.loanamount = loanamount
         self.month = month
         self.repay_mode = repay_mode
         self.loan_date = loan_date if loan_date else datetime.datetime.today().strftime('%Y-%m-%d')
-        self.BaiDuBizImpl = BaiDuBizImpl(data=data)
+        self.BaiDuBizImpl = BaiDuBizImpl(data=data, repay_mode=repay_mode)
         self.CheckBizImpl = CheckBizImpl()
         self.MysqlBizImpl = MysqlBizImpl()
         self.job = JOB()

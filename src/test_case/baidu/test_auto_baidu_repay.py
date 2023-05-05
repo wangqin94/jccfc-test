@@ -58,16 +58,25 @@ class TestCase(object):
                                                      batch_date=repay_date_ove.replace('-', ''))
 
         with allure.step('执行任务流下载还款对账文件入库'):
-            job.update_job('百度还款对账文件下载任务流', executeBizDate=repay_date_ove.replace('-', ''))
+            job.update_job('百度还款对账文件下载任务流', executeBizDate=repay_date_ove.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
             job.trigger_job('百度还款对账文件下载任务流')
             time.sleep(5)
 
         with allure.step('更新还款通知表业务日期'):
-            key = "loan_invoice_id = '" + data['loan_no'] + "' order by create_time desc limit 1"
+            key = "loan_invoice_id = '" + data['loan_no'] + "' and notice_type = '1' order by create_time desc limit 1"
             mysqlBizImpl.update_credit_database_info('credit_ctrip_repay_notice_info', attr=key,
-                                                  business_date=repay_date_ove.replace('-', ''))
+                                                     business_date=repay_date_ove.replace('-', ''))
+
         with allure.step('执行任务流还款入账'):
-            job.update_job('三方还款任务流', executeBizDate=repay_date_ove.replace('-', ''))
+            job.update_job('三方还款任务流', executeBizDate=repay_date_ove.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
+            job.trigger_job('三方还款任务流')
+            time.sleep(5)
+
+        with allure.step('执行任务流还款入账'):
+            job.update_job('三方还款任务流', executeBizDate=repay_date_ove.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
             job.trigger_job('三方还款任务流')
             time.sleep(5)
 
@@ -112,16 +121,24 @@ class TestCase(object):
                                                      batch_date=repay_date_bill.replace('-', ''))
 
         with allure.step('执行任务流下载还款对账文件入库'):
-            job.update_job('百度还款对账文件下载任务流', executeBizDate=repay_date_bill.replace('-', ''))
+            job.update_job('百度还款对账文件下载任务流', executeBizDate=repay_date_bill.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
             job.trigger_job('百度还款对账文件下载任务流')
             time.sleep(10)
 
         with allure.step('更新还款通知表业务日期'):
-            key = "loan_invoice_id = '" + data['loan_no'] + "' order by create_time desc limit 1"
+            key = "loan_invoice_id = '" + data['loan_no'] + "' and notice_type = '1' order by create_time desc limit 1"
             mysqlBizImpl.update_credit_database_info('credit_ctrip_repay_notice_info', attr=key,
                                                      business_date=repay_date_bill.replace('-', ''))
         with allure.step('执行任务流还款入账'):
-            job.update_job('三方还款任务流', executeBizDate=repay_date_bill.replace('-', ''))
+            job.update_job('三方还款任务流', executeBizDate=repay_date_bill.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
+            job.trigger_job('三方还款任务流')
+            time.sleep(5)
+
+        with allure.step('执行任务流还款入账'):
+            job.update_job('三方还款任务流', executeBizDate=repay_date_bill.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
             job.trigger_job('三方还款任务流')
             time.sleep(5)
 
@@ -136,7 +153,7 @@ class TestCase(object):
         data = baiduBizSynImpl
         period = 3
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
-                                                            loan_invoice_id=data['loan_no'], current_num=period)
+                                                                loan_invoice_id=data['loan_no'], current_num=period)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
         repay_date_settle = get_custom_day(-1, repay_date_bill)
         with allure.step("设置大会计时间,账务时间=repay_date"):
@@ -167,16 +184,25 @@ class TestCase(object):
                                                      batch_date=repay_date_settle.replace('-', ''))
 
         with allure.step('执行任务流下载还款对账文件入库'):
-            job.update_job('百度还款对账文件下载任务流', executeBizDate=repay_date_settle.replace('-', ''))
+            job.update_job('百度还款对账文件下载任务流', executeBizDate=repay_date_settle.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
             job.trigger_job('百度还款对账文件下载任务流')
             time.sleep(5)
 
         with allure.step('更新还款通知表业务日期'):
-            key = "loan_invoice_id = '" + data['loan_no'] + "' order by create_time desc limit 1"
+            key = "loan_invoice_id = '" + data['loan_no'] + "' and notice_type = '1' order by create_time desc limit 1"
             mysqlBizImpl.update_credit_database_info('credit_ctrip_repay_notice_info', attr=key,
                                                      business_date=repay_date_settle.replace('-', ''))
+
         with allure.step('执行任务流还款入账'):
-            job.update_job('三方还款任务流', executeBizDate=repay_date_settle.replace('-', ''))
+            job.update_job('三方还款任务流', executeBizDate=repay_date_settle.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
+            job.trigger_job('三方还款任务流')
+            time.sleep(5)
+
+        with allure.step('执行任务流还款入账'):
+            job.update_job('三方还款任务流', executeBizDate=repay_date_settle.replace('-', ''),
+                           executeBizDateType='CUSTOMER')
             job.trigger_job('三方还款任务流')
             time.sleep(5)
 
@@ -188,9 +214,3 @@ class TestCase(object):
 
 if __name__ == '__main__':
     pytest.main(['test_auto_baidu_repay.py'])
-
-
-
-
-
-
