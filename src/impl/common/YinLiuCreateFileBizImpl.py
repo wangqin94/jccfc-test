@@ -148,7 +148,7 @@ class YinLiuRepayFile(EnvInit):
             key1 = "loan_invoice_id = '{}'".format(loan_invoice_id)
             sqlCreditLoanInvoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key1)
         else:
-            key2 = "user_name = '{}'".format(self.userData['name'])
+            key2 = "user_name = '{}' and certificate_no ='{}'".format(self.userData['name'],self.userData['cer_no'])
             sqlCreditLoanInvoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
         return sqlCreditLoanInvoice
 

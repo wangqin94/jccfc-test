@@ -1,3 +1,4 @@
+import random
 import unittest
 import warnings
 
@@ -24,7 +25,7 @@ class MyTestCase(unittest.TestCase):
         # 初始化日志引擎模块
         self.env = TEST_ENV_INFO
         self.data = get_base_data(str(self.env))
-        # self.data = {'name': '反十七', 'cer_no': '510101199408290199', 'telephone': '13551583381', 'bankid': '6217221665997010811'}  # rts
+        # self.data = {'name': '鞠惜文', 'cer_no': '140430199903033121', 'telephone': '17725049631', 'bankid': '6212261681437589712'}  # hqas
         self.log = MyLog.get_log()
         self.job = JOB()
         self.CheckBizImpl = CheckBizImpl()
@@ -37,8 +38,9 @@ class MyTestCase(unittest.TestCase):
         # 绑卡签约
         jike = JiKeBizImpl(data=self.data)
         jike.sharedWithholdingAgreement()
-        term = 3
-        amount = 2000
+        term = 12
+        amount = random.randint(1000, 9999)
+        # amount = 10000
         # 发起授信申请
         self.thirdApplyId = jike.credit(applyAmount=amount, loanTerm=term).get('body')['thirdApplyId']
 
@@ -52,7 +54,7 @@ class MyTestCase(unittest.TestCase):
 
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
         # self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
-        self.loan_date = '2022-11-04'
+        self.loan_date = '2023-01-01'
         jike.applyLoan(loan_date=self.loan_date, loanAmt=amount, loanTerm=term, thirdApplyId=self.thirdApplyId)
 
     """ 后置条件处理 """

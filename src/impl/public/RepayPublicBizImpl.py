@@ -12,6 +12,7 @@ from src.enums.EnumsCommon import ProductEnum, EnumLoanStatus
 from src.impl.MeiTuan.MeiTuanSynBizImpl import MeiTuanSynBizImpl
 from src.impl.common.CheckBizImpl import CheckBizImpl
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
+from utils.Apollo import Apollo
 from utils.JobCenter import JOB
 from utils.Models import get_custom_day
 from utils.Redis import Redis
@@ -23,12 +24,14 @@ class RepayPublicBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.redis = Redis()
         self.job = JOB()
+        self.apollo = Apollo()
         self.checkBizImpl = CheckBizImpl()
 
-    def pre_repay_config(self, repayDate=None):
+    def pre_repay_config(self, repayDate=None, repayMock=True):
         """
         预制各产品的逾期数据
         @param repayDate: 还款时间 格式："2021-12-12", 默认当前时间
+        @param repayMock: 还款mock 默认关闭
         @return:
         """
         self.log.demsg("设置大会计时间,账务时间=repay_date")
@@ -40,6 +43,11 @@ class RepayPublicBizImpl(MysqlInit):
         self.MysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
                                                        account_date=repay_date_format, next_date=next_date,
                                                        cutday_time=cut_time)
+        # 配置还款mock时间
+        apollo_data = dict()
+        apollo_data['credit.mock.repay.trade.date'] = repayMock  # credit.mock.repay.trade.date
+        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         self.log.demsg('清除分片流水')
         self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
@@ -91,4 +99,4 @@ class RepayPublicBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    RepayPublicBizImpl().pre_repay_config(repayDate='2022-09-06')
+    RepayPublicBizImpl().pre_repay_config(repayDate='2023-05-18')

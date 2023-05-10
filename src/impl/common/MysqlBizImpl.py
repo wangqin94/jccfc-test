@@ -407,6 +407,8 @@ class MysqlBizImpl(MysqlInit):
         self.delete_asset_database_info('asset_repay_plan_od', account_date=account_date)
         self.delete_asset_database_info('asset_repay_plan_fee_detail_od', account_date=account_date)
         self.delete_asset_database_info('asset_loan_invoice_info_od', account_date=account_date)
+        self.delete_asset_database_info('asset_repay_plan_od', account_date=account_date)
+        self.delete_asset_database_info('asset_daily_accrue_detail', account_date=account_date)
 
 
 if __name__ == '__main__':
@@ -416,5 +418,4 @@ if __name__ == '__main__':
     # MysqlBizImpl().get_loan_apply_info(id=999)
     # MysqlBizImpl().get_credit_apply_info('credit_apply_id', credit_apply_id='000CA2021031500000021')
     # MysqlBizImpl().get_loan_apply_status('01')
-    # MysqlBizImpl().get_asset_database_info('asset_repay_plan', 'sum(pre_repay_amount)', record=999, loan_invoice_id='000LI0001287425037156375010', repay_plan_status='4')
-    MysqlBizImpl().update_asset_job_ctl_date('20210909')
+    MysqlBizImpl().get_asset_database_info('asset_repay_plan', 'sum(pre_repay_amount)', record=999, loan_invoice_id='000LI0001287425037156375010', repay_plan_status='4')

@@ -39,7 +39,7 @@ def pre_loan_data(get_base_data_zhixin, zhiXinSynBizImpl, checkBizImpl, zhiXinCh
         apollo_data = dict()
         apollo_data['credit.mock.repay.trade.date'] = "true"
         apollo_data['credit.mock.repay.date'] = "{} 00:00:00".format(repay_date)
-        apollo.update_config(**apollo_data)
+        apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
     with allure.step("设置大会计时间,账务时间=repay_date"):
         account_date = repay_date.replace("-", '')

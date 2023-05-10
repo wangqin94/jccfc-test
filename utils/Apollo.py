@@ -22,7 +22,7 @@ _readconfig = ReadConfig.Config()
 
 def getApolloEnv(env):
     hj = ['hsit', 'huat', 'hdev', 'hqas', 'hpre']
-    credit = ['uat', 'rts', 'dev', 'sit']
+    credit = ['uat', 'rts', 'dev', 'sit', 'year']
     # apolloEnv = None
     try:
         if env in hj:
@@ -80,7 +80,7 @@ class Apollo(object):
                 _log.error("Location url return fault: {}".format(res.headers['Location']))
         except Exception as err:
             _log.error("login apollo failed {}".format(err))
-            sys.exit()
+            raise AssertionError(err)
 
     def get_config(self, key, appId='loan2.1-jcxf-credit', namespace='000'):
         """
@@ -93,17 +93,15 @@ class Apollo(object):
         url = self.host + '/apps/{}/envs/{}/clusters/default/namespaces/{}'.format(appId, self.env.upper(), namespace)
         res = self.session.get(url=url, headers=json_headers, cookies=self.cookie, verify=False)
         items = res.json()['items']
-        flag = 0
         try:
             for item in items:
                 if key == item['item']['key']:
-                    flag = 1
                     return item['item']
-            if flag == 0:
-                _log.error('config error, namespaces:{} cannot get config:{}'.format(namespace, key))
-                return None
+            else:
+                _log.error('search failed! namespaces:{} cannot get config:{}'.format(namespace, key))
+                raise ValueError("get config error")
         except Exception as err:
-            _log.error('search  failed! system exception:{}'.format(err))
+            raise ValueError(err)
 
     def releases(self, appId='loan2.1-jcxf-credit', namespace='000'):
         """
@@ -150,18 +148,23 @@ class Apollo(object):
 
 if __name__ == '__main__':
     apollo = Apollo()
-    kwargs = dict()
+    updateKeys = dict()
     # 设置还款mock时间
-    # kwargs['credit.mock.repay.trade.date'] = "true"
-    # kwargs['credit.mock.repay.date'] = "2022-01-18 00:00:00"
-    # apollo.update_config(**kwargs)
+    # updateKeys['credit.mock.repay.trade.date'] = "true"
+    # updateKeys['credit.mock.repay.date'] = "2022-01-18 00:00:00"
+    # apollo.update_config(**updateKeys)
 
     # 设置H5还款mock时间
-    # kwargs['api.mock.repay.trade.date'] = "true"
-    # kwargs['api.mock.repay.date'] = "2022-01-18 00:00:00"
-    # apollo.update_config(appId='loan2.1-jcxf-app-web', **kwargs)
+    # updateKeys['api.mock.repay.trade.date'] = "true"
+    # updateKeys['api.mock.repay.date'] = "2022-01-18 00:00:00"
+    # apollo.update_config(appId='loan2.1-jcxf-app-web', **updateKeys)
 
     # 设置放款mock时间
-    kwargs['credit.loan.trade.date.mock'] = "true"
-    kwargs['credit.loan.date.mock'] = "2022-10-27"
-    apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **kwargs)
+    # updateKeys['credit.loan.trade.date.mock'] = "true"
+    # updateKeys['credit.loan.date.mock'] = "2023-03-29"
+    # apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **updateKeys)
+
+    # 配置还款mock时间
+    updateKeys['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
+    updateKeys['credit.mock.repay.date'] = "{} 12:00:00".format("2023-04-05")
+    apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **updateKeys)

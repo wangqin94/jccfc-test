@@ -21,7 +21,7 @@ def pre_loan_data(fqlBizImpl, fqlCreditCheckBizImpl, fqlLoanCheckBizImpl):
         assert creditStatus == '0', "返回0说明授信申请成功"
 
     with allure.step("数据库层校验授信结果是否符合预期"):
-        time.sleep(5)
+        time.sleep(10)
         creditApply = fqlCreditCheckBizImpl.check_credit_apply_status(thirdpart_apply_id=creditRes['applyId'])
         fqlCreditCheckBizImpl.checkCreditApply1(creditApply)
         fqlCreditCheckBizImpl.checkCreditInfo1(thirdpart_apply_id=creditRes['applyId'])
@@ -164,4 +164,5 @@ class TestCase(object):
             fqlRepayCheckBizImpl.credit_repay_order1(loan_invoice_id=gl.get_value('loanInfo')['loan_no'], repay_term=3)
 
 
-
+if __name__ == "__main__":
+    pytest.main(['test_auto_fql_repay.py'])
