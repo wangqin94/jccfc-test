@@ -61,16 +61,14 @@ jiebei = {
                 "certNo":"34298719870021647X",
                 "bankCardInfo":"{\"cardType\":\"DC\",\"bankReservedMobileNo\":\"13173671201\",\"bankName\":\"招商银行\",\"cardNo\":\"123456789101110\"}",
                 "suggestAmtMax":"5000000",
-                "suggestRateMax":"0.00015",
+                "suggestRateMax":"0.0006",
                 "name":"张三",
-                "suggestAmtMin":"7000000",
-                "suggestRateMin":"0.00015",
+                "suggestAmtMin":"5000000",
+                "suggestRateMin":"0.0006",
                 "creditNo":"2022081100200000000100792S",
                 "certValidEndDate":"2022-12-02 11:12:00",
                 "tc_NoSource_ToPlatformOne":"Y",  # Y就是一期的新客，N就是二转一的老客
-                "extInfo": {
-                    "reason":""         #发起申请原因  借呗产品 且 降额或调价时有值  HIGH_RISK_SCORE较高风险用户  LOW_RISK_SCORE较低风险用户 AUDIT_KSCZ人工客诉处置
-                }
+                "extInfo": "{\"reason\":\"AUDIT_KSCZ\"}"   #发起申请原因  借呗产品 且 降额或调价时有值  HIGH_RISK_SCORE较高风险用户  LOW_RISK_SCORE较低风险用户 AUDIT_KSCZ人工客诉处置
             },  # 自定义
             # "signType": "RSA2",  # 签名类型 RSA2
             "sign": "YEjsLnpe6H44gR0exMp6kEDG7ZCpqiez0Np5aIUcc2S+12koFrNs7nO9moAIF8fMqApMPmaFIOG4IromyR/7h/gxxFC5f6HrMlO87sh66FHGwkzgXuCfnmZdfckHY0JJFJ8I14t6/HhAjUFECTCthffej0+YvgcFXxufOJUZPl6Hg6mSQ874NFrGrYcTkpwvuRO/yrdTOdf5B0J63F0fCKt5a5W9mwXRGu6N9R32KafoUJwNSRgsqHUWDjapAf5pSW+egxtW8wYh8jW7GnEwIXJhLutUrreMugGNZ9n2eDKKT9+U92+9C9vCdzCBX5Yjihw4mCcwO3FhubYA0wBL1Q\u003d\u003d"  # 签名结果
@@ -95,13 +93,13 @@ jiebei = {
                 "mobile": "",
                 "toPlatformOne": "",      #授信场景时有值
                 "agreeFlag": "Y",  # 授信结果
-                "creditAmt": 5000000,  # 额度的单位是『分』,  授信/调额时有值
-                "creditRate": 0.0002,  # 利率单位是 『⽇利率』  授信/调价时有值
+                "creditAmt": 6000000,  # 额度的单位是『分』,  授信/调额时有值
+                "creditRate": 0.0004,  # 利率单位是 『⽇利率』  授信/调价时有值
                 "creditRateLimit": 1,  #授信利率上限 网商贷产品 且 授信通过时有值
                 "creditRateBottom": 2,  #授信利率下限 网商贷产品 且 授信通过时有值
                 "unAdmReasons":"",  #拒绝码   外部资产拒绝时有值
                 "unAdmMng":"",     #拒绝码中文解释  外部资产拒绝时有值
-                "reason":"AUDIT_KSCZ"         #发起申请原因  借呗产品 且 降额或调价时有值  HIGH_RISK_SCORE较高风险用户  LOW_RISK_SCORE较低风险用户 AUDIT_KSCZ人工客诉处置
+                "reason":"HIGH_RISK_SCORE"         #发起申请原因  借呗产品 且 降额或调价时有值  HIGH_RISK_SCORE较高风险用户  LOW_RISK_SCORE较低风险用户 AUDIT_KSCZ人工客诉处置
 
             },  # 自定义
             # "signType": "RSA2",  # 签名类型 RSA2
