@@ -33,8 +33,10 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_apply(self):
+    def test_apply(self, loan_date='2023-05-12'):
         """ 测试步骤 """
+        # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
+        self.loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
         # 绑卡签约
         jike = JiKeBizImpl(data=self.data)
         jike.sharedWithholdingAgreement()
@@ -52,9 +54,6 @@ class MyTestCase(unittest.TestCase):
         # 发起LPR查询
         jike.queryLprInfo(thirdApplyId=self.thirdApplyId)
 
-        # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
-        # self.loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
-        self.loan_date = '2023-01-01'
         jike.applyLoan(loan_date=self.loan_date, loanAmt=amount, loanTerm=term, thirdApplyId=self.thirdApplyId)
 
     """ 后置条件处理 """

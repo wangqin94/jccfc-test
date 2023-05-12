@@ -407,7 +407,6 @@ class MysqlBizImpl(MysqlInit):
         self.delete_asset_database_info('asset_repay_plan_od', account_date=account_date)
         self.delete_asset_database_info('asset_repay_plan_fee_detail_od', account_date=account_date)
         self.delete_asset_database_info('asset_loan_invoice_info_od', account_date=account_date)
-        self.delete_asset_database_info('asset_repay_plan_od', account_date=account_date)
         self.delete_asset_database_info('asset_daily_accrue_detail', account_date=account_date)
 
 
