@@ -52,7 +52,7 @@ class RepayPublicBizImpl(MysqlInit):
         self.log.demsg('清除分片流水')
         self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
         self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-        self.MysqlBizImpl.del_assert_repay_history_data(repay_date_format)
+        self.MysqlBizImpl.del_assert_repay_history_data(last_date)
 
         self.log.demsg("删除redis中资产账务时间 key=000:ACCT:SysInfo:BIGACCT、000:ACCT:AccountDate:BIGACCT")
         self.redis.del_assert_repay_keys()
@@ -99,4 +99,4 @@ class RepayPublicBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    RepayPublicBizImpl().pre_repay_config(repayDate='2023-05-18')
+    RepayPublicBizImpl().pre_repay_config(repayDate='2024-01-15')
