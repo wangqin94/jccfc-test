@@ -10,6 +10,7 @@ from src.enums.EnumsCommon import *
 from src.enums.EnumWld import *
 from src.test_data.module_data import wld
 from utils.FileHandle import *
+from utils.Apollo import Apollo
 
 
 class WldBizImpl(EnvInit):
@@ -44,6 +45,7 @@ class WldBizImpl(EnvInit):
 
         # 初始化payload变量
         self.active_payload = {}
+        self.apollo = Apollo()
 
 
 
@@ -269,7 +271,7 @@ class WldBizImpl(EnvInit):
         return response
 
     # 还款
-    def repay(self,repay_date=None, repay_term_no='1', repay_type="1",  loan_invoice_id='', **kwargs):
+    def repay(self, repay_date=None, repay_term_no='1', repay_type="1",  loan_invoice_id='', **kwargs):
         ## 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
         repay_data = dict()
         strings = str(int(round(time.time() * 1000)))
@@ -312,7 +314,11 @@ class WldBizImpl(EnvInit):
                 repay_data['repayInterest'] = float(content1['pre_repay_interest'])
                 repay_data['repayPrincipal'] = float(content1['before_calc_principal'])  # 还款总本金
                 repay_data['repayAmount'] = repay_data['repayPrincipal'] + repay_data["repayInterest"]  # 总金额
-
+        # 配置还款mock时间
+        apollo_data = dict()
+        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
+        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repay_date)
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         # 更新 payload 字段值
         repay_data.update(**kwargs)
         parser = DataUpdate(self.cfg['repay']['payload'], **repay_data)
