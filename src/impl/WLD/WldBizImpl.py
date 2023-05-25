@@ -14,7 +14,7 @@ from utils.Apollo import Apollo
 
 
 class WldBizImpl(EnvInit):
-    def __init__(self,  data=None, person=True,encrypt_flag=True,**kwargs):
+    def __init__(self,  data=None, person=True,encrypt_flag=False,**kwargs):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         self.Files = Files()
@@ -67,6 +67,7 @@ class WldBizImpl(EnvInit):
         bind_card_data['payerIdNum'] = self.data['cer_no']
         bind_card_data['payerBankCardNum'] = self.data['bankid']
         bind_card_data['payerPhoneNum'] = self.data['telephone']
+        bind_card_data['payerBankCode'] = self.data['bankcode']
 
         # 更新 payload 字段值
         bind_card_data.update(kwargs)

@@ -84,6 +84,7 @@ class ZhiXinBizImpl(MysqlInit):
         applyCertification_data['idCardNo'] = self.data['cer_no']
         applyCertification_data['userName'] = self.data['name']
         applyCertification_data['bankCardNo'] = self.data['bankid']
+        applyCertification_data['bankCode'] = self.data['bankcode']
         applyCertification_data['userMobile'] = self.data['telephone']
         applyCertification_data['agreementTime'] = self.date
         applyCertification_data['ct'] = self.times

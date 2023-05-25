@@ -24,7 +24,7 @@ wld = {
                 "payerIdNum": "${身份证号}",
                 "payerPhoneNum": "${手机号}",
                 "payerBankCardNum": "${银行卡号}",
-                "payerBankCode": "0102"
+                "payerBankCode": ""
             }
         }
     },
