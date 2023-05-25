@@ -78,8 +78,9 @@ def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
     data['cer_no'] = IdNumber.generate_id(age=age)
     # 获取随机生成的手机号
     data['telephone'] = get_telephone()
-    bankName = bankName if bankName else '工商银行'
-    data['bankid'] = BankNo().get_bank_card(bankName=bankName)
+    bankName = bankName if bankName else '中国银行'
+    data['bankid'] = BankNo().get_bank_card(bankName=bankName)[0]
+    data['bankcode'] = BankNo().get_bank_card(bankName=bankName)[1]
 
     # 读取文件行数，超过20行删除历史数据
     with open('person.py', "r", encoding='utf-8') as f:  # 打开文件
@@ -130,7 +131,8 @@ def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
     data['telephone'] = get_telephone()
     bank = BankNo()
     bankName = bankName if bankName else '工商银行'
-    data['bankid'] = bank.get_bank_card(bankName=bankName)
+    data['bankid'] = bank.get_bank_card(bankName=bankName)[0]
+    data['bankcode'] = bank().get_bank_card(bankName=bankName)[1]
 
     # project赋值后天从到data中
     if project:
