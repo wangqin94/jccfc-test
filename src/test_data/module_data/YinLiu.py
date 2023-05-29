@@ -17,6 +17,49 @@ YinLiu = {
     'decrypt': {
         'interface': '/api/v1/yinliu/secret/thirdDecryptData',
     },
+
+    # 代扣签约申请接口
+    'getCardRealNameMessage': {
+        'interface': '/api/v1/yl/common/getCardRealNameMessage',
+        'payload': {
+            "head": {
+                "merchantId": "G23E01XIAX",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "payer": "QH",  # 付款方姓名
+                "mobileNo": "",  # 注册手机号
+                "payerPhoneNum": "",  # 付款方银行卡预留手机号
+                "payerIdNum": "",  # 付款方身份证号
+                "payerBankCardNum": "",  # 付款方银行卡号
+                "payerBankCode": "0102",  # 付款方银行编号
+            }
+        }
+    },
+    # 确认代扣签约接口
+    'bindCardRealName': {
+        'interface': '/api/v1/yl/common/bindCardRealName',
+        'payload': {
+            "head": {
+                "merchantId": "G23E01XIAX",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "tradeSerialNo": "",  # 同发起代扣签约返回的交易流水号
+                "mobileNo": "",  # 注册手机号
+                "payerPhoneNum": "",  # 付款方银行卡预留手机号
+                "userId": "",  # 锦程用户编号
+                "smsCode": "111111",  # 验证码
+            }
+        }
+    },
+
     # 代扣申请接口
     'sharedWithholdingAgreement': {
         'interface': '/api/v1/yl/common/sharedWithholdingAgreement',

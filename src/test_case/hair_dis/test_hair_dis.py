@@ -26,16 +26,28 @@ class TestCase(object):
         pass
 
     @staticmethod
-    def process(flag=3, productId=ProductIdEnum.HAIR_DISCOUNT.value):
+    def process(flag=0, productId=ProductIdEnum.HAIR_DISCOUNT.value):
         """
         @param flag: 标签
         @param productId: 默认贴息产品号（主产品号）：G23E041， 否则非贴息产品号（子产品号）：G23E042
         @return:
         """
         # 绑卡
-        if flag == 1:
+        if flag == 0:
+            hair = HairBizImpl(productId, data=None)
+            # hair.getCardRealNameMessage()
+            hair.getOnlineStoreInfo()
+
+        # 确认绑卡
+        elif flag == 1:
             hair = HairBizImpl(productId, data=data)
-            hair.sharedWithholdingAgreement()
+            hair.bindCardRealName(tradeSerialNo='000DEF2023020700000022')
+
+        # 确认绑卡
+        elif flag == 99:
+            hair = HairBizImpl(productId, data=data)
+            res = hair.getCardRealNameMessage(payerBankCardNum='6216701676429127322').get('body')
+            hair.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # 绑卡查询
         elif flag == 2:

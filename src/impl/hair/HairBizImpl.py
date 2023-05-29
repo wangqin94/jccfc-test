@@ -29,10 +29,11 @@ class HairBizImpl(MysqlInit):
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
-        # 初始化产品商户号
+        # 初始化产品、商户、门店号
         self.productId = productId if productId else ProductIdEnum.HAIR_DISCOUNT.value
         self.merchantId = EnumMerchantId.HAIR.value
         self.interestRate = self.getInterestRate()
+        self.storeCode = 'HairStore'  # 需保证测试环境有此storeCode门店
 
         # 初始化payload变量
         self.active_payload = {}
@@ -73,36 +74,70 @@ class HairBizImpl(MysqlInit):
                 base_data = get_base_data_temp()
         return base_data
 
+    # 查询门店信息
+    def getOnlineStoreInfo(self):
+        """
+        @return: user_financial_instrument_info表-门店：self.storeCode信息
+        """
+        # 根据门店ID查询资源ID
+        resId = self.MysqlBizImpl.get_user_database_info('user_cust_resource_relation', user_id=self.storeCode)['resource_id']
+        print(resId)
+        # 根据资源ID查询门店金融信息
+        res = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info', resource_id=resId)
+        print(type(res))
+        return dict(res)
+
     # 发起代扣协议申请
-    def sharedWithholdingAgreement(self, **kwargs):
+    def getCardRealNameMessage(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        sharedWithholdingAgreement = dict()
+        getCardRealNameMessage = dict()
         # head
-        sharedWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
-        sharedWithholdingAgreement['requestTime'] = self.date
-        sharedWithholdingAgreement['merchantId'] = self.merchantId
-
+        getCardRealNameMessage['requestSerialNo'] = 'requestNo' + strings + "_1000"
+        getCardRealNameMessage['requestTime'] = self.date
+        getCardRealNameMessage['merchantId'] = self.merchantId
         # body
-        sharedWithholdingAgreement['aggrementNum'] = 'aggrementNum' + strings
-        sharedWithholdingAgreement['payerIdNum'] = self.data['cer_no']
-        sharedWithholdingAgreement['payer'] = self.data['name']
-        sharedWithholdingAgreement['mobileNo'] = self.data['telephone']
-        sharedWithholdingAgreement['payerBankCardNum'] = self.data['bankid']
-        sharedWithholdingAgreement['payerPhoneNum'] = self.data['telephone']
-        sharedWithholdingAgreement['agreementTime'] = self.date
+        getCardRealNameMessage['payerIdNum'] = self.data['cer_no']
+        getCardRealNameMessage['payer'] = self.data['name']
+        getCardRealNameMessage['mobileNo'] = self.data['telephone']
+        getCardRealNameMessage['payerBankCardNum'] = self.data['bankid']
+        getCardRealNameMessage['payerPhoneNum'] = self.data['telephone']
 
         # 更新 payload 字段值
-        sharedWithholdingAgreement.update(kwargs)
-        parser = DataUpdate(self.cfg['sharedWithholdingAgreement']['payload'], **sharedWithholdingAgreement)
+        getCardRealNameMessage.update(kwargs)
+        parser = DataUpdate(self.cfg['getCardRealNameMessage']['payload'], **getCardRealNameMessage)
         self.active_payload = parser.parser
 
         self.log.demsg('发起绑卡请求...')
-        url = self.host + self.cfg['sharedWithholdingAgreement']['interface']
+        url = self.host + self.cfg['getCardRealNameMessage']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 确认绑卡申请payload
+    def bindCardRealName(self, tradeSerialNo, **kwargs):
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        bindCardRealName_data = dict()
+        # head
+        bindCardRealName_data['requestSerialNo'] = 'requestNo' + strings + "_1000"
+        bindCardRealName_data['requestTime'] = self.date
+        bindCardRealName_data['merchantId'] = self.merchantId
+        # body
+        bindCardRealName_data['tradeSerialNo'] = tradeSerialNo  # 同发起代扣签约返回的交易流水号
+        bindCardRealName_data['mobileNo'] = self.data['telephone']
+        bindCardRealName_data['payerPhoneNum'] = self.data['telephone']
+
+        # 更新 payload 字段值
+        bindCardRealName_data.update(kwargs)
+        parser = DataUpdate(self.cfg['bindCardRealName']['payload'], **bindCardRealName_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('确认绑卡请求...')
+        url = self.host + self.cfg['bindCardRealName']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
@@ -159,7 +194,7 @@ class HairBizImpl(MysqlInit):
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '2'  # 固定传2-赊销(分期购物)
-        credit_data['storeCode'] = 'HairStore'  # 需保证测试环境有此storeCode门店
+        credit_data['storeCode'] = self.storeCode  # 需保证测试环境有此storeCode门店
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -264,6 +299,10 @@ class HairBizImpl(MysqlInit):
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
         applyLoan_data['interestRate'] = self.interestRate
+
+        # 门店信息
+        applyLoan_data['storeAccountNo'] = ""  # 门店银行号
+        applyLoan_data['storeBankName'] = ""  # 门店银行名称
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
@@ -788,4 +827,4 @@ class HairBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    print(yinLiuRepayPlanByAvgAmt(billDate='2022-06-01', loanAmt=11100, yearRate=9.7, term=12))
+    HairBizImpl().getOnlineStoreInfo()
