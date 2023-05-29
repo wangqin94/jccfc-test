@@ -65,6 +65,7 @@ sftp_path = {
 }
 
 ks3_asset_path = {
+    'asset': "xdgl/xdnb/pl/accounting/asset",
     'jike': {
         "claimPath": "xdgl/xdnb/pl/accounting/asset/geexClaimFile",
         "bayBackPath": "xdgl/xdnb/pl/accounting/asset/geexBuybackFile"
@@ -72,5 +73,9 @@ ks3_asset_path = {
     'yinliu': {
         "claimPath": "xdgl/xdnb/pl/accounting/asset/geexClaimFile",
         "bayBackPath": "xdgl/xdnb/pl/accounting/asset/geexBuybackFile"
+    },
+    'hair': {
+        "bayBackPath": "xdgl/xdnb/pl/accounting/asset/disPreBuyBack",
+        "disInterestPath": "xdgl/xdnb/pl/accounting/asset/disInterestDetail"
     }
 }

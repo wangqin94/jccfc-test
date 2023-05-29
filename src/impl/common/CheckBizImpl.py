@@ -215,6 +215,49 @@ class CheckBizImpl(EnvInit):
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
                     raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
+    def check_channel_loan_compensation_status(self, m=10, t=3, **kwargs):
+        """
+        还款表channel_loan_compensation结果校验
+        @param kwargs: 查询条件
+        @param t: 每次时间间隔, 默认5S
+        @param m: 查证次数 默认10次
+        @return: response 接口响应参数 数据类型：json
+        """
+        self.log.demsg('数据库还款结果校验...')
+        for i in range(m):
+            info = self.MysqlBizImpl.get_op_channel_database_info('channel_loan_compensation', **kwargs)
+            if not info:
+                self.log.info("channel_loan_compensation未查询到还款记录，开始重试查证,当前第-{}-次".format(i))
+                time.sleep(t)
+                if i == m - 1:
+                    self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
+                    raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m * t))
+            else:
+                self.log.info("还款记录已入channel_loan_compensation表")
+                break
+        for j in range(m):
+            info = self.MysqlBizImpl.get_op_channel_database_info('channel_loan_compensation', **kwargs)
+            status = info['list_status']
+            if status == EnumChannelLoanCompensationStatus.ACCOUNT_SUCCESS.value:
+                self.log.demsg('数据库层还款查询成功')
+                return status
+            elif status == EnumChannelLoanCompensationStatus.FAIL.value:
+                self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
+                raise AssertionError(
+                    '检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(
+                        EnumChannelLoanCompensationStatus.ACCOUNT_SUCCESS.value,
+                        status, info['compensation_desc']))
+            elif status == EnumChannelLoanCompensationStatus.FAIL_WAIT_BACK.value:
+                self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(
+                    EnumChannelLoanCompensationStatus.ACCOUNT_SUCCESS.value, status))
+            else:
+                self.log.demsg("还款审批状态处理中，请等待....")
+                time.sleep(t)
+                if j == m - 1:
+                    self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
+
     def check_H5_repay_status(self, m=10, t=5, **kwargs):
         """
         还款表credit_custom_payment_apply结果校验
@@ -349,7 +392,7 @@ class CheckBizImpl(EnvInit):
         """
         self.log.demsg('获取还款计划表最大逾期天数...')
         for i in range(m):
-            info = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",  **kwargs)
+            info = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan", **kwargs)
             overdue_days = info['overdue_days']
             if overdue_days >= max_overdue_days:
                 self.log.demsg('asset_repay_plan获取借据最大逾期天数[overdue_days：{}]'.format(overdue_days))
@@ -363,4 +406,4 @@ class CheckBizImpl(EnvInit):
 
 if __name__ == '__main__':
     # CheckBizImpl().check_channel_repay_status(id=999)
-    CheckBizImpl().check_loan_apply_status_with_expect('11', id=86)
+    CheckBizImpl().check_credit_apply_status(thirdpart_apply_id="thirdApplyId16794799870849850")
