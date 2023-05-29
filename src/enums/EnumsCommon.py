@@ -21,6 +21,7 @@ class ProductEnum(Enum):
     XIAOX = 'xiaoxiang'
     YINLIU = 'yinliu'
     HaLo = 'halo'
+    HAIR = 'hair'
 
 
 @unique
@@ -34,6 +35,13 @@ class ProductIdEnum(Enum):
     JieTiao = 'F22E011'
     JieBei = 'F22C021'
     HALO = 'G23E031'
+    HAIR_DISCOUNT = 'G23E041'
+    HAIR = 'G23E042'
+
+
+class EnumProductYearRate(Enum):
+    HAIR_DISCOUNT = 9.3
+    HAIR = 9.3
 
 
 @unique
@@ -43,6 +51,7 @@ class EnumMerchantId(Enum):
     FQL = '000UC010000006268'
     WLD = 'F21E03WOLD'
     HALO = 'G23E03HALO'
+    HAIR = 'G23E04HAIR'
 
 
 @unique
@@ -73,6 +82,19 @@ class EnumChannelRepayStatus(Enum):
     SUCCESS = '03'  # 成功
     CHECK_FAIL = '02'  # 信贷校验失败
     FAIL = '04'   # 资产校验失败
+
+
+@unique
+class EnumChannelLoanCompensationStatus(Enum):
+    INIT = '0'  # 初始化
+    WAIT = '1'  # 待处理
+    MANUAL_CONFIRMATION = '2'  # 手动确认
+    ACCOUNT_SUCCESS = '3'  # 已入账
+    CANCEL_WAIT = '4'   # 取消待处理
+    CANCEL_MANUAL_CONFIRMATION = '5'  # 取消手动处理
+    ASSET_PROCESSING = '6'  # 资产入账处理中
+    FAIL = '7'  # 入账失败
+    FAIL_WAIT_BACK = '8'   # 资金回退待处理
 
 
 @unique
@@ -124,6 +146,13 @@ class EnumRepayPlanStatus(Enum):
     OVERDUE_PART_REPAY = '5'  # 逾期部分还款
     OVERDUE_REPAY = '6'  # 逾期已还款
     SETTLE = '7'  # 已结清
+
+
+@unique
+class EnumAppName(Enum):
+    ASSET = 'asset'  # asset应用
+    CREDIT = 'credit'  # credit应用
+    OP_CHANNEL = 'op_channel'  # op_channel应用
 
 
 if __name__ == "__main__":

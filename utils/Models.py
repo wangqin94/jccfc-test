@@ -603,7 +603,7 @@ def assetAnnuity(loanAmt, term, yearRate, billDate):
 # # -----------------------------------------------------------
 # # - 老核心等额本息还款计划计算
 # # -----------------------------------------------------------
-def OldSysLoanByAvgAmt(loanAmt, term, yearRate, billDate, guaranteeAmt=1.11):
+def yinLiuRepayPlanByAvgAmt(loanAmt, term, yearRate, billDate, guaranteeAmt=1.11):
     """
     非最后一期，每期期供是用等额本息的公式计算出来的，然后对应的利息是等于剩余本金*月利率，本金=期供-利息；只有最后一期，是用的剩余本金+利息，计算的期供
     @param loanAmt:         借款金额
@@ -641,6 +641,62 @@ def OldSysLoanByAvgAmt(loanAmt, term, yearRate, billDate, guaranteeAmt=1.11):
         repaymentPlans['guaranteeAmt'] = guaranteeAmt  # 服务费
         repayment_plan.append(repaymentPlans)
     return repayment_plan
+
+
+# # -----------------------------------------------------------
+# # - 老核心等额本金还款计划计算
+# # -----------------------------------------------------------
+def yinLiuRepayPlanByAvgPrincipal(loanAmt, term, yearRate, billDate, guaranteeAmt=1.11):
+    """
+    利息=期初余额×年贴息率（9.3%）/12
+    @param loanAmt:         借款金额
+    @param term:            期数
+    @param yearRate:        锦程实收利率
+    @param billDate:        用户首期账单日
+    @param guaranteeAmt:    服务费
+    @return:还款计划表
+    """
+    repayment_plan = []
+    # 月利率
+    jcMonthRate = round(yearRate / 1200, 2)
+    # 月应还本金
+    jcMonthPrincipal = round(loanAmt/term, 2)
+    # 剩余应还本金
+    jcLeftPrePrincipal = loanAmt
+    for i in range(1, term + 1):
+        repaymentPlans = {}
+
+        # 每期应还利息
+        jcMonthInterest = round(jcLeftPrePrincipal * jcMonthRate, 2)
+        # 剩余还款本金
+        jcLeftPrePrincipal = round((jcLeftPrePrincipal - jcMonthPrincipal), 2)
+
+        repaymentPlans['period'] = i  # 期次
+        repaymentPlans['billDate'] = get_custom_month(i - 1, billDate)  # 还款日
+        repaymentPlans['principalAmt'] = round(jcMonthPrincipal, 2)  # 本金
+        repaymentPlans['interestAmt'] = round(jcMonthInterest, 2)  # 利息
+        repaymentPlans['guaranteeAmt'] = guaranteeAmt  # 服务费
+        repayment_plan.append(repaymentPlans)
+    return repayment_plan
+
+
+def get_bill_day(loan_date=None):
+    """
+    引流通用账单日计算规则
+    @param loan_date: 放款时间，如果放款时间空，则默认当前时间 eg:2022-01-01
+    @return: 返回首期账单日
+    """
+    if not loan_date:
+        loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
+    date_list = str(loan_date).split('-')
+    bill_year, bill_month, bill_day = map(int, date_list)
+    bill_month += 1
+    if bill_month > 12:
+        bill_year += 1
+        bill_month -= 12
+    bill_day = 28 if bill_day > 27 else bill_day
+    bill_data = '{}-{}-{}'.format(str(bill_year), str("%02d" % bill_month), str("%02d" % bill_day))
+    return bill_data
 
 
 if __name__ == "__main__":

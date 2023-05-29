@@ -3,6 +3,7 @@
     Function: 理赔/回购文件生成
 """
 from engine.EnvInit import EnvInit
+from src.enums.EnumYinLiu import EnumFileType
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.KS3 import KS3
 from utils.Logger import Logs
@@ -48,6 +49,7 @@ class YinLiuRepayFile(EnvInit):
         self.userData = userData
         self.repayTermNo = repayTermNo
         self.repayDate = repayDate
+        self.productId = productId
 
         # 理赔文件 键值对字典数据模板
         self.bankClaimTemple = {
@@ -58,7 +60,7 @@ class YinLiuRepayFile(EnvInit):
             'repay_amt': '',  # 代偿总额
             'repay_date': '',  # 代偿日期
             'business_no': str(int(round(time.time() * 1000))) + str(random.randint(0, 9999)),  # 流水号
-            'product_id': productId,  # 商户号
+            'product_id': productId,  # 产品号
             'type_flag': '1',  # 类型标志
             'loan_amt': '',  # 贷款总金额
             'loan_period': '',  # 贷款总期次
@@ -68,7 +70,7 @@ class YinLiuRepayFile(EnvInit):
             'left_repay_amt': ''  # 在贷余额
         }
 
-        # bank_repay_loan 键值对字典数据模板
+        # 引流回购通用文件 键值对字典数据模板
         self.bankBuyBackTemple = {
             'loan_no': '',  # 借据号
             'name': self.userData['name'],  # 姓名
@@ -77,7 +79,7 @@ class YinLiuRepayFile(EnvInit):
             'repay_amt': '',  # 代偿总额
             'repay_date': '',  # 代偿日期
             'business_no': str(int(round(time.time() * 1000))) + str(random.randint(0, 9999)),  # 流水号
-            'product_id': productId,  # 商户号
+            'product_id': productId,  # 产品号
             'type_flag': '2',  # 类型标志
             'loan_amt': '',  # 贷款总金额
             'loan_period': '',  # 贷款总期次
@@ -87,56 +89,86 @@ class YinLiuRepayFile(EnvInit):
             'left_repay_amt': ''  # 在贷余额
         }
 
-        # # 执行文件生成上传SFTP服务器
-        # self.start()
+        # 海尔回购文件 键值对字典数据模板
+        self.hairBuyBackTemple = {
+            'loan_no': '',  # 借据号
+            'name': self.userData['name'],  # 姓名
+            'cer_no': self.userData['cer_no'],  # 身份证号
+            'current_period': self.repayTermNo,  # 期次
+            'repay_amt': '',  # 代偿总额
+            'repay_date': '',  # 代偿日期
+            'business_no': str(int(round(time.time() * 1000))) + str(random.randint(0, 9999)),  # 流水号
+            'product_id': productId,  # 产品代码
+            'type_flag': '2',  # 类型标志
+            'loan_amt': '',  # 贷款总金额
+            'loan_period': '',  # 贷款总期次
+            'loan_date': '',  # 放款时间
+            'compensationPrincipal': '',  # 本金
+            'compensationInterest': '',  # 利息
+            'loanBalance': '',  # 在贷余额  用户级
+            'compensationOverdueFee': '',  # 代偿罚息
+            'compensationFee': '',  # 代偿违约金
+            'handler_status': ''  # 是否贴息 0:未贴息 1:已贴息 EnumBool.YES'
+        }
 
-    def uploadFile(self, fileType):
+        # 海尔贴息文件 键值对字典数据模板
+        self.hairDisInterestTemple = {
+            'loanNo': '',  # 借据号
+            'repayDate': '',  # 代偿日期
+            'repayTermNo': self.repayTermNo,  # 期次
+            'productId': productId,  # 产品代码
+            'subProductId': '',  # 子产品代码
+            'merchantId': '',  # 商户号
+            'preInterest': '',  # 利息
+        }
+
+    def uploadFile(self, fileType, assetFilePath):
         """
-        @param fileType: 文件类型 0:理赔文件 1:回购文件
+        @param fileType: EnumFileType枚举内容
+        @param assetFilePath: 资产文件类型存放路径
         @return:
         """
         # 遍历需要上传的文件
-        filePath = "claimPath" if fileType == 0 else "bayBackPath"
-        loaclPath = self.get_filename(self.repayDate)[filePath]
-        remote = os.path.join(ks3_asset_path[ProductEnum.YINLIU.value][filePath], self.repayDate.split('-')[0],
+        localPath = self.getLocalFilePath(fileType)
+        remote = os.path.join(ks3_asset_path[EnumAppName.ASSET.value], assetFilePath, self.repayDate.split('-')[0],
                               self.repayDate.split('-')[1], self.repayDate.split('-')[2])
 
         fileList = []
         remoteList = []
-        for root, dirs, files in os.walk(loaclPath):
+        for root, dirs, files in os.walk(localPath):
             for file in files:
-                fileList.append(os.path.join(loaclPath, file))
+                fileList.append(os.path.join(localPath, file))
                 remoteList.append(format_path(remote) + "/" + file)
         for local, remote in zip(fileList, remoteList):
             self.ks3.upload_file(local, remote)
 
-    # 获取文件存放路径
-    def get_filename(self, repayDate):
+    # 获取本地文件存放路径
+    def getLocalFilePath(self, fileType):
+        """
+        @param fileType: 文件类型
+        @return: 本地文件存放路径
+        """
         # 初始化文件存放路径，(用户_身份证号)
         data_save_path = '%s_%s' % (
             self.userData['name'], self.userData['cer_no'])
-        data_save_path = os.path.join(_FilePath, data_save_path, repayDate.replace('-', ''))
+        data_save_path = os.path.join(_FilePath, data_save_path, self.repayDate.replace('-', ''))
         if not os.path.exists(data_save_path):
             os.makedirs(data_save_path)
-        # 理赔文件
-        claimPath = os.path.join(data_save_path, "claim")
-        if not os.path.exists(claimPath):
-            os.makedirs(claimPath)
-        # 回购文件
-        bayBackPath = os.path.join(data_save_path, "bayBack")
-        if not os.path.exists(bayBackPath):
-            os.makedirs(bayBackPath)
-        # 理赔文件名
-        claimFileName = os.path.join(claimPath, '%s-claim.txt' % repayDate.replace('-', ''))
-        # 回购文件名
-        buyBackFileName = os.path.join(bayBackPath, '%s-buyback.txt' % (repayDate.replace('-', '')))
-        info = dict()
-        info['data_save_path'] = data_save_path
-        info['claimPath'] = claimPath
-        info['bayBackPath'] = bayBackPath
-        info['claimFileName'] = claimFileName
-        info['buyBackFileName'] = buyBackFileName
-        return info
+        # 文件所属文件夹不存在则创建
+        localFilePath = os.path.join(data_save_path, fileType)
+        if not os.path.exists(localFilePath):
+            os.makedirs(localFilePath)
+        return localFilePath
+
+    # 获取本地文件名称
+    def getLocalFileName(self, filePath, fileType):
+        """
+        @param filePath: 本地文件路径
+        @param fileType: 文件类型
+        @return: 本地文件名称
+        """
+        localFileName = os.path.join(filePath, '{}-{}.txt'.format(self.repayDate.replace('-', ''), fileType))
+        return localFileName
 
     def getInvoiceInfo(self):
         """
@@ -159,7 +191,8 @@ class YinLiuRepayFile(EnvInit):
         """
         temple = {}
         # 初始化理赔文件
-        claimFileName = self.get_filename(self.repayDate)['claimFileName']
+        localFilePath = self.getLocalFilePath(EnumFileType.CLAIM_FILE.fileType)
+        claimFileName = self.getLocalFileName(localFilePath, EnumFileType.CLAIM_FILE.fileType)
         if os.path.exists(claimFileName):
             os.remove(claimFileName)
         # 获取用户借据信息
@@ -187,7 +220,7 @@ class YinLiuRepayFile(EnvInit):
         write_repay_file(claimFileName, **self.bankClaimTemple)
 
         # 开始上传文件到ks3
-        self.uploadFile(fileType=0)
+        self.uploadFile(fileType=EnumFileType.CLAIM_FILE.fileType, assetFilePath=EnumFileType.CLAIM_FILE.folderName)
 
     # 回购文件生成
     def creditBuyBackFile(self):
@@ -196,14 +229,15 @@ class YinLiuRepayFile(EnvInit):
         """
         temple = {}
         # 初始化文件
-        buyBackFileName = self.get_filename(self.repayDate)['buyBackFileName']
+        localFilePath = self.getLocalFilePath(EnumFileType.BUYBACK_FILE.fileType)
+        buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.BUYBACK_FILE.fileType)
         if os.path.exists(buyBackFileName):
             os.remove(buyBackFileName)
         # 获取用户借据信息
         creditLoanInvoiceInfo = self.getInvoiceInfo()
         loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
 
-        # 根据借据Id和期次获取资产侧还款计划
+        # 组装回购内容
         totalTerm = creditLoanInvoiceInfo['installment_num']
         temple['repay_date'] = self.repayDate.replace('-', '')
         temple['loan_no'] = loanInvoiceId
@@ -223,13 +257,127 @@ class YinLiuRepayFile(EnvInit):
             temple['current_period'] = str(termNo)  # 期次
 
             # 文件赋值
-            self.bankBuyBackTemple.update(temple)
+            self.hairDisInterestTemple.update(temple)
             # 开始写入文件内容
             write_repay_file(buyBackFileName, **self.bankBuyBackTemple)
             termNo += 1
 
         # 开始上传文件到ks3
-        self.uploadFile(fileType=1)
+        self.uploadFile(fileType=EnumFileType.BUYBACK_FILE.fileType, assetFilePath=EnumFileType.BUYBACK_FILE.folderName)
+
+    # 海尔贴息文件生成
+    def creditDisInterestFile(self):
+        """
+        @return:
+        """
+        temple = {}
+        # 初始化理赔文件
+        localFilePath = self.getLocalFilePath(EnumFileType.DIS_INTEREST_FILE.fileType)
+        disInterestFileName = self.getLocalFileName(localFilePath, EnumFileType.DIS_INTEREST_FILE.fileType)
+        if os.path.exists(disInterestFileName):
+            os.remove(disInterestFileName)
+        # 获取用户借据信息
+        creditLoanInvoiceInfo = self.getInvoiceInfo()
+        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
+
+        # 根据借据Id和期次获取资产侧还款计划
+        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loanInvoiceId, self.repayTermNo)
+        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
+
+        temple['repayDate'] = self.repayDate.replace('-', '')
+        temple['loanNo'] = loanInvoiceId
+        temple['preInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
+        temple['subProductId'] = self.productId if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else ProductIdEnum.HAIR.value  # 子产品号
+        temple['merchantId'] = EnumMerchantId.HAIR.value  # 商户号
+
+        # 文件赋值
+        self.hairDisInterestTemple.update(temple)
+
+        # 开始写入文件内容
+        write_repay_file(disInterestFileName, **self.hairDisInterestTemple)
+
+        # 开始上传文件到ks3
+        self.uploadFile(fileType=EnumFileType.DIS_INTEREST_FILE.fileType, assetFilePath=EnumFileType.DIS_INTEREST_FILE.folderName)
+
+    # 海尔回购文件生成
+    def creditHairDisBuyBackFile(self):
+        """
+        @return:
+        """
+        # 初始化文件
+        localFilePath = self.getLocalFilePath(EnumFileType.DIS_BUYBACK_FILE.fileType)
+        buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.DIS_BUYBACK_FILE.fileType)
+        if os.path.exists(buyBackFileName):
+            os.remove(buyBackFileName)
+        # 获取借据总期数
+        totalTerm = self.getInvoiceInfo()['installment_num']
+        # 依次写入回购所有期次还款数据
+        termNo = int(self.repayTermNo)
+        while int(totalTerm) >= termNo:
+            # 文件赋值
+            self.hairBuyBackTemple.update(self.creditHairBuyBackData(termNo))
+            # 开始写入文件内容
+            write_repay_file(buyBackFileName, **self.hairBuyBackTemple)
+            termNo += 1
+
+        # 开始上传文件到ks3
+        self.uploadFile(fileType=EnumFileType.DIS_BUYBACK_FILE.fileType, assetFilePath=EnumFileType.DIS_BUYBACK_FILE.folderName)
+
+    # 海尔预回购文件生成
+    def creditHairDisPreBuyBackFile(self):
+        """
+        @return:
+        """
+        # 初始化文件
+        localFilePath = self.getLocalFilePath(EnumFileType.DIS_PRE_BUYBACK_FILE.fileType)
+        buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.DIS_PRE_BUYBACK_FILE.fileType)
+        if os.path.exists(buyBackFileName):
+            os.remove(buyBackFileName)
+        # 获取借据总期数
+        totalTerm = self.getInvoiceInfo()['installment_num']
+        # 依次写入回购所有期次还款数据
+        termNo = int(self.repayTermNo)
+        while int(totalTerm) >= termNo:
+            # 文件赋值
+            self.hairBuyBackTemple.update(self.creditHairBuyBackData(termNo))
+            # 开始写入文件内容
+            write_repay_file(buyBackFileName, **self.hairBuyBackTemple)
+            termNo += 1
+
+        # 开始上传文件到ks3
+        self.uploadFile(fileType=EnumFileType.DIS_BUYBACK_FILE.fileType, assetFilePath=EnumFileType.DIS_BUYBACK_FILE.folderName)
+
+    # 海尔回购文件生成
+    def creditHairBuyBackData(self, termNo):
+        """
+        productId: G23E041:disPreBuyBack预回购文件； G23E042:disBuyBack回购文件
+        @return:
+        """
+        temple = {}
+        # 获取用户借据信息
+        creditLoanInvoiceInfo = self.getInvoiceInfo()
+        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
+
+        # 组装回购内容
+        totalTerm = creditLoanInvoiceInfo['installment_num']
+        temple['repay_date'] = self.repayDate.replace('-', '')
+        temple['loan_no'] = loanInvoiceId
+        temple['loan_period'] = totalTerm
+        temple['loan_amt'] = creditLoanInvoiceInfo['loan_amount']
+        temple['loan_date'] = str(creditLoanInvoiceInfo['loan_pay_time']).split()[0].replace('-', '')
+        # 根据借据Id和期次获取资产侧还款计划
+        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loanInvoiceId, str(termNo))
+        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
+        temple['repay_amt'] = str(asset_repay_plan["left_repay_principal"])  # 总金额
+        temple['compensationPrincipal'] = str(asset_repay_plan["left_repay_principal"])  # 本金
+        temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
+        temple['loanBalance'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
+        temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
+        temple['compensationFee'] = str(asset_repay_plan["left_repay_fee"])  # 费用
+        temple['business_no'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))  # 流水号
+        temple['current_period'] = str(termNo)  # 期次
+        temple['handler_status'] = "1" if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else "0"  # 是否贴息
+        return temple
 
 
 if __name__ == '__main__':
