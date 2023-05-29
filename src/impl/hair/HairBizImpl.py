@@ -77,15 +77,11 @@ class HairBizImpl(MysqlInit):
     # 查询门店信息
     def getOnlineStoreInfo(self):
         """
-        @return: user_financial_instrument_info表-门店：self.storeCode信息
+        @return: user_online_store_partnership表-self.storeCode门店信息
         """
-        # 根据门店ID查询资源ID
-        resId = self.MysqlBizImpl.get_user_database_info('user_cust_resource_relation', user_id=self.storeCode)['resource_id']
-        print(resId)
-        # 根据资源ID查询门店金融信息
-        res = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info', resource_id=resId)
-        print(type(res))
-        return dict(res)
+        # 线上门店合作关系表
+        res = self.MysqlBizImpl.get_user_database_info('user_online_store_partnership', third_store_id=self.storeCode)
+        return res
 
     # 发起代扣协议申请
     def getCardRealNameMessage(self, **kwargs):
@@ -301,8 +297,8 @@ class HairBizImpl(MysqlInit):
         applyLoan_data['interestRate'] = self.interestRate
 
         # 门店信息
-        applyLoan_data['storeAccountNo'] = ""  # 门店银行号
-        applyLoan_data['storeBankName'] = ""  # 门店银行名称
+        applyLoan_data['storeAccountNo'] = self.getOnlineStoreInfo()['open_bank_code']  # 门店银行号
+        applyLoan_data['storeBankName'] = self.getOnlineStoreInfo()['open_brank_name']  # 门店银行名称
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
