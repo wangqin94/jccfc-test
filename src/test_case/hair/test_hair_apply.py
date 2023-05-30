@@ -20,7 +20,8 @@ class MyTestCase(unittest.TestCase):
         """ 测试步骤 """
         # 绑卡签约
         hair = HairBizImpl(productId, data=None)
-        hair.sharedWithholdingAgreement()
+        res = hair.getCardRealNameMessage().get('body')
+        hair.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # 发起授信申请
         self.thirdApplyId = hair.credit(applyAmount=5000)['body']['thirdApplyId']

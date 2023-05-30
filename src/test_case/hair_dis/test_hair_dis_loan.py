@@ -34,11 +34,12 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_apply(self, loan_date='2023-05-18'):
+    def test_apply(self, loan_date='2023-05-30'):
         """ 测试步骤 """
         # 绑卡签约
         Hair = HairBizImpl(self.productId, data=self.data)
-        Hair.sharedWithholdingAgreement()
+        res = Hair.getCardRealNameMessage().get('body')
+        Hair.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         term = 6
         amount = random.randrange(1000, 10000, 100)

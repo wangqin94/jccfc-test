@@ -33,7 +33,7 @@ class HairBizImpl(MysqlInit):
         self.productId = productId if productId else ProductIdEnum.HAIR_DISCOUNT.value
         self.merchantId = EnumMerchantId.HAIR.value
         self.interestRate = self.getInterestRate()
-        self.storeCode = 'HairStore'  # 需保证测试环境有此storeCode门店
+        self.storeCode = 'NHairStore'  # 需保证测试环境有此storeCode门店
 
         # 初始化payload变量
         self.active_payload = {}

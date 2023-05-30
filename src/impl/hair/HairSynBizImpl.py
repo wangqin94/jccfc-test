@@ -29,7 +29,8 @@ class HairSynBizImpl(HairBizImpl):
         """
         # 绑卡
         hair = HairBizImpl(data=None)
-        hair.sharedWithholdingAgreement()
+        res = hair.getCardRealNameMessage().get('body')
+        hair.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # ocr配置默认不校验 (1：不验证，0：验证)
         apollo_data = dict()
