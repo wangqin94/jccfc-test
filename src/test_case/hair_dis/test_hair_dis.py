@@ -26,7 +26,7 @@ class TestCase(object):
         pass
 
     @staticmethod
-    def process(flag=0, productId=ProductIdEnum.HAIR_DISCOUNT.value):
+    def process(flag=5, productId=ProductIdEnum.HAIR_DISCOUNT.value):
         """
         @param flag: 标签
         @param productId: 默认贴息产品号（主产品号）：G23E041， 否则非贴息产品号（子产品号）：G23E042
@@ -68,7 +68,7 @@ class TestCase(object):
         # 借款申请
         elif flag == 5:
             hair = HairBizImpl(productId, data=data)
-            hair.applyLoan(loanAmt=1000, loanTerm=12, reserveMobile='16100001955', thirdApplyId='thirdApplyId16708148970374646')
+            hair.applyLoan(loanAmt=1000, loanTerm=12)
 
         # 借款查询
         elif flag == 6:

@@ -150,7 +150,13 @@ YinLiu = {
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
                 "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
-                "idCardAddr": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证地址
+                "idCardAddrAddress": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证地址
+                "idCardAddrProvinceCode": "510000",  # 身份证地址省份代码
+                "idCardAddrProvinceName": "四川省",  # 身份证地址省份名称
+                "idCardAddrCityCode": "510100",  # 身份证地址市级代码
+                "idCardAddrCityName": "成都市",  # 身份证地址市级名称
+                "idCardAddrAreaCode": "510107",  # 身份证地址区代码
+                "idCardAddrAreaName": "武侯区",  # 身份证地址区名称
                 "issuingAuth": "成都高新派出所",  # 发证机关
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
                 "compName": "单位名称",  # 单位名称
@@ -203,19 +209,14 @@ YinLiu = {
                         "fileName": "credit.pdf"
                     },
                     {
-                        "fileType": "6",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_non_student_202000000948071964.pdf"
-                    },
-                    {
                         "fileType": "7",  # 三方查询授权书
                         "fileUrl": "xdgl/jike/test/third.pdf",
                         "fileName": "third.pdf"
                     },
                     {
-                        "fileType": "10",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_third_auth_202000000948071964.pdf"
+                        "fileType": "14",
+                        "fileUrl": "xdgl/jike/test/photos.png",
+                        "fileName": "photos.png"
                     }
                 ],
                 "authenticationInfo": {

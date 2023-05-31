@@ -3,6 +3,7 @@
 # 百度接口数据封装类
 # ------------------------------------------
 from engine.MysqlInit import MysqlInit
+from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import YinLiu
@@ -198,14 +199,17 @@ class HairBizImpl(MysqlInit):
         credit_data['reserveMobile'] = self.data['telephone']
         credit_data['mobileNo'] = self.data['telephone']
 
+        # 还款方式
+        credit_data[
+            'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_AMT_INTEREST.value
         # 银行卡信息
         credit_data['userBankCardNo'] = self.data['bankid']
 
         # 更新 payload 字段值
         credit_data.update(kwargs)
-
         parser = DataUpdate(self.cfg['credit_apply']['payload'], **credit_data)
         self.active_payload = parser.parser
+        self.active_payload['body']['productId'] = self.productId  # 产品编号
 
         # 校验用户是否已存在
         self.MysqlBizImpl.check_user_available(self.data)
@@ -296,20 +300,17 @@ class HairBizImpl(MysqlInit):
         applyLoan_data['loanTerm'] = loanTerm
         applyLoan_data['interestRate'] = self.interestRate
 
-        # 门店信息
-        applyLoan_data['storeAccountNo'] = self.getOnlineStoreInfo()['open_bank_code']  # 门店银行号
-        applyLoan_data['storeBankName'] = self.getOnlineStoreInfo()['open_brank_name']  # 门店银行名称
-
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
         applyLoan_data['mobileNo'] = self.data['telephone']
         applyLoan_data['reserveMobile'] = self.data['telephone']
         applyLoan_data['name'] = self.data['name']
         applyLoan_data['accountNo'] = self.data['bankid']
-
+        # 还款方式
+        applyLoan_data[
+            'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_FEE_AMT.value
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
-
         # 还款计划
         applyLoan_data['repaymentPlans'] = self.getRepayPlan(billDate=firstRepayDate, loanAmt=loanAmt,
                                                              yearRate=self.interestRate, term=loanTerm)
@@ -317,6 +318,9 @@ class HairBizImpl(MysqlInit):
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
         self.active_payload = parser.parser
+        # 门店信息
+        self.active_payload['storeAccountNo'] = self.getOnlineStoreInfo()['open_bank_code']  # 门店银行号
+        self.active_payload['storeBankName'] = self.getOnlineStoreInfo()['open_brank_name']  # 门店银行名称
 
         self.log.demsg('发起支用请求...')
         url = self.host + self.cfg['loan_apply']['interface']

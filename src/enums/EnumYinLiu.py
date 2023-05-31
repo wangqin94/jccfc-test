@@ -147,6 +147,16 @@ class StatusEnum(Enum):
 
 
 # @unique
+class EnumRepayType(Enum):
+    EQUAL_AMT_INTEREST = "1"  # 等额本息
+    EQUAL_AMT_PRINCIPLE = "2"  # 等额本金
+    EQUAL_FEE_AMT = "3"  # 等本等费
+    PERIOD_INTEREST = "4"  # 按期付息到期还本
+    ONCE_TIME = "5"  # 到期一次性还本付息
+    EQUAL_FEE_AMT_TOTAL_RATE = "5"  # 等本等费-总费率
+
+
+# @unique
 class EnumFileType(Enum):
     CLAIM_FILE = ('geexClaimFile', 'claim')  # 理赔文件
     BUYBACK_FILE = ('geexBuybackFile', 'buyback')  # 回购文件
