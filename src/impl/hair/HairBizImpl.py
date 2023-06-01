@@ -54,10 +54,10 @@ class HairBizImpl(MysqlInit):
 
     def getRepayPlan(self, billDate, loanAmt, yearRate, term):
         # 根据输入产品编号获取对应产品年利率
-        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+        if self.productId == ProductIdEnum.HAIR.value:
             repayPlan = yinLiuRepayPlanByAvgAmt(billDate=billDate, loanAmt=loanAmt,
                                                 yearRate=yearRate, term=term)
-        elif self.productId == ProductIdEnum.HAIR.value:
+        elif self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
             repayPlan = yinLiuRepayPlanByAvgPrincipal(billDate=billDate, loanAmt=loanAmt,
                                                       yearRate=yearRate, term=term)
         else:
@@ -309,6 +309,7 @@ class HairBizImpl(MysqlInit):
         # 还款方式
         applyLoan_data[
             'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_AMT_INTEREST.value
+        applyLoan_data['repayType'] = '2'
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
         # 还款计划
