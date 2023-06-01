@@ -60,7 +60,7 @@ class HairBizImpl(MysqlInit):
                                                 yearRate=yearRate, term=term)
         elif self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
             repayPlan = yinLiuRepayPlanByAvgPrincipal(billDate=billDate, loanAmt=loanAmt,
-                                                      yearRate=yearRate, term=term)
+                                                      yearRate=yearRate, term=term, guaranteeAmt=0)
         else:
             raise Exception('产品编号输入错误：{}'.format(self.productId))
         return repayPlan
@@ -310,7 +310,6 @@ class HairBizImpl(MysqlInit):
         # 还款方式
         applyLoan_data[
             'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_AMT_INTEREST.value
-        applyLoan_data['repayType'] = '2'
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
         # 还款计划
