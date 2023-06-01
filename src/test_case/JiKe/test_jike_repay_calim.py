@@ -26,8 +26,8 @@ class MyTestCase(unittest.TestCase):
         jiKeRepayFile = JiKeRepayFile(data, repayTermNo='4', repayDate=repayDate)
         jiKeRepayFile.creditClaimFile()
 
-        self.repayPublicBizImpl.job.update_job('引流代偿文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job('引流代偿文件分片任务流', group=13)
+        self.repayPublicBizImpl.job.update_job('【引流】代偿文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.trigger_job('【引流】代偿文件分片任务流', group=13)
         time.sleep(3)
 
         # 自动入账
