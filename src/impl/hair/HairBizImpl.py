@@ -35,7 +35,6 @@ class HairBizImpl(MysqlInit):
         self.merchantId = EnumMerchantId.HAIR.value
         self.interestRate = self.getInterestRate()
         self.storeCode = 'NHairStore'  # 需保证测试环境有此storeCode门店
-        self.onlineStoreInfo = self.getOnlineStoreInfo()
 
         # 初始化payload变量
         self.active_payload = {}
@@ -75,15 +74,6 @@ class HairBizImpl(MysqlInit):
             else:
                 base_data = get_base_data_temp()
         return base_data
-
-    # 查询门店信息
-    def getOnlineStoreInfo(self):
-        """
-        @return: user_online_store_partnership表-self.storeCode门店信息
-        """
-        # 线上门店合作关系表
-        res = self.MysqlBizImpl.get_user_database_info('user_online_store_partnership', third_store_id=self.storeCode)
-        return res
 
     # 发起代扣协议申请
     def getCardRealNameMessage(self, **kwargs):
@@ -320,8 +310,9 @@ class HairBizImpl(MysqlInit):
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
         self.active_payload = parser.parser
         # 门店信息
-        self.active_payload['body']['storeAccountNo'] = self.onlineStoreInfo['account']  # 门店银行号
-        self.active_payload['body']['storeBankName'] = self.onlineStoreInfo['account_name']  # 门店银行名称
+        onlineStoreInfo = self.MysqlBizImpl.get_user_database_info('user_online_store_partnership', third_store_id=self.storeCode)
+        self.active_payload['body']['storeAccountNo'] = onlineStoreInfo['account']  # 门店银行号
+        self.active_payload['body']['storeBankName'] = onlineStoreInfo['account_name']  # 门店银行名称
 
         self.log.demsg('发起支用请求...')
         url = self.host + self.cfg['loan_apply']['interface']
@@ -828,4 +819,4 @@ class HairBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    HairBizImpl().getOnlineStoreInfo()
+    pass
