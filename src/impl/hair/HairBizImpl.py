@@ -321,8 +321,8 @@ class HairBizImpl(MysqlInit):
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
         self.active_payload = parser.parser
         # 门店信息
-        self.active_payload['storeAccountNo'] = self.onlineStoreInfo['account']  # 门店银行号
-        self.active_payload['storeBankName'] = self.onlineStoreInfo['account_name']  # 门店银行名称
+        self.active_payload['body']['storeAccountNo'] = self.onlineStoreInfo['account']  # 门店银行号
+        self.active_payload['body']['storeBankName'] = self.onlineStoreInfo['account_name']  # 门店银行名称
 
         self.log.demsg('发起支用请求...')
         url = self.host + self.cfg['loan_apply']['interface']
