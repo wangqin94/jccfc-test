@@ -258,7 +258,7 @@ class HairBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, **kwargs):
+    def applyLoan(self, loanTerm=12, loanAmt=1000, thirdApplyId=None, loan_date=None, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param loan_date: 放款时间，默认当前时间 eg:2022-01-01
@@ -308,7 +308,7 @@ class HairBizImpl(MysqlInit):
         applyLoan_data['accountNo'] = self.data['bankid']
         # 还款方式
         applyLoan_data[
-            'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_FEE_AMT.value
+            'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_AMT_INTEREST.value
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
         # 还款计划
@@ -319,8 +319,8 @@ class HairBizImpl(MysqlInit):
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
         self.active_payload = parser.parser
         # 门店信息
-        self.active_payload['storeAccountNo'] = self.getOnlineStoreInfo()['open_bank_code']  # 门店银行号
-        self.active_payload['storeBankName'] = self.getOnlineStoreInfo()['open_brank_name']  # 门店银行名称
+        self.active_payload['storeAccountNo'] = self.getOnlineStoreInfo()['account']  # 门店银行号
+        self.active_payload['storeBankName'] = self.getOnlineStoreInfo()['account_name']  # 门店银行名称
 
         self.log.demsg('发起支用请求...')
         url = self.host + self.cfg['loan_apply']['interface']
