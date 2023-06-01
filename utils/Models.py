@@ -640,6 +640,7 @@ def yinLiuRepayPlanByAvgAmt(loanAmt, term, yearRate, billDate, guaranteeAmt=1.11
         repaymentPlans['interestAmt'] = round(jcMonthInterest, 2)  # 利息
         repaymentPlans['guaranteeAmt'] = guaranteeAmt  # 服务费
         repayment_plan.append(repaymentPlans)
+    # repayment_plan[0]['principalAmt'] += 0.01
     return repayment_plan
 
 
@@ -665,17 +666,19 @@ def yinLiuRepayPlanByAvgPrincipal(loanAmt, term, yearRate, billDate, guaranteeAm
     jcLeftPrePrincipal = loanAmt
     for i in range(1, term + 1):
         repaymentPlans = {}
-
+        # 是否最后一期
+        isLastPeriod = i == term
         # 每期应还利息
         jcMonthInterest = round(jcLeftPrePrincipal * jcMonthRate, 2)
-        # 剩余还款本金
-        jcLeftPrePrincipal = round((jcLeftPrePrincipal - jcMonthPrincipal), 2)
-
         repaymentPlans['period'] = i  # 期次
         repaymentPlans['billDate'] = get_custom_month(i - 1, billDate)  # 还款日
-        repaymentPlans['principalAmt'] = round(jcMonthPrincipal, 2)  # 本金
+        if isLastPeriod:
+            repaymentPlans['principalAmt'] =  jcLeftPrePrincipal
+        else:
+            repaymentPlans['principalAmt'] = round(jcMonthPrincipal, 2)  # 本金
         repaymentPlans['interestAmt'] = round(jcMonthInterest, 2)  # 利息
         repaymentPlans['guaranteeAmt'] = guaranteeAmt  # 服务费
+        jcLeftPrePrincipal = round((jcLeftPrePrincipal - jcMonthPrincipal), 2) # 剩余还款本金
         repayment_plan.append(repaymentPlans)
     return repayment_plan
 
@@ -705,9 +708,12 @@ if __name__ == "__main__":
     # r = get_before_month(2, date='2021-11-13')
     # r = update_sql_qurey_str(table='table', db='db', attr='a=b', a=1, b=2)
     # r = get_custom_year(-16)
-    r = get_custom_month(0, '2022-02-03')
-    print(r)
+    # r = get_custom_month(0, '2022-02-03')
+    # print(r)
     # r = get_sql_qurey_str('table', 'a', 'b', db='base')
 
     # r = format_path("/hj/xdgl/meituan/bank_loan_create\\20220401")
     # print(r)
+
+    # print(OldSysLoanByAvgAmt(10000, 12, 24, '2021-07-01', guaranteeAmt=0))
+    print(yinLiuRepayPlanByAvgPrincipal(1000, 12, 9.3, '2021-07-01', guaranteeAmt=1.11))
