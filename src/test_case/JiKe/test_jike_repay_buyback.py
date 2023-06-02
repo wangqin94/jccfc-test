@@ -26,8 +26,8 @@ class MyTestCase(unittest.TestCase):
         jiKeRepayFile = JiKeRepayFile(data, repayTermNo='5', repayDate=repayDate)
         jiKeRepayFile.creditBuyBackFile()
 
-        self.repayPublicBizImpl.job.update_job('引流回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job('引流回购清单文件分片任务流', group=13)
+        self.repayPublicBizImpl.job.update_job('【引流】回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.trigger_job('【引流】回购清单文件分片任务流', group=13)
         time.sleep(3)
 
         # 自动入账

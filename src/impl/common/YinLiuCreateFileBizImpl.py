@@ -257,7 +257,7 @@ class YinLiuRepayFile(EnvInit):
             temple['current_period'] = str(termNo)  # 期次
 
             # 文件赋值
-            self.hairDisInterestTemple.update(temple)
+            self.bankBuyBackTemple.update(temple)
             # 开始写入文件内容
             write_repay_file(buyBackFileName, **self.bankBuyBackTemple)
             termNo += 1

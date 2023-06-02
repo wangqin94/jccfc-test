@@ -27,8 +27,8 @@ class MyTestCase(unittest.TestCase):
         hairRepayFile = YinLiuRepayFile(data, self.productId, repayTermNo='7', repayDate=repayDate, loanInvoiceId='000LI0001362535425950765007')
         hairRepayFile.creditBuyBackFile()
 
-        self.repayPublicBizImpl.job.update_job('引流回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job('引流回购清单文件分片任务流', group=13)
+        self.repayPublicBizImpl.job.update_job('【引流】回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.trigger_job('【引流】回购清单文件分片任务流', group=13)
         time.sleep(3)
 
         # 自动入账
