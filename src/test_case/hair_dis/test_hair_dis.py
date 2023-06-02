@@ -36,7 +36,7 @@ class TestCase(object):
         if flag == 0:
             hair = HairBizImpl(productId, data=None)
             # hair.getCardRealNameMessage()
-            hair.getOnlineStoreInfo()
+            hair.getCardRealNameMessage()
 
         # 确认绑卡
         elif flag == 1:

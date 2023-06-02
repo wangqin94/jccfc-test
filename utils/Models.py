@@ -132,7 +132,7 @@ def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
     bank = BankNo()
     bankName = bankName if bankName else '工商银行'
     data['bankid'] = bank.get_bank_card(bankName=bankName)[0]
-    data['bankcode'] = bank().get_bank_card(bankName=bankName)[1]
+    data['bankcode'] = bank.get_bank_card(bankName=bankName)[1]
 
     # project赋值后天从到data中
     if project:
@@ -673,12 +673,12 @@ def yinLiuRepayPlanByAvgPrincipal(loanAmt, term, yearRate, billDate, guaranteeAm
         repaymentPlans['period'] = i  # 期次
         repaymentPlans['billDate'] = get_custom_month(i - 1, billDate)  # 还款日
         if isLastPeriod:
-            repaymentPlans['principalAmt'] =  jcLeftPrePrincipal
+            repaymentPlans['principalAmt'] = jcLeftPrePrincipal
         else:
             repaymentPlans['principalAmt'] = round(jcMonthPrincipal, 2)  # 本金
         repaymentPlans['interestAmt'] = round(jcMonthInterest, 2)  # 利息
         repaymentPlans['guaranteeAmt'] = guaranteeAmt  # 服务费
-        jcLeftPrePrincipal = round((jcLeftPrePrincipal - jcMonthPrincipal), 2) # 剩余还款本金
+        jcLeftPrePrincipal = round((jcLeftPrePrincipal - jcMonthPrincipal), 2)  # 剩余还款本金
         repayment_plan.append(repaymentPlans)
     return repayment_plan
 
@@ -716,4 +716,4 @@ if __name__ == "__main__":
     # print(r)
 
     # print(OldSysLoanByAvgAmt(10000, 12, 24, '2021-07-01', guaranteeAmt=0))
-    print(yinLiuRepayPlanByAvgPrincipal(1001, 12, 9.3, '2021-07-02', guaranteeAmt=0))
+    print(json.dumps(yinLiuRepayPlanByAvgPrincipal(5200, 6, 9.3, '2023-07-02', guaranteeAmt=0)))
