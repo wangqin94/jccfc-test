@@ -15,9 +15,8 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl = RepayPublicBizImpl()
 
     """ 测试步骤 """
-    def test_repay_apply(self):
+    def test_repay_apply(self, repayDate='2023-06-06'):
         """ 测试步骤 """
-        repayDate = '2023-05-05'
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
         # 还款环境配置,清理缓存配置账务时间

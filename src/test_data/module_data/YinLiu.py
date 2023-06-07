@@ -377,7 +377,9 @@ YinLiu = {
                 "thirdWithholdId": "",  # 三方代扣编号 线下还款、逾期还款通知：传机构代扣编号；支付宝还款通知：传支付宝扣款订单号；其他还款场景不传
                 "appAuthToken": "6",  # 支付宝授权令牌 支付宝还款通知必传
                 "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
-                "repaymentAccountNo": "6",  # 还款账号 线上还款必填
+                "thirdRepayTime": "",  # 线下还款、支付宝还款必传，客户实际还款时间
+                "thirdRepayAccountType": "中国工商银行",  # 线下还款、支付宝还款必传，银行卡还款传开户行名称，微信、支付宝还款传支付平台名称，如：微信、支付宝、中国工商银行 等；
+                "repaymentAccountNo": "6",  # 还款账号 线上还款、线下还款、支付宝还款必传
                 "repayType": "1",  # 还款类型 EnumTrialRepayType
                 "repayNum": 1,  # 期数 前结清，将各期金额合并，期数传开始期次
                 "repayAmount": 0,  # 资还款总金额

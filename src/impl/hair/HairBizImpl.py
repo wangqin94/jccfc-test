@@ -442,6 +442,7 @@ class HairBizImpl(MysqlInit):
         # body
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
+        repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
         repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayType'] = repay_type
         if repayTerm:
@@ -491,6 +492,7 @@ class HairBizImpl(MysqlInit):
             if not paymentOrder:
                 raise Exception("支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）")
             repay_apply_data['thirdWithholdId'] = paymentOrder  # 支付宝存量订单
+            repay_apply_data['thirdRepayAccountType'] = "支付宝"
             repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
@@ -656,7 +658,7 @@ class HairBizImpl(MysqlInit):
 
         # 附件信息
         fileInfos = []
-        fileInfo = {'fileType': "10", 'fileName': "cqid1.png"}
+        fileInfo = {'fileType': "14", 'fileName': "cqid1.png"}
         positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
         fileInfo['file'] = positive  # 身份证正面base64字符串
         fileInfos.append(fileInfo)
