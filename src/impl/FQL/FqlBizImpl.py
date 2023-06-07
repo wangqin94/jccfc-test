@@ -12,6 +12,7 @@ from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from src.test_data.module_data import fql
 from utils.FileHandle import *
+from utils.Apollo import Apollo
 
 
 class FqlBizImpl(EnvInit):
@@ -33,7 +34,7 @@ class FqlBizImpl(EnvInit):
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
         self.times = time.strftime('%Y-%m-%d', time.localtime())
-
+        self.apollo = Apollo()
         self.sourceCode = '000UC010000006268'
         self.encrypt_url = API['request_host_api'].format(self.env) + FqlPathEnum.fqlEncryptPath.value
         self.decrypt_url = API['request_host_api'].format(self.env) + FqlPathEnum.fqlDecryptPath.value
@@ -123,7 +124,7 @@ class FqlBizImpl(EnvInit):
         return response
 
     # 支用申请payload
-    def loan(self, loanTerm='3', **kwargs):
+    def loan(self, loanTerm='3', loan_date=None, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
@@ -156,6 +157,12 @@ class FqlBizImpl(EnvInit):
         loan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.active_payload = parser.parser
+        # 设置apollo放款mock时间 默认当前时间
+        loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
+        apollo_data = dict()
+        apollo_data['credit.loan.trade.date.mock'] = True
+        apollo_data['credit.loan.date.mock'] = loan_date
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         gl.set_value('loanRequestData', self.active_payload)
         self.log.info('支用请求信息-全局变量: {}'.format(gl))
@@ -288,18 +295,17 @@ class FqlBizImpl(EnvInit):
         return response
 
     # 还款试算
-    def repay_trial(self, loanno, loanterm, repaytype, rpyDate, **kwargs):
+    def repay_trial(self, loanno, loanterm, repaytype, repayDate, **kwargs):
         repay_trial_data = dict()
         # head
-        # repay_trial_data['requestTime'] = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
         repay_trial_data['requestSerialNo'] = self.strings + "4"
+        repay_trial_data['requestTime'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         # body
         repay_trial_data['capitalLoanNo'] = loanno
-        # repay_trial_data['repayDate'] = time.strftime('%Y-%m-%d',time.localtime(time.time()))
         repay_trial_data['loanTerm'] = loanterm
         repay_trial_data['repayType'] = repaytype
-        repay_trial_data['rpyDate'] = rpyDate
+        repay_trial_data['repayDate'] = repayDate
 
         # 更新 payload 字段值
         repay_trial_data.update(kwargs)

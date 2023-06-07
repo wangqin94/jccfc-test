@@ -315,6 +315,18 @@ class MysqlBizImpl(MysqlInit):
         self.mysql_credit.update(sql)
         self.log.info("sql：更新成功 [{}]".format(sql))
 
+    def update_channel_database_info(self, table, attr, **kwargs):
+        """
+        更新op-channel数据库结构
+        @param table: 更新表
+        @param attr: 更新条件 tuple
+        @param kwargs: 更新值，字典类型
+        """
+        # 获取查询内容
+        sql = update_sql_qurey_str(table, self.op_channel_database_name, attr=attr, **kwargs)
+        self.mysql_op_channel.update(sql)
+        self.log.info("sql：更新成功 [{}]".format(sql))
+
     def delete_asset_database_info(self, table, **kwargs):
         """
         删除asset数据库结构

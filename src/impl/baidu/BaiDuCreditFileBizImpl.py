@@ -2,6 +2,7 @@
 """
     Function: 百度借据/费率/息费减免/还款计划/还款文件生成
 """
+import time
 
 from engine.EnvInit import EnvInit
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
@@ -53,7 +54,8 @@ class BaiduFile(EnvInit):
             'cur_date', 'leader', 'parter', 'cust_name', 'cert_type', 'cert_no', 'loan_id',
             'apply_date', 'start_date', 'end_date', 'seq_no', 'encash_amt', 'currency',
             'repay_mode', 'repay_cycle', 'total_terms', 'grace_day', 'fund_status',
-            'fail_type', 'partner_loan_id', 'order_id', 'card_no'
+            'fail_type', 'partner_loan_id', 'order_id', 'card_no', 'ext01', 'ext02', 'ext03',
+            'ext04', 'ext05', 'ext06', 'ext07', 'ext08', 'ext09', 'ext10'
         ]
         self.repay_plan_csv_keys = [
             'cur_date',
@@ -130,6 +132,43 @@ class BaiduFile(EnvInit):
             'refund_violate_amt',
             'service_amt',
         ]
+        self.repay_csv_keys = [
+            'cur_date',
+            'loan_id',
+            'tran_date',
+            'tran_time',
+            'seq_no',
+            'total_amt',
+            'int_reduced_amt_coupon',
+            'pnlt_reduced_amt_coupon',
+            'fund_fee_reduced_amt_coupon',
+            'income_amt',
+            'prin_amt',
+            'int_amt',
+            'pnlt_int_amt',
+            'fund_fee_amt',
+            'partner_loan_id',
+            'charges_reduced_amt_coupon',
+            'overdue_reduced_amt_coupon',
+            'repay_violate_reduced_amt_coupon',
+            'refund_violate_reduced_amt_coupon',
+            'service_reduced_amt_coupon',
+            'charges_amt',
+            'overdue_amt',
+            'repay_violate_amt',
+            'refund_violate_amt',
+            'service_amt',
+            'ext01',
+            'ext02',
+            'ext03',
+            'ext04',
+            'ext05',
+            'ext06',
+            'ext07',
+            'ext08',
+            'ext09',
+            'ext10'
+        ]
         self.reduce_csv_keys = [
             'cur_date',
             'loan_id',
@@ -192,6 +231,16 @@ class BaiduFile(EnvInit):
             'partner_loan_id': self.info['loan_apply_id'],
             'order_id': self.info['thirdpart_order_id'],
             'card_no': data['bankid'],
+            'ext01': data['name'],
+            'ext02': '中国工商银行',
+            'ext03': self.cur_date.replace('-', '') + '120000',
+            'ext04': str(int(time.time()*1000000000000000000000)),
+            'ext05': str(int(time.time()*1000000000000000000000)),
+            'ext06': str(int(time.time()*1000000000)),
+            'ext07': '',
+            'ext08': '',
+            'ext09': '',
+            'ext10': '',
         }
         self.repay_plan_csv_template = {
             'cur_date': self.cur_date,
@@ -267,6 +316,43 @@ class BaiduFile(EnvInit):
             'repay_violate_amt': 0,
             'refund_violate_amt': 0,
             'service_amt': 0
+        }
+        self.repay_csv_template = {
+            'cur_date': '',
+            'loan_id': '',
+            'tran_date': '',
+            'tran_time': '120318',
+            'seq_no': '',
+            'total_amt': 40000,
+            'int_reduced_amt_coupon': 11,
+            'pnlt_reduced_amt_coupon': 22,
+            'fund_fee_reduced_amt_coupon': 33,
+            'income_amt': 40000,
+            'prin_amt': 27456,
+            'int_amt': 12544,
+            'pnlt_int_amt': 44,
+            'fund_fee_amt': 55,
+            'partner_loan_id': 40003050991000000,
+            'charges_reduced_amt_coupon': 6,
+            'overdue_reduced_amt_coupon': 7,
+            'repay_violate_reduced_amt_coupon': 8,
+            'refund_violate_reduced_amt_coupon': 9,
+            'service_reduced_amt_coupon': 10,
+            'charges_amt': 1,
+            'overdue_amt': 2,
+            'repay_violate_amt': 3,
+            'refund_violate_amt': 4,
+            'service_amt': 5,
+            'ext01': data['bankid'],
+            'ext02': data['name'],
+            'ext03': '中国工商银行',
+            'ext04': 2,
+            'ext05': '',
+            'ext06': 2,
+            'ext07': str(int(time.time()*1000000000000000000000)),
+            'ext08': str(int(time.time()*1000000000)),
+            'ext09': '',
+            'ext10': '',
         }
         self.reduce_csv_template = {
             'cur_date': "",
@@ -453,12 +539,12 @@ class BaiduRepayFile(BaiduFile):
         @param pnlt_int_amt:        还款罚息，随借随还部分还款必填
         """
 
-        super(BaiduRepayFile, self).__init__(data)
+        super(BaiduRepayFile, self).__init__(data, cur_date=repay_date)
         self.repay_mode = repay_mode
         self.repay_date = repay_date
         self.repay_term_no = repay_term_no
         self.repay_type = repay_type
-        self.repay_file_path = self.get_filename(self.repay_date)
+        self.repay_file_path = self.get_filename(self.repay_date.replace('-', ''))
         self.loan_invoice_id = loan_invoice_id
         self.loan_no = self.get_loan_id()
         self.prin_amt = prin_amt
@@ -472,6 +558,7 @@ class BaiduRepayFile(BaiduFile):
     def start_repay_file(self):
         # 开始写入还款计划/还款 文件
         self.get_repay_item(self.repay_item_csv_template)
+        self.get_repay_csv(self.repay_csv_template)
         self.get_new_repay_plan_csv(self.repay_plan_csv_template)
         self.get_reduce_csv(self.reduce_csv_template)
         self.log.demsg("还款文件生成路径：{}".format(_FilePath))
@@ -518,7 +605,7 @@ class BaiduRepayFile(BaiduFile):
     # 还款计划文件生成
     def get_new_repay_plan_csv(self, temple):
         # 写入头信息
-        repay_plan = os.path.join(self.loan_file_path, 'repay_plan.csv')
+        repay_plan = os.path.join(self.repay_file_path, 'repay_plan.csv')
         table_head = ','.join(self.repay_plan_csv_keys)
         with open(repay_plan, 'w', encoding='utf-8') as f:
             f.write(table_head)
@@ -577,16 +664,19 @@ class BaiduRepayFile(BaiduFile):
         if self.repay_type == "01":
             temple['tran_date'] = str(asset_repay_plan["pre_repay_date"]).replace("-", "")
             temple['cur_date'] = str(asset_repay_plan["pre_repay_date"]).replace("-", "")
+            temple['event'] = '12'
 
         # 逾期还款
         elif self.repay_type == "03":
             temple['tran_date'] = str(asset_repay_plan["calc_overdue_fee_date"]).replace("-", "")
             temple['cur_date'] = str(asset_repay_plan["calc_overdue_fee_date"]).replace("-", "")
+            temple['event'] = '11'
 
         # 提前结清（按日收息）
         elif self.repay_type == "02":
             temple['tran_date'] = self.repay_date.replace("-", "")
             temple['cur_date'] = self.repay_date.replace("-", "")
+            temple['event'] = '13'
             temple['prin_amt'] = int(asset_repay_plan["before_calc_principal"]*100)  # 剩余应还本金
             # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
             days = get_day(asset_repay_plan["start_date"], self.repay_date)
@@ -623,6 +713,7 @@ class BaiduRepayFile(BaiduFile):
         elif self.repay_type == "04":
             temple['tran_date'] = self.repay_date.replace("-", "")
             temple['cur_date'] = self.repay_date.replace("-", "")
+            temple['event'] = '14'
 
         # 提前部分还款
         elif self.repay_type == "05":
@@ -633,6 +724,7 @@ class BaiduRepayFile(BaiduFile):
             temple['pnlt_int_amt'] = int(self.pnlt_int_amt) * 100  # 费用
             temple['income_amt'] = temple['prin_amt'] + temple['pnlt_int_amt'] + temple['int_amt']  # 不含优惠卷总金额
             temple['total_amt'] = temple['income_amt']  # 总金额
+            temple['event'] = '12'
 
         # 写入头信息
         repay_item = os.path.join(self.repay_file_path, 'repay_item.csv')
@@ -643,6 +735,24 @@ class BaiduRepayFile(BaiduFile):
         val_list = map(str, [self.repay_item_csv_template[key] for key in self.repay_item_csv_keys])
         strings = ','.join(val_list)
         with open(repay_item, 'a+', encoding='utf-8') as f:
+            f.write(strings)
+            f.write('\n')
+
+    def get_repay_csv(self, temple):
+        temple['tran_date'] = self.repay_date.replace("-", "")
+        temple['cur_date'] = self.repay_date.replace("-", "")
+        temple['loan_id'] = self.loan_no
+        temple['seq_no'] = 'seq_no' + str(int(round(time.time() * 1000)))
+        temple['ext05'] = self.repay_date.replace("-", "") + '120000'
+
+        repay = os.path.join(self.repay_file_path, 'repay.csv')
+        table_head = ','.join(self.repay_csv_keys)
+        with open(repay, 'w', encoding='utf-8') as f:
+            f.write(table_head)
+            f.write('\n')
+        val_list = map(str, [self.repay_csv_template[key] for key in self.repay_csv_keys])
+        strings = ','.join(val_list)
+        with open(repay, 'a+', encoding='utf-8') as f:
             f.write(strings)
             f.write('\n')
 

@@ -10,6 +10,7 @@ class MyTestCase(unittest.TestCase):
     def setUp(self):
         self.cur_time = str(get_next_month_today(1))
         self.CheckBizImpl = CheckBizImpl()
+        self.MysqlBizImpl = MysqlBizImpl()
 
     """ 测试步骤 """
 
@@ -22,17 +23,20 @@ class MyTestCase(unittest.TestCase):
         # 检查授信状态
         time.sleep(10)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.applyId)
-        # 发起支用刚申请
-        # firstRepayDate = '2022-10-01'
-        firstRepayDate = self.cur_time
+        # 发起支用申请
+        loan_date = '2023-04-25'
+        firstRepayDate = str(get_custom_month(1, loan_date))
         # orderType: 订单类型 1取现；2赊销
-        fql.loan(orderType=1, loanTerm=6, loanAmt=1000, firstRepayDate=firstRepayDate, interestRate='23')
+        fql.loan(orderType=1, loanTerm=6, loanAmt=1000, firstRepayDate=firstRepayDate,
+                 fixedRepayDay=firstRepayDate[-2:], interestRate='23', loan_date=loan_date)
 
     """ 后置条件处理 """
     def tearDown(self):
         time.sleep(5)
         # 检查支用状态
         self.CheckBizImpl.check_loan_apply_status(thirdpart_apply_id=self.applyId)
+        sql = "update asset_loan_invoice_info set apply_loan_date = date_format(begin_profit_date,'%Y%m%d') where apply_loan_date != date_format(begin_profit_date,'%Y%m%d')"
+        self.MysqlBizImpl.mysql_asset.update(sql)
 
 
 if __name__ == '__main__':

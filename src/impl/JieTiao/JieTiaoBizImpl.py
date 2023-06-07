@@ -11,6 +11,7 @@ from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import JieTiao
 from utils.Models import *
 from src.enums.EnumsCommon import *
+from utils.Apollo import Apollo
 
 
 class JieTiaoBizImpl(EnvInit):
@@ -37,10 +38,12 @@ class JieTiaoBizImpl(EnvInit):
 
         # 初始化payload变量
         self.active_payload = {}
+        self.apollo = Apollo()
 
-    def loan(self, **kwargs):
+    def loan(self, loan_date=None, **kwargs):
         loan_data = dict()
-
+        date = str(get_before_day(1)).replace('-', '')
+        self.MysqlBizImpl.update_channel_database_info('channel_loan_amount', attr="product_id='F22E011'", business_date=date)
         loan_data['loanReqNo'] = self.data['loanReqNo']
         loan_data['custName'], loan_data['dbAcctName'] = self.data['name'],self.data['name']
         loan_data['id'] = self.data['cer_no']
@@ -52,6 +55,12 @@ class JieTiaoBizImpl(EnvInit):
         loan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.active_payload = parser.parser
+        # 设置apollo放款mock时间 默认当前时间
+        loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
+        apollo_data = dict()
+        apollo_data['credit.loan.trade.date.mock'] = True
+        apollo_data['credit.loan.date.mock'] = loan_date
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         
         self.log.demsg('放款请求接口...')
         url = self.host + self.cfg['loan']['interface']
@@ -180,6 +189,11 @@ class JieTiaoBizImpl(EnvInit):
         repay_notice_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_notice']['payload'], **repay_notice_data)
         self.active_payload = parser.parser
+        # 配置还款mock时间
+        apollo_data = dict()
+        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
+        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(rpyDate)
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         self.log.demsg('还款通知接口...')
         url = self.host + self.cfg['repay_notice']['interface']
