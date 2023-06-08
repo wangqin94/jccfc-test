@@ -124,6 +124,11 @@ fql = {
                         "fileType": "7",
                         "fileUrl": "xdgl/fql/yw/JC_third_auth.pdf",
                         "fileName": "JC_third_auth.pdf"
+                    },
+                    {
+                        "fileType": "8",
+                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
+                        "fileName": "JC_face_identify_authorization.pdf"
                     }
 
                 ]
@@ -178,7 +183,7 @@ fql = {
                 "loanTerm": "6",
                 "mobileNo": "16100007381",
                 "interestRate": "24",
-                "orderType": "2",  # 1、取现 2、赊销（分期购物） 3、信用卡还款 4、账单分期 5、微信、银联消费资产（二类户资产）
+                "orderType": "2",  # 1、取现 2、赊销（分期购物）-- 3、信用卡还款 4、账单分期 5、微信、银联消费资产（二类户资产）
                 "repayType": "1",
                 "debitAccountName": "蓝安峰",
                 "debitOpenAccountBank": "中国银行",
