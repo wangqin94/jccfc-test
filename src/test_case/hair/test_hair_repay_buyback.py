@@ -1,12 +1,11 @@
 import unittest
 import warnings
-
 import time
 
 from src.enums.EnumsCommon import ProductIdEnum
 from src.impl.common.YinLiuCreateFileBizImpl import YinLiuRepayFile
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
-from src.test_case.halo.person import data
+from src.test_case.hair.person import data
 
 
 class MyTestCase(unittest.TestCase):
@@ -15,21 +14,21 @@ class MyTestCase(unittest.TestCase):
     def setUp(self):
         warnings.simplefilter('ignore', ResourceWarning)
         self.repayPublicBizImpl = RepayPublicBizImpl()
+        self.productId = ProductIdEnum.HAIR.value
 
     """ 测试步骤 """
-    # 哈喽 G23E031
-    def test_repay_apply(self, productId=ProductIdEnum.HALO.value, repayDate='2023-06-06'):
+    def test_repay_apply(self, repayDate='2024-01-15'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
         # 还款环境配置,清理缓存配置账务时间
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
-        yinLiuRepayFile = YinLiuRepayFile(data, productId, repayTermNo='4', repayDate=repayDate)
-        yinLiuRepayFile.creditClaimFile()
+        hairRepayFile = YinLiuRepayFile(data, self.productId, repayTermNo='7', repayDate=repayDate, loanInvoiceId='000LI0001362535425950765007')
+        hairRepayFile.creditBuyBackFile()
 
-        self.repayPublicBizImpl.job.update_job('【引流】代偿文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job('【引流】代偿文件分片任务流', group=13)
+        self.repayPublicBizImpl.job.update_job('【引流】回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.trigger_job('【引流】回购清单文件分片任务流', group=13)
         time.sleep(3)
 
         # 自动入账

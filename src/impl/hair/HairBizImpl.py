@@ -1,45 +1,22 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------
-# 哈喽接口数据封装类
+# 百度接口数据封装类
 # ------------------------------------------
 from engine.MysqlInit import MysqlInit
+from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import HaLo
+from src.test_data.module_data import YinLiu
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
 from dateutil.parser import parse
 
 
-def computeMD5(message):
-    m = hashlib.md5()
-    m.update(message.encode(encoding='utf-8'))
-    return m.hexdigest()
-
-
-def get_bill_day(loan_date=None):
-    """
-    @param loan_date: 放款时间，如果放款时间空，则默认当前时间 eg:2022-01-01
-    @return: 返回首期账单日
-    """
-    if not loan_date:
-        loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
-    date_list = str(loan_date).split('-')
-    bill_year, bill_month, bill_day = map(int, date_list)
-    bill_month += 1
-    if bill_month > 12:
-        bill_year += 1
-        bill_month -= 12
-    bill_day = 28 if bill_day > 27 else bill_day
-    bill_data = '{}-{}-{}'.format(str(bill_year), str("%02d" % bill_month), str("%02d" % bill_day))
-    return bill_data
-
-
-class HaLoBizImpl(MysqlInit):
-    def __init__(self, merchantId=None, data=None, encrypt_flag=True, person=True):
+class HairBizImpl(MysqlInit):
+    def __init__(self, productId=None, data=None, encrypt_flag=True, person=True):
         """
-        @param merchantId: 商户ID 默认值：G23E03HALO
+        @param productId: 默认贴息产品号（主产品号）：G23E041， 否则非贴息产品号（子产品号）：G23E042
         @param data: 四要素 为空系统随机获取，若person=True四要输写入person文件
         @param encrypt_flag: 接口加密标识，默认加密
         @param person: 若person=True四要输写入person文件，否则不写入
@@ -48,19 +25,44 @@ class HaLoBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         # 解析项目特性配置
-        self.cfg = HaLo.HaLo
+        self.cfg = YinLiu.YinLiu
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
+        # 初始化产品、商户、门店号
+        self.productId = productId if productId else ProductIdEnum.HAIR_DISCOUNT.value
+        self.merchantId = EnumMerchantId.HAIR.value
+        self.interestRate = self.getInterestRate()
+        self.storeCode = 'NHairStore'  # 需保证测试环境有此storeCode门店
 
-        # 初始化产品
-        self.merchantId = merchantId if merchantId else EnumMerchantId.HALO.value
         # 初始化payload变量
         self.active_payload = {}
 
-        self.encrypt_url = self.host + self.cfg['encrypt']['interface']
+        self.encrypt_url = self.host + self.cfg['encrypt']['interface'].format(self.merchantId)
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
+
+    def getInterestRate(self):
+        # 根据输入产品编号获取对应产品年利率
+        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+            interestRate = EnumProductYearRate.HAIR_DISCOUNT.value
+        elif self.productId == ProductIdEnum.HAIR.value:
+            interestRate = EnumProductYearRate.HAIR.value
+        else:
+            raise Exception('产品编号输入错误：{}'.format(self.productId))
+        return interestRate
+
+    def getRepayPlan(self, billDate, loanAmt, yearRate, term):
+        # 根据输入产品编号获取对应产品年利率
+        if self.productId == ProductIdEnum.HAIR.value:
+            repayPlan = yinLiuRepayPlanByAvgAmt(billDate=billDate, loanAmt=loanAmt,
+                                                yearRate=yearRate, term=term)
+        elif self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+            repayPlan = yinLiuRepayPlanByAvgPrincipal(billDate=billDate, loanAmt=loanAmt,
+                                                      yearRate=yearRate, term=term, guaranteeAmt=0)
+        else:
+            raise Exception('产品编号输入错误：{}'.format(self.productId))
+        return repayPlan
 
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
@@ -68,40 +70,62 @@ class HaLoBizImpl(MysqlInit):
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.HaLo.value))
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.HAIR.value))
             else:
                 base_data = get_base_data_temp()
         return base_data
 
     # 发起代扣协议申请
-    def sharedWithholdingAgreement(self, **kwargs):
+    def getCardRealNameMessage(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        sharedWithholdingAgreement = dict()
+        getCardRealNameMessage = dict()
         # head
-        sharedWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
-        sharedWithholdingAgreement['requestTime'] = self.date
-        sharedWithholdingAgreement['merchantId'] = self.merchantId
+        getCardRealNameMessage['requestSerialNo'] = 'requestNo' + strings + "_1000"
+        getCardRealNameMessage['requestTime'] = self.date
+        getCardRealNameMessage['merchantId'] = self.merchantId
         # body
-        sharedWithholdingAgreement['aggrementNum'] = 'aggrementNum' + strings
-        sharedWithholdingAgreement['payerIdNum'] = self.data['cer_no']
-        sharedWithholdingAgreement['payer'] = self.data['name']
-        sharedWithholdingAgreement['mobileNo'] = self.data['telephone']
-        sharedWithholdingAgreement['payerBankCardNum'] = self.data['bankid']
-        sharedWithholdingAgreement['payerPhoneNum'] = self.data['telephone']
-        sharedWithholdingAgreement['agreementTime'] = self.date
+        getCardRealNameMessage['payerIdNum'] = self.data['cer_no']
+        getCardRealNameMessage['payer'] = self.data['name']
+        getCardRealNameMessage['mobileNo'] = self.data['telephone']
+        getCardRealNameMessage['payerBankCardNum'] = self.data['bankid']
+        getCardRealNameMessage['payerPhoneNum'] = self.data['telephone']
 
         # 更新 payload 字段值
-        sharedWithholdingAgreement.update(kwargs)
-        parser = DataUpdate(self.cfg['sharedWithholdingAgreement']['payload'], **sharedWithholdingAgreement)
+        getCardRealNameMessage.update(kwargs)
+        parser = DataUpdate(self.cfg['getCardRealNameMessage']['payload'], **getCardRealNameMessage)
         self.active_payload = parser.parser
 
         self.log.demsg('发起绑卡请求...')
-        url = self.host + self.cfg['sharedWithholdingAgreement']['interface']
+        url = self.host + self.cfg['getCardRealNameMessage']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 确认绑卡申请payload
+    def bindCardRealName(self, tradeSerialNo, **kwargs):
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        bindCardRealName_data = dict()
+        # head
+        bindCardRealName_data['requestSerialNo'] = 'requestNo' + strings + "_1000"
+        bindCardRealName_data['requestTime'] = self.date
+        bindCardRealName_data['merchantId'] = self.merchantId
+        # body
+        bindCardRealName_data['tradeSerialNo'] = tradeSerialNo  # 同发起代扣签约返回的交易流水号
+        bindCardRealName_data['mobileNo'] = self.data['telephone']
+        bindCardRealName_data['payerPhoneNum'] = self.data['telephone']
+
+        # 更新 payload 字段值
+        bindCardRealName_data.update(kwargs)
+        parser = DataUpdate(self.cfg['bindCardRealName']['payload'], **bindCardRealName_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('确认绑卡请求...')
+        url = self.host + self.cfg['bindCardRealName']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
@@ -119,6 +143,7 @@ class HaLoBizImpl(MysqlInit):
         queryWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
         queryWithholdingAgreement['requestTime'] = self.date
         queryWithholdingAgreement['merchantId'] = self.merchantId
+
         # body
         queryWithholdingAgreement['payerIdNum'] = self.data['cer_no']
         queryWithholdingAgreement['payer'] = self.data['name']
@@ -150,14 +175,14 @@ class HaLoBizImpl(MysqlInit):
         credit_data['requestSerialNo'] = 'requestNo' + strings + "_2000"
         credit_data['requestTime'] = self.date
         credit_data['merchantId'] = self.merchantId
-        # body
 
+        # body
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
-        credit_data['thirdApplyTime'] = self.date
-        credit_data['interestRate'] = 9.5
+        credit_data['interestRate'] = self.interestRate
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
-        credit_data['orderType'] = '1'  # 固定传1-取现
+        credit_data['orderType'] = '2'  # 固定传2-赊销(分期购物)
+        credit_data['storeCode'] = self.storeCode  # 需保证测试环境有此storeCode门店
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -165,14 +190,17 @@ class HaLoBizImpl(MysqlInit):
         credit_data['reserveMobile'] = self.data['telephone']
         credit_data['mobileNo'] = self.data['telephone']
 
+        # 还款方式
+        credit_data[
+            'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_AMT_INTEREST.value
         # 银行卡信息
         credit_data['userBankCardNo'] = self.data['bankid']
 
         # 更新 payload 字段值
         credit_data.update(kwargs)
-
         parser = DataUpdate(self.cfg['credit_apply']['payload'], **credit_data)
         self.active_payload = parser.parser
+        self.active_payload['body']['productId'] = self.productId  # 产品编号
 
         # 校验用户是否已存在
         self.MysqlBizImpl.check_user_available(self.data)
@@ -221,10 +249,9 @@ class HaLoBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=9.5, **kwargs):
+    def applyLoan(self, loanTerm=12, loanAmt=1000, thirdApplyId=None, loan_date=None, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        @param rate: 支用利率
         @param loan_date: 放款时间，默认当前时间 eg:2022-01-01
         @param thirdApplyId: 三方申请号，与授信申请号一致
         @param loanAmt: 支用申请金额, 默认1000 单位元
@@ -262,7 +289,7 @@ class HaLoBizImpl(MysqlInit):
 
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
-        applyLoan_data['interestRate'] = rate
+        applyLoan_data['interestRate'] = self.interestRate
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
@@ -270,17 +297,22 @@ class HaLoBizImpl(MysqlInit):
         applyLoan_data['reserveMobile'] = self.data['telephone']
         applyLoan_data['name'] = self.data['name']
         applyLoan_data['accountNo'] = self.data['bankid']
-
+        # 还款方式
+        applyLoan_data[
+            'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_AMT_INTEREST.value
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
-
         # 还款计划
-        applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
-                                                                   yearRate=rate, term=loanTerm)
+        applyLoan_data['repaymentPlans'] = self.getRepayPlan(billDate=firstRepayDate, loanAmt=loanAmt,
+                                                             yearRate=self.interestRate, term=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
         self.active_payload = parser.parser
+        # 门店信息
+        onlineStoreInfo = self.MysqlBizImpl.get_user_database_info('user_online_store_partnership', third_store_id=self.storeCode)
+        self.active_payload['body']['storeAccountNo'] = onlineStoreInfo['account']  # 门店银行号
+        self.active_payload['body']['storeBankName'] = onlineStoreInfo['account_name']  # 门店银行名称
 
         self.log.demsg('发起支用请求...')
         url = self.host + self.cfg['loan_apply']['interface']
@@ -364,6 +396,7 @@ class HaLoBizImpl(MysqlInit):
         loanContract_query_data['requestSerialNo'] = 'requestNo' + strings + "_8000"
         loanContract_query_data['requestTime'] = self.date
         loanContract_query_data['merchantId'] = self.merchantId
+
         # body
         loanContract_query_data['loanInvoiceId'] = loanInvoiceId
 
@@ -381,21 +414,26 @@ class HaLoBizImpl(MysqlInit):
 
     # 还款申请
     def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
-                    repayDate=None, **kwargs):
+                    repayDate=None, paymentOrder=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        @param repayTerm: 还款期次，默认取当前借据最早未还期次
-        @param repayDate: 还款时间，默认当天 eg:'2022-08-01'
-        @param repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
-        @param repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         @param loanInvoiceId: 借据号 必填
+
+        @param repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         @param repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
+        @param repayTerm: 还款期次，默认取当前借据最早未还期次
+        @param repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
+        @param repayDate: 还款时间，默认当天 eg:'2022-08-01'
+        @param paymentOrder: 支付宝订单号，支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
+        # 如果是贴息产品，担保费为0
+        repayGuaranteeFee = 0 if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else repayGuaranteeFee
+        # 构造还款参数
         repay_apply_data = dict()
         # head
         repay_apply_data['requestSerialNo'] = 'requestNo' + strings
@@ -403,8 +441,8 @@ class HaLoBizImpl(MysqlInit):
         repay_apply_data['merchantId'] = self.merchantId
         # body
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
-        # repay_apply_data['repayApplySerialNo'] = "2022093022001425270501810521"  # 支付宝存量订单
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
+        repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
         repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayType'] = repay_type
         if repayTerm:
@@ -451,7 +489,10 @@ class HaLoBizImpl(MysqlInit):
         if repay_scene == '02' or '05':  # 线下还款、逾期还款
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
         if repay_scene == '04':  # 支付宝还款
-            repay_apply_data['thirdWithholdId'] = "2022093022001425270501809997"  # 支付宝存量订单
+            if not paymentOrder:
+                raise Exception("支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）")
+            repay_apply_data['thirdWithholdId'] = paymentOrder  # 支付宝存量订单
+            repay_apply_data['thirdRepayAccountType'] = "支付宝"
             repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
@@ -459,6 +500,11 @@ class HaLoBizImpl(MysqlInit):
                                                                              2)  # 总金额
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
 
+        # 配置还款mock时间
+        apollo_data = dict()
+        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
+        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_apply']['payload'], **repay_apply_data)
@@ -501,7 +547,7 @@ class HaLoBizImpl(MysqlInit):
     # 退货申请
     def returnGoods_apply(self, loanInvoiceId, term, repayDate, **kwargs):
         """
-        注意：键名必须与接口原始数据的键名一致
+        注意：10天内免息
         @param term: 当前待还期次
         @param repayDate: 退货时间
         @param loanInvoiceId: 借据号 必填
@@ -538,7 +584,7 @@ class HaLoBizImpl(MysqlInit):
         # date = datetime.strptime(date, '%Y-%m-%d').date()
         loanDate = parse(loanDate)
         repayDateFormat = parse(repayDate)
-        if 7 > int((repayDateFormat - loanDate).days):
+        if 10 > int((repayDateFormat - loanDate).days):
             returnGoods_apply_data['returnGoodsInterest'] = 0
             returnGoods_apply_data['returnGoodsOverdueFee'] = 0
         else:
@@ -612,8 +658,8 @@ class HaLoBizImpl(MysqlInit):
 
         # 附件信息
         fileInfos = []
-        fileInfo = {'fileType': "13", 'fileName': "userInfo.txt"}
-        positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/temp/userInfo.txt'))
+        fileInfo = {'fileType': "14", 'fileName': "cqid1.png"}
+        positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
         fileInfo['file'] = positive  # 身份证正面base64字符串
         fileInfos.append(fileInfo)
         file_data['fileInfos'] = fileInfos
@@ -747,7 +793,32 @@ class HaLoBizImpl(MysqlInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
+    # 支持的银行列表
+    def querySupportBank(self, **kwargs):
+        """
+        渠道方可调用此接口缓存支持的银行卡列表
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        querySupportBank_data = dict()
+        # head
+        querySupportBank_data['requestSerialNo'] = 'requestNo' + strings + "_1400"
+        querySupportBank_data['requestTime'] = self.date
+        querySupportBank_data['merchantId'] = self.merchantId
+        # body
+
+        # 更新 payload 字段值
+        querySupportBank_data.update(kwargs)
+        parser = DataUpdate(self.cfg['querySupportBank']['payload'], **querySupportBank_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('支持银行列表获取...')
+        url = self.host + self.cfg['querySupportBank']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
 
 if __name__ == '__main__':
-    s = yinLiuRepayPlanByAvgAmt(billDate='2023-03-18', loanAmt=10000, yearRate=9.5, term=12)
-    print(json.dumps(s))
+    pass

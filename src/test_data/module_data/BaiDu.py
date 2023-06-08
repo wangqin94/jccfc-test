@@ -125,7 +125,7 @@ BaiDu = {
                     "repayMode": "22",  # 32等额本息对应还款对账文件还款类型05，22随借随还对应还款类型02
                     "dxmDScore": "575.24151",
                     # "ocrAddress": "重庆市江北区府城大道中段87号",
-                    "careerType": "",  # 职业
+                    "careerType": "01",  # 职业
                     "ocrAddress": "",  # 身份地址
                     "userHomeAddress": "重庆市江北区府城大道中段87号",  # 家庭地址
                     "zxPermanentAddress": "重庆市江北区府城大道中段87号",  # 征信户籍地址
@@ -213,15 +213,22 @@ BaiDu = {
     'settlement': {
         'interface': '/api/v1/baidu/settlement/applyInfo',
         'payload': {
-                "loanId": "5170535549454899682",
-                "query_flag": "",
-                "confirmDate": "2021-12-05",
-                "amount": "600",
-                "clearDate": "2021-12-03",
-                "prcid": "610102199905187862",   # 141100200905221670
-                "reqsn": "",
-                "username": "",
-                "subLoanId": "12332122"
+                "loanId": "5170535549454899682",  # 三方借据号
+                "query_flag": "1",  # 查询标志，0-不需返回base64只返回结清状态；1-需返回base64文件
+                "confirmDate": "2021-12-05",  # 申请确认日期
+                "amount": "肆万叁仟叁佰元整",  # 机构出资金额，中文大写
+                "clearDate": "2021-12-03",  # 结清日期
+                "prcid": "610102199905187862",   # 身份证号
+                "reqsn": "",  # 时间戳
+                "username": "",  # 用户姓名
+                "subLoanId": "2847814924254298899"  # 子借据号
+        }
+    },
+    'query_repay_info': {
+        'interface': '/api/v1/jccfc/invoice/queryRepayInfoByLoanInvoiceId',
+        'payload': {
+                "loanInvoiceId": "5170535549454899682",
+                "repaymentDate": ""
         }
     }
 }

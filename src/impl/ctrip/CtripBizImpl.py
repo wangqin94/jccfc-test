@@ -37,6 +37,7 @@ class CtripBizImpl(EnvInit):
         self.loan_payload = {}
         self.repay_notice_payload = {}
         self.active_payload = {}
+        self.apollo = Apollo()
 
         # 初始数据库变量
         self.credit_database_name = '%s_credit' % TEST_ENV_INFO.lower()
@@ -109,19 +110,19 @@ class CtripBizImpl(EnvInit):
     def update_apollo_amount(self):
         # 配置风控mock返回建议额度与授信额度一致
         apollo_data = dict()
-        result = self.MysqlBizImpl.get_credit_database_info("credit_apply", certificate_no=self.data['cer_no'])
+        result = self.MysqlBizImpl.get_credit_database_info("credit_apply", thirdpart_user_id=self.data['open_id'])
         i = 1
         while result is None:
             time.sleep(5)
-            result = self.MysqlBizImpl.get_credit_database_info("credit_apply", certificate_no=self.data['cer_no'])
-            try:
-                apollo_data['hj.channel.risk.credit.line.amt.mock'] = float(result['apply_amount'])
-                Apollo().update_config(appId='loan2.1-jcxf-credit', **apollo_data)
-            except:
-                pass
+            result = self.MysqlBizImpl.get_credit_database_info("credit_apply", thirdpart_user_id=self.data['open_id'])
             i += 1
             if i == 5:
                 break
+        try:
+            apollo_data['hj.channel.risk.credit.line.amt.mock'] = float(result['apply_amount'])
+            self.apollo.update_config(appId='loan2.1-jcxf-credit', **apollo_data)
+        except:
+            pass
 
     # 授信查询
     def credit_query(self, **kwargs):
@@ -142,7 +143,7 @@ class CtripBizImpl(EnvInit):
         return response
 
     # 支用申请payload
-    def loan(self, **kwargs):
+    def loan(self, loan_date=None, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
@@ -164,6 +165,12 @@ class CtripBizImpl(EnvInit):
         loan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.active_payload = parser.parser
+        # 设置apollo放款mock时间 默认当前时间
+        loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
+        apollo_data = dict()
+        apollo_data['credit.loan.trade.date.mock'] = True
+        apollo_data['credit.loan.date.mock'] = loan_date
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         self.log.demsg('支用申请...')
         url = self.host + self.cfg['loan']['interface']
@@ -173,9 +180,9 @@ class CtripBizImpl(EnvInit):
     # 支用查询
     def loan_query(self, **kwargs):
         loan_query_data = dict()
-        key = self.MysqlBizImpl.get_loan_apply_info(thirdpart_user_id=self.data['open_id'])
-        loan_query_data['loan_request_no'] = key['loan_apply_serial_id']
-        loan_query_data['partner_loan_no'] = key['certificate_no']
+        # key = self.MysqlBizImpl.get_loan_apply_info(thirdpart_user_id=self.data['open_id'])
+        # loan_query_data['loan_request_no'] = key['loan_apply_serial_id']
+        # loan_query_data['partner_loan_no'] = key['certificate_no']
         # 更新 payload 字段值
         loan_query_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_query']['payload'], **loan_query_data)
@@ -187,7 +194,7 @@ class CtripBizImpl(EnvInit):
         return response
 
     # 还款通知payload
-    def repay_notice(self, repay_term_no="1", repay_mode="2", repay_date="2", **kwargs):
+    def repay_notice(self, repay_term_no="1", repay_mode="2", repay_date=None, **kwargs):
         """ # 还款通知payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param repay_term_no:   还款期次
@@ -283,6 +290,11 @@ class CtripBizImpl(EnvInit):
         repay_notice.update(kwargs)
         parser = DataUpdate(self.cfg['loan_repay_notice']['payload'], **repay_notice)
         self.active_payload = parser.parser
+        # 配置还款mock时间
+        apollo_data = dict()
+        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
+        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repay_date)
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         self.log.demsg('还款通知...')
         url = self.host + self.cfg['loan_repay_notice']['interface']

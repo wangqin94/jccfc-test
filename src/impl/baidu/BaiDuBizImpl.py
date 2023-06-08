@@ -47,18 +47,21 @@ class BaiDuBizImpl(EnvInit):
         strings = str(int(round(time.time() * 1000)))
         settlement_data['requestTime'] = time.strftime('%Y%m%d%H%M%S')
         settlement_data['requestSerialNo'] = "SerialNo" + strings + "1001"
+        settlement_data['username'] = self.data['name']
+        settlement_data['prcid'] = self.data['cer_no']
+        settlement_data['confirmDate'] = time.strftime('%Y-%m-%d')
+        settlement_data['reqsn'] = time.strftime('%Y%m%d%H%M%S')
+
         # 更新 payload 字段值
         settlement_data['reqsn'] = time.strftime('%Y%m%d%H%M%S')
         settlement_data.update(kwargs)
         parser = DataUpdate(self.cfg['settlement']['payload'], **settlement_data)
         self.active_payload = parser.parser
 
-        self.log.demsg('开始支用申请...')
+        self.log.demsg('结清证明申请...')
         url = self.host + self.cfg['settlement']['interface']
         response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                            encrypt_flag=True)
-        # response = post_with_encrypt(url, self.active_payload, encrypt_flag=self.encrypt_flag)
-        response['orderId'] = settlement_data['orderId']
         return response
 
     # 授信申请
@@ -271,6 +274,19 @@ class BaiDuBizImpl(EnvInit):
         url = self.host + self.cfg['notifyCloseLimit']['interface']
         response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                            encrypt_flag=True)
+        return response
+
+    # 催收查询度小满还款信息
+    def query_repay_info(self, **kwargs):
+        repay_data = dict()
+
+        repay_data.update(kwargs)
+        parser = DataUpdate(self.cfg['query_repay_info']['payload'], **repay_data)
+        self.active_payload = parser.parser
+        self.log.demsg('开始还款信息查询...')
+        url = self.host + self.cfg['query_repay_info']['interface']
+        response = post_with_encrypt_baidu(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                           encrypt_flag=False)
         return response
 
 

@@ -3,53 +3,46 @@
 test case script
 """
 
-import threading
 
+import unittest
 from src.impl.ctrip.CtripBizImpl import CtripBizImpl
 from src.impl.common.CheckBizImpl import *
-# from person import *
 from utils.Models import *
+from person import *
 
-CheckBizImpl = CheckBizImpl()
 
 
-class TestCase(object):
-    def __init__(self):
+class MyTestCase(unittest.TestCase):
+
+    """ 预置条件处理 """
+    def setUp(self):
         self.cur_time = str(get_next_month_today(1)).replace("-", '') + time.strftime('%H%M%S')
-        self.process()
+        self.CheckBizImpl = CheckBizImpl()
+        self.MysqlBizImpl = MysqlBizImpl()
 
-    def process(self):
-        """ 测试步骤 """
+    """ 测试步骤 """
+    def test_loan(self):
         ctrip = CtripBizImpl(data=None)
-
-        # # 预授信
-        # ctrip.pre_credit(advice_amount=12000)
         # 发起授信申请
-        open_id = ctrip.credit(advice_amount=10000)['open_id']
+        self.open_id = ctrip.credit(advice_amount=10000)['open_id']
+        ctrip.update_apollo_amount()
         # 检查授信状态
         time.sleep(10)
-        CheckBizImpl.check_credit_apply_status(thirdpart_user_id=open_id)
+        self.CheckBizImpl.check_credit_apply_status(thirdpart_user_id=self.open_id)
         # 发起支用刚申请
-        ctrip.loan(loan_amount=10000, term=12, first_repay_date=self.cur_time)
+        loan_date = '2023-06-01'
+        first_repay_date = str(get_custom_month(1, loan_date)).replace("-", '') + time.strftime('%H%M%S')
+        ctrip.loan(loan_amount=10000, term=6, first_repay_date=first_repay_date, loan_date=loan_date)
+
+
+    """ 后置条件处理 """
+    def tearDown(self):
         # 检查支用状态
         time.sleep(5)
-        CheckBizImpl.check_loan_apply_status(thirdpart_user_id=open_id)
-
-    def manythread(self):
-        threads = []
-        for x in range(5):  # 循环创建10个线程
-            t = threading.Thread(target=self.process)
-            threads.append(t)
-        for t in threads:  # 循环启动10个线程
-            t.start()
-
-    def postprocess(self):
-        """ 后置条件处理 """
-        pass
+        self.CheckBizImpl.check_loan_apply_status(thirdpart_user_id=self.open_id)
+        sql = "update asset_loan_invoice_info set apply_loan_date = date_format(begin_profit_date,'%Y%m%d') where apply_loan_date != date_format(begin_profit_date,'%Y%m%d')"
+        self.MysqlBizImpl.mysql_asset.update(sql)
 
 
 if __name__ == '__main__':
-    start_time = time.time()
-    start = TestCase()
-    total = time.time() - start_time
-    print('程序运行时间：{}'.format(round(total)))
+    unittest.main()

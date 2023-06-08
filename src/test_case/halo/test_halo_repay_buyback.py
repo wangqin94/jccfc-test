@@ -18,7 +18,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
     # 哈喽 G23E031
-    def test_repay_apply(self, productId=ProductIdEnum.HALO.value, repayDate='2023-03-15'):
+    def test_repay_apply(self, productId=ProductIdEnum.HALO.value, repayDate='2023-06-06'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
@@ -28,12 +28,12 @@ class MyTestCase(unittest.TestCase):
         xiaoXRepayFile = YinLiuRepayFile(data, productId, repayTermNo='5', repayDate=repayDate)
         xiaoXRepayFile.creditBuyBackFile()
 
-        self.repayPublicBizImpl.job.update_job('引流回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job('引流回购清单文件分片任务流', group=13)
+        self.repayPublicBizImpl.job.update_job('【引流】回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.trigger_job('【引流】回购清单文件分片任务流', group=13)
         time.sleep(3)
 
         # 自动入账
-        self.repayPublicBizImpl.job.trigger_job("自动入账处理任务流", group=13)
+        self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
         # 输入指定借据号
         # self.repayRes = json.loads(HaLo.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId="").get('body'))  # 按期还款
 

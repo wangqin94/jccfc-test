@@ -19,11 +19,11 @@ class TestCase(object):
         pass
 
     # # [0: 授信, 1: 授信查询, 2:支用申请, 3: 支用查询, 4: 授信失效 , 5:结清证明, 6:放款全流程]
-    def process(self, flag=7):
+    def process(self, flag=5):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
-            bd = BaiDuBizImpl(data=None)
+            bd = BaiDuBizImpl(data=data)
             bd.credit(initialAmount=3000000)
 
         # 授信查询
@@ -34,26 +34,33 @@ class TestCase(object):
         # 支用申请
         elif flag == 2:
             # repay_mode='02'随借随还，repay_mode='05'等额本息；
-            bd = BaiDuBizImpl(data=data, repay_mode='02')
-            bd.loan(cashAmount=100000, term=3)
+            bd = BaiDuBizImpl(data=data, repay_mode='05')
+            bd.loan(cashAmount=500000, term=3)
 
         # 支用查询
         elif flag == 3:
             bd = BaiDuBizImpl(data=data)
             bd.loan_query(loan_apply_id='Loan_req16656293336541001')
 
-        # 结清证明   0不需要返回base64 1需要  杜星
+        # 结清证明
         elif flag == 5:
-            bd = BaiDuBizImpl(data=data, encrypt_flag=False)
-            bd.settlement(query_flag=1, username="仰敬胜")
+            bd = BaiDuBizImpl(data=data)
+            bd.settlement(query_flag="1", loanId='LoanId1686042346106')
 
+        # 放款全流程
         elif flag == 6:
             bd = BaiDuSynBizImpl(data=None, loanamount=1000000, month=3, loan_date='2022-11-21')
             bd.loan_flow()
 
+        # 额度关闭
         elif flag == 7:
             bd = BaiDuBizImpl(data=data)
-            bd.notifyCloseLimit(idNo='')
+            bd.notifyCloseLimit(idNo='542127199611099040')
+
+        # 催收查询度小满还款信息
+        elif flag == 8:
+            bd = BaiDuBizImpl(data=None)
+            bd.query_repay_info(loanInvoiceId='000LI0002139340391333924028')
 
 
         return self

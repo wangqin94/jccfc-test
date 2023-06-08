@@ -404,8 +404,8 @@ class JiKeBizImpl(MysqlInit):
 
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
-        applyLoan_data['repaymentPlans'] = OldSysLoanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
-                                                              yearRate=rate, term=loanTerm)
+        applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
+                                                                   yearRate=rate, term=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)

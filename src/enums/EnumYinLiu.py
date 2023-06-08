@@ -144,3 +144,32 @@ class StatusEnum(Enum):
     REJECT = "R"  # 授信拒绝
     DOING = "P"  # 处理中
     CANCEL = "C"  # 取消
+
+
+# @unique
+class EnumRepayType(Enum):
+    EQUAL_AMT_INTEREST = "1"  # 等额本息
+    EQUAL_AMT_PRINCIPLE = "2"  # 等额本金
+    EQUAL_FEE_AMT = "3"  # 等本等费
+    PERIOD_INTEREST = "4"  # 按期付息到期还本
+    ONCE_TIME = "5"  # 到期一次性还本付息
+    EQUAL_FEE_AMT_TOTAL_RATE = "5"  # 等本等费-总费率
+
+
+# @unique
+class EnumFileType(Enum):
+    CLAIM_FILE = ('geexClaimFile', 'claim')  # 理赔文件
+    BUYBACK_FILE = ('geexBuybackFile', 'buyback')  # 回购文件
+    DIS_BUYBACK_FILE = ('disBuyBack', 'disBuyBack')  # 海尔回购文件
+    DIS_PRE_BUYBACK_FILE = ('disPreBuyBack', 'disPreBuyBack')  # 海尔预回购文件
+    DIS_INTEREST_FILE = ('disInterestDetail', 'disInterest')  # 贴息文件
+
+    @property
+    def folderName(self):
+        """获取状态码"""
+        return self.value[0]
+
+    @property
+    def fileType(self):
+        """获取状态码信息"""
+        return self.value[1]
