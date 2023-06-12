@@ -34,9 +34,9 @@ class MyTestCase(unittest.TestCase):
         self.repayRes = self.hair.returnGoods_apply(loanInvoiceId=loanInvoiceId, term=term, repayDate=repayDate)
 
         # 自动入账
-        # self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
+        self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
         # 【引流】贴息入账自动处理定时任务
-        # self.repayPublicBizImpl.job.trigger_job_byId("859052136875552768")
+        self.repayPublicBizImpl.job.trigger_job_byId("859052136875552768")
 
     """ 后置条件处理 """
     def tearDown(self):
