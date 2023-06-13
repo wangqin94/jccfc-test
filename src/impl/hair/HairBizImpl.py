@@ -471,7 +471,7 @@ class HairBizImpl(MysqlInit):
                 loan_invoice_id=loanInvoiceId,
                 current_num=int(asset_repay_plan['current_num']))
             repay_apply_data["repayInterest"] += float(asset_repay_plan_merchant_interest['pre_repay_interest'])  # 利息
-            repay_apply_data["repayAmount"] += float(asset_repay_plan_merchant_interest['pre_repay_interest'])  # 总金额
+            repay_apply_data["repayAmount"] = round(float(asset_repay_plan_merchant_interest['pre_repay_interest'])+repay_apply_data["repayAmount"] , 2 )  # 总金额
 
         # 线下还款，担保费必须为0
         if repay_scene == '02':  # 线下还款
