@@ -457,11 +457,21 @@ class HairBizImpl(MysqlInit):
 
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
-        # repay_apply_data['repayNum'] = 1
+        repay_apply_data["repayAmount"] = float(asset_repay_plan['pre_repay_amount'])  # 总金额
         repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
         repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
         repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
         repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
+
+        # 如果是贴息产品，贴息还款计划表查询利息，并重新计算还款总金额
+        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+            # 贴息产品，查询贴息还款计划
+            asset_repay_plan_merchant_interest = self.MysqlBizImpl.get_asset_database_info(
+                'asset_repay_plan_merchant_interest',
+                loan_invoice_id=loanInvoiceId,
+                current_num=int(asset_repay_plan['current_num']))
+            repay_apply_data["repayInterest"] += float(asset_repay_plan_merchant_interest['pre_repay_interest'])  # 利息
+            repay_apply_data["repayAmount"] += float(asset_repay_plan_merchant_interest['pre_repay_interest'])  # 总金额
 
         # 线下还款，担保费必须为0
         if repay_scene == '02':  # 线下还款
@@ -470,10 +480,23 @@ class HairBizImpl(MysqlInit):
 
         # 按期还款、提前当期
         if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
+            repay_apply_data["repayAmount"] = round(repay_apply_data["repayAmount"] + repayGuaranteeFee,
                                                     2)  # 总金额
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
+
+        # 提前结清
+        days = get_day(asset_repay_plan["start_date"], repayDate)
+        if repay_type == "2":
+            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
+            # 如果当期已还款，提前还款利息应收0
+            repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
+            # repay_apply_data["repayInterest"] = 33.45
+            repay_apply_data["repayAmount"] = round(
+                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
+                2)  # 总金额
+            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
+
         # 线上还款
         if repay_scene == '01':
             repay_apply_data['repaymentAccountNo'] = self.data['bankid']
@@ -492,26 +515,6 @@ class HairBizImpl(MysqlInit):
             apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
                                                                              2)  # 总金额
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
-        # 如果是贴息产品，贴息还款计划表查询利息，并重新计算还款总金额
-        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            # 贴息产品，查询贴息还款计划
-            asset_repay_plan_merchant_interest = self.MysqlBizImpl.get_asset_database_info(
-                'asset_repay_plan_merchant_interest',
-                loan_invoice_id=loanInvoiceId,
-                current_num=int(asset_repay_plan['current_num']))
-            repay_apply_data["repayInterest"] += float(asset_repay_plan_merchant_interest['pre_repay_interest'])  # 利息
-            repay_apply_data["repayAmount"] += float(asset_repay_plan_merchant_interest['pre_repay_interest'])  # 总金额
-            # 提前结清
-            days = get_day(asset_repay_plan["start_date"], repayDate)
-            if repay_type == "2":
-                repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-                # 如果当期已还款，提前还款利息应收0
-                repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
-                # repay_apply_data["repayInterest"] = 33.45
-                repay_apply_data["repayAmount"] = round(
-                    repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
-                    2)  # 总金额
-                repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
 
         # 配置还款mock时间
         apollo_data = dict()
