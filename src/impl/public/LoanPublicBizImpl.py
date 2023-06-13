@@ -9,12 +9,14 @@ import time
 
 from engine.MysqlInit import MysqlInit
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
+from utils.Apollo import Apollo
 
 
 class LoanPublicBizImpl(MysqlInit):
     def __init__(self):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
+        self.apollo = Apollo()
 
     def updateLoanInfo(self, thirdLoanId, loanDate=None):
         """
@@ -43,6 +45,16 @@ class LoanPublicBizImpl(MysqlInit):
         loanDateFormat = str(loanDate).replace("-", '')
         self.MysqlBizImpl.update_asset_database_info('asset_loan_invoice_info', attr="loan_invoice_id='{}'".format(
             loanInvoiceId), apply_loan_date=loanDateFormat)
+
+    def updateLoanDateMock(self, date="2023-06-06", flag=True):
+        """
+        设置放款mock时间
+        @param date: 如果mock开启，请输入mock时间
+        @param flag: mock开关
+        @return:
+        """
+        updateKeys = {'credit.loan.trade.date.mock': flag, 'credit.loan.date.mock': date}
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **updateKeys)
 
 
 if __name__ == '__main__':
