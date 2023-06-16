@@ -310,7 +310,8 @@ class HairBizImpl(MysqlInit):
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
         self.active_payload = parser.parser
         # 门店信息
-        onlineStoreInfo = self.MysqlBizImpl.get_user_database_info('user_online_store_partnership', third_store_id=self.storeCode)
+        onlineStoreInfo = self.MysqlBizImpl.get_user_database_info('user_online_store_partnership',
+                                                                   third_store_id=self.storeCode)
         self.active_payload['body']['storeAccountNo'] = onlineStoreInfo['account']  # 门店银行号
         self.active_payload['body']['storeBankName'] = onlineStoreInfo['account_name']  # 门店银行名称
 
@@ -413,7 +414,7 @@ class HairBizImpl(MysqlInit):
         return response
 
     # 还款申请
-    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
+    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=1.11,
                     repayDate=None, paymentOrder=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
@@ -453,13 +454,24 @@ class HairBizImpl(MysqlInit):
             key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
                 loanInvoiceId)
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
-        # repay_apply_data['repayNum'] = 1
-        repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
+        repay_apply_data["repayAmount"] = float(asset_repay_plan['pre_repay_amount'])  # 总金额
+        repay_apply_data["repayInterest"] = round(float(asset_repay_plan['pre_repay_interest']),2)  # 利息
         repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
-        repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
+        repay_apply_data["repayOverdueFee"] = round(float(asset_repay_plan['pre_repay_overdue_fee']),2)  # 逾期罚息
         repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
+
+        # 如果是贴息产品，贴息还款计划表查询利息，并重新计算还款总金额
+        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+            # 贴息产品，查询贴息还款计划
+            asset_repay_plan_merchant_interest = self.MysqlBizImpl.get_asset_database_info(
+                'asset_repay_plan_merchant_interest',
+                loan_invoice_id=loanInvoiceId,
+                current_num=int(asset_repay_plan['current_num']))
+            repay_apply_data["repayInterest"] += float(asset_repay_plan_merchant_interest['pre_repay_interest'])  # 利息
+            repay_apply_data["repayAmount"] = round(float(asset_repay_plan_merchant_interest['pre_repay_interest'])+repay_apply_data["repayAmount"] , 2 )  # 总金额
 
         # 线下还款，担保费必须为0
         if repay_scene == '02':  # 线下还款
@@ -468,27 +480,30 @@ class HairBizImpl(MysqlInit):
 
         # 按期还款、提前当期
         if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
-                                                    2)  # 总金额
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
+            repay_apply_data["repayAmount"] = round(repay_apply_data["repayAmount"] + repayGuaranteeFee,2)  # 总金额
+            repay_apply_data["repayPrincipal"] = round(float(asset_repay_plan['pre_repay_principal']),2)  # 本金
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
 
         # 提前结清
+        days = get_day(asset_repay_plan["start_date"], repayDate)
         if repay_type == "2":
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-            days = get_day(asset_repay_plan["start_date"], repayDate)
             # 如果当期已还款，提前还款利息应收0
             repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
             # repay_apply_data["repayInterest"] = 33.45
             repay_apply_data["repayAmount"] = round(
-                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee, 2)  # 总金额
+                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
+                2)  # 总金额
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
 
-        if repay_scene == '01':  # 线上还款
+        # 线上还款
+        if repay_scene == '01':
             repay_apply_data['repaymentAccountNo'] = self.data['bankid']
-        if repay_scene == '02' or '05':  # 线下还款、逾期还款
+        # 线下还款、逾期还款
+        if repay_scene == '02' or '05':
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
-        if repay_scene == '04':  # 支付宝还款
+        # 支付宝还款
+        if repay_scene == '04':
             if not paymentOrder:
                 raise Exception("支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）")
             repay_apply_data['thirdWithholdId'] = paymentOrder  # 支付宝存量订单
@@ -496,8 +511,9 @@ class HairBizImpl(MysqlInit):
             repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
-                                                                             2)  # 总金额
+            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,2)  # 总金额
+            if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+                apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayPrincipal"] * 100,2)  # 总本金
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
 
         # 配置还款mock时间
@@ -576,7 +592,7 @@ class HairBizImpl(MysqlInit):
         if days <= 0:
             returnGoods_apply_data["returnGoodsInterest"] = 0
 
-        # 计算退货应收利息， 放款7日内退货不收罚息
+        # 计算退货应收利息， 放款10日内退货不收罚息
         credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
                                                                          loan_invoice_id=loanInvoiceId)
         loanDate = str(credit_loan_invoice['loan_pay_time']).split()[0]
@@ -584,37 +600,88 @@ class HairBizImpl(MysqlInit):
         # date = datetime.strptime(date, '%Y-%m-%d').date()
         loanDate = parse(loanDate)
         repayDateFormat = parse(repayDate)
-        if 10 > int((repayDateFormat - loanDate).days):
+        if 10 >= int((repayDateFormat - loanDate).days):
             returnGoods_apply_data['returnGoodsInterest'] = 0
             returnGoods_apply_data['returnGoodsOverdueFee'] = 0
         else:
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         repay_plan_status='1',
-                                                                         current_num=term)
-            dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
-            # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
-            key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
-                loanInvoiceId)
-            KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
-            kuanxianqi_interest = float(KXQRepayAmt['pre_repay_interest']) if KXQRepayAmt else 0  # 宽限期利息
-            # 逾期借据=逾期期次利息+当期利息
-            oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                    'sum(pre_repay_interest)',
-                                                                    'sum(pre_repay_overdue_fee)',
-                                                                    loan_invoice_id=loanInvoiceId,
-                                                                    repay_plan_status='4')
-            if oveRepayAmt['sum(pre_repay_interest)']:
-                weihuan_interest = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_interest)']))  # 未还期次利息
-                pre_repay_overdue_fee = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
-            else:
-                weihuan_interest = 0
-                pre_repay_overdue_fee = 0
-            returnGoods_apply_data['returnGoodsInterest'] = float("{:.2f}".format(dangqi_interest + weihuan_interest +
-                                                                                  kuanxianqi_interest))
+            if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+                self.log.demsg("贴息产品,利息查asset_repay_plan_merchant_interest表； 罚息费用查asset_repay_plan表", )
+                asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
+                                                                             loan_invoice_id=loanInvoiceId,
+                                                                             repay_plan_status='1',
+                                                                             current_num=term)
+                dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
+                # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
+                key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
+                    loanInvoiceId)
+                KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+                if KXQRepayAmt:
+                    asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
+                                                                                 loan_invoice_id=loanInvoiceId,
+                                                                                 repay_plan_status='1',
+                                                                                 current_num=KXQRepayAmt['current_num'])
+                    kuanxianqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 宽限期利息
+                else:
+                    kuanxianqi_interest = 0  # 宽限期利息
 
-            # 罚息
-            returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee
+                # 逾期借据=计算逾期期次利息+当期利息
+                oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
+                                                                        'sum(pre_repay_interest)',
+                                                                        loan_invoice_id=loanInvoiceId,
+                                                                        repay_plan_status='4')
+                if oveRepayAmt['sum(pre_repay_interest)']:
+                    weihuan_interest = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_interest)']))  # 未还期次利息
+                else:
+                    weihuan_interest = 0
+                returnGoods_apply_data['returnGoodsInterest'] = float(
+                    "{:.2f}".format(dangqi_interest + weihuan_interest +
+                                    kuanxianqi_interest))
+
+                # 逾期借据=计算逾期期次罚息、费用
+                oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                        'sum(left_repay_fee)',
+                                                                        'sum(pre_repay_overdue_fee)',
+                                                                        loan_invoice_id=loanInvoiceId,
+                                                                        repay_plan_status='4')
+                if oveRepayAmt['sum(left_repay_fee)'] or oveRepayAmt['sum(pre_repay_overdue_fee)']:
+                    left_repay_fee = float("{:.2f}".format(oveRepayAmt['sum(left_repay_fee)']))  # 未还期次费用
+                    pre_repay_overdue_fee = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
+                else:
+                    left_repay_fee = 0
+                    pre_repay_overdue_fee = 0
+                returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee + left_repay_fee  # 罚息
+            else:
+                self.log.demsg("非贴息产品,利息查asset_repay_plan表")
+                asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                             loan_invoice_id=loanInvoiceId,
+                                                                             repay_plan_status='1',
+                                                                             current_num=term)
+                dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
+                # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
+                key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
+                    loanInvoiceId)
+                KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+                kuanxianqi_interest = float(KXQRepayAmt['pre_repay_interest']) if KXQRepayAmt else 0  # 宽限期利息
+                # 逾期借据=逾期期次利息+当期利息
+                oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                        'sum(left_repay_fee)',
+                                                                        'sum(pre_repay_interest)',
+                                                                        'sum(pre_repay_overdue_fee)',
+                                                                        loan_invoice_id=loanInvoiceId,
+                                                                        repay_plan_status='4')
+                if oveRepayAmt['sum(pre_repay_interest)']:
+                    left_repay_fee = float("{:.2f}".format(oveRepayAmt['sum(left_repay_fee)']))  # 未还期次费用
+                    weihuan_interest = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_interest)']))  # 未还期次利息
+                    pre_repay_overdue_fee = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
+                else:
+                    left_repay_fee = 0
+                    weihuan_interest = 0
+                    pre_repay_overdue_fee = 0
+                returnGoods_apply_data['returnGoodsInterest'] = float(
+                    "{:.2f}".format(dangqi_interest + weihuan_interest +
+                                    kuanxianqi_interest))
+                # 罚息
+                returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee + left_repay_fee  # 罚息
 
         # 更新退货mock时间
         apollo_data = dict()

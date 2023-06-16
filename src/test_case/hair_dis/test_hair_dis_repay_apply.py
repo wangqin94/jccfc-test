@@ -44,7 +44,8 @@ class MyTestCase(unittest.TestCase):
         # 自动入账定时任务
         self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
         # 【引流】账单日机构贴息批量还款入账定时任务流
-        self.repayPublicBizImpl.job.trigger_job_byId("859053695655079936")
+        time.sleep(3)
+        self.repayPublicBizImpl.job.trigger_job_byId("859052136875552768")
 
     """ 后置条件处理 """
     def tearDown(self):
