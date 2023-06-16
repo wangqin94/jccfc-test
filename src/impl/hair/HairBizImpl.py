@@ -414,7 +414,7 @@ class HairBizImpl(MysqlInit):
         return response
 
     # 还款申请
-    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
+    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=1.11,
                     repayDate=None, paymentOrder=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
@@ -458,9 +458,9 @@ class HairBizImpl(MysqlInit):
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
         repay_apply_data["repayAmount"] = float(asset_repay_plan['pre_repay_amount'])  # 总金额
-        repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
+        repay_apply_data["repayInterest"] = round(float(asset_repay_plan['pre_repay_interest']),2)  # 利息
         repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
-        repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
+        repay_apply_data["repayOverdueFee"] = round(float(asset_repay_plan['pre_repay_overdue_fee']),2)  # 逾期罚息
         repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
 
         # 如果是贴息产品，贴息还款计划表查询利息，并重新计算还款总金额
@@ -480,9 +480,8 @@ class HairBizImpl(MysqlInit):
 
         # 按期还款、提前当期
         if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = round(repay_apply_data["repayAmount"] + repayGuaranteeFee,
-                                                    2)  # 总金额
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
+            repay_apply_data["repayAmount"] = round(repay_apply_data["repayAmount"] + repayGuaranteeFee,2)  # 总金额
+            repay_apply_data["repayPrincipal"] = round(float(asset_repay_plan['pre_repay_principal']),2)  # 本金
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
 
         # 提前结清
@@ -512,8 +511,9 @@ class HairBizImpl(MysqlInit):
             repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
-                                                                             2)  # 总金额
+            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,2)  # 总金额
+            if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+                apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayPrincipal"] * 100,2)  # 总本金
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
 
         # 配置还款mock时间
