@@ -175,9 +175,9 @@ JiKe = {
                         "fileName": "JC_third_auth_202000000948071964.pdf"
                     },
                     {
-                        "fileType": "16",
-                        "fileUrl": "xdgl/jike/test/test1.png",
-                        "fileName": "test1.png"
+                        "fileType": "16",  # 学信网截图
+                        "fileUrl": "xdgl/jike/test/test.jpg",
+                        "fileName": "test.jpg"
                     }
                 ],
                 "authenticationInfo": {
