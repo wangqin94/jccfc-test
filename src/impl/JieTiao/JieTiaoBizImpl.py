@@ -182,7 +182,7 @@ class JieTiaoBizImpl(EnvInit):
             else:
                 # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
                 days = get_day(asset_repay_plan["start_date"], repay_date)
-                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * execute_rate / (100 * 360)
+                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * execute_rate / (100 * 365)
                 repay_notice_data["rpyIntAmt"] = float('{:.2f}'.format(paid_prin_amt))  # 利息
 
         # 更新 payload 字段值
