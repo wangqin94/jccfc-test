@@ -6,14 +6,15 @@
 @Date    ：2022/6/6 13:57 
 """
 import json
+import sys
+sys.path.append("../")
 from flask import jsonify, Flask, request
 from config.globalConfig import headers
 from utils.BankNo import BankNo
 from utils.GenName import get_name
 from utils.Identity import IdNumber
 from utils.Models import decrypt, get_telephone
-import sys
-sys.path.append("../")
+
 app = Flask(__name__)  # 创建flask实例，用来接收web请求
 
 getMsg_loan_invoice_no16539809083830 = {
