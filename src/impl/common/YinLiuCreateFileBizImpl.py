@@ -107,8 +107,7 @@ class YinLiuRepayFile(EnvInit):
             'compensationInterest': '',  # 利息
             'loanBalance': '',  # 在贷余额  用户级
             'compensationOverdueFee': '',  # 代偿罚息
-            'compensationFee': '',  # 代偿违约金
-            'handler_status': ''  # 是否贴息 0:未贴息 1:已贴息 EnumBool.YES'
+            'handler_status': ''  # 是否贴息 N:未贴息 Y:已贴息 EnumBool.YES'
         }
 
         # 海尔贴息文件 键值对字典数据模板
@@ -374,15 +373,22 @@ class YinLiuRepayFile(EnvInit):
         # 根据借据Id和期次获取资产侧还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loanInvoiceId, str(termNo))
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
-        temple['repay_amt'] = str(asset_repay_plan["left_repay_principal"])  # 总金额
+        temple['repay_amt'] = str(asset_repay_plan["left_repay_amount"])  # 总金额
         temple['compensationPrincipal'] = str(asset_repay_plan["left_repay_principal"])  # 本金
         temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
         temple['loanBalance'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
-        temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
-        temple['compensationFee'] = str(asset_repay_plan["left_repay_fee"])  # 费用
+        temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"] + asset_repay_plan["left_repay_fee"])  # 罚息
         temple['business_no'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))  # 流水号
         temple['current_period'] = str(termNo)  # 期次
-        temple['handler_status'] = "1" if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else "0"  # 是否贴息
+        temple['handler_status'] = "N"  # 是否贴息
+        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+            temple['handler_status'] = "Y"
+            self.log.demsg("贴息产品,利息查asset_repay_plan_merchant_interest表")
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
+                                                                         loan_invoice_id=loanInvoiceId,
+                                                                         current_num=termNo)
+            temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
+            temple['repay_amt'] = round(float(temple['repay_amt']) + float(temple['compensationInterest']), 2)
         return temple
 
 
