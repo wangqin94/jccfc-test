@@ -445,7 +445,7 @@ class HairBizImpl(MysqlInit):
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
         repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
         repay_apply_data['repayScene'] = repay_scene
-        repay_apply_data['repayType'] = "2" if repay_type == "9" or "10" else repay_type
+        repay_apply_data['repayType'] = repay_type
         if repayTerm:
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
                                                                          loan_invoice_id=loanInvoiceId,
@@ -500,6 +500,7 @@ class HairBizImpl(MysqlInit):
 
         # 宽限期提前结清
         if repay_type == "9":
+            repay_apply_data['repayType'] = "2"
             # 非贴息产品应收当期利息+宽限期期次利息， 贴息产品应收当前期利息
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
                 loanInvoiceId)
@@ -517,6 +518,7 @@ class HairBizImpl(MysqlInit):
 
         # 逾期提前结清
         if repay_type == "10":
+            repay_apply_data['repayType'] = "2"
             oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
                                                                     'sum(left_repay_fee)',
                                                                     'sum(pre_repay_interest)',
@@ -777,8 +779,9 @@ class HairBizImpl(MysqlInit):
 
         # 附件信息
         fileInfos = []
-        fileInfo = {'fileType': "14", 'fileName': "cqid1.png"}
+        fileInfo = {'fileType': "14", 'fileName': "action1.jpg"}
         positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
+        # positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/temp/userInfo.txt'))
         fileInfo['file'] = positive  # 身份证正面base64字符串
         fileInfos.append(fileInfo)
         file_data['fileInfos'] = fileInfos
