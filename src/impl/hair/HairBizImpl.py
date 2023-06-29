@@ -664,7 +664,7 @@ class HairBizImpl(MysqlInit):
                                                                              current_num=term)
                 dangqi_interest = float(asset_repay_plan['left_repay_interest'])  # 当期利息
                 # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
-                key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
+                key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3,4) ORDER BY 'current_num'".format(
                     loanInvoiceId)
                 KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
                 if KXQRepayAmt:
@@ -710,7 +710,7 @@ class HairBizImpl(MysqlInit):
                 dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
                 self.log.demsg("当期利息：{}".format(dangqi_interest))
                 # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
-                key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
+                key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3,4) ORDER BY 'current_num'".format(
                     loanInvoiceId)
                 KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
                 kuanxianqi_interest = float(KXQRepayAmt['pre_repay_interest']) if KXQRepayAmt else 0  # 宽限期利息

@@ -107,7 +107,8 @@ class YinLiuRepayFile(EnvInit):
             'compensationInterest': '',  # 利息
             'loanBalance': '',  # 在贷余额  用户级
             'compensationOverdueFee': '',  # 代偿罚息
-            'handler_status': ''  # 是否贴息 N:未贴息 Y:已贴息 EnumBool.YES'
+            'compensationFee': '',  # 代偿费用
+            'handler_status': ''  # 是否贴息 0:未贴息 1:已贴息 EnumBool.YES'
         }
 
         # 海尔贴息文件 键值对字典数据模板
@@ -378,11 +379,12 @@ class YinLiuRepayFile(EnvInit):
         temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
         temple['loanBalance'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
         temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"] + asset_repay_plan["left_repay_fee"])  # 罚息
+        temple['compensationFee'] = str(asset_repay_plan["left_repay_fee"])  # 费用
         temple['business_no'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))  # 流水号
         temple['current_period'] = str(termNo)  # 期次
-        temple['handler_status'] = "N"  # 是否贴息
+        temple['handler_status'] = "0"  # 是否贴息
         if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            temple['handler_status'] = "Y"
+            temple['handler_status'] = "1"
             self.log.demsg("贴息产品,利息查asset_repay_plan_merchant_interest表")
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
                                                                          loan_invoice_id=loanInvoiceId,

@@ -282,7 +282,7 @@ class JiKeBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
-        credit_data['interestRate'] = 9.8
+        credit_data['interestRate'] = 9.0
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '2'  # 应传2
@@ -350,7 +350,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=9.8, **kwargs):
+    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=9.0, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param rate: 支用利率
