@@ -473,6 +473,11 @@ YinLiu = {
                         "fileType": "7",
                         "file": "文件Base64字符串",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
+                    },
+                    {
+                        "fileType": "14",
+                        "file": "文件Base64字符串",
+                        "fileName": "photos.png"
                     }
                 ],
             }

@@ -6,6 +6,8 @@
 @Date    ：2022/6/6 13:57 
 """
 import json
+import sys
+sys.path.append("../")
 from flask import jsonify, Flask, request
 from config.globalConfig import headers
 from utils.BankNo import BankNo
@@ -51,7 +53,7 @@ def getTestData_mock():
     data = {'姓名': get_name(), '身份证号': IdNumber.generate_id(), '手机号': get_telephone()}
     # 获取随机生成的手机号
     bank = BankNo()
-    data['银行卡号'] = bank.get_bank_card(bankName='工商银行')
+    data['银行卡号'] = bank.get_bank_card(bankName='工商银行')[0]
     data['银行卡Bin'] = bank.cardBin
     data['银行卡Code'] = bank.bankCode
     print(str(data))

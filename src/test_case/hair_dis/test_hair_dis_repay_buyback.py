@@ -24,11 +24,11 @@ class MyTestCase(unittest.TestCase):
         # 还款环境配置,清理缓存配置账务时间
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
-        hairRepayFile = YinLiuRepayFile(data, self.productId, repayTermNo='7', repayDate=repayDate, loanInvoiceId='000LI0001362535425950765007')
-        hairRepayFile.creditBuyBackFile()
+        hairRepayFile = YinLiuRepayFile(data, self.productId, repayTermNo='1', repayDate=repayDate)
+        hairRepayFile.creditHairDisBuyBackFile()
 
-        self.repayPublicBizImpl.job.update_job('【引流】回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job('【引流】回购清单文件分片任务流', group=13)
+        self.repayPublicBizImpl.job.update_job_byJobId('856176818498170880', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.trigger_job_byId('856176818498170880')
         time.sleep(3)
 
         # 自动入账

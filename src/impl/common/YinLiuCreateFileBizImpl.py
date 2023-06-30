@@ -107,7 +107,7 @@ class YinLiuRepayFile(EnvInit):
             'compensationInterest': '',  # 利息
             'loanBalance': '',  # 在贷余额  用户级
             'compensationOverdueFee': '',  # 代偿罚息
-            'compensationFee': '',  # 代偿违约金
+            'compensationFee': '',  # 代偿费用
             'handler_status': ''  # 是否贴息 0:未贴息 1:已贴息 EnumBool.YES'
         }
 
@@ -180,7 +180,7 @@ class YinLiuRepayFile(EnvInit):
             key1 = "loan_invoice_id = '{}'".format(loan_invoice_id)
             sqlCreditLoanInvoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key1)
         else:
-            key2 = "user_name = '{}' and certificate_no ='{}'".format(self.userData['name'],self.userData['cer_no'])
+            key2 = "user_name = '{}' and certificate_no ='{}'".format(self.userData['name'], self.userData['cer_no'])
             sqlCreditLoanInvoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
         return sqlCreditLoanInvoice
 
@@ -211,7 +211,8 @@ class YinLiuRepayFile(EnvInit):
         temple['paid_prin_amt'] = str(asset_repay_plan["pre_repay_principal"])  # 本金
         temple['paid_int_amt'] = str(asset_repay_plan["pre_repay_interest"])  # 利息
         temple['left_repay_amt'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
-        temple['repay_amt'] = str(asset_repay_plan["pre_repay_principal"] + asset_repay_plan["pre_repay_interest"])  # 总金额
+        temple['repay_amt'] = str(
+            asset_repay_plan["pre_repay_principal"] + asset_repay_plan["pre_repay_interest"])  # 总金额
 
         # 文件赋值
         self.bankClaimTemple.update(temple)
@@ -281,13 +282,15 @@ class YinLiuRepayFile(EnvInit):
         loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
 
         # 根据借据Id和期次获取资产侧还款计划
-        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loanInvoiceId, self.repayTermNo)
-        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
+        asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
+                                                                     loan_invoice_id=loanInvoiceId,
+                                                                     current_num=self.repayTermNo)
 
         temple['repayDate'] = self.repayDate.replace('-', '')
         temple['loanNo'] = loanInvoiceId
         temple['preInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
-        temple['subProductId'] = self.productId if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else ProductIdEnum.HAIR.value  # 子产品号
+        temple[
+            'subProductId'] = self.productId if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else ProductIdEnum.HAIR.value  # 子产品号
         temple['merchantId'] = EnumMerchantId.HAIR.value  # 商户号
 
         # 文件赋值
@@ -297,7 +300,8 @@ class YinLiuRepayFile(EnvInit):
         write_repay_file(disInterestFileName, **self.hairDisInterestTemple)
 
         # 开始上传文件到ks3
-        self.uploadFile(fileType=EnumFileType.DIS_INTEREST_FILE.fileType, assetFilePath=EnumFileType.DIS_INTEREST_FILE.folderName)
+        self.uploadFile(fileType=EnumFileType.DIS_INTEREST_FILE.fileType,
+                        assetFilePath=EnumFileType.DIS_INTEREST_FILE.folderName)
 
     # 海尔回购文件生成
     def creditHairDisBuyBackFile(self):
@@ -321,7 +325,8 @@ class YinLiuRepayFile(EnvInit):
             termNo += 1
 
         # 开始上传文件到ks3
-        self.uploadFile(fileType=EnumFileType.DIS_BUYBACK_FILE.fileType, assetFilePath=EnumFileType.DIS_BUYBACK_FILE.folderName)
+        self.uploadFile(fileType=EnumFileType.DIS_BUYBACK_FILE.fileType,
+                        assetFilePath=EnumFileType.DIS_BUYBACK_FILE.folderName)
 
     # 海尔预回购文件生成
     def creditHairDisPreBuyBackFile(self):
@@ -345,7 +350,8 @@ class YinLiuRepayFile(EnvInit):
             termNo += 1
 
         # 开始上传文件到ks3
-        self.uploadFile(fileType=EnumFileType.DIS_BUYBACK_FILE.fileType, assetFilePath=EnumFileType.DIS_BUYBACK_FILE.folderName)
+        self.uploadFile(fileType=EnumFileType.DIS_BUYBACK_FILE.fileType,
+                        assetFilePath=EnumFileType.DIS_BUYBACK_FILE.folderName)
 
     # 海尔回购文件生成
     def creditHairBuyBackData(self, termNo):
@@ -368,15 +374,23 @@ class YinLiuRepayFile(EnvInit):
         # 根据借据Id和期次获取资产侧还款计划
         key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loanInvoiceId, str(termNo))
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
-        temple['repay_amt'] = str(asset_repay_plan["left_repay_principal"])  # 总金额
+        temple['repay_amt'] = str(asset_repay_plan["left_repay_amount"])  # 总金额
         temple['compensationPrincipal'] = str(asset_repay_plan["left_repay_principal"])  # 本金
         temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
         temple['loanBalance'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
-        temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
+        temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"] + asset_repay_plan["left_repay_fee"])  # 罚息
         temple['compensationFee'] = str(asset_repay_plan["left_repay_fee"])  # 费用
         temple['business_no'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))  # 流水号
         temple['current_period'] = str(termNo)  # 期次
-        temple['handler_status'] = "1" if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else "0"  # 是否贴息
+        temple['handler_status'] = "0"  # 是否贴息
+        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+            temple['handler_status'] = "1"
+            self.log.demsg("贴息产品,利息查asset_repay_plan_merchant_interest表")
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
+                                                                         loan_invoice_id=loanInvoiceId,
+                                                                         current_num=termNo)
+            temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
+            temple['repay_amt'] = round(float(temple['repay_amt']) + float(temple['compensationInterest']), 2)
         return temple
 
 

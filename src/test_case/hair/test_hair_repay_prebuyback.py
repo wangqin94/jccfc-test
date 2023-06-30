@@ -25,16 +25,7 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
         hairRepayFile = YinLiuRepayFile(data, self.productId, repayTermNo='1', repayDate=repayDate)
-        hairRepayFile.creditHairDisBuyBackFile()
-
-        self.repayPublicBizImpl.job.update_job_byJobId('856176818498170880', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
-        self.repayPublicBizImpl.job.trigger_job_byId('856176818498170880')
-        time.sleep(3)
-
-        # 自动入账
-        # self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
-        # 输入指定借据号
-        # self.repayRes = json.loads(HaLo.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId="").get('body'))  # 按期还款
+        hairRepayFile.creditHairDisPreBuyBackFile()
 
     """ 后置条件处理 """
     def tearDown(self):

@@ -4,7 +4,7 @@ from src.impl.common.CommonBizImpl import post_with_encrypt
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import jiebei
 from utils.Models import *
-from src.enums.EnumsCommon import *
+
 
 
 class JieBeiBizImpl(EnvInit):
@@ -19,13 +19,13 @@ class JieBeiBizImpl(EnvInit):
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
 
-        self.encrypt_url = self.encrypt_url = self.host + JieBeiEnum.JieBeiEncryptPath.value
+        self.encrypt_url = self.host + JieBeiEnum.JieBeiEncryptPath.value
         self.decrypt_url = self.host + JieBeiEnum.JieBeiDecryptPath.value
 
         # 初始化payload变量
         self.active_payload = {}
 
-    def feature(self,bizActionType, **kwargs):
+    def feature(self, bizActionType, **kwargs):
         feature_data = dict()
 
         if bizActionType == 'LOAN_DECISION':
@@ -36,7 +36,6 @@ class JieBeiBizImpl(EnvInit):
             feature_data['applyNo'] = "loanNo" + str(int(round(time.time() * 1000)))
         else:
             feature_data['applyNo'] = self.data['applyno']
-
 
         # 更新 payload 字段值
         feature_data.update(kwargs)
@@ -68,7 +67,7 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def datapreFs(self, applyType,**kwargs):
+    def datapreFs(self, applyType, **kwargs):
         datapreFs_data = dict()
         #
         datapreFs_data['name'] = self.data['name']
@@ -96,13 +95,13 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def creditNotice(self,bizType, **kwargs):
+    def creditNotice(self, bizType, **kwargs):
         creditNotice_data = dict()
 
         creditNotice_data['name'] = self.data['name']
         creditNotice_data['certNo'] = self.data['cer_no']
         creditNotice_data['mobile'] = self.data['telephone']
-        creditNotice_data['timestamp'] = int(time.time()*1000)
+        creditNotice_data['timestamp'] = int(time.time() * 1000)
         creditNotice_data['applyNo'] = self.data['applyno']
         creditNotice_data['bizType'] = bizType
 
@@ -117,27 +116,8 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-
-    def pdf_to_base64(pdf_path):
+    def pdf_to_base64(self, pdf_path):
         with open(pdf_path, "rb") as pdf_file:
-           encoded_string = base64.b64encode(pdf_file.read())
+            encoded_string = base64.b64encode(pdf_file.read()).decode('utf-8')
         return encoded_string
 
-
-    def certificationSend(self, **kwargs):
-        certificationSend_data = dict()
-
-        certificationSend_data['certifyNo'] = 'certifyNo' + self.strings + "A"
-        certificationSend_data['name'] = self.data['name']
-        certificationSend_data['certNo'] = self.data['cer_no']
-
-        # 更新 payload 字段值
-        certificationSend_data.update(kwargs)
-        parser = DataUpdate(self.cfg['certificationSend']['payload'], **certificationSend_data)
-        self.active_payload = parser.parser
-
-        self.log.demsg('结清证明接口...')
-        url = self.host + self.cfg['certificationSend']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-                                     encrypt_flag=self.encrypt_flag)
-        return response

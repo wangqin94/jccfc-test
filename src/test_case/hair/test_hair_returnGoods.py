@@ -20,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         self.hair = HairBizImpl(self.productId, data=data)
 
     """ 测试步骤 """
-    def test_repay_apply(self, loanInvoiceId=None, term="1", repayDate='2022-07-01', ):
+    def test_repay_apply(self, loanInvoiceId=None, term="1", repayDate='2023-05-10', ):
         """ 测试步骤 """
         # 还款环境配置,清理缓存配置账务时间
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
@@ -29,6 +29,8 @@ class MyTestCase(unittest.TestCase):
         if not loanInvoiceId:
             credit_loan_invoice = self.hair.MysqlBizImpl.get_credit_database_info('credit_loan_invoice', certificate_no=data['cer_no'])
             loanInvoiceId = credit_loan_invoice['loan_invoice_id']
+        self.loanInvoiceId = loanInvoiceId
+
         self.repayRes = self.hair.returnGoods_apply(loanInvoiceId=loanInvoiceId, term=term, repayDate=repayDate)
 
         # 自动入账
@@ -39,7 +41,7 @@ class MyTestCase(unittest.TestCase):
     """ 后置条件处理 """
     def tearDown(self):
         # 数据库层校验还款状态
-        self.checkBizImpl.check_channel_loan_compensation_status(third_compensation_no=self.repayRes['body']['repayApplySerialNo'])
+        self.checkBizImpl.check_channel_loan_compensation_status(loan_invoice_id=self.loanInvoiceId, compensation_type='02')
 
 
 if __name__ == '__main__':
