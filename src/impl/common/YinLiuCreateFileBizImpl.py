@@ -350,8 +350,8 @@ class YinLiuRepayFile(EnvInit):
             termNo += 1
 
         # 开始上传文件到ks3
-        self.uploadFile(fileType=EnumFileType.DIS_BUYBACK_FILE.fileType,
-                        assetFilePath=EnumFileType.DIS_BUYBACK_FILE.folderName)
+        self.uploadFile(fileType=EnumFileType.DIS_PRE_BUYBACK_FILE.fileType,
+                        assetFilePath=EnumFileType.DIS_PRE_BUYBACK_FILE.folderName)
 
     # 海尔回购文件生成
     def creditHairBuyBackData(self, termNo):
