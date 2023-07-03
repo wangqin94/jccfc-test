@@ -87,8 +87,8 @@ class Files(object):
         seqNo = str(int(time.time() * 1000))
         data = {
             "seqNo": seqNo,
-            "channelNo": "01",
-            "applyPath": "/",
+            "channelNo": "FQL",
+            "applyPath": "/pl/JC_payment_20220222.txt",
             "fullPath": remote_file
         }
         _log.info(f"下载文件结果查询请求数据：{data}")
@@ -101,8 +101,8 @@ class Files(object):
 
 if __name__ == '__main__':
     a = Files()
-    host = "http://op-channel-rts.corp.jccfc.com"
-    local = "C:\\Users\\jccfc\\Desktop\\a.jpg"
-    remote = "/xdgl/hj/zhixin/2022/08/12/F6629388810741ADA9D4B4FCBDB9AED40B10BFDA202741BBB1379FB41108BBA7.jpg"
+    host = "https://op-channel-huat.corp.jccfc.com"
+    local = "C:\\Users\\zq\\Desktop\\a.png"
+    remote = "/xdgl/fql/pl/JC_payment_20220222.txt"
     a.gfs_download_file(host, local, remote)
     # a.gfs_upload_file(host, local, remote)

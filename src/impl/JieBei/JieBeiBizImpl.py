@@ -1,5 +1,6 @@
 from engine.EnvInit import EnvInit
 from src.enums.EnumJieBei import JieBeiEnum
+from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import post_with_encrypt
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import jiebei
