@@ -98,7 +98,7 @@ class YinLiuRepayFile(EnvInit):
             'repay_amt': '',  # 代偿总额
             'repay_date': '',  # 代偿日期
             'business_no': str(int(round(time.time() * 1000))) + str(random.randint(0, 9999)),  # 流水号
-            'product_id': productId,  # 产品代码
+            'product_id': ProductIdEnum.HAIR_DISCOUNT.value,  # 产品代码
             'type_flag': '2',  # 类型标志
             'loan_amt': '',  # 贷款总金额
             'loan_period': '',  # 贷款总期次
@@ -350,8 +350,8 @@ class YinLiuRepayFile(EnvInit):
             termNo += 1
 
         # 开始上传文件到ks3
-        self.uploadFile(fileType=EnumFileType.DIS_BUYBACK_FILE.fileType,
-                        assetFilePath=EnumFileType.DIS_BUYBACK_FILE.folderName)
+        self.uploadFile(fileType=EnumFileType.DIS_PRE_BUYBACK_FILE.fileType,
+                        assetFilePath=EnumFileType.DIS_PRE_BUYBACK_FILE.folderName)
 
     # 海尔回购文件生成
     def creditHairBuyBackData(self, termNo):
