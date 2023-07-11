@@ -14,7 +14,7 @@ from utils.Apollo import Apollo
 
 
 class WldBizImpl(EnvInit):
-    def __init__(self,  data=None, person=True,encrypt_flag=False,**kwargs):
+    def __init__(self, data=None, person=True, encrypt_flag=True, **kwargs):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         self.Files = Files()
@@ -47,8 +47,6 @@ class WldBizImpl(EnvInit):
         self.active_payload = {}
         self.apollo = Apollo()
 
-
-
     @staticmethod
     def url_encoded_to_json(response):
         data = dict()
@@ -79,7 +77,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('发起代扣签约...')
         url = self.host + self.cfg['bind_card']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
 
         bind_card_info = dict()
@@ -105,7 +103,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('确认代扣签约...')
         url = self.host + self.cfg['confirm_bind_card']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -128,7 +126,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('代扣签约查询...')
         url = self.host + self.cfg['query_bind_card']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -152,7 +150,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('换卡通知...')
         url = self.host + self.cfg['update_card']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -177,7 +175,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('授信申请...')
         url = self.host + self.cfg['credit']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -197,7 +195,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('授信申请查询...')
         url = self.host + self.cfg['credit_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -225,7 +223,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('支用申请...')
         url = self.host + self.cfg['loan']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -245,7 +243,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('支用查询...')
         url = self.host + self.cfg['loan_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
@@ -267,13 +265,13 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('还款计划查询...')
         url = self.host + self.cfg['repay_plan_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
     # 还款
-    def repay(self, repay_date=None, repay_term_no='1', repay_type="1",  loan_invoice_id='', **kwargs):
-        ## 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
+    def repay(self, repay_date=None, repay_term_no='1', repay_type="1", loan_invoice_id='', **kwargs):
+        # 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
         repay_data = dict()
         strings = str(int(round(time.time() * 1000)))
         times = time.strftime('%Y%m%d%H%M%S', time.localtime())
@@ -327,7 +325,7 @@ class WldBizImpl(EnvInit):
 
         self.log.demsg('发起还款申请...')
         url = self.host + self.cfg['repay']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url, 
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 

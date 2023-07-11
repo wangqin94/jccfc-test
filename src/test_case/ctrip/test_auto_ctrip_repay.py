@@ -22,10 +22,11 @@ def pre_loan_repay_data(ctripBizImpl, ctripCreditCheckBizImpl,ctripLoanCheckBizI
         # 设置apollo还款mock时间 默认当前时间
         apollo_data = dict()
         apollo_data['credit.mock.repay.trade.date'] = "false"  # credit.mock.repay.trade.date
-        Apollo().update_config(**apollo_data)
+        Apollo().update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
     with allure.step("发起授信申请"):
         creditRes = ctripBizImpl.credit(advice_amount=30000)
+        ctripBizImpl.update_apollo_amount()
         log.info(f"授信申请接口结果----：{creditRes}")
         creditStatus = creditRes['credit_status']
         assert creditStatus == '0', "返回0说明授信申请成功"

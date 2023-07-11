@@ -155,6 +155,7 @@ class JiKeBizImpl(MysqlInit):
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
+        self.interestRate = 9.0
 
         # 初始化payload变量
         self.active_payload = {}
@@ -282,7 +283,7 @@ class JiKeBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
-        credit_data['interestRate'] = 9.0
+        credit_data['interestRate'] = self.interestRate
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '2'  # 应传2
@@ -350,10 +351,9 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=9.0, **kwargs):
+    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        @param rate: 支用利率
         @param loan_date: 放款时间，默认当前时间 eg:2022-01-01
         @param thirdApplyId: 三方申请号，与授信申请号一致
         @param loanAmt: 支用申请金额, 默认1000 单位元
@@ -390,7 +390,7 @@ class JiKeBizImpl(MysqlInit):
 
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
-        applyLoan_data['interestRate'] = rate
+        applyLoan_data['interestRate'] = self.interestRate
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
@@ -405,7 +405,7 @@ class JiKeBizImpl(MysqlInit):
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
         applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
-                                                                   yearRate=rate, term=loanTerm)
+                                                                   yearRate=self.interestRate, term=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -508,7 +508,7 @@ class JiKeBizImpl(MysqlInit):
 
     # 还款申请
     def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
-                    repayDate=None, **kwargs):
+                    repayDate=None, paymentOrder=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param repayTerm: 还款期次，默认取当前借据最早未还期次
@@ -517,6 +517,7 @@ class JiKeBizImpl(MysqlInit):
         @param repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         @param loanInvoiceId: 借据号 必填
         @param repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
+        @param paymentOrder: 支付宝订单号，支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
@@ -531,6 +532,8 @@ class JiKeBizImpl(MysqlInit):
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
         # repay_apply_data['repayApplySerialNo'] = "2022093022001425270501810521"  # 支付宝存量订单
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
+        repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
+        repay_apply_data['repaymentAccountNo'] = self.data['bankid']
         repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayType'] = repay_type
         if repayTerm:
@@ -577,7 +580,10 @@ class JiKeBizImpl(MysqlInit):
         if repay_scene == '02' or '05':  # 线下还款、逾期还款
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
         if repay_scene == '04':  # 支付宝还款
-            repay_apply_data['thirdWithholdId'] = "2108041506202974975937967"  # 支付宝存量订单
+            if not paymentOrder:
+                raise Exception("支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）")
+            repay_apply_data['thirdWithholdId'] = paymentOrder  # 支付宝存量订单
+            repay_apply_data['thirdRepayAccountType'] = "支付宝"
             repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"

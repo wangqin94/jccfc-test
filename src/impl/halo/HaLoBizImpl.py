@@ -381,7 +381,7 @@ class HaLoBizImpl(MysqlInit):
 
     # 还款申请
     def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
-                    repayDate=None, **kwargs):
+                    repayDate=None, paymentOrder=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param repayTerm: 还款期次，默认取当前借据最早未还期次
@@ -390,6 +390,7 @@ class HaLoBizImpl(MysqlInit):
         @param repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         @param loanInvoiceId: 借据号 必填
         @param repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
+        @param paymentOrder: 支付宝订单号，支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
@@ -405,6 +406,8 @@ class HaLoBizImpl(MysqlInit):
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
         # repay_apply_data['repayApplySerialNo'] = "2022093022001425270501810521"  # 支付宝存量订单
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
+        repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
+        repay_apply_data['repaymentAccountNo'] = self.data['bankid']
         repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayType'] = repay_type
         if repayTerm:
@@ -451,7 +454,10 @@ class HaLoBizImpl(MysqlInit):
         if repay_scene == '02' or '05':  # 线下还款、逾期还款
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
         if repay_scene == '04':  # 支付宝还款
-            repay_apply_data['thirdWithholdId'] = "2022093022001425270501809997"  # 支付宝存量订单
+            if not paymentOrder:
+                raise Exception("支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）")
+            repay_apply_data['thirdWithholdId'] = paymentOrder  # 支付宝存量订单
+            repay_apply_data['thirdRepayAccountType'] = "支付宝"
             repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
             apollo_data = dict()
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
