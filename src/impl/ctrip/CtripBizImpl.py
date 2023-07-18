@@ -5,7 +5,7 @@ from src.impl.common.CommonBizImpl import *
 from src.enums.EnumsCommon import *
 from engine.EnvInit import EnvInit
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from utils.Apollo import Apollo
+from src.impl.public.RepayPublicBizImpl import *
 from utils.Models import *
 from src.test_data.module_data import ctrip
 
@@ -37,7 +37,7 @@ class CtripBizImpl(EnvInit):
         self.loan_payload = {}
         self.repay_notice_payload = {}
         self.active_payload = {}
-        self.apollo = Apollo()
+        self.repayPublicBizImpl = RepayPublicBizImpl()
 
         # 初始数据库变量
         self.credit_database_name = '%s_credit' % TEST_ENV_INFO.lower()
@@ -203,6 +203,9 @@ class CtripBizImpl(EnvInit):
         @param kwargs:          需要临时装填的字段以及值 eg: key=value
         @return: response       接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
+        # 还款前置任务
+        self.repayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+        time.sleep(10)
         strings = str(int(round(time.time() * 1000)))
         repay_notice = dict()
         # 根据openId查询支用信息
@@ -290,11 +293,6 @@ class CtripBizImpl(EnvInit):
         repay_notice.update(kwargs)
         parser = DataUpdate(self.cfg['loan_repay_notice']['payload'], **repay_notice)
         self.active_payload = parser.parser
-        # 配置还款mock时间
-        apollo_data = dict()
-        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repay_date)
-        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         self.log.demsg('还款通知...')
         url = self.host + self.cfg['loan_repay_notice']['interface']

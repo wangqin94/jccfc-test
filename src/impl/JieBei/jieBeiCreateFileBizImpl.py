@@ -49,7 +49,7 @@ class loanApplyFile(EnvInit):
         self.certNo = data['cer_no']
         self.telephone = data['telephone']
         self.creditNo = data['applyno']
-        self.apply_no = "loanNo" + str(int(round(time.time() * 1000)))
+        self.apply_no = data['applyno'].replace('applyno', 'loanNo')
         self.businessDate = time.strftime('%Y%m%d', time.localtime())
         self.applyDate = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
@@ -72,8 +72,8 @@ class loandetailFile(EnvInit):
         self.certNo = data['cer_no']
         self.telephone = data['telephone']
         self.creditNo = data['applyno']
-        self.contract_no = data['applyno'].replace('applyno','contract_no')
-        self.apply_no = "loanNo" + str(int(round(time.time() * 100000000000)))
+        self.contract_no = data['applyno'].replace('applyno', 'contract_no')
+        self.apply_no = data['applyno'].replace('applyno', 'loanNo')
         self.businessDate = time.strftime('%Y%m%d', time.localtime())
         self.endDate = (datetime.datetime.now() + datetime.timedelta(days=30)).strftime('%Y%m%d')
         self.repayDate = (datetime.datetime.now() + datetime.timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')

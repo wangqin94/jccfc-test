@@ -4,13 +4,13 @@
 # ------------------------------------------
 from engine.EnvInit import EnvInit
 from src.impl.common.CommonBizImpl import *
+from src.impl.public.RepayPublicBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from src.enums.EnumsCommon import *
 from src.enums.EnumWld import *
 from src.test_data.module_data import wld
 from utils.FileHandle import *
-from utils.Apollo import Apollo
 
 
 class WldBizImpl(EnvInit):
@@ -45,7 +45,7 @@ class WldBizImpl(EnvInit):
 
         # 初始化payload变量
         self.active_payload = {}
-        self.apollo = Apollo()
+        self.repayPublicBizImpl = RepayPublicBizImpl()
 
     @staticmethod
     def url_encoded_to_json(response):
@@ -200,7 +200,7 @@ class WldBizImpl(EnvInit):
         return response
 
     # 支用申请
-    def loan(self, **kwargs):
+    def loan(self, loan_date=None, **kwargs):
         loan_data = dict()
         # head
         loan_data['requestSerialNo'] = 'SerialNo' + self.strings + "7"
@@ -220,6 +220,12 @@ class WldBizImpl(EnvInit):
         loan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.active_payload = parser.parser
+        # 设置apollo放款mock时间 默认当前时间
+        loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
+        apollo_data = dict()
+        apollo_data['credit.loan.trade.date.mock'] = True
+        apollo_data['credit.loan.date.mock'] = loan_date
+        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         self.log.demsg('支用申请...')
         url = self.host + self.cfg['loan']['interface']
@@ -272,6 +278,8 @@ class WldBizImpl(EnvInit):
     # 还款
     def repay(self, repay_date=None, repay_term_no='1', repay_type="1", loan_invoice_id='', **kwargs):
         # 还款  repay_term_no还款期次   repay_type还款类型：1-按期还款，2-提前结清，4-逾期还款
+        # 还款前置任务
+        self.repayPublicBizImpl.pre_repay_config(repayDate=repay_date)
         repay_data = dict()
         strings = str(int(round(time.time() * 1000)))
         times = time.strftime('%Y%m%d%H%M%S', time.localtime())
@@ -313,11 +321,7 @@ class WldBizImpl(EnvInit):
                 repay_data['repayInterest'] = float(content1['pre_repay_interest'])
                 repay_data['repayPrincipal'] = float(content1['before_calc_principal'])  # 还款总本金
                 repay_data['repayAmount'] = repay_data['repayPrincipal'] + repay_data["repayInterest"]  # 总金额
-        # 配置还款mock时间
-        apollo_data = dict()
-        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repay_date)
-        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
+
         # 更新 payload 字段值
         repay_data.update(**kwargs)
         parser = DataUpdate(self.cfg['repay']['payload'], **repay_data)

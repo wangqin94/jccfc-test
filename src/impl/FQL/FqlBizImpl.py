@@ -2,6 +2,7 @@
 # ------------------------------------------
 # 分期乐接口数据封装类
 # ------------------------------------------
+import datetime
 
 from engine.EnvInit import EnvInit
 from utils import GlobalVar as gl
@@ -41,6 +42,7 @@ class FqlBizImpl(EnvInit):
 
         # 初始化payload变量
         self.active_payload = {}
+        self.MysqlBizImpl = MysqlBizImpl()
 
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
@@ -295,7 +297,7 @@ class FqlBizImpl(EnvInit):
         return response
 
     # 还款试算
-    def repay_trial(self, loanno, loanterm, repaytype, repayDate, **kwargs):
+    def repay_trial(self, loanno, loanterm, repaytype, **kwargs):
         repay_trial_data = dict()
         # head
         repay_trial_data['requestSerialNo'] = self.strings + "4"
@@ -305,7 +307,7 @@ class FqlBizImpl(EnvInit):
         repay_trial_data['capitalLoanNo'] = loanno
         repay_trial_data['loanTerm'] = loanterm
         repay_trial_data['repayType'] = repaytype
-        repay_trial_data['repayDate'] = repayDate
+        repay_trial_data['repayDate'] = datetime.now().strftime('%Y-%m-%d')
 
         # 更新 payload 字段值
         repay_trial_data.update(kwargs)
@@ -317,8 +319,7 @@ class FqlBizImpl(EnvInit):
         return response
 
     # 代扣申请
-    def payment(self, withholdAmt, signNum, capitalLoanNo, rpyTerm, rpyPrincipal, rpyFeeAmt, rpyMuclt, rpyType,
-                rpyDate, **kwargs):
+    def payment(self, capitalLoanNo, rpyTerm, rpyType, **kwargs):
         payment_data = dict()
 
         # Head
@@ -327,7 +328,7 @@ class FqlBizImpl(EnvInit):
 
         # body
         payment_data['withholdSerialNo'] = "wsn" + self.strings
-        payment_data['withholdAmt'] = withholdAmt
+
 
         # bindardinfo
         payment_data['userName'] = self.data['name']
@@ -335,32 +336,50 @@ class FqlBizImpl(EnvInit):
         payment_data['cardNo'] = self.data['bankid']
         payment_data['idNo'] = self.data['cer_no']
 
-        payment_data['signNum'] = signNum
         payment_data['assetId'] = self.data['applyId']
         payment_data['capitalLoanNo'] = capitalLoanNo
 
         payment_data['rpyTerm'] = rpyTerm
 
         # sepOutInfo
-        payment_data['amt'] = withholdAmt
-        payment_data['rpyTotalAmt'] = withholdAmt
-        payment_data['rpyAmt'] = withholdAmt
-
         payment_data['account'] = self.data['bankid']
-        #
-        payment_data['rpyPrincipal'] = rpyPrincipal
-        payment_data['rpyFeeAmt'] = rpyFeeAmt
-        payment_data['rpyMuclt'] = rpyMuclt
         payment_data['rpyType'] = rpyType
-        payment_data['rpyDate'] = rpyDate
-        # payment_data['rpyDate'] = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+        payment_data['rpyDate'] = datetime.now().strftime('%Y-%m-%d')
+        # 取资产执行利率
+        asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
+                                                                            loan_invoice_id=capitalLoanNo)
+        execute_rate = asset_loan_invoice_info["execute_rate"]
+        # 根据借据Id和期次获取还款计划
+        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(capitalLoanNo, rpyTerm)
+        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
+        payment_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_principal'])
+        payment_data['rpyFeeAmt'] = float(asset_repay_plan['pre_repay_interest'])
+        payment_data['rpyMuclt'] = float(asset_repay_plan['pre_repay_fee'])
+        if rpyType == '30':
+            payment_data['rpyPrincipal'] = float('{:.2f}'.format(asset_repay_plan['before_calc_principal']))
+            pre_repay_date = str(asset_repay_plan["start_date"])
+            pre_repay_date = datetime.strptime(pre_repay_date, "%Y-%m-%d").date()
+            repay_date = datetime.now().date()
+            if pre_repay_date > repay_date:
+                payment_data["rpyFeeAmt"] = 0  # 如果还款时间小于账单日，利息应该为0
+            else:
+                # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
+                days = get_day(asset_repay_plan["start_date"], repay_date)
+                day_rate = round(execute_rate/(100 * 360), 6)
+                paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * day_rate
+                payment_data['rpyFeeAmt'] = float('{:.2f}'.format(paid_prin_amt))  # 利息
+
+        total_amt = round(payment_data['rpyPrincipal'] + payment_data['rpyFeeAmt'] + payment_data['rpyMuclt'], 2)
+        payment_data['withholdAmt'] = total_amt
+        payment_data['amt'] = total_amt
+        payment_data['rpyTotalAmt'] = total_amt
+        payment_data['rpyAmt'] = total_amt
 
         # 更新 payload 字段值
         payment_data.update(kwargs)
         parser = DataUpdate(self.cfg['payment']['payload'], **payment_data)
         self.active_payload = parser.parser
         url = self.host_api + self.cfg['payment']['interface']
-        print(url)
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response

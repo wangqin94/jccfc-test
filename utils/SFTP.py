@@ -15,8 +15,8 @@ _readconfig = Config()
 
 
 class SFTP(object):
-    def __init__(self):
-        self.env = TEST_ENV_INFO
+    def __init__(self, env=None):
+        self.env = env if env else TEST_ENV_INFO
         self.sftp_host = _readconfig.get_sftp(self.env)['host']
         self.sftp_user = _readconfig.get_sftp(self.env)['name']
         self.sftp_passwd = _readconfig.get_sftp(self.env)['password']

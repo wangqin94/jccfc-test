@@ -60,6 +60,11 @@ class RepayPublicBizImpl(MysqlInit):
         self.log.demsg('新增资产卸数记录')
         self.MysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
 
+        self.log.demsg("执行摊销文件任务流")
+        self.job.update_job("摊销文件任务流", group=5, executeBizDateType='CUSTOMER', executeBizDate=last_date)
+        self.job.trigger_job("摊销文件任务流", group=5)
+        time.sleep(3)
+
         self.log.demsg("执行账务日终任务")
         self.job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
         self.job.trigger_job("资产日终任务流", group=6)
@@ -99,4 +104,4 @@ class RepayPublicBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    RepayPublicBizImpl().pre_repay_config(repayDate='2024-01-15')
+    RepayPublicBizImpl().pre_repay_config(repayDate='2023-07-18')

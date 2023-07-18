@@ -21,7 +21,7 @@ class MyTestCase(unittest.TestCase):
         # 授信-授信校验-放款-放款校验
         # repay_mode='02'随借随还，repay_mode='05'等额本息
         repay_mode = '05'
-        loan_date = '20230507'
+        self.loan_date = '2023-06-13'
         baidu = BaiDuBizImpl(data=None, repay_mode=repay_mode)
 
         # 发起授信申请
@@ -34,14 +34,14 @@ class MyTestCase(unittest.TestCase):
         # 检查支用状态为待放款
         self.CheckBizImpl.check_file_loan_apply_status(loan_apply_serial_id=self.loan_apply_id)
         # 上传文件
-        baidufile = BaiduFile(baidu.data, cur_date=loan_date, loan_record=0, repay_mode=repay_mode)
+        baidufile = BaiduFile(baidu.data, cur_date=self.loan_date.replace('-', ''), loan_record=0, repay_mode=repay_mode)
         baidufile.start()
         # 清除分片流水
         self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
         self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
         self.MysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
         # 执行任务流下载文件入库
-        self.job.update_job('百度放款对账下载任务流-测试', executeBizDate=loan_date.replace('-', ''))
+        self.job.update_job('百度放款对账下载任务流-测试', executeBizDate=self.loan_date.replace('-', ''))
         self.job.trigger_job('百度放款对账下载任务流-测试')
         time.sleep(5)
         # 检查是否入三方待建账信息
@@ -59,6 +59,9 @@ class MyTestCase(unittest.TestCase):
         sql = "update asset_loan_invoice_info set apply_loan_date = date_format(begin_profit_date,'%Y%m%d') " \
               "where apply_loan_date != date_format(begin_profit_date,'%Y%m%d')"
         self.MysqlBizImpl.mysql_asset.update(sql)
+        sql2 = "update credit_loan_invoice set loan_pay_time = '{} 12:00:00' where loan_apply_id = '{}'".\
+            format(self.loan_date, self.loan_apply_id)
+        self.MysqlBizImpl.mysql_credit.update(sql2)
 
 
 if __name__ == '__main__':

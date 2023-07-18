@@ -33,13 +33,10 @@ fql = {
                 "sourceCode": "000UC010000006268",
                 "orderType": "1",  # 订单类型
                 "loanAmount": "30000",
-                "creditAmount": 30000,
                 "loanTerm": "3",  # 借款期数
                 "repayType": "1",  # 还款方式 1:等额本息 2:等额本金 3:按天计息
                 "fixedBillDay": "10",
                 "fixedRepayDay": "27",
-                "interestRate": "24",  # 年利率
-                "annualRate": "20.36",  # 实际利率（平台优惠后的利率
                 "name": "祖文策",
                 "age": "39",
                 "sex": "1",
@@ -47,7 +44,7 @@ fql = {
                 "idNo": "232722200207072798",
                 "issuingAuth": "成都市双流县公安局",
                 "birthDay": "1984-11-23",
-                "nation": "汉族",
+                "nation": "壮族",
                 "mobileNo": "16400008192",
                 "reserveMobile": "16400008192",
                 "userBankCardNo": "6217228360087474548",
@@ -55,7 +52,7 @@ fql = {
                 "maritalStatus": "90",
                 "duties": "A",
                 "education": "1",
-                "companyName": "锦程消费金融有限公司",
+                "companyName": "四川锦程消费金融有限责任公司",
                 "livingAddr": "成都市武侯区府城大道中段85号",
                 "contactName": "唐无名",
                 "contactMobile": "13708080125",
@@ -75,6 +72,11 @@ fql = {
                 "companyAddress": "成都市武侯区府城大道中段85号",
                 "userOccupation": "0",
                 "userIndustryCategory": "0",
+                # 朴道查询字段
+                "creditAmount": 5000,
+                "interestRate": "24",  # 年利率
+                "annualRate": "20.36",  # 实际利率（平台优惠后的利率）
+                # ##### 断直连删除字段
                 "registerMobileLocation": "成都",
                 "hasOverdueEver": "false",
                 "totalOverdueCount": "0",
@@ -87,13 +89,18 @@ fql = {
                 "totalOrderCount": "0",
                 "firstOrderDate": "2021-05-08",
                 "latestOrderDate": "2021-04-08",
+                "manualApproval": "false",
+                ##########
                 "monthlyIncome": "10000",
-                "idCardExpireDate": "2028-3-30",
+                "idCardExpireDate": "2033-04-30",
                 "idCardAddr": "510000-510100-510107",
                 "idCardDetailAddr": "成都市武侯区府城大道中段85号",
-                "manualApproval": "false",
                 "liveArea": "510000-510100-510107",
                 "companyArea": "510000-510100-510107",
+                # "disLinkFlag": "Y",
+                # "orderNo": "1123062415281257090252",
+                # "uniqueSerialNo": "140O20230624933424800252",
+                # "channelId": "2265",
                 "fileInfos": [
                     {
                         "fileType": "1",
@@ -182,7 +189,6 @@ fql = {
                 "loanAmt": "20000",
                 "loanTerm": "6",
                 "mobileNo": "16100007381",
-                "interestRate": "24",
                 "orderType": "2",  # 1、取现 2、赊销（分期购物）-- 3、信用卡还款 4、账单分期 5、微信、银联消费资产（二类户资产）
                 "repayType": "1",
                 "debitAccountName": "蓝安峰",
@@ -324,7 +330,7 @@ fql = {
             "body": {
                 "withholdSerialNo": "12346",  # 代扣请求流水号--直接透传交易侧的请求流水号,退款/查询这批数据的状态需要
                 "partnerCode": "000UC010000006268",  # 合作方代码
-                "withholdAmt": "693.51",  # 代扣总金额=用户代扣金额+补差金额---保留两位有效数字(单位:元
+                "withholdAmt": "364.34",  # 代扣总金额=用户代扣金额+补差金额---保留两位有效数字(单位:元
                 "marketingAmount": "0",  # 补差金额----保留两位有效数字(单位:元)
                 "bindCardInfo": {
                     "userName": "",
@@ -334,50 +340,46 @@ fql = {
                     "idNo": "",
                     "phoneNo": ""
                 },
-                "signNum": "123456",  # 签约协议号,交易侧透传给接入
+                "signNum": "S00202307060001",  # 签约协议号,交易侧透传给接入
                 "payMode": "0",  # 支付模式: 0:银行卡支付
                 "subMerchantId": "000UC010000006268",  # 分期乐在通联生态圈的商户号
-                "sepOutInfo": [       # 出账信息
+                "sepOutInfo": [  # 出账信息
                     {
                         "type": "1",  # 用户账户出账
-                        "amt": "693.51",
+                        "amt": "364.34",
                         "account": "1313"
                     },
-                    # {
-                    #     "type": "2",  # 补差账户出账
-                    #     "amt": "0",
-                    #     "account": "1346"
-                    # }
                 ],
                 "encryptContent": "16646",  # 通联需要的加密报文
                 "bankCode": "03040000",
                 "withholdDetail": [{
                     "assetId": "applyId16674462572948120",  # 贷款申请编号-----分期乐资产号,每笔借款唯一
                     "capitalLoanNo": "000LI0001909130144309268037",  # 资金方放款编号/借据号---资金方订单唯一标识
-                    "rpyTotalAmt": 693.51,  # 实还总额--单笔订单代扣的总额--------保留两位有效数字(单位:元)
+                    "rpyTotalAmt": 364.34,  # 实还总额--单笔订单代扣的总额--------保留两位有效数字(单位:元)
                     "rpyType": "10",  # 还款类型  10-正常还款  30-提前结清, 40-逾期还款，
                     "rpyDate": "2022-11-25",  # 代扣时间   用户实还日（yyyy-MM-dd）
-                    "billDetails": [{
-                        "rpyAmt": 346.76,  # 还款总额：单笔账单本利罚之和:保留两位有效数字(单位:元)
-                        "rpyPrincipal": 326.75,  # 实还本金,保留两位有效数字(单位:元)
-                        "rpyFeeAmt": 20.01,  # 实还利息,保留两位有效数字(单位:元)
-                        "rpyMuclt": 0,  # 实还罚息,保留两位有效数字(单位:元)}
-                        "otherInfo": {    # 其他科目金额
-                            "repayFee": "0.00",  # 费用（如果没有就给默认值0.00）
-                            "repayCompoundInterest": "0.00"  # 复利（如果没有就给默认值0.00）
+                    "billDetails": [
+                        {
+                            "rpyAmt": 184.86,  # 还款总额：单笔账单本利罚之和:保留两位有效数字(单位:元)
+                            "rpyPrincipal": 158.85,  # 实还本金,保留两位有效数字(单位:元)
+                            "rpyFeeAmt": 19.81,  # 实还利息,保留两位有效数字(单位:元)
+                            "rpyMuclt": 6.20,  # 实还罚息,保留两位有效数字(单位:元)}
+                            "otherInfo": {  # 其他科目金额
+                                "repayFee": "0.00",  # 费用（如果没有就给默认值0.00）
+                                "repayCompoundInterest": "0.00"  # 复利（如果没有就给默认值0.00）
                             },
-                        "rpyTerm": "1"  # 还款期数
+                            "rpyTerm": "1"  # 还款期数
                         },
                         # {
-                        # "rpyAmt": 346.75,  # 还款总额-单笔账单本利罚之和:保留两位有效数字(单位:元)
-                        # "rpyPrincipal": 333.28,  # 实还本金,保留两位有效数字(单位:元)
-                        # "rpyFeeAmt": 13.47,  # 实还利息,保留两位有效数字(单位:元)
-                        # "rpyMuclt": 0,  # 实还罚息,保留两位有效数字(单位:元)}
-                        # "otherInfo": {    # 其他科目金额
-                        #     "repayFee": "0.00",  # 费用（如果没有就给默认值0.00）
-                        #     "repayCompoundInterest": "0.00"  # 复利（如果没有就给默认值0.00）
+                        #     "rpyAmt": 179.48,  # 还款总额-单笔账单本利罚之和:保留两位有效数字(单位:元)
+                        #     "rpyPrincipal": 161.90,  # 实还本金,保留两位有效数字(单位:元)
+                        #     "rpyFeeAmt": 16.12,  # 实还利息,保留两位有效数字(单位:元)
+                        #     "rpyMuclt": 1.46,  # 实还罚息,保留两位有效数字(单位:元)}
+                        #     "otherInfo": {  # 其他科目金额
+                        #         "repayFee": "0.00",  # 费用（如果没有就给默认值0.00）
+                        #         "repayCompoundInterest": "0.00"  # 复利（如果没有就给默认值0.00）
                         #     },
-                        # "rpyTerm": "2"  # 还款期数
+                        #     "rpyTerm": "2"  # 还款期数
                         # }
                     ]  # 还款账单明细
                 }]  # 代扣明细
@@ -386,7 +388,7 @@ fql = {
     },
 
     # 代扣结果查询
-    'payment_query':{
+    'payment_query': {
         'interface': '/api/fql/v1/repay/queryRepayResult',
         'payload': {
             "head": {
@@ -398,7 +400,7 @@ fql = {
                 "requestTime": "2019-05-29 21:00:00"
 
             },
-            "body":{
+            "body": {
                 "withholdSerialNo": "",  # 代扣请求流水号
                 "partnerCode": "000UC010000006268"
             }

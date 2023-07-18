@@ -9,6 +9,7 @@ from src.enums.EnumJieTiao import JieTiaoEnum
 from src.impl.common.CommonBizImpl import post_with_encrypt
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import JieTiao
+from src.impl.public.RepayPublicBizImpl import *
 from utils.Models import *
 from src.enums.EnumsCommon import *
 from utils.Apollo import Apollo
@@ -38,7 +39,7 @@ class JieTiaoBizImpl(EnvInit):
 
         # 初始化payload变量
         self.active_payload = {}
-        self.apollo = Apollo()
+        self.repayPublicBizImpl = RepayPublicBizImpl()
 
     def loan(self, loan_date=None, **kwargs):
         loan_data = dict()
@@ -127,6 +128,8 @@ class JieTiaoBizImpl(EnvInit):
         :param kwargs:
         :return:
         '''
+        # 还款前置任务
+        self.repayPublicBizImpl.pre_repay_config(repayDate=rpyDate)
         repay_notice_data = dict()
 
         repay_notice_data['rpyReqNo'] = 'rpyNoticeNo' + self.strings + "4"
@@ -189,11 +192,6 @@ class JieTiaoBizImpl(EnvInit):
         repay_notice_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_notice']['payload'], **repay_notice_data)
         self.active_payload = parser.parser
-        # 配置还款mock时间
-        apollo_data = dict()
-        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(rpyDate)
-        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         self.log.demsg('还款通知接口...')
         url = self.host + self.cfg['repay_notice']['interface']
