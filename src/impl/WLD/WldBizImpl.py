@@ -46,6 +46,7 @@ class WldBizImpl(EnvInit):
         # 初始化payload变量
         self.active_payload = {}
         self.repayPublicBizImpl = RepayPublicBizImpl()
+        self.apollo = Apollo()
 
     @staticmethod
     def url_encoded_to_json(response):

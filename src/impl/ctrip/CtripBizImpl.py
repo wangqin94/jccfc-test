@@ -38,6 +38,7 @@ class CtripBizImpl(EnvInit):
         self.repay_notice_payload = {}
         self.active_payload = {}
         self.repayPublicBizImpl = RepayPublicBizImpl()
+        self.apollo = Apollo()
 
         # 初始数据库变量
         self.credit_database_name = '%s_credit' % TEST_ENV_INFO.lower()

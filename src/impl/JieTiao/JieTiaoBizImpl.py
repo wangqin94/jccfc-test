@@ -40,6 +40,7 @@ class JieTiaoBizImpl(EnvInit):
         # 初始化payload变量
         self.active_payload = {}
         self.repayPublicBizImpl = RepayPublicBizImpl()
+        self.apollo = Apollo()
 
     def loan(self, loan_date=None, **kwargs):
         loan_data = dict()
