@@ -104,37 +104,37 @@ fql = {
                 "fileInfos": [
                     {
                         "fileType": "1",
-                        "fileUrl": "xdgl/fql/yw/idcard_front.jpg",
+                        "fileUrl": "xdgl/fql/yw/20230724/idcard_front.jpg",
                         "fileName": "idcard_front.jpg"
                     },
                     {
                         "fileType": "2",
-                        "fileUrl": "xdgl/fql/yw/idcard_back.jpg",
+                        "fileUrl": "xdgl/fql/yw/20230724/idcard_back.jpg",
                         "fileName": "idcard_back.jpg"
                     },
                     {
                         "fileType": "3",
-                        "fileUrl": "xdgl/fql/yw/face_distinguish.jpg",
+                        "fileUrl": "xdgl/fql/yw/20230724/face_distinguish.jpg",
                         "fileName": "face_distinguish.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileUrl": "xdgl/fql/yw/JC_userauth.pdf",
+                        "fileUrl": "xdgl/fql/yw/20230724/JC_userauth.pdf",
                         "fileName": "JC_userauth.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "xdgl/fql/yw/JC_non_student.pdf",
+                        "fileUrl": "xdgl/fql/yw/20230724/JC_non_student.pdf",
                         "fileName": "JC_non_student.pdf"
                     },
                     {
                         "fileType": "7",
-                        "fileUrl": "xdgl/fql/yw/JC_third_auth.pdf",
+                        "fileUrl": "xdgl/fql/yw/20230724/JC_third_auth.pdf",
                         "fileName": "JC_third_auth.pdf"
                     },
                     {
                         "fileType": "8",
-                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
+                        "fileUrl": "xdgl/fql/yw/20230724/JC_face_identify_authorization.pdf",
                         "fileName": "JC_face_identify_authorization.pdf"
                     }
 
