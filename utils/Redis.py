@@ -38,6 +38,16 @@ class Redis(object):
             except Exception as err:
                 _log.error("delete redis key error {}".format(err))
 
+    def add_key(self, *args):
+        for key in args:
+            try:
+                if self.redis.exists(key) == 1:
+                    _log.info("redis key:{} 已存在".format(key))
+                else:
+                    self.redis.append(key, '1')
+            except Exception as err:
+                _log.error("append redis key error {}".format(err))
+
     def del_assert_repay_keys(self):
         self.del_key('000:ACCT:SysInfo:BIGACCT', '000:ACCT:AccountDate:BIGACCT')
 

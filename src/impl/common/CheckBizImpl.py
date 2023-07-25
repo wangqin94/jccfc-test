@@ -78,6 +78,7 @@ class CheckBizImpl(EnvInit):
             info = self.MysqlBizImpl.get_loan_apply_info(**kwargs)
             if not info:
                 self.log.info("credit_loan_apply未查询到支用记录，开始重试查证,当前第-{}-次".format(j))
+                time.sleep(t)
             else:
                 status = info['status']
                 if status == expect_status:
