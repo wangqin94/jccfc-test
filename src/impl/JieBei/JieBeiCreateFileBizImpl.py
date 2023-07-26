@@ -36,7 +36,7 @@ class creditFile(EnvInit):
         mobile_no, apply_date, expiry_date, state, result, biz_data, gmt_create, gmt_modified, business_date, 
         deal_status, fail_reason, status, created, create_time, modified, update_time)
         VALUES('{}', '{}', 'ADMIT_APPLY', 'PLATFORM', 'JB', 'JB_ADVANCED_BK_DI', 'DIRECT', '{}', '{}', '01', '{}', 
-        '{}', '{}', 'REJECT', '{}', '{}','{}', '{}', '{}', '00', '', 0, 'system', now(), 'system', now());''' \
+        '{}', '{}', 'PASS', '{}', '{}','{}', '{}', '{}', '00', '', 0, 'system', now(), 'system', now());''' \
             .format(self.creditNo, self.creditNo, self.name, self.certNo, self.telephone, self.applyDate,
                     self.expireDate, result, bizData, self.applyDate, self.applyDate, self.businessDate)
         self.log.demsg("sql：{}".format(sql))
