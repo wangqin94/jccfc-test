@@ -77,8 +77,8 @@ class loandetailFile(EnvInit):
         self.contract_no = data['applyno'].replace('applyno', 'contract_no')
         self.apply_no = data['applyno'].replace('applyno', 'loanNo')
         self.businessDate = time.strftime('%Y%m%d', time.localtime())
-        self.endDate = (datetime.datetime.now() + datetime.timedelta(days=30)).strftime('%Y%m%d')
-        self.repayDate = (datetime.datetime.now() + datetime.timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')
+        self.endDate = datetime.datetime.now().strftime('%Y%m%d')
+        self.repayDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.applyDate = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         self.seqNo = "seqNo" + str(int(round(time.time() * 100000000000)))
 
@@ -110,3 +110,9 @@ class loandetailFile(EnvInit):
 
         self.log.demsg("sql4：{}".format(sql4))
         self.MysqlBizImpl.mysql_op_channel.update(sql4)
+
+        sql5 = "INSERT INTO `channel_jiebei_instmnt_daily` (contract_no, settle_date, term_no, start_date, end_date, instmnt_status, clear_date, prin_ovd_date, int_ovd_date, prin_ovd_days, int_ovd_days, prin_bal, int_bal, ovd_prin_pnlt_bal, ovd_int_pnlt_bal, accrued_status, write_off, region_code, bsn_type, business_date, status, created, create_time, modified, update_time) VALUES " \
+               "('" + self.contract_no + "','" + self.endDate + "',1,'" + self.endDate + "','" + self.endDate + "','CLEAR','','','','0','0','0','0','0','0','0','N','350000','02013000','" + self.endDate + "','0','system','" + self.applyDate + "','system','" + self.applyDate + "');"
+
+        self.log.demsg("sql5：{}".format(sql5))
+        self.MysqlBizImpl.mysql_op_channel.update(sql5)

@@ -1,6 +1,6 @@
 import unittest
 
-from src.impl.JieBei.jieBeiCreateFileBizImpl import creditFile, loanApplyFile, loandetailFile
+from src.impl.JieBei.JieBeiCreateFileBizImpl import creditFile, loanApplyFile, loandetailFile
 from person import *
 
 
@@ -10,12 +10,12 @@ class MyTestCase(unittest.TestCase):
 
     def test_create_file(self, flag=3):
 
-        #银河授信文件
+        # 银河授信文件
         if flag == 0:
             jb = creditFile(data)
             jb.start_creditFile()
 
-        #银河支用文件
+        # 银河支用文件
         elif flag == 1:
             jb = loanApplyFile(data)
             jb.start_loanApplyFile()
@@ -25,7 +25,7 @@ class MyTestCase(unittest.TestCase):
             jb = loandetailFile(data)
             jb.start_loandetailFile()
 
-        #银数 还款
+        # 银数 还款
         elif flag == 3:
             jb = loandetailFile(data)
             jb.start_repayDetailFile()
