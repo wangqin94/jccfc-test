@@ -7,7 +7,7 @@
 
 API = {
     'request_host': "https://hapi-web-{}.corp.jccfc.com",
-    'request_host_api': "https://api-web-{}.jccfc.com",
+    'request_host_api': "https://api-web-{}.corp.jccfc.com",
     'eureka_host': "https://eureka-{}.corp.jccfc.com/eureka/apps/",
     'request_job_host': "https://job-admin-{}.corp.jccfc.com",
     'request_apollo_host': "https://apollo-{}.corp.jccfc.com",
