@@ -378,7 +378,7 @@ class YinLiuRepayFile(EnvInit):
         temple['compensationPrincipal'] = str(asset_repay_plan["left_repay_principal"])  # 本金
         temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
         temple['loanBalance'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
-        temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"] + asset_repay_plan["left_repay_fee"])  # 罚息
+        temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
         temple['compensationFee'] = str(asset_repay_plan["left_repay_fee"])  # 费用
         temple['business_no'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))  # 流水号
         temple['current_period'] = str(termNo)  # 期次

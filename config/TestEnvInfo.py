@@ -5,7 +5,7 @@
 __all__ = ['EnvList', 'TEST_ENV_INFO']
 
 # 测试环境列表
-EnvList = ['hsit', 'huat', 'hdev', 'hqas', 'uat', 'hpre', 'dev', 'rts']
+EnvList = ['hsit', 'huat', 'hdev', 'hqas', 'uat', 'hpre', 'dev', 'rts', 'year']
 # TEST_ENV_INFO = 'huat'
 # TEST_ENV_INFO = 'hdev'
 TEST_ENV_INFO = 'hsit'

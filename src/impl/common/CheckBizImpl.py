@@ -84,6 +84,21 @@ class CheckBizImpl(EnvInit):
                 if status == expect_status:
                     self.log.demsg('支用单状态校验成功，符合预期值[status={}]'.format(expect_status))
                     return status
+                elif status == EnumLoanStatus.LOAN_PAY_FAILED.value:
+                    self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
+                    raise AssertionError(
+                        '检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status,
+                                                                       info['fail_reason']))
+                elif status == EnumLoanStatus.DEAL_FAILED.value:
+                    self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
+                    raise AssertionError(
+                        '检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status,
+                                                                       info['fail_reason']))
+                elif status == EnumLoanStatus.REJECT.value:
+                    self.log.error('支用失败,状态：{},原因：{}'.format(status, info['fail_reason']))
+                    raise AssertionError(
+                        '检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status,
+                                                                       info['fail_reason']))
                 else:
                     self.log.demsg("支用单状态不符合预期，期望值[{}]！= 实际值[{}]，当前第[{}]次查证....".format(expect_status, status, j + 1))
                     time.sleep(t)

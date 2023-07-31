@@ -214,7 +214,7 @@ YinLiu = {
                         "fileName": "third.pdf"
                     },
                     {
-                        "fileType": "14", #现场照/消费凭证
+                        "fileType": "14",  # 现场照/消费凭证
                         "fileUrl": "xdgl/jike/test/photos.png",
                         "fileName": "photos.png"
                     },
@@ -289,8 +289,8 @@ YinLiu = {
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "accountNo": "",  # 放款/还款银行卡号
                 "bankName": "工商银行",  # 还款银行名称
-                "storeAccountNo":"门店银卡号", # 门店银卡号
-                "storeBankName":"门店银行账户名称", # 门店银行账户名称
+                "storeAccountNo": "门店银卡号",  # 门店银卡号
+                "storeBankName": "门店银行账户名称",  # 门店银行账户名称
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
                 "guaranteeContractNo": "",  # 担保合同号
                 "fileInfos": [
@@ -433,7 +433,7 @@ YinLiu = {
                 "returnGoodsPrincipal": 0,  # 退货总本金
                 "returnGoodsInterest": 0,  # 退货总利息
                 "returnGoodsOverdueFee": 0,  # 退货罚息(非贴息融担产品传罚息)
-                "returnGoodsFee": 0, # 退货总费用(贴息产品无罚息，逾期违约金放到费用字段)
+                "returnGoodsFee": 0,  # 退货总费用(贴息产品无罚息，逾期违约金放到费用字段)
             }
         }
     },

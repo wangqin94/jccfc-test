@@ -122,6 +122,11 @@ class TestCase(object):
             # hair.queryAccountResult("GoodsSerialNo16624470361285455", term=2)
             hair.queryAccountResult(loanInvoiceId='000LI0001408714913972228005', term=2)
 
+        # 银行卡列表查询
+        elif flag == 16:
+            hair = HairBizImpl(productId, data=data)
+            hair.querySupportBank()
+
     def postprocess(self):
         """ 后置条件处理 """
         pass
