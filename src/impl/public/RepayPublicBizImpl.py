@@ -63,7 +63,7 @@ class RepayPublicBizImpl(MysqlInit):
         self.log.demsg("执行账务日终任务")
         self.job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
         self.job.trigger_job("资产日终任务流", group=6)
-        time.sleep(5)  # 等待任务执行
+        time.sleep(10)  # 等待任务执行
 
     def pre_overdue_repay_data(self, productId, loan_date=None):
         """
@@ -99,4 +99,4 @@ class RepayPublicBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    RepayPublicBizImpl().pre_repay_config(repayDate='2024-01-15')
+    RepayPublicBizImpl().pre_repay_config(repayDate='2023-07-26')

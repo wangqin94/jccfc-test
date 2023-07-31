@@ -426,6 +426,7 @@ YinLiu = {
                 "returnGoodsPrincipal": 0,  # 退货总本金
                 "returnGoodsInterest": 0,  # 退货总利息
                 "returnGoodsOverdueFee": 0,  # 退货罚息
+                "returnGoodsFee": 0,  # 退货费用
             }
         }
     },
