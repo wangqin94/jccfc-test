@@ -24,9 +24,9 @@ class MyTestCase(unittest.TestCase):
         # 执行还款消息入还款额度恢复表任务
         self.job.update_job('还款消息入还款额度恢复表任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('还款消息入还款额度恢复表任务', group=13, job_type='VIRTUAL_JOB')
+        self.CheckBizImpl.check_channel_repay_status_with_expect('00', third_loan_id=self.third_loan_no)
         last_date = str(get_custom_day(-1, time.strftime('%Y-%m-%d', time.localtime()))).replace("-", '')
         self.MysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
-        time.sleep(3)
         # 执行渠道还款任务
         self.job.update_job('渠道还款任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('渠道还款任务', group=13, job_type='VIRTUAL_JOB')
