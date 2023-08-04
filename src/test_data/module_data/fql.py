@@ -61,7 +61,7 @@ fql = {
                 "contactMobile1": "15908118645",
                 "contactRel1": "1",
                 "goodsName": "取现借款",
-                "loanUse": "1",
+                "loanUse": "3",
                 "firstRepayDate": "2021-06-11",
                 "schoolName": "四川音乐学院",
                 "schoolProvince": "510000",
