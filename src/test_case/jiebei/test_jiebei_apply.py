@@ -22,17 +22,16 @@ class MyTestCase(unittest.TestCase):
         # 检查初审结果
         jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
         # 复审
-        jb.datapreFs(applyType='ADMIT_APPLY')
+        jb.datapreFs(applyType='ADMIT_APPLY', tc_NoSource_ToPlatformOne='Y')
         # 检查复审结果
         jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)
         # 授信通知
         jb.creditNotice(bizType='ADMIT_APPLY', creditAmt=5000000)
         # 创建授信文件
         jb_apply_file.start_creditFile()
-        # 执行创建支用单任务
+        # 处理授信对账文件
         self.job.update_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB')
-
 
     """ 后置条件处理 """
     def tearDown(self):

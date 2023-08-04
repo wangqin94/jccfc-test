@@ -231,6 +231,47 @@ class CheckBizImpl(EnvInit):
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
                     raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
 
+    def check_channel_repay_status_with_expect(self, expect_status, m=10, t=3, **kwargs):
+        """
+        @param expect_status: 期望状态
+        @param kwargs: 查询条件
+        @param t: 每次时间间隔, 默认5S
+        @param m: 查证次数 默认10次
+        @return: response 接口响应参数 数据类型：json
+        """
+        self.log.demsg('数据库还款结果校验...')
+        for i in range(m):
+            info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
+            if not info:
+                self.log.info("channel_repay未查询到还款记录，开始重试查证,当前第-{}-次".format(i))
+                time.sleep(t)
+                if i == m - 1:
+                    self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
+                    raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m * t))
+            else:
+                self.log.info("还款记录已入channel_repay表")
+                break
+        for j in range(m):
+            info = self.MysqlBizImpl.get_op_channel_database_info('channel_repay', **kwargs)
+            status = info['repay_status']
+            if status == expect_status:
+                self.log.demsg('数据库层还款状态符合预期')
+                return status
+            elif status == EnumChannelRepayStatus.FAIL.value:
+                self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
+                raise AssertionError(
+                    '检验不符合期望，中断测试。期望值：{}，实际值：{}....失败原因：{}'.format(EnumCreditStatus.SUCCESS.value, status,
+                                                                   info['fail_reason']))
+            elif status == EnumChannelRepayStatus.CHECK_FAIL.value:
+                self.log.error('数据库层还款查询结果为失败,状态：{}'.format(status))
+                raise AssertionError('检验不符合期望，中断测试。期望值：{}，实际值：{}'.format(EnumChannelRepayStatus.SUCCESS.value, status))
+            else:
+                self.log.demsg("还款审批状态处理中，请等待....")
+                time.sleep(t)
+                if j == m - 1:
+                    self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+                    raise AssertionError('检验不符合期望，中断测试。当前状态：{}不为终态'.format(status))
+
     def check_channel_loan_compensation_status(self, m=10, t=3, **kwargs):
         """
         还款表channel_loan_compensation结果校验
