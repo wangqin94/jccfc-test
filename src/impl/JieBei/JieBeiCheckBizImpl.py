@@ -24,14 +24,17 @@ class JieBeiCheckBizImpl(JieBeiBizImpl):
                     self.log.demsg('特征取数成功')
                     return feature_value
                 elif feature_value == '0':
-                    self.log.error('检验不符合期望，特征取数结果为拒绝')
-                    return feature_value
+                    raise AssertionError('检验不符合期望，特征取数结果为拒绝')
                 else:
                     self.log.demsg("处理中，请等待....")
                     time.sleep(t)
-            except:
+            except KeyError:
                 self.log.demsg('特征取数明细未入库')
                 time.sleep(t)
+            except AssertionError as e:
+                self.log.error('{}'.format(e))
+                exit()
+
 
 
 

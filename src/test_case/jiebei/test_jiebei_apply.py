@@ -13,7 +13,7 @@ class MyTestCase(unittest.TestCase):
         self.job = JOB()
 
     """ 测试步骤 """
-    def test_loan(self):
+    def test_apply(self):
         jb = JieBeiCheckBizImpl(data=None)
         jb_apply_file = creditFile(data=jb.data)
         # 初审
@@ -21,7 +21,7 @@ class MyTestCase(unittest.TestCase):
         self.applyNo = jb.data['applyno']
         # 检查初审结果
         jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
-        # 复审
+        # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客
         jb.datapreFs(applyType='ADMIT_APPLY', tc_NoSource_ToPlatformOne='Y')
         # 检查复审结果
         jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)

@@ -26,8 +26,8 @@ class MyTestCase(unittest.TestCase):
         self.applyNo = jb.data['applyno']
         # 检查初审结果
         jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
-        # 复审
-        jb.datapreFs(applyType='ADMIT_APPLY', tc_NoSource_ToPlatformOne='Y')
+        # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客
+        jb.datapreFs(applyType='ADMIT_APPLY', tc_NoSource_ToPlatformOne='N')
         # 检查复审结果
         jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)
         # 授信通知
@@ -39,6 +39,7 @@ class MyTestCase(unittest.TestCase):
         self.job.trigger_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB')
         # 创建支用文件
         jb_loanapply_file.start_loanApplyFile()
+        time.sleep(3)
         # 执行创建支用单任务
         self.job.update_job('借呗支用文件（创建支用单）处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('借呗支用文件（创建支用单）处理任务', group=13, job_type='VIRTUAL_JOB')
