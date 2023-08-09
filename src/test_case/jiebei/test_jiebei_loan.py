@@ -44,7 +44,7 @@ class MyTestCase(unittest.TestCase):
         self.job.update_job('借呗支用文件（创建支用单）处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('借呗支用文件（创建支用单）处理任务', group=13, job_type='VIRTUAL_JOB')
         # 检查是否入三方待建账信息
-        self.CheckBizImpl.check_loan_apply_status_with_expect('09', third_loan_invoice_id=self.third_loan_no)
+        self.CheckBizImpl.check_loan_apply_status_with_expect('09', certificate_no=jb.data['cer_no'])
         # 创建放款合约+分期
         jb_loandetail_file.start_loandetailFile()
         # 删除保存待放款redis
