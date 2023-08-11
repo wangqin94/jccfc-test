@@ -333,13 +333,13 @@ class JOB(object):
                                        verify=False).json()
         try:
             if update_res['code'] == 200:
-                _log.demsg("任务'{}'更新成功，更新内容：{}".format(id, triggerData))
+                _log.demsg("任务'{}'更新成功，更新内容：{}".format(job_id, triggerData))
                 trigger_res = self.session.post(url=trigger_url, headers=job_headers, cookies=self.cookie,
-                                                data={'id': id}, verify=False).json()
+                                                data={'id': job_id}, verify=False).json()
                 if trigger_res['code'] == 200 and trigger_res['msg'] == "任务触发成功":
-                    _log.demsg("任务:{}触发成功".format(id))
+                    _log.demsg("任务:{}触发成功".format(job_id))
             else:
-                _log.demsg("任务'{}'更新失败,response msg {}".format(id, update_res))
+                _log.demsg("任务'{}'更新失败,response msg {}".format(job_id, update_res))
         except Exception as err:
             _log.error('update job failed! %s', err)
 
@@ -349,5 +349,5 @@ if __name__ == '__main__':
     # s = job.get_jobId("资产日终任务流", group=6)
     # job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate='20220119')
     # job.trigger_job(s)
-    job.update_and_trigger_job_byJobId('555721327290720256')
+    job.trigger_job_byJobId('545946619904192512', executeBizDate='20230911')
     # job.get_all_job()

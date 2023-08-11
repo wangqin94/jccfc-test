@@ -60,6 +60,8 @@ class FqlCreditCheckBizImpl(EnvInit):
         assert creditApply['apply_term_unit'] == '1', "申请期限单位"
         assert creditApply['product_id'] == ProductIdEnum.FQL.value, "产品码"
         assert creditApply['product_catalog'] == 'F0210001', "产品种类"
+        assert float(creditApply['apply_rate']) == float(gl.get_value('creditRequestData')['body']['interestRate']), "年利率"
+
 
     def checkCreditInfo1(self, **kwargs):
         creditInfo = self.MysqlBizImpl.get_credit_database_info('credit_info', **kwargs)

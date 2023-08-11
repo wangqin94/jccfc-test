@@ -1,6 +1,6 @@
 import logging
 import time
-
+import pytest
 import allure
 
 log = logging.getLogger(__name__)
@@ -47,3 +47,7 @@ class TestCase(object):
             log.info(f"支用查询接口结果----：{loanQueryRes}")
             loanResult = loanQueryRes['loanResult']
             assert loanResult == '0', "返回0说明支用成功"
+
+
+if __name__ == "__main__":
+    pytest.main(['test_auto_fql_loan.py'])

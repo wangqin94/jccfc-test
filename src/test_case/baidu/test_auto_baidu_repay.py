@@ -29,7 +29,7 @@ class TestCase(object):
             info = mysqlBizImpl.get_asset_database_info('asset_loan_invoice_info', loan_invoice_id=data['loan_no'])
             assert EnumLoanInvoiceStatus.OVERDUE.value == info['loan_invoice_status'], "借据状态非逾期"
 
-        with allure.step('生成逾期还款文件并上传金山云'):
+        with allure.step('生成逾期还款文件并上传gfs'):
             bd = BaiduRepayFile(data=data, repay_date=repay_date_ove, repay_type='03', repay_term_no=period)
             bd.start_repay_file()
 
@@ -72,7 +72,7 @@ class TestCase(object):
         with allure.step("设置还款日期"):
             RepayPublicBizImpl().pre_repay_config(repayDate=str(repay_date_bill))
 
-        with allure.step('生成按期还款文件并上传金山云'):
+        with allure.step('生成按期还款文件并上传gfs'):
             bd = BaiduRepayFile(data=data, repay_date=repay_date_bill, repay_type='01', repay_term_no=period)
             bd.start_repay_file()
 
@@ -115,7 +115,7 @@ class TestCase(object):
         with allure.step("设置还款日期"):
             RepayPublicBizImpl().pre_repay_config(repayDate=str(repay_date_settle))
 
-        with allure.step('生成提前结清还款文件并上传金山云'):
+        with allure.step('生成提前结清还款文件并上传gfs'):
             bd = BaiduRepayFile(data=data, repay_date=repay_date_settle, repay_type='02', repay_term_no=period)
             bd.start_repay_file()
 

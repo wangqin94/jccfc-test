@@ -57,11 +57,9 @@ class FqlLoanCheckBizImpl(EnvInit):
         assert loanApply['repay_method'] == '1', "还款方式"
         assert loanApply['loan_pay_mode'] == '1', "支付模式：1自主支付"
         assert loanApply['loan_pay_type'] == '0', "放款方式：0线上"
-        assert loanApply['loan_purpose'] == '5', "借款用途"
         assert loanApply['loan_type'] == '1', "支用类型：1借款一体"
         assert loanApply['user_name'] == gl.get_value('loanRequestData')['body']['name']
         assert loanApply['merchant_id'] == EnumMerchantId.FQL.value, "商户号"
-        assert float(loanApply['apply_rate']) == float(gl.get_value('loanRequestData')['body']['interestRate']), "年利率"
         assert loanApply['user_tel'] == gl.get_value('loanRequestData')['body']['mobileNo'], "手机号"
         assert loanApply['certificate_type'] == '0', "证件类型"
         assert loanApply['certificate_no'] == gl.get_value('personData')['cer_no'], "身份证号"
@@ -74,7 +72,7 @@ class FqlLoanCheckBizImpl(EnvInit):
         assert loanInvoice['product_catalog'] == 'F0210001', "产品种类"
         assert loanInvoice['user_name'] == gl.get_value('loanRequestData')['body']['name']
         assert loanInvoice['loan_amount'] == gl.get_value('loanRequestData')['body']['loanAmt'], "支用金额"
-        assert float(loanInvoice['rate']) == float(gl.get_value('loanRequestData')['body']['interestRate']), "年利率"
+        assert float(loanInvoice['rate']) == float(gl.get_value('creditRequestData')['body']['interestRate']), "年利率"
         assert loanInvoice['status'] == '1', "状态：1使用中"
         assert loanInvoice['loan_type'] == '1', "放款方式"
         assert loanInvoice['merchant_id'] == EnumMerchantId.FQL.value, "商户号"

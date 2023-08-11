@@ -42,7 +42,7 @@ class TestCase(object):
             l_ris_code = baiduBizImpl.loan_query(loan_apply_id=loan_apply_id)['message']['expanding']['risCode']
             assert EnumBaiDuRisCode.ACCEPT.value == l_ris_code, '支用失败'
 
-        with allure.step('生成放款文件并上传金山云'):
+        with allure.step('生成放款文件并上传gfs'):
             bd = BaiduFile(data=data, cur_date=loan_date)
             bd.start()
 
