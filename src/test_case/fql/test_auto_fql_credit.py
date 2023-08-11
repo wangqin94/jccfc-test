@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 @allure.feature("分期乐授信")
 class TestCase(object):
-
+    @pytest.mark.fql
     @allure.title("授信申请-授信查询：授信成功")  # 标题
     @allure.step("授信申请-授信查询：授信成功")  # 测试报告显示步骤
     def test_credit_success1(self, fqlBizImpl, fqlCreditCheckBizImpl):

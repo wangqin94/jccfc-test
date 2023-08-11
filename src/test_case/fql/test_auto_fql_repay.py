@@ -12,9 +12,10 @@ from utils.Models import get_custom_day
 log = logging.getLogger(__name__)
 
 
+@pytest.mark.fql
 @allure.step("放款流程数据准备")  # 测试报告显示步骤
 @pytest.fixture(scope="class", autouse=True)
-def pre_loan_data(fqlBizImpl, fqlCreditCheckBizImpl, fqlLoanCheckBizImpl):
+def test_loan_data(fqlBizImpl, fqlCreditCheckBizImpl, fqlLoanCheckBizImpl):
     with allure.step("发起授信申请"):
         creditRes = fqlBizImpl.credit(creditAmount=2000, loanAmount=1000, loanTerm=3)
         creditStatus = creditRes['status']
@@ -56,7 +57,7 @@ def pre_loan_data(fqlBizImpl, fqlCreditCheckBizImpl, fqlLoanCheckBizImpl):
 
 @allure.feature("分期乐还款")
 class TestCase(object):
-
+    @pytest.mark.fql
     @allure.step("按期还款")
     def test_billDate_repay1(self, fqlRepayCheckBizImpl, job):
         log.info('预放款数据-全局变量: {}'.format(gl))
@@ -82,6 +83,7 @@ class TestCase(object):
             fqlRepayCheckBizImpl.check_credit_file_repay1(apply_id=gl.get_value('personData')['applyId'], repay_num=1)
             fqlRepayCheckBizImpl.credit_repay_order1(loan_invoice_id=gl.get_value('loanInfo')['loan_no'], repay_term=1)
 
+    @pytest.mark.fql
     @allure.step("逾期还款")
     def test_overdue_repay2(self, fqlRepayCheckBizImpl, job):
         log.info('预放款数据-全局变量: {}'.format(gl))
@@ -114,6 +116,7 @@ class TestCase(object):
                                                           repay_num=2)
             fqlRepayCheckBizImpl.credit_repay_order1(loan_invoice_id=gl.get_value('loanInfo')['loan_no'], repay_term=2)
 
+    @pytest.mark.fql
     @allure.step("提前结清")
     def test_settle_repay3(self, fqlRepayCheckBizImpl, job):
         log.info('预放款数据-全局变量: {}'.format(gl))
