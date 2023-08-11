@@ -460,6 +460,43 @@ class CheckBizImpl(EnvInit):
                     self.log.error("超过当前系统设置等待时间，请手动查看结果....")
                     raise AssertionError('检验不符合期望，中断测试。当前逾期天数：{}'.format(overdue_days))
 
+    def check_asset_table_status(self, table, query_key, expect_value, m=10, t=3, **kwargs):
+        """
+        查询资产数据表
+        :param table: 表名
+        :param query_key: 查询字段
+        :param expect_value: 期望值
+        :param m: 循环次数
+        :param t: 循环间隔时间
+        :param kwargs: 查询条件
+        :return:
+        """
+        self.log.demsg('{}表状态检查...'.format(table))
+        for i in range(m):
+            info = self.MysqlBizImpl.get_asset_database_info(table, query_key, **kwargs)
+            if not info:
+                self.log.info("{}未查询到记录，启动查证,当前第-{}-次".format(table, i))
+                time.sleep(3)
+                if i == m - 1:
+                    self.log.error("超过当前系统设置等待时间，还款异常，请手动查看结果....")
+                    raise AssertionError('{}内数据系统数据未插入数据库，测试终止'.format(m * t))
+            else:
+                self.log.info("数据已入{}表".format(table))
+                break
+        status = ''
+        for j in range(m):
+            info = self.MysqlBizImpl.get_asset_database_info(table, query_key, **kwargs)
+            status = info[query_key]
+            if status == expect_value:
+                self.log.demsg('数据库状态校验成功')
+                return
+            else:
+                self.log.demsg("处理中，请等待....")
+                time.sleep(t)
+        else:
+            self.log.error("超过当前系统设置等待时间，请手动查看结果....")
+            raise AssertionError('检验不符合期望，中断测试。当前状态：{}'.format(status))
+
 
 if __name__ == '__main__':
     # CheckBizImpl().check_channel_repay_status(id=999)

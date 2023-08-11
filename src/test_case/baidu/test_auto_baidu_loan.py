@@ -15,7 +15,7 @@ class TestCase(object):
     @pytest.mark.smoke
     @allure.title("授信放款流程")
     @allure.step("授信申请-授信查询-支用申请-支用查询-对账文件")
-    def test_loan(self,get_base_data_baidu, baiduBizImpl, checkBizImpl, mysqlBizImpl, job):
+    def test_loan(self, get_base_data_baidu, baiduBizImpl, checkBizImpl, mysqlBizImpl, job):
         data = get_base_data_baidu
         loan_date = datetime.datetime.today().strftime('%Y-%m-%d')
         with allure.step('授信申请'):

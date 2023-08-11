@@ -5,6 +5,7 @@
 import allure
 import pytest
 from src.impl.baidu.BaiDuCreditFileBizImpl import BaiduRepayFile
+from src.impl.public.RepayPublicBizImpl import *
 from src.enums.EnumsCommon import *
 from utils.Models import *
 
@@ -13,34 +14,15 @@ class TestCase(object):
 
     @pytest.mark.baidu
     @allure.step("逾期还款")
-    def test_overdue_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
+    def test_overdue_repay(self, baiduBizSynImpl, mysqlBizImpl, checkBizImpl, job):
         data = baiduBizSynImpl
         period = 1
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
                                                                 loan_invoice_id=data['loan_no'], current_num=period)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
         repay_date_ove = get_custom_day(10, repay_date_bill)
-        with allure.step("设置大会计时间,账务时间=repay_date"):
-            account_date = str(repay_date_ove).replace("-", '')
-            last_date = str(get_custom_day(-1, repay_date_ove)).replace("-", '')
-            next_date = str(get_custom_day(1, repay_date_ove)).replace("-", '')
-            mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
-                                                      account_date=account_date, next_date=next_date)
-        with allure.step('更新资产卸数'):
-            mysqlBizImpl.get_asset_job_ctl_info(job_date=last_date.replace('-', ''))
-
-        with allure.step("清理分片流水"):
-            mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
-            mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-            mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
-
-        with allure.step("删除redis 大会计"):
-            redis.del_assert_repay_keys()
-
-        with allure.step("执行账务日终任务"):
-            job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
-            job.trigger_job("资产日终任务流", group=6)
-            time.sleep(10)
+        with allure.step("设置还款日期"):
+            RepayPublicBizImpl().pre_repay_config(repayDate=str(repay_date_ove))
 
         with allure.step("校验当前借据状态"):
             time.sleep(5)
@@ -74,41 +56,21 @@ class TestCase(object):
             job.trigger_job('三方还款任务流')
             time.sleep(5)
 
-        with allure.step('执行任务流还款入账'):
-            job.update_job('三方还款任务流', executeBizDate=repay_date_ove.replace('-', ''),
-                           executeBizDateType='CUSTOMER')
-            job.trigger_job('三方还款任务流')
-            time.sleep(5)
-
         with allure.step('检查是否还款成功'):
-            info = mysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                        loan_invoice_id=data['loan_no'], current_num=period)
-            assert EnumRepayPlanStatus.OVERDUE_REPAY.value == info['repay_plan_status'], '还款失败'
+            checkBizImpl.check_asset_table_status('asset_repay_plan', 'repay_plan_status',
+                                                  EnumRepayPlanStatus.OVERDUE_REPAY.value,
+                                                  loan_invoice_id=data['loan_no'], current_num=period)
 
     @pytest.mark.baidu
     @allure.step("按期还款")
-    def test_billDate_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
+    def test_billDate_repay(self, baiduBizSynImpl, mysqlBizImpl, checkBizImpl, job):
         data = baiduBizSynImpl
         period = 2
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
                                                                 loan_invoice_id=data['loan_no'], current_num=period)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
-        with allure.step("设置大会计时间,账务时间=repay_date"):
-            account_date = repay_date_bill.replace("-", '')
-            last_date = str(get_custom_day(-1, repay_date_bill)).replace("-", '')
-            next_date = str(get_custom_day(1, repay_date_bill)).replace("-", '')
-            mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
-                                                      account_date=account_date, next_date=next_date)
-        with allure.step('更新资产卸数'):
-            mysqlBizImpl.get_asset_job_ctl_info(job_date=last_date.replace('-', ''))
-
-        with allure.step('清除分片流水'):
-            mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
-            mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-            mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
-
-        with allure.step("删除redis 大会计"):
-            redis.del_assert_repay_keys()
+        with allure.step("设置还款日期"):
+            RepayPublicBizImpl().pre_repay_config(repayDate=str(repay_date_bill))
 
         with allure.step('生成按期还款文件并上传金山云'):
             bd = BaiduRepayFile(data=data, repay_date=repay_date_bill, repay_type='01', repay_term_no=period)
@@ -136,42 +98,22 @@ class TestCase(object):
             job.trigger_job('三方还款任务流')
             time.sleep(5)
 
-        with allure.step('执行任务流还款入账'):
-            job.update_job('三方还款任务流', executeBizDate=repay_date_bill.replace('-', ''),
-                           executeBizDateType='CUSTOMER')
-            job.trigger_job('三方还款任务流')
-            time.sleep(5)
-
         with allure.step('检查是否还款成功'):
-            info = mysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                        loan_invoice_id=data['loan_no'], current_num=period)
-            assert EnumRepayPlanStatus.REPAY.value == info['repay_plan_status'], '还款失败'
+            checkBizImpl.check_asset_table_status('asset_repay_plan', 'repay_plan_status',
+                                                  EnumRepayPlanStatus.REPAY.value,
+                                                  loan_invoice_id=data['loan_no'], current_num=period)
 
     @pytest.mark.baidu
     @allure.step("提前结清")
-    def test_settle_repay(self, baiduBizSynImpl, mysqlBizImpl, job, redis):
+    def test_settle_repay(self, baiduBizSynImpl, mysqlBizImpl, checkBizImpl, job):
         data = baiduBizSynImpl
         period = 3
         asset_repay_plan = mysqlBizImpl.get_asset_database_info("asset_repay_plan",
                                                                 loan_invoice_id=data['loan_no'], current_num=period)
         repay_date_bill = str(asset_repay_plan["pre_repay_date"])
         repay_date_settle = get_custom_day(-1, repay_date_bill)
-        with allure.step("设置大会计时间,账务时间=repay_date"):
-            account_date = repay_date_settle.replace("-", '')
-            last_date = str(get_custom_day(-1, repay_date_settle)).replace("-", '')
-            next_date = str(get_custom_day(1, repay_date_settle)).replace("-", '')
-            mysqlBizImpl.update_bigacct_database_info('acct_sys_info', attr="sys_id='BIGACCT'", last_date=last_date,
-                                                      account_date=account_date, next_date=next_date)
-        with allure.step('更新资产卸数'):
-            mysqlBizImpl.get_asset_job_ctl_info(job_date=last_date.replace('-', ''))
-
-        with allure.step('清除分片流水'):
-            mysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
-            mysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-            mysqlBizImpl.delete_asset_database_info('asset_slice_batch_serial')
-
-        with allure.step("删除redis 大会计"):
-            redis.del_assert_repay_keys()
+        with allure.step("设置还款日期"):
+            RepayPublicBizImpl().pre_repay_config(repayDate=str(repay_date_settle))
 
         with allure.step('生成提前结清还款文件并上传金山云'):
             bd = BaiduRepayFile(data=data, repay_date=repay_date_settle, repay_type='02', repay_term_no=period)
@@ -200,16 +142,10 @@ class TestCase(object):
             job.trigger_job('三方还款任务流')
             time.sleep(5)
 
-        with allure.step('执行任务流还款入账'):
-            job.update_job('三方还款任务流', executeBizDate=repay_date_settle.replace('-', ''),
-                           executeBizDateType='CUSTOMER')
-            job.trigger_job('三方还款任务流')
-            time.sleep(5)
-
         with allure.step("校验当前借据状态"):
-            info = mysqlBizImpl.get_asset_database_info('asset_loan_invoice_info',
-                                                        loan_invoice_id=data['loan_no'])
-            assert EnumLoanInvoiceStatus.SETTLE.value == info['loan_invoice_status'], "借据状态非结清"
+            checkBizImpl.check_asset_table_status('asset_loan_invoice_info', 'loan_invoice_status',
+                                                  EnumLoanInvoiceStatus.SETTLE.value,
+                                                  loan_invoice_id=data['loan_no'])
 
 
 if __name__ == '__main__':
