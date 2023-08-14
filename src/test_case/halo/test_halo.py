@@ -23,7 +23,8 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=13):
+    @staticmethod
+    def process(flag=16):
         """ 测试步骤 """
         # 绑卡
         merchantId = 'G23E03HALO'
@@ -39,7 +40,7 @@ class TestCase(object):
         # 授信
         elif flag == 3:
             HaLo = HaLoBizImpl(merchantId, data=data)
-            HaLo.credit(applyAmount=10000, loanTerm=3)
+            HaLo.credit(applyAmount=10000)
 
         # 授信查询
         elif flag == 4:
@@ -102,6 +103,16 @@ class TestCase(object):
             # HaLo.queryAccountResult("GoodsSerialNo16624470361285455", loanInvoiceId='000LI0001739049438658571059', term=2)
             # HaLo.queryAccountResult("GoodsSerialNo16624470361285455", term=2)
             HaLo.queryAccountResult(loanInvoiceId='000LI0001408714913972228005', term=2)
+
+        # 结清证明申请
+        elif flag == 16:
+            HaLo = HaLoBizImpl(merchantId, data=data)
+            HaLo.applySettlementCer("thirdApplyId16917188971617615")
+
+        # 结清证明下载
+        elif flag == 17:
+            HaLo = HaLoBizImpl(merchantId, data=data)
+            HaLo.settlementCerDownload("488958292D324978AC873742067CC783")
 
     def postprocess(self):
         """ 后置条件处理 """
