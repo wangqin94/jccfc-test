@@ -753,6 +753,64 @@ class HaLoBizImpl(MysqlInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
+    # 结清证明申请
+    def applySettlementCer(self, *args, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        applySettlementCer_data = dict()
+        # head
+        applySettlementCer_data['requestSerialNo'] = 'requestNo' + strings + "_1400"
+        applySettlementCer_data['requestTime'] = self.date
+        applySettlementCer_data['merchantId'] = self.merchantId
+        # body
+        applySettlementCer_data['name'] = self.data['name']
+        applySettlementCer_data['idNo'] = self.data['cer_no']
+        applySettlementCer_data['mobileNo'] = self.data['telephone']
+        applySettlementCer_data['loanApplyIdList'] = list(args)
+        # 更新 payload 字段值
+        applySettlementCer_data.update(kwargs)
+        parser = DataUpdate(self.cfg['applySettlementCer']['payload'], **applySettlementCer_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('结清证明申请...')
+        url = self.host + self.cfg['applySettlementCer']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 结清证明下载
+    def settlementCerDownload(self, applyId, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param applyId: 结清证明编号
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        settlementCerDownload_data = dict()
+        # head
+        settlementCerDownload_data['requestSerialNo'] = 'requestNo' + strings + "_1400"
+        settlementCerDownload_data['requestTime'] = self.date
+        settlementCerDownload_data['merchantId'] = self.merchantId
+        # body
+        settlementCerDownload_data['name'] = self.data['name']
+        settlementCerDownload_data['idNo'] = self.data['cer_no']
+        settlementCerDownload_data['applyId'] = applyId
+        # 更新 payload 字段值
+        settlementCerDownload_data.update(kwargs)
+        parser = DataUpdate(self.cfg['settlementCerDownload']['payload'], **settlementCerDownload_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('结清证明下载...')
+        url = self.host + self.cfg['settlementCerDownload']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
 
 if __name__ == '__main__':
     s = yinLiuRepayPlanByAvgAmt(billDate='2023-03-18', loanAmt=10000, yearRate=9.5, term=12)

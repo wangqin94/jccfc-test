@@ -506,4 +506,43 @@ HaLo = {
             }
         }
     },
+
+    # 结清证明申请
+    'applySettlementCer': {
+        'interface': '/api/v1/yl/common/applySettlementCer',
+        'payload': {
+            "head": {
+                "merchantId": "G23E03HALO",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "name": "",  # 用户姓名
+                "idNo": "",  # 用户身份证
+                "mobileNo": "",  # 用户手机号
+                "loanApplyIdList": []  # 放款申请编号List<String>
+            }
+        }
+    },
+
+    # 结清证明下载
+    'settlementCerDownload': {
+        'interface': '/api/v1/yl/common/settlementCerDownload',
+        'payload': {
+            "head": {
+                "merchantId": "G23E03HALO",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "name": "",  # 用户姓名
+                "idNo": "",  # 用户身份证
+                "applyId": ""  # 结清证明编号
+            }
+        }
+    },
 }
