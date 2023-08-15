@@ -2,12 +2,14 @@
 """
 test case script
 """
-
+import os
 import time
 from src.impl.baidu.BaiDuBizImpl import BaiDuBizImpl
-from person import *
 from utils.Logger import MyLog
 from src.impl.baidu.BaiDuSynBizImpl import BaiDuSynBizImpl
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
+from person import *
 
 
 class TestCase(object):
@@ -23,7 +25,7 @@ class TestCase(object):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
-            bd = BaiDuBizImpl(data=data)
+            bd = BaiDuBizImpl(data=None)
             bd.credit(initialAmount=3000000)
 
         # 授信查询

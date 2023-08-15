@@ -27,7 +27,7 @@ class TestCase(object):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            jike = JiKeBizImpl(data=data)
+            jike = JiKeBizImpl(data=None)
             jike.sharedWithholdingAgreement()
 
         # 绑卡查询

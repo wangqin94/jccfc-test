@@ -3,9 +3,11 @@
 test case script
 """
 import json
+import os
 import time
 from multiprocessing import Process
-
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.impl.zhixin.ZhiXinBizImpl import ZhiXinBizImpl
 from person import *
@@ -26,7 +28,7 @@ class TestCase(object):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            zhixin = ZhiXinBizImpl(data=data)
+            zhixin = ZhiXinBizImpl(data=None)
             res = json.loads(zhixin.applyCertification().get('output'))
             zhixin.verifyCode(userId=res['userId'], certificationApplyNo=res['certificationApplyNo'],
                               cdKey=res['cdKey'])

@@ -3,14 +3,15 @@
 test case script
 """
 import logging
-import time
-
 from src.impl.FQL.FqlBizImpl import FqlBizImpl
-from person import *
 from threading import Thread
 from multiprocessing import Process
 from src.impl.common.CheckBizImpl import *
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
+from person import *
 log = logging.getLogger(__name__)
+
 
 class TestCase(object):
     def __init__(self):

@@ -2,11 +2,13 @@
 """
 test case script
 """
-
+import os
 import time
 import threading
 from src.impl.ctrip.CtripBizImpl import CtripBizImpl
 from utils.Logger import MyLog
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
 from person import *
 
 
@@ -23,7 +25,7 @@ class TestCase(object):
         """ 测试步骤 """
         # 授信申请
         if flag == 0:
-            xc = CtripBizImpl(data=data)
+            xc = CtripBizImpl(data=None)
             xc.credit(advice_amount=10000)
             xc.update_apollo_amount()
 

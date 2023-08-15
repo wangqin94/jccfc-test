@@ -1,7 +1,7 @@
 /FilePath/
 .idea
 /LogFile/
-/src/test_case/*/person.py
+person.py
 /results/
 .pytest_cache
 /allure/

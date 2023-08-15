@@ -3,12 +3,11 @@
 test case script
 """
 import os
-if not os.path.exists('person.py'):
-    open('person.py', 'w')
-
 import time
 from multiprocessing import Process
 from src.impl.halo.HaLoBizImpl import HaLoBizImpl
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
 from person import *
 from utils.Logger import MyLog
 

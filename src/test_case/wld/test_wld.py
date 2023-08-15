@@ -2,8 +2,11 @@
 """
 test case script
 """
+import os
 import time
 from src.impl.WLD.WldBizImpl import WldBizImpl
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
 from person import *
 from utils.Logger import MyLog
 
@@ -21,7 +24,7 @@ class TestCase(object):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            wld = WldBizImpl(data=data)
+            wld = WldBizImpl(data=None)
             wld.bind_card()
             wld.confirm_bind_card()
             wld.credit(loanTerm=6, applyAmount=10000)

@@ -2,10 +2,12 @@
 """
 test case script
 """
-
+import os
 import time
 from src.impl.MeiTuan.MeiTuanBizImpl import MeiTuanBizImpl
 from src.impl.MeiTuan.MeiTuanSynBizImpl import MeiTuanSynBizImpl
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
 from person import *
 from utils.Logger import MyLog
 

@@ -3,6 +3,7 @@
 test case script
 """
 import os
+
 if not os.path.exists('person.py'):
     open('person.py', 'w')
 
@@ -24,7 +25,7 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=7, merchantId = 'G23E02XIAX'):
+    def process(self, flag=7, merchantId='G23E02XIAX'):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
@@ -116,15 +117,17 @@ class TestCase(object):
 
         # 统一还款
         elif flag == 16:
-            XiaoX = XiaoXBizImpl(merchantId,data=data)
+            XiaoX = XiaoXBizImpl(merchantId, data=data)
             repayType = '02'
-            if(repayType !='02'):
-                XiaoX.repay_apply(loanInvoiceId='000LI0001900746367639750011', repay_scene=repayType, repay_type='1',repayTerm=None, repayGuaranteeFee=1.11, repayDate=None)
+            if (repayType != '02'):
+                XiaoX.repay_apply(loanInvoiceId='000LI0001900746367639750011', repay_scene=repayType, repay_type='1',
+                                  repayTerm=None, repayGuaranteeFee=1.11, repayDate=None)
             else:
                 i = 0
                 while i < 5:
                     i += 1
-                    XiaoX.repay_apply(loanInvoiceId='000LI0001900746367639750011', repay_scene=repayType, repay_type='1', repayTerm=None,repayGuaranteeFee=1.11, repayDate=None)
+                    XiaoX.repay_apply(loanInvoiceId='000LI0001900746367639750011', repay_scene=repayType,
+                                      repay_type='1', repayTerm=None, repayGuaranteeFee=1.11, repayDate=None)
                     # 自动入账
                     self.repayPublicBizImpl = RepayPublicBizImpl()
                     self.repayPublicBizImpl.job.trigger_job("自动入账处理任务流", group=13)

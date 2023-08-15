@@ -1,8 +1,11 @@
+import os
 import time
 
 from src.impl.JieTiao.JieTiaoBizImpl import JieTiaoBizImpl
-from src.test_case.JieTiao.person import data
 from utils.Logger import MyLog
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
+from person import *
 
 
 class TestCase(object):
@@ -18,7 +21,7 @@ class TestCase(object):
         """ 测试步骤 """
         # 放款请求接口
         if flag == 0:
-            jt = JieTiaoBizImpl(data=data)
+            jt = JieTiaoBizImpl(data=None)
             jt.loan(loanAmt='10000', lnTerm='12')
 
         # 放款结果查询接口

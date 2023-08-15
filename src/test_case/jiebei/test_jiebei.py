@@ -1,9 +1,12 @@
 import base64
+import os
 import time
 
 from src.impl.JieBei.JieBeiBizImpl import JieBeiBizImpl
-from src.test_case.jiebei.person import data
 from utils.Logger import MyLog
+if not os.path.exists('person.py'):
+    open('person.py', 'w')
+from person import *
 
 
 class TestCase(object):
@@ -15,7 +18,7 @@ class TestCase(object):
         pass
 
     # # [0: 特征取数接口（2次）  1:初审数据准备 2:复审数据准备（多次调用） 3.授信通知接口 4.结清证明开具]
-    def process(self, flag=3):
+    def process(self, flag=0):
         """ 测试步骤 """
         # 特征取数接口  初审："featureCodes":["jc_cs_result","jc_cs_failCode","jc_cs_failReason"]
         # 复审："featureCodes":["jc_fs_result","jc_fs_failCode","jc_fs_failReason","jc_fs_pbocBlankAccLevel"]   ........
@@ -23,7 +26,7 @@ class TestCase(object):
         # 提额："featureCodes":["jc_limit_up_result","jc_limit_up_failCode","jc_limit_up_failReason"]
         # 降额："featureCodes":["jc_limit_down_result","jc_limit_down_failCode","jc_limit_down_failReason"]
         if flag == 0:
-            jb = JieBeiBizImpl(data=data)
+            jb = JieBeiBizImpl(data=None)
             jb.feature(bizActionType='LOAN_DECISION', featureCodes=["jc_loan_result","jc_loan_failCode","jc_loan_failReason"])
 
         # 初审数据准备
