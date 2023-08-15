@@ -61,6 +61,10 @@ class Config:
         value = self.conf.get("APOLLO", name)
         return value
 
+    def get_cms(self, name):
+        value = self.conf.get("CMS", name)
+        return value
+
     def get_redis(self, name):
         value = self.conf.get("REDIS", name)
         return json.loads(value)

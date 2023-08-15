@@ -580,10 +580,10 @@ class HairBizImpl(MysqlInit):
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
 
         # 配置还款mock时间
-        apollo_data = dict()
-        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
-        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
+        # apollo_data = dict()
+        # apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
+        # apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
+        # self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_apply']['payload'], **repay_apply_data)

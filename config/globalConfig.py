@@ -12,7 +12,9 @@ API = {
     'request_job_host': "https://job-admin-{}.corp.jccfc.com",
     'request_apollo_host': "https://apollo-{}.corp.jccfc.com",
     'apollo_index_host': "http://apollo-{}.corp.jccfc.com/",
-    'op-channel_host': "https://op-channel-{}.corp.jccfc.com"
+    'op-channel_host': "https://op-channel-{}.corp.jccfc.com",
+    'cms_host': "https://cms-{}.corp.jccfc.com",
+    'platform_host': "https://platform-{}.corp.jccfc.com",
 }
 
 headers = {
@@ -47,6 +49,17 @@ apollo_headers = {
     "Origin": "https://apollo-hdev.corp.jccfc.com",
     "Accept": "*/*",
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"
+}
+
+cms_headers = {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-cache",
+    "Connection": "keep-alive",
+    "Encode-Rpc-Hsjry-Request": "YXNrPTk2MiZhbnN3ZXI9OTE4JnNlcmlhbE5vPUNEM0FBNDVGNEM1ODBFNEU4MjU4NUEyNzcxMTAwQTBDJmlkZW1TZXJpYWxObz1GQ0FFNEU3RDQzMUUyNjQ3MzUwODRDMDFBMTNDQzY0MiZzZXJ2aWNlU2NlbmU9MTEmdHJhbnNEYXRlVGltZT0yMDIzLTA4LTA5IDExOjI0OjMxJnRlbmFudElkPTAwMCZjaGFubmVsTm89MDYmc2lnbj0x",
+    "Encode-Rpc-Hsjry-User-Request": "YXV0aElkPXVuZGVmaW5lZCZ0b2tlbj11bmRlZmluZWQmb3BlcmF0b3JJZD11bmRlZmluZWQmb3BlcmF0b3JOYW1lPXVuZGVmaW5lZCZvcmdhbklkPXVuZGVmaW5lZCZvcmdhbk5hbWU9dW5kZWZpbmVk",
+    "Accept": "*/*",
+    "Date": "Wed, 09 Aug 2023 16:18:31 GMT",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
 }
 
 json_headers = {
