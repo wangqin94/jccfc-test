@@ -8,6 +8,7 @@ from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import zhixin
 from src.impl.common.CommonBizImpl import *
+from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from utils.Apollo import Apollo
 
 
@@ -40,6 +41,7 @@ class ZhiXinBizImpl(MysqlInit):
 
         self.encrypt_url = self.host + self.cfg['encrypt']['interface']
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
+        self.repayPublicBizImpl = RepayPublicBizImpl()
 
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
@@ -443,7 +445,7 @@ class ZhiXinBizImpl(MysqlInit):
         return response
 
     # 还款申请
-    def applyRepayment(self, loan_no, repay_type='1', **kwargs):
+    def applyRepayment(self, loan_no, repay_type='1', repaydate=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param loan_no: 借据号 userid依赖loan_no 必填
@@ -492,6 +494,8 @@ class ZhiXinBizImpl(MysqlInit):
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
             self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
             applyRepayment_data['repayTime'] = str(asset_repay_plan['pre_repay_date']).replace('-', '') + '111111'
+
+        self.repayPublicBizImpl.pre_repay_config(repayDate=repaydate)
 
         # 更新 payload 字段值
         applyRepayment_data.update(kwargs)

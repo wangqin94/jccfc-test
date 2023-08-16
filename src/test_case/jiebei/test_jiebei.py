@@ -27,7 +27,8 @@ class TestCase(object):
         # 降额："featureCodes":["jc_limit_down_result","jc_limit_down_failCode","jc_limit_down_failReason"]
         if flag == 0:
             jb = JieBeiBizImpl(data=None)
-            jb.feature(bizActionType='LOAN_DECISION', featureCodes=["jc_loan_result","jc_loan_failCode","jc_loan_failReason"])
+            jb.feature(bizActionType='LOAN_DECISION',
+                       featureCodes=["jc_loan_result", "jc_loan_failCode", "jc_loan_failReason"])
 
         # 初审数据准备
         elif flag == 1:
@@ -37,20 +38,19 @@ class TestCase(object):
         # 复审数据准备 applyType:#授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY
         elif flag == 2:
             jb = JieBeiBizImpl(data=data)
-            jb.datapreFs(applyType='ADMIT_APPLY')
+            jb.datapreFs(applyType='ADJUST_AMT_APPLY')
 
-        #授信通知接口 ADMIT_APPLY授信申请 LOAN_APPLY支用申请 ADJUST_AMT_APPLY提额申请 DECREASE_AMT_APPLY降额申请 ADJUST_RATE_APPLY提价申请 DECREASE_RATE_APPLY降价
+        # 授信通知接口
+        # ADMIT_APPLY 授信申请 LOAN_APPLY 支用申请 ADJUST_AMT_APPLY 提额申请 DECREASE_AMT_APPLY 降额申请
+        # ADJUST_RATE_APPLY 提价申请 DECREASE_RATE_APPLY 降价
         elif flag == 3:
             jb = JieBeiBizImpl(data=data)
-            jb.creditNotice(bizType='ADMIT_APPLY', creditAmt=5000000)
-
+            jb.creditNotice(bizType='ADMIT_APPLY', creditAmt=5000000, agreeFlag='N')
 
         elif flag == 5:
-            c = ('浙江省杭州市⻄湖区学院路128号A1座12').encode()
+            c = '浙江省杭州市⻄湖区学院路128号A1座12'.encode()
             a = base64.b64encode(c)
             print(a)
-
-
 
     def postprocess(self):
         """ 后置条件处理 """
