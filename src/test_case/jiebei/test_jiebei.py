@@ -18,7 +18,7 @@ class TestCase(object):
         pass
 
     # # [0: 特征取数接口（2次）  1:初审数据准备 2:复审数据准备（多次调用） 3.授信通知接口 4.结清证明开具]
-    def process(self, flag=0):
+    def process(self, flag=1):
         """ 测试步骤 """
         # 特征取数接口  初审："featureCodes":["jc_cs_result","jc_cs_failCode","jc_cs_failReason"]
         # 复审："featureCodes":["jc_fs_result","jc_fs_failCode","jc_fs_failReason","jc_fs_pbocBlankAccLevel"]   ........
@@ -38,7 +38,7 @@ class TestCase(object):
         # 复审数据准备 applyType:#授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY
         elif flag == 2:
             jb = JieBeiBizImpl(data=data)
-            jb.datapreFs(applyType='ADJUST_AMT_APPLY')
+            jb.datapreFs(applyType='ADMIT_APPLY')
 
         # 授信通知接口
         # ADMIT_APPLY 授信申请 LOAN_APPLY 支用申请 ADJUST_AMT_APPLY 提额申请 DECREASE_AMT_APPLY 降额申请
