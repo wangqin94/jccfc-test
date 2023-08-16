@@ -16,6 +16,7 @@ from utils.Identity import IdNumber
 from utils.Models import decrypt, get_telephone
 
 app = Flask(__name__)  # 创建flask实例，用来接收web请求
+app.config['JSON_AS_ASCII'] = False
 
 getMsg_loan_invoice_no16539809083830 = {
     "data": "h9coJy%2FueB7AK7vGW%2FoXDf8or9x9qkUFjY1ryKI5Y3GvHLG7AVmyerDBcUaAbXYiympiGWB66yTk%0ArUbbtxkbDH5eSemY7EQlCoteOJS8fO73%2BACp4YuSVFk6Wj%2FE4GucJM0Rv4BzJc4FtUGMuxTtMF%2BN%0A%2BkRKKY0w4aCpIcZFph6JwQpsrwl8U3%2ByJMzJMwC3JqJM8FrGDIWE22Z8OYaEBMYI3d%2BOjEcHk4gu%0ASVPCbDWLop81CSP8x4dhbnvIgwM0%2FDzaC3fzvtCCFqWfsz6IP0vDZ2kwHsgsz4Zh0pHe9vmqnkV%2B%0AsnTqhKb%2Flh3OqgIiDC6g6zqQOpWTCtTaXzt4dlBWI4QGxdmbxHWsLslwPJqO%2BXmVwiPat6woM4kS%0AF3qjUadaaWDCl8NamRrDbc0ZkdqY7QkormDW5oY5egVp6ZHsrqj5%2BarWNSfE9EIABuU%2B2aNCSRXj%0AxaIcOn7t21tob0xza4gODBhHMWFyy9gpgltpM7amRLZIfXSxHg9lRu5fLOM%2BfXbVu5jONSf%2BYZYb%0A2QPDOXo7NngrvSScYxXD6hsMme%2Bngm7cdaZ89QDlobxYOk7OQ%2FDfhIyota3bEgvKrxUijaa2Mnpx%0AWoSv2XKOT00BOr8SdfF%2F1BoAA7zzi3jgfjmo36cCFItkOc%2BwOgHMwd%2B0Rj9JoJ7GKlRX8UkKsic1%0A83XjHB%2F3dWeTrm7uvmusFUCnNOHWOX%2FjhzDxpQ80e2oCjYNdIca71ngpok6VriPuYEwIZIN3dF1O%0Ap67Mcswz8xHlvHiquJurJaBX%2BvrSsVG%2BREuOcZArWUjROyOhpOX0OtN63TdIVvmPNh7G9ktnO49R%0A603LqC2YEe5GdNJLax5GxZPfgv64ijS6BYLbY8fwRVlZhQy7emJgFQLEoio4up3bpDQkLfdPUz4H%0ANTrbsGXq52M9%2BOi69HmTICno2loiPByrBZZQlKYsufHnVochZcqQ9UZza%2FKx5ABwM6w6J7kOLOCt%0ASFGGmpN%2F4NvlcYLeVpvaEMTt9AltH8PqhYmxoGSoys8DZteeqXtYQA2mEm1uOBq%2BHN6ySBw0Z7k6%0AOBMxtQx1YYzTLHmbre33g5n%2FczF3KToUFjsT2Ny2l4dv5SIlxG%2Fo5DAaJeKEEBBFd%2Fxc8pKb1I4H%0A%2BA4Un5cI5oDPDAGDfy3BoRcS673XR3ah%2F8QnpLdnlsjxJBxXwpWvKD5NCGzw4Qem7d3HpN00Qadu%0ADSfWBm7f8xcHbd26QE%2FMv4Gh%2B%2FbVifuRfbEeUGc8M1wqj8UZdhv6nJz1RnA9iABqdoEv6TzxYQQ4%0Au5NlZO7MhSdUyaGPu0bhKEbmK34LaX%2FUFqFNsrsBdHu7dNIgHd1MHejZlaZ0eTEQrwAjL1zMMA%3D%3D%0A",
@@ -291,6 +292,49 @@ def fileCheckQuery_mock():
     }
     return jsonify(fileCheckQueryMsg)
 
+
+# 借呗调银河接口清退
+@app.route('/inst/apply', methods=['GET', 'POST'])
+def clear_mock():
+    clearMsg = {
+        "creditNo": 'applyno16910330214359740',
+        "resultCode": "0000",
+        "resultMsg": "执行成功或者幂等返回",
+        "retry": "N",
+        "serialNo": 'applyno16910330214359740',
+        "sign": ""
+    }
+    return jsonify(clearMsg)
+
+
+# 老核心贷款余额查询
+@app.route('/bridge/cusLoanStatus', methods=['GET', 'POST'])
+def loan_mock():
+    loanMsg = {
+        "code": "0000",
+        "limitAmt": 0.00,
+        "settleStatusCode": "E",
+        "msg": "请求成功",
+        "tradeNum": "140108199706175653",
+        "tradeTime": "1602831640577"
+    }
+    return jsonify(loanMsg)
+
+
+# 借呗调数据组人脸识别接口
+@app.route('/3d/faceplus/verify_v5/defult', methods=['GET', 'POST'])
+def face_mock():
+    faceMsg = {
+        "result": {
+            "error": "BAD_ARGUMENTS: data_type",
+            "request_id": "1670294991,4222013a-0821-4a09-91c2-1520d2f832e2",
+            "time_used": 4
+        },
+        "code": "E002",
+        "trace_num": "35F79F4627D04F91B6BDC5EB9A069DDA",
+        "desc": "数据查询成功，响应结果不符合预期,响应内容:{\"request_id\":\"1670294991,4222013a-0821-4a09-91c2-1520d2f832e2\",\"time_used\":4,\"error\":\"BAD_ARGUMENTS: data_type\"}\n"
+    }
+    return jsonify(faceMsg)
 
 delMsg = {
     'code': 0,

@@ -19,8 +19,8 @@ jiebei = {
                     "userName": "",  # 客户姓名
                     "certNo": "",  # 证件号码
                     "loanUse": "1",  # 贷款用途   1 2 3 4 5 6
-                    "encashAmt": "4000000",  # 放款金额
-                    "dayRate": "0.00657",  # 贷款日利率，借呗业务有值
+                    "encashAmt": "100000",  # 放款金额
+                    "dayRate": "0.0006",  # 贷款日利率，借呗业务有值
                     "creditNo": ""  # 授信编号
                 }
             }
@@ -35,10 +35,10 @@ jiebei = {
                 "applyType": "ADMIT_APPLY",
                 "certNo": "513700199705225552",
                 "certType": "01",
-                "certValidEndDate": "2022-12-02 11:12:00",
+                "certValidEndDate": "2029-12-02 11:12:00",
                 "name": "鲁南春",
                 "mobileNo": "18754870269",
-                "applyExpiredDate": "2018-05-02 11:12:00"
+                "applyExpiredDate": "2023-08-30 11:12:00"
             },
             "applyNo": "applyNo202208160000000000000002",
             "dataType": "JC_CS",
@@ -66,7 +66,7 @@ jiebei = {
                 "suggestAmtMin": "2000000",
                 "suggestRateMin": "0.00015",
                 "creditNo": "2022081100200000000100792S",
-                "certValidEndDate": "2022-12-02 11:12:00",
+                "certValidEndDate": "2029-12-02 11:12:00",
                 "tc_NoSource_ToPlatformOne": "N",  # Y就是一期的新客，N就是二转一的老客
                 # "extInfo": {
                 #     "reason": ""
