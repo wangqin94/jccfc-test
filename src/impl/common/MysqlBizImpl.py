@@ -12,7 +12,7 @@ class MysqlBizImpl(MysqlInit):
     def __init__(self):
         super().__init__()
 
-    def get_credit_data_info(self, table='credit_loan_apply', key="查询条件", record=0):
+    def get_credit_data_info(self, table='credit_loan_apply', key="查询条件", record=-1):
         """
         :function: 获取credit数据库表中信息
         table : 表名
@@ -31,12 +31,12 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
-    def get_asset_data_info(self, table='asset_loan_apply', key="查询条件", record=0):
+    def get_asset_data_info(self, table='asset_loan_apply', key="查询条件", record=-1):
         """
         :function: 获取asset数据库表中信息
         table : 表名
@@ -56,7 +56,7 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -83,7 +83,7 @@ class MysqlBizImpl(MysqlInit):
             else:
                 self.log.warning('提示：用户已存在授信信息\n继续流程...')
 
-    def get_loan_apply_info(self, *args, record=0, **kwargs):
+    def get_loan_apply_info(self, *args, record=-1, **kwargs):
         """
         @param record: 查询记录,非必填
         @param args: 查询表子项
@@ -102,12 +102,12 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
-    def get_credit_apply_info(self, *args, record=0, **kwargs):
+    def get_credit_apply_info(self, *args, record=-1, **kwargs):
         """
         @param record: 查询记录，非必填
         @param args: 查询表子项
@@ -126,12 +126,12 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
-    def get_credit_database_info(self, table, *args, record=0, **kwargs):
+    def get_credit_database_info(self, table, *args, record=-1, **kwargs):
         """
         @param table:
         @param args: 查询表子项 tuple
@@ -150,16 +150,16 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
-    def get_asset_database_info(self, table, *args, record=0, **kwargs):
+    def get_asset_database_info(self, table, *args, record=-1, **kwargs):
         """
         @param table:
         @param args: 查询表子项 tuple
-        @param record: 查询记录，非必填  record == 999: 查询所有记录
+        @param record: 查询记录，record=-1：默认查询最后一条数据（数据库默认排序）； record == 999: 查询所有记录
         @param kwargs: 查询条件，字典类型
         @return: response 接口响应参数 数据类型：json
         """
@@ -174,12 +174,12 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询：{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
-    def get_user_database_info(self, table, *args, record=0, **kwargs):
+    def get_user_database_info(self, table, *args, record=-1, **kwargs):
         """
         @param table:
         @param args: 查询表子项 tuple
@@ -198,12 +198,12 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
-    def get_base_database_info(self, table, *args, record=0, **kwargs):
+    def get_base_database_info(self, table, *args, record=-1, **kwargs):
         """
         过去base数据库结构
         @param args: 查询表子项 tuple
@@ -223,12 +223,12 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
-    def get_bigacct_database_info(self, table, *args, record=0, **kwargs):
+    def get_bigacct_database_info(self, table, *args, record=-1, **kwargs):
         """
         获取base数据库结构
         @param args: 查询表子项 tuple
@@ -248,12 +248,12 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
-    def get_op_channel_database_info(self, table, *args, record=0, **kwargs):
+    def get_op_channel_database_info(self, table, *args, record=-1, **kwargs):
         """
         获取op_channel数据库结构
         @param args: 查询表子项 tuple
@@ -274,7 +274,7 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -383,7 +383,7 @@ class MysqlBizImpl(MysqlInit):
                                     job_name='日终结束任务', job_order='999', job_status='1', create_time=curtime,
                                     update_time=curtime)
 
-    def get_loan_invoice_info(self, *args, record=0, **kwargs):
+    def get_loan_invoice_info(self, *args, record=-1, **kwargs):
 
         """  @param record: 查询记录，非必填
              @param args: 查询表子项
@@ -402,7 +402,7 @@ class MysqlBizImpl(MysqlInit):
                 self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
             else:
                 data = [dict(zip(keys, item)) for item in values][record]
-                self.log.info("执行sql查询：{} {}: query 1 ".format(sql, data))
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
             return data
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
@@ -429,4 +429,5 @@ if __name__ == '__main__':
     # MysqlBizImpl().get_loan_apply_info(id=999)
     # MysqlBizImpl().get_credit_apply_info('credit_apply_id', credit_apply_id='000CA2021031500000021')
     # MysqlBizImpl().get_loan_apply_status('01')
-    MysqlBizImpl().get_asset_database_info('asset_repay_plan', 'sum(pre_repay_amount)', record=999, loan_invoice_id='000LI0001287425037156375010', repay_plan_status='4')
+    # MysqlBizImpl().get_asset_database_info('asset_repay_plan', 'sum(pre_repay_amount)', record=999, loan_invoice_id='000LI0001287425037156375010', repay_plan_status='4')
+    MysqlBizImpl().get_credit_database_info("credit_apply", certificate_no='445300199510101260')

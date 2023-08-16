@@ -53,7 +53,7 @@ class Mysql(object):
         try:
             self.cursor.execute(sql_column)
         except Exception as e:
-            print(e)
+            _log.info(e)
         res_column = self.cursor.fetchall()
         if args:
             column_key = args
@@ -70,7 +70,7 @@ class Mysql(object):
             # 提交到数据库执行
             self.__mysql.commit()
         except Exception as e:
-            print(e)
+            _log.info(e)
         res_values = self.cursor.fetchall()
         return res_values
 
@@ -93,7 +93,7 @@ class Mysql(object):
             values = ', '.join(['%s'] * len(kwargs))
             sql = 'INSERT INTO {table}({keys}) VALUES ({values})'.format(table=table, keys=keys, values=values)
             self.cursor.execute(sql, tuple(kwargs.values()))
-            _log.demsg("成功插入数据[{}]".format(sql))
+            _log.demsg("成功插入数据[{}]".format(sql % tuple(kwargs.values())))
             # 提交到数据库执行
             self.__mysql.commit()
         except Exception as e:
