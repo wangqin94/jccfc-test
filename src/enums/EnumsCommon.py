@@ -22,6 +22,7 @@ class ProductEnum(Enum):
     YINLIU = 'yinliu'
     HaLo = 'halo'
     HAIR = 'hair'
+    WEICAI = 'weicai'
 
 
 @unique
@@ -37,6 +38,7 @@ class ProductIdEnum(Enum):
     HALO = 'G23E031'
     HAIR_DISCOUNT = 'G23E041'
     HAIR = 'G23E042'
+    WEICAI = 'G23E051'
 
 
 class EnumProductYearRate(Enum):
@@ -52,6 +54,7 @@ class EnumMerchantId(Enum):
     WLD = 'F21E03WOLD'
     HALO = 'G23E03HALO'
     HAIR = 'G23E04HAIR'
+    WEICAI = 'G23E05WEIC'
 
 
 @unique
