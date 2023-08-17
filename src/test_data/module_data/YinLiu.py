@@ -150,13 +150,14 @@ YinLiu = {
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
                 "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
-                "idCardAddrAddress": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证地址
+                "idCardAddrAddress": "天府四街OCG写字楼A座",  # 身份证详细地址
                 "idCardAddrProvinceCode": "510000",  # 身份证地址省份代码
                 "idCardAddrProvinceName": "四川省",  # 身份证地址省份名称
                 "idCardAddrCityCode": "510100",  # 身份证地址市级代码
                 "idCardAddrCityName": "成都市",  # 身份证地址市级名称
                 "idCardAddrAreaCode": "510107",  # 身份证地址区代码
                 "idCardAddrAreaName": "武侯区",  # 身份证地址区名称
+                "idCardAddr": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证完整地址
                 "issuingAuth": "成都高新派出所",  # 发证机关
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
                 "compName": "单位名称",  # 单位名称
@@ -177,6 +178,7 @@ YinLiu = {
                 "liveAreaName": "高新区",  # 居住地址区名称
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
+                "liabilities": "0",  # EnumLiabilities，可传多个枚举，码值间以英文逗号“,”分隔；0-无贷款时，不支持多个枚举
                 "storeCode": "NJKStore01",  # 门店代码
                 "goodsCategory1": "商品大分类",  # 商品大分类
                 "goodsCategory2": "商品小分类",  # 商品小分类
@@ -328,6 +330,31 @@ YinLiu = {
             },
             "body": {
                 "thirdApplyId": "",  # 授信申请编号 与授信申请编号保持一致(同一thirdApplyId间隔不小于30秒)
+            }
+        }
+    },
+
+    # 担保费同步
+    'syncGuaranteePlan': {
+        'interface': '/api/v1/yl/common/loan/syncGuaranteePlan',
+        'payload': {
+            "head": {
+                "merchantId": "G22E02JIKE",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
+                "guaranteePlanFilePath": "",  # 担保费计划附件地址--附件传输接口返回地址
+                "guaranteePlans": [
+                    {
+                        "period": 1,
+                        "guaranteeAmt": 10,
+                    }
+                ],  # 担保费计划列表
+
             }
         }
     },

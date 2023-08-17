@@ -6,6 +6,7 @@
 @Date    ：2022/7/13 9:51
 """
 from src.enums.EnumsCommon import EnumMerchantId
+from src.impl.public.LoanPublicBizImpl import LoanPublicBizImpl
 from utils.Apollo import *
 from src.impl.common.CheckBizImpl import CheckBizImpl
 from src.impl.halo.HaLoBizImpl import HaLoBizImpl
@@ -55,13 +56,12 @@ class HaLoSynBizImpl(HaLoBizImpl):
         # 接口层校验授信结果是否符合预期
         self.HaLoCheckBizImpl.halo_check_loan_apply_status(thirdApplyId)
 
-        # 更新资产asset_loan_invoice_info放款时间,apply_loan_date=loan_date:
-        loan_apply_info = self.MysqlBizImpl.get_loan_apply_info(thirdpart_apply_id=thirdApplyId)
-        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                         loan_apply_id=loan_apply_info['loan_apply_id'])
-        loan_date = str(loanDate).replace("-", '')
-        self.MysqlBizImpl.update_asset_database_info('asset_loan_invoice_info', attr="loan_invoice_id='{}'".format(
-            credit_loan_invoice['loan_invoice_id']), apply_loan_date=loan_date)
+        # 更新放款时间
+        loanPublicBizImpl = LoanPublicBizImpl()
+        loanPublicBizImpl.updateLoanInfo(thirdLoanId=thirdApplyId, loanDate=loanDate)
+
+        # 关闭放款mock
+        loanPublicBizImpl.updateLoanDateMock(flag=False)
 
         return bill_date
 
