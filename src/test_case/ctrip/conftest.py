@@ -7,12 +7,13 @@ from utils.Models import *
 
 @pytest.fixture(scope="class")
 def get_base_data_ctrip():
-    data = get_base_data_temp('userId')
+    data = get_base_data_temp('open_id')
     return data
 
 @pytest.fixture(scope="class", autouse=True)
-def ctripBizImpl():
-    ctripBizImpl = CtripBizImpl()
+def ctripBizImpl(get_base_data_ctrip):
+    data = get_base_data_ctrip
+    ctripBizImpl = CtripBizImpl(data=data)
     return ctripBizImpl
 
 @pytest.fixture(scope="class", autouse=True)
@@ -35,8 +36,4 @@ def mysqlBizImpl():
     mysqlBizImpl = MysqlBizImpl()
     return mysqlBizImpl
 
-@pytest.fixture(scope="class", autouse=True)
-def get_base_data_ctrip():
-    data = get_base_data_temp('userId')
-    return data
 

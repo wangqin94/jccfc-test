@@ -442,7 +442,7 @@ class WeiCaiBizImpl(MysqlInit):
         else:
             key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
                 loanInvoiceId)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
 
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
@@ -478,10 +478,10 @@ class WeiCaiBizImpl(MysqlInit):
         # 宽限期提前结清
         if repay_type == "9":
             repay_apply_data['repayType'] = "2"
-            # 非贴息产品应收当期利息+宽限期期次利息， 贴息产品应收当前期利息
+            # 应收当期利息+宽限期期次利息
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days = '0' ORDER BY 'current_num'".format(
                 loanInvoiceId)
-            currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+            currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
             currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm else 0  # 宽限期利息
             repay_apply_data["repayInterest"] = round(repay_apply_data["repayInterest"] + currentTermInterest, 2)  # 总利息
             self.log.demsg("宽限期利息：{}".format(repay_apply_data["repayInterest"]))

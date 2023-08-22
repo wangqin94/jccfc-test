@@ -543,7 +543,7 @@ class JiKeBizImpl(MysqlInit):
         else:
             key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
                 loanInvoiceId)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
         # repay_apply_data['repayNum'] = 1
@@ -656,7 +656,7 @@ class JiKeBizImpl(MysqlInit):
         # 计算剩余应还本金(最早未还期次:期初计息余额before_calc_principal)
         key = "loan_invoice_id = '{}' and repay_plan_status in('1','4') ORDER BY 'current_num'".format(
             loanInvoiceId)
-        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
         returnGoods_apply_data["returnGoodsPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
 
         # 当期已还款，利息0
@@ -685,7 +685,7 @@ class JiKeBizImpl(MysqlInit):
             # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
                 loanInvoiceId)
-            KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
+            KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
             kuanxianqi_interest = float(KXQRepayAmt['pre_repay_interest']) if KXQRepayAmt else 0  # 宽限期利息
             # 逾期借据=逾期期次利息+当期利息
             oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',

@@ -28,12 +28,11 @@ class MyTestCase(unittest.TestCase):
         last_date = str(get_custom_day(-1, time.strftime('%Y-%m-%d', time.localtime()))).replace("-", '')
         self.MysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
         # 执行渠道还款任务
-        self.job.update_job('渠道还款任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
-        self.job.trigger_job('渠道还款任务', group=13, job_type='VIRTUAL_JOB')
+        self.job.update_job('渠道还款任务(新核心)', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
+        self.job.trigger_job('渠道还款任务(新核心)', group=13, job_type='VIRTUAL_JOB')
         # 执行渠道还款额度恢复任务
         self.job.update_job('渠道还款额度恢复任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('渠道还款额度恢复任务', group=13, job_type='VIRTUAL_JOB')
-
 
     """ 后置条件处理 """
     def tearDown(self):
