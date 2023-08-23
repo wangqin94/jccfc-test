@@ -6,7 +6,7 @@ from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import YinLiu
+from src.test_data.module_data import weicai
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
@@ -24,7 +24,7 @@ class WeiCaiBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         # 解析项目特性配置
-        self.cfg = YinLiu.YinLiu
+        self.cfg = weicai.weicai
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
@@ -246,6 +246,7 @@ class WeiCaiBizImpl(MysqlInit):
 
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
+        applyLoan_data['orderType'] = '1'  # EnumOrderType 固定传1-取现
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']

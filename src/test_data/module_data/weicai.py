@@ -5,10 +5,10 @@
 # # ---------------------------------------------------------
 
 # -----------------------------------------------------------
-# 引流项目配置
+# 微财项目配置
 # -----------------------------------------------------------
-YinLiu = {
-    # 加密接口
+weicai = {
+    # 加密接口-哈喽
     'encrypt': {
         'interface': '/api/v1/yinliu/secret/thirdEncryptData/{}',
     },
@@ -17,49 +17,6 @@ YinLiu = {
     'decrypt': {
         'interface': '/api/v1/yinliu/secret/thirdDecryptData',
     },
-
-    # 代扣签约申请接口
-    'getCardRealNameMessage': {
-        'interface': '/api/v1/yl/common/getCardRealNameMessage',
-        'payload': {
-            "head": {
-                "merchantId": "G23E01XIAX",
-                "channelNo": "01",
-                "requestSerialNo": "cqrn20210415155213618",
-                "requestTime": "2020-08-28 17:16:41",
-                "tenantId": "000"
-            },
-            "body": {
-                "payer": "QH",  # 付款方姓名
-                "mobileNo": "",  # 注册手机号
-                "payerPhoneNum": "",  # 付款方银行卡预留手机号
-                "payerIdNum": "",  # 付款方身份证号
-                "payerBankCardNum": "",  # 付款方银行卡号
-                "payerBankCode": "0102",  # 付款方银行编号
-            }
-        }
-    },
-    # 确认代扣签约接口
-    'bindCardRealName': {
-        'interface': '/api/v1/yl/common/bindCardRealName',
-        'payload': {
-            "head": {
-                "merchantId": "G23E01XIAX",
-                "channelNo": "01",
-                "requestSerialNo": "cqrn20210415155213618",
-                "requestTime": "2020-08-28 17:16:41",
-                "tenantId": "000"
-            },
-            "body": {
-                "tradeSerialNo": "",  # 同发起代扣签约返回的交易流水号
-                "mobileNo": "",  # 注册手机号
-                "payerPhoneNum": "",  # 付款方银行卡预留手机号
-                "userId": "",  # 锦程用户编号
-                "smsCode": "111111",  # 验证码
-            }
-        }
-    },
-
     # 代扣申请接口
     'sharedWithholdingAgreement': {
         'interface': '/api/v1/yl/common/sharedWithholdingAgreement',
@@ -102,30 +59,12 @@ YinLiu = {
             }
         }
     },
-    # 换卡通知接口
-    'updateWithholdCard': {
-        'interface': '/api/v1/yl/common/queryWithholdingAgreement',
-        'payload': {
-            "head": {
-                "merchantId": "G22E02JIKE",
-                "channelNo": "01",
-                "requestSerialNo": "cqrn20210415155213618",
-                "requestTime": "2020-08-28 17:16:41",
-                "tenantId": "000"
-            },
-            "body": {
-                "loanInvoiceId": "",  # 资金方放款编号
-                "idNo": "",  # 证件号码
-                "repaymentAccountNo": ""  # 新银行卡号
-            }
-        }
-    },
     # 授信请求接口
     'credit_apply': {
         'interface': '/api/v1/yl/common/credit/apply',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -134,10 +73,8 @@ YinLiu = {
             "body": {
                 "thirdApplyId": "",  # 三方授信申请编号  与放款申请编号保持一致
                 "repayType": "1",  # 还款方式  EnumRepayMethod
-                "orderType": "2",  # 订单类型  固定传2-赊销(分期购物)
+                "orderType": "1",  # 订单类型  固定传1-取现
                 "goodsName": "美容贷",  # 商品名称  取现为：取现借款、分期购物为：商品名称
-                "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
-                "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
                 "userBankCardNo": "0102",  # 用户银行卡号
                 "bankCode": "0102",  # 银行编码
                 "reserveMobile": "",  # 银行预留手机号
@@ -149,8 +86,9 @@ YinLiu = {
                 "education": "11",  # 学历 EnumEduLevel
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
-                "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
-                "idCardAddrAddress": "天府四街OCG写字楼A座",  # 身份证详细地址
+                "idExpiryDate": "1990.1.1-2053.06.25",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
+                "issuingAuth": "成都高新派出所",  # 发证机关
+                "idCardAddrAddress": "天府四街OCG写字楼A座",  # 身份证地址
                 "idCardAddrProvinceCode": "510000",  # 身份证地址省份代码
                 "idCardAddrProvinceName": "四川省",  # 身份证地址省份名称
                 "idCardAddrCityCode": "510100",  # 身份证地址市级代码
@@ -158,7 +96,6 @@ YinLiu = {
                 "idCardAddrAreaCode": "510107",  # 身份证地址区代码
                 "idCardAddrAreaName": "武侯区",  # 身份证地址区名称
                 "idCardAddr": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证完整地址
-                "issuingAuth": "成都高新派出所",  # 发证机关
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
                 "compName": "单位名称",  # 单位名称
                 "compPhone": "13812345689",  # 单位电话
@@ -168,20 +105,17 @@ YinLiu = {
                 "duties": "A",  # 职务 EnumPost
                 "companyNature": "A",  # 单位性质 EnumUnitProperty
                 "industryCategory": "A",  # 行业类别 EnumIndustryType
-                "workAddrAddress": "茂业中心A座",  # 工作详细地址
-                "workAddrProvinceName": "四川省",  # 工作地址省份名称
-                "workAddrCityName": "成都市",  # 工作地址市级名称
-                "workAddrAreaName": "邛崃市",  # 工作地址区名称
-                "liveAddress": "四川省成都市天府新区天府四街158号",  # 工作详细地址
-                "liveProvinceName": "四川省",  # 居住地址省份名称
-                "liveCityName": "成都市",  # 居住地址市级名称
-                "liveAreaName": "高新区",  # 居住地址区名称
+                "workAddrAddress": "北京市海淀医院",  # 工作详细地址
+                "workAddrProvinceName": "北京市",  # 工作地址省份名称
+                "workAddrCityName": "北京市",  # 工作地址市级名称
+                "workAddrAreaName": "海淀区",  # 工作地址区名称
+                "liveAddress": "北京市海淀医院",  # 工作详细地址
+                "liveProvinceName": "北京市",  # 居住地址省份名称
+                "liveCityName": "北京市",  # 居住地址市级名称
+                "liveAreaName": "海淀区",  # 居住地址区名称
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
                 "liabilities": "0",  # EnumLiabilities，可传多个枚举，码值间以英文逗号“,”分隔；0-无贷款时，不支持多个枚举
-                "storeCode": "NJKStore01",  # 门店代码
-                "goodsCategory1": "商品大分类",  # 商品大分类
-                "goodsCategory2": "商品小分类",  # 商品小分类
                 "contactRelationList": [
                     {
                         "contactName": "配偶姓名",  # 联系人姓名
@@ -211,19 +145,19 @@ YinLiu = {
                         "fileName": "credit.pdf"
                     },
                     {
+                        "fileType": "6",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileName": "JC_non_student_202000000948071964.pdf"
+                    },
+                    {
                         "fileType": "7",  # 三方查询授权书
                         "fileUrl": "xdgl/jike/test/third.pdf",
                         "fileName": "third.pdf"
                     },
                     {
-                        "fileType": "14",  # 现场照/消费凭证
-                        "fileUrl": "xdgl/jike/test/photos.png",
-                        "fileName": "photos.png"
-                    },
-                    {
-                        "fileType": "17",  # 人脸识别查询授权书
-                        "fileUrl": "xdgl/jike/test/third.pdf",
-                        "fileName": "third.pdf"
+                        "fileType": "10",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileName": "JC_third_auth_202000000948071964.pdf"
                     }
                 ],
                 "authenticationInfo": {
@@ -243,6 +177,7 @@ YinLiu = {
                     "quaternCerRst": "四元认证结果"  # 四元认证结果
                 },
                 "featureField": {
+                    "thirdCreditLine": "30000",  # 授信额度
                 }
             }
         }
@@ -253,7 +188,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/credit/queryResult',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -269,7 +204,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/loan/apply',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -285,15 +220,11 @@ YinLiu = {
                 "idNo": "",  # 证件号码
                 "mobileNo": "0102",  # 手机号码
                 "reserveMobile": "",  # 银行预留手机号
-                "orderType": "2",  # 订单类型  固定传2-赊销(分期购物)
-                "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
-                "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
+                "orderType": "1",  # 订单类型  固定传1-取现
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "accountNo": "",  # 放款/还款银行卡号
                 "bankName": "工商银行",  # 还款银行名称
-                "storeAccountNo": "门店银卡号",  # 门店银卡号
-                "storeBankName": "门店银行账户名称",  # 门店银行账户名称
-                "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
+                "loanPurpose": "1",  # 贷款用途 EnumLoanPurpose
                 "guaranteeContractNo": "",  # 担保合同号
                 "fileInfos": [
                     {
@@ -302,17 +233,6 @@ YinLiu = {
                         "fileName": "C20JIKEloancontract.pdf"
                     }
                 ],
-                "repaymentPlans": [
-                    {
-                        "period": "1",  # 期数
-                        "billDate": "2022-02-03",  # 账单日
-                        "principalAmt": 1,  # 本金金额
-                        "interestAmt": 1,  # 利息金额
-                        "guaranteeAmt": 1,  # 担保费金额
-                    }
-                ],
-                "featureField": {
-                }
             }
         }
 
@@ -322,7 +242,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/loan/queryResult',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -330,6 +250,41 @@ YinLiu = {
             },
             "body": {
                 "thirdApplyId": "",  # 授信申请编号 与授信申请编号保持一致(同一thirdApplyId间隔不小于30秒)
+            }
+        }
+    },
+
+    # 还款计划查询
+    'repayPlan_query': {
+        'interface': '/api/v1/yl/common/loan/queryRepayPlan',
+        'payload': {
+            "head": {
+                "merchantId": "G23E01XIAX",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
+            }
+        }
+    },
+
+    # 借款合同查询
+    'loanContract_query': {
+        'interface': '/api/v1/yl/common/loan/queryLoanContract',
+        'payload': {
+            "head": {
+                "merchantId": "G23E01XIAX",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
+                "contractType": "6",  # 合同类型 EnumFileType,固定传6-借款合同
             }
         }
     },
@@ -359,47 +314,12 @@ YinLiu = {
         }
     },
 
-    # 还款计划查询
-    'repayPlan_query': {
-        'interface': '/api/v1/yl/common/loan/queryRepayPlan',
-        'payload': {
-            "head": {
-                "merchantId": "G22E02JIKE",
-                "channelNo": "01",
-                "requestSerialNo": "cqrn20210415155213618",
-                "requestTime": "2020-08-28 17:16:41",
-                "tenantId": "000"
-            },
-            "body": {
-                "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
-            }
-        }
-    },
-
-    # 借款合同查询
-    'loanContract_query': {
-        'interface': '/api/v1/yl/common/loan/queryLoanContract',
-        'payload': {
-            "head": {
-                "merchantId": "G22E02JIKE",
-                "channelNo": "01",
-                "requestSerialNo": "cqrn20210415155213618",
-                "requestTime": "2020-08-28 17:16:41",
-                "tenantId": "000"
-            },
-            "body": {
-                "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
-                "contractType": "6",  # 合同类型 EnumFileType,固定传6-借款合同
-            }
-        }
-    },
-
     # 还款通知接口
     'repay_apply': {
         'interface': '/api/v1/yl/common/repay/uniteRepay',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -431,7 +351,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/repay/queryWithholdResult',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -443,12 +363,12 @@ YinLiu = {
         }
     },
 
-    # 退货申请
+    # 退货申请查询
     'returnGoods_apply': {
         'interface': '/api/v1/yl/common/returnGoods/apply',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -459,8 +379,7 @@ YinLiu = {
                 "returnGoodsSerialNo": "",  # 退货申请流水号  每一笔退货申请唯一
                 "returnGoodsPrincipal": 0,  # 退货总本金
                 "returnGoodsInterest": 0,  # 退货总利息
-                "returnGoodsOverdueFee": 0,  # 退货罚息(非贴息融担产品传罚息)
-                "returnGoodsFee": 0,  # 退货总费用(贴息产品无罚息，逾期违约金放到费用字段)
+                "returnGoodsOverdueFee": 0,  # 退货罚息
             }
         }
     },
@@ -470,7 +389,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/supplementAttachment',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -508,11 +427,6 @@ YinLiu = {
                         "fileType": "7",
                         "file": "文件Base64字符串",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
-                    },
-                    {
-                        "fileType": "14",
-                        "file": "文件Base64字符串",
-                        "fileName": "photos.png"
                     }
                 ],
             }
@@ -524,7 +438,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/getAllAreaInfo',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -540,7 +454,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/queryLprInfo',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -558,7 +472,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/cancellationCreditLine',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -576,7 +490,7 @@ YinLiu = {
         'interface': '/api/v1/yl/common/compensation/queryAccountResult',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -590,18 +504,41 @@ YinLiu = {
         }
     },
 
-    # 支持银行列表查询
-    'querySupportBank': {
-        'interface': '/api/v1/yl/common/querySupportBank',
+    # 结清证明申请
+    'applySettlementCer': {
+        'interface': '/api/v1/yl/common/applySettlementCer',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E03HALO",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
                 "tenantId": "000"
             },
             "body": {
+                "name": "",  # 用户姓名
+                "idNo": "",  # 用户身份证
+                "mobileNo": "",  # 用户手机号
+                "loanApplyIdList": []  # 放款申请编号List<String>
+            }
+        }
+    },
+
+    # 结清证明下载
+    'settlementCerDownload': {
+        'interface': '/api/v1/yl/common/settlementCerDownload',
+        'payload': {
+            "head": {
+                "merchantId": "G23E03HALO",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "name": "",  # 用户姓名
+                "idNo": "",  # 用户身份证
+                "applyId": ""  # 结清证明编号
             }
         }
     },
