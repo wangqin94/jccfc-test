@@ -84,7 +84,7 @@ class IdNumber(str):
             assert now_date > age + relativedelta(years=int(20)), '支付要求用户最小年龄不能小于18岁'
             birth_days = datetime.strftime(age, "%Y%m%d")
         else:
-            min_age = datetime.strftime(now_date - relativedelta(years=int(20)), "%Y-%m-%d")
+            min_age = datetime.strftime(now_date - relativedelta(years=int(22)), "%Y-%m-%d")
             start, end = datetime.strptime("1975-01-01", "%Y-%m-%d"), datetime.strptime(min_age, "%Y-%m-%d")
             birth_days = datetime.strftime(start + timedelta(random.randint(0, (end - start).days + 1)), "%Y%m%d")
         id_number += str(birth_days)

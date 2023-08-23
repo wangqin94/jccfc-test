@@ -2,33 +2,29 @@
 # ------------------------------------------
 # 借条接口数据封装类
 # ------------------------------------------
-from datetime import datetime
 
 from engine.EnvInit import EnvInit
 from src.enums.EnumJieTiao import JieTiaoEnum
 from src.impl.common.CommonBizImpl import post_with_encrypt
-from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import JieTiao
 from src.impl.public.RepayPublicBizImpl import *
-from utils.Models import *
-from src.enums.EnumsCommon import *
+from src.test_data.module_data import JieTiao
 from utils.Apollo import Apollo
+from utils.Models import *
 
 
 class JieTiaoBizImpl(EnvInit):
-    def __init__(self, *, data=None, encrypt_flag=True, loan_invoice_id=None):
-        '''
-
+    def __init__(self, *, data=None, encrypt_flag=True, loan_invoice_id=None, person=True):
+        """
         :param data:
         :param encrypt_flag: 加密
         :param loan_invoice_id: 借据号为None取用户第一笔借据，否则取自定义值
-        '''
+        :param person: 若person=True四要输写入person文件，否则不写入
+        """
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = JieTiao.JieTiao
-
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JieTiao.value), "loanReqNo")
+        self.data = self.get_user_info(data=data, person=person)
 
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
@@ -42,12 +38,26 @@ class JieTiaoBizImpl(EnvInit):
         self.repayPublicBizImpl = RepayPublicBizImpl()
         self.apollo = Apollo()
 
+    def get_user_info(self, data=None, person=True):
+        # 获取四要素信息
+        if data:
+            data['loanReqNo'] = "loanReqNo" + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+            update_user_info(data)
+            base_data = data
+        else:
+            if person:
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JieTiao.value), "loanReqNo")
+            else:
+                base_data = get_base_data_temp()
+        return base_data
+
     def loan(self, loan_date=None, **kwargs):
         loan_data = dict()
         date = str(get_before_day(1)).replace('-', '')
-        self.MysqlBizImpl.update_channel_database_info('channel_loan_amount', attr="product_id='F22E011'", business_date=date)
+        self.MysqlBizImpl.update_channel_database_info('channel_loan_amount', attr="product_id='F22E011'",
+                                                       business_date=date)
         loan_data['loanReqNo'] = self.data['loanReqNo']
-        loan_data['custName'], loan_data['dbAcctName'] = self.data['name'],self.data['name']
+        loan_data['custName'], loan_data['dbAcctName'] = self.data['name'], self.data['name']
         loan_data['id'] = self.data['cer_no']
         loan_data['dbAcct'] = self.data['bankid']
         loan_data['mobileNo'] = self.data['telephone']
@@ -63,7 +73,7 @@ class JieTiaoBizImpl(EnvInit):
         apollo_data['credit.loan.trade.date.mock'] = True
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
-        
+
         self.log.demsg('放款请求接口...')
         url = self.host + self.cfg['loan']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
@@ -105,7 +115,6 @@ class JieTiaoBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-
     def payment_query(self, **kwargs):
         payment_query_data = dict()
 
@@ -121,14 +130,14 @@ class JieTiaoBizImpl(EnvInit):
         return response
 
     def repay_notice(self, rpyTerm="1", rpyType="02", rpyDate="2022-07-01", **kwargs):
-        '''
+        """
         还款通知
         :param rpyTerm: 还款期数
         :param rpyType: 还款类型：提前还款:01 期供还款:02 逾期还款：03
         :param rpyDate: 还款日期
         :param kwargs:
         :return:
-        '''
+        """
         # 还款前置任务
         self.repayPublicBizImpl.pre_repay_config(repayDate=rpyDate)
         repay_notice_data = dict()
@@ -145,11 +154,11 @@ class JieTiaoBizImpl(EnvInit):
         # 根据支用申请单号查询借据信息
         if self.loan_invoice_id:
             loan_invoice_id = self.loan_invoice_id
-            key2 = "loan_invoice_id = '{}'".format(loan_invoice_id)
-            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
-            loan_apply_id = credit_loan_invoice["loan_apply_id"]
-            key21 = "loan_apply_id = '{}'".format(loan_apply_id)
-            credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key21)
+            # key2 = "loan_invoice_id = '{}'".format(loan_invoice_id)
+            # credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            # loan_apply_id = credit_loan_invoice["loan_apply_id"]
+            # key21 = "loan_apply_id = '{}'".format(loan_apply_id)
+            # credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key21)
         else:
             loan_apply_id = credit_loan_apply["loan_apply_id"]
             key2 = "loan_apply_id = '{}'".format(loan_apply_id)

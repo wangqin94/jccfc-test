@@ -147,6 +147,28 @@ def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
     return data
 
 
+# 更新person文件指定行数数据
+def update_user_info(newData, item=-1, model="a"):
+    """
+    @param newData: 待更新用户数据
+    @param item: 待更新第N行数据，默认最后一行
+    @param model: model="a" 追加一条新数据， model="w"更新数据
+    @return:
+    """
+    # 读取文件第item行数进行数据更新
+    with open('person.py', "r", encoding='utf-8') as f:  # 打开文件
+        back_data = f.readlines()  # 读取文件
+        if model == "a":
+            f = open('person.py', model, encoding='utf-8')  # 以写入的形式打开txt文件
+            f.write('\n')
+            f.write('data = {}'.format(newData))  # 将修改后的文本内容写入
+        elif model == "w":
+            back_data[item] = 'data = {}'.format(newData)  # 只更新第item行
+            f = open('person.py', model, encoding='utf-8')  # 以写入的形式打开txt文件
+            f.writelines(back_data)  # 将修改后的文本内容写入
+        f.close()  # 关闭文件
+
+
 # 计算还款时间和放款时间差，天为单位
 def get_day(time1, time2):
     """
@@ -583,7 +605,8 @@ def assetAnnuity(loanAmt, term, yearRate, billDate):
         if i == term:
             jcAmtpermonth = jcLeftPrePrincipal + jcLeftPrePrincipal * jcMonthRate
         else:
-            jcAmtpermonth = round(loanAmt * jcMonthRate * pow((1 + jcMonthRate), term) / (pow((1 + jcMonthRate), term) - 1), 2)
+            jcAmtpermonth = round(
+                loanAmt * jcMonthRate * pow((1 + jcMonthRate), term) / (pow((1 + jcMonthRate), term) - 1), 2)
 
         # 每期应还利息
         jcMonthInterest = jcLeftPrePrincipal * jcMonthRate
@@ -625,7 +648,8 @@ def yinLiuRepayPlanByAvgAmt(loanAmt, term, yearRate, billDate, guaranteeAmt=1.11
         if isLastPeriod:
             jcAmtpermonth = jcLeftPrePrincipal + jcLeftPrePrincipal * jcMonthRate
         else:
-            jcAmtpermonth = round(loanAmt * jcMonthRate * pow((1 + jcMonthRate), term) / (pow((1 + jcMonthRate), term) - 1), 2)
+            jcAmtpermonth = round(
+                loanAmt * jcMonthRate * pow((1 + jcMonthRate), term) / (pow((1 + jcMonthRate), term) - 1), 2)
 
         # 每期应还利息
         jcMonthInterest = round(jcLeftPrePrincipal * jcMonthRate, 2)
@@ -661,7 +685,7 @@ def yinLiuRepayPlanByAvgPrincipal(loanAmt, term, yearRate, billDate, guaranteeAm
     # 月利率
     jcMonthRate = yearRate / 1200
     # 月应还本金
-    jcMonthPrincipal = round(loanAmt/term, 2)
+    jcMonthPrincipal = round(loanAmt / term, 2)
     # 剩余应还本金
     jcLeftPrePrincipal = loanAmt
     for i in range(1, term + 1):
