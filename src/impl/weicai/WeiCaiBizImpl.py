@@ -351,7 +351,8 @@ class WeiCaiBizImpl(MysqlInit):
         # body
         syncGuaranteePlan['loanInvoiceId'] = loanInvoiceId
         # 组装担保费计划
-        term = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
+        term = credit_loan_invoice['installment_num']
         guaranteePlans = []
         for period in range(1, term + 1):
             guaranteePlan = {"period": period, "guaranteeAmt": guaranteeAmt}
