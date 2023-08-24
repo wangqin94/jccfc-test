@@ -23,7 +23,7 @@ class TestCase(object):
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     @staticmethod
-    def process(flag=11):
+    def process(flag=7):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
@@ -48,17 +48,17 @@ class TestCase(object):
         # 借款申请
         elif flag == 5:
             wc = WeiCaiBizImpl(data=data)
-            wc.applyLoan(loanAmt=20000, loanTerm=3)
+            wc.applyLoan(loanAmt=1000, loanTerm=6)
 
         # 借款查询
         elif flag == 6:
             wc = WeiCaiBizImpl(data=data)
-            wc.queryLoanResult(thirdApplyId='thirdApplyId1676441886237783')
+            wc.queryLoanResult(thirdApplyId='thirdApplyId16928485803642059')
 
         # 还款计划查询
         elif flag == 7:
             wc = WeiCaiBizImpl(data=data)
-            wc.repayPlan_query(loanInvoiceId='000LI0001359580488327206022')
+            wc.repayPlan_query(loanInvoiceId='000LI0001861095229792369046')
 
         # 借据合同查询
         elif flag == 8:
@@ -109,6 +109,11 @@ class TestCase(object):
         elif flag == 17:
             wc = WeiCaiBizImpl(data=data)
             wc.settlementCerDownload("488958292D324978AC873742067CC783")
+
+        # 担保费同步
+        elif flag == 18:
+            wc = WeiCaiBizImpl(data=data)
+            wc.syncGuaranteePlan(loanInvoiceId = "488958292D324978AC873742067CC783")
 
     def postprocess(self):
         """ 后置条件处理 """
