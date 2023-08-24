@@ -254,6 +254,7 @@ class WeiCaiBizImpl(MysqlInit):
         applyLoan_data['reserveMobile'] = self.data['telephone']
         applyLoan_data['name'] = self.data['name']
         applyLoan_data['accountNo'] = self.data['bankid']
+
         # 还款方式
         applyLoan_data['repayType'] = EnumRepayType.EQUAL_AMT_INTEREST.value
         # 担保合同号
@@ -349,11 +350,6 @@ class WeiCaiBizImpl(MysqlInit):
 
         # body
         syncGuaranteePlan['loanInvoiceId'] = loanInvoiceId
-
-        # 获取担保费计划附件地址
-        FilePath = self.supplementAttachment(thirdApplyId=None, fileType=18)['body']['fileInfos'][0]['fileUrl']
-        syncGuaranteePlan['guaranteePlanFilePath'] = FilePath
-
         # 组装担保费计划
         term = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
         guaranteePlans = []

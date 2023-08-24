@@ -302,7 +302,6 @@ weicai = {
             },
             "body": {
                 "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
-                "guaranteePlanFilePath": "",  # 担保费计划附件地址--附件传输接口返回地址
                 "guaranteePlans": [
                     {
                         "period": 1,
