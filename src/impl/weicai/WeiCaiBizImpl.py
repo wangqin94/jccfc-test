@@ -39,25 +39,13 @@ class WeiCaiBizImpl(MysqlInit):
         self.encrypt_url = self.host + self.cfg['encrypt']['interface'].format(self.merchantId)
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
 
-    def getRepayPlan(self, billDate, loanAmt, yearRate, term):
-        # 根据输入产品编号获取对应产品年利率
-        if self.productId == ProductIdEnum.HAIR.value:
-            repayPlan = yinLiuRepayPlanByAvgAmt(billDate=billDate, loanAmt=loanAmt,
-                                                yearRate=yearRate, term=term)
-        elif self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            repayPlan = yinLiuRepayPlanByAvgPrincipal(billDate=billDate, loanAmt=loanAmt,
-                                                      yearRate=yearRate, term=term, guaranteeAmt=0)
-        else:
-            raise Exception('产品编号输入错误：{}'.format(self.productId))
-        return repayPlan
-
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
         if data:
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.HAIR.value))
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WEICAI.value))
             else:
                 base_data = get_base_data_temp()
         return base_data
@@ -423,7 +411,7 @@ class WeiCaiBizImpl(MysqlInit):
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         # 如果是贴息产品，担保费为0
-        repayGuaranteeFee = 0 if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else repayGuaranteeFee
+        repayGuaranteeFee = repayGuaranteeFee
         # 构造还款参数
         repay_apply_data = dict()
         # head

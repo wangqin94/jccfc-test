@@ -528,4 +528,42 @@ JiKe = {
             }
         }
     },
+
+    # 理赔文件 键值对字典数据模板
+    "jiKeClaimTemple": {
+        'loan_no': '',  # 借据号
+        'name': '',  # 姓名
+        'cer_no': '',  # 身份证号
+        'current_period': '',  # 期次
+        'repay_amt': '',  # 代偿总额
+        'repay_date': '',  # 代偿日期
+        'business_no': '',  # 流水号
+        'product_id': '',  # 产品号
+        'type_flag': '1',  # 类型标志
+        'loan_amt': '',  # 贷款总金额
+        'loan_period': '',  # 贷款总期次
+        'loan_date': '',  # 放款时间
+        'paid_prin_amt': '',  # 本金
+        'paid_int_amt': '',  # 利息
+        'left_repay_amt': '',  # 在贷余额
+    },
+
+    # 理赔文件 键值对字典数据模板
+    "jiKeBuyBackTemple": {
+        'loan_no': '',  # 借据号
+        'name': '',  # 姓名
+        'cer_no': '',  # 身份证号
+        'current_period': '',  # 期次
+        'repay_amt': '',  # 代偿总额
+        'repay_date': '',  # 代偿日期
+        'business_no': '',  # 流水号
+        'product_id': '',  # 产品号
+        'type_flag': '1',  # 类型标志
+        'loan_amt': '',  # 贷款总金额
+        'loan_period': '',  # 贷款总期次
+        'loan_date': '',  # 放款时间
+        'paid_prin_amt': '',  # 本金
+        'paid_int_amt': '',  # 利息
+        'left_repay_amt': '',  # 在贷余额
+    },
 }

@@ -33,7 +33,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_apply(self, loan_date='2023-08-22'):
+    def test_apply(self, loan_date='2023-07-15'):
         """ 测试步骤 """
         # 绑卡签约
         wc = WeiCaiBizImpl(data=self.data)

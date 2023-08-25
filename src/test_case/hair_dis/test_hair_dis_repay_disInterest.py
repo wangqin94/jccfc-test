@@ -17,7 +17,7 @@ class MyTestCase(unittest.TestCase):
         self.productId = ProductIdEnum.HAIR_DISCOUNT.value
 
     """ 测试步骤 """
-    def test_repay_apply(self, repayDate='2023-06-14'):
+    def test_repay_apply(self, repayDate='2023-06-01'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
@@ -25,13 +25,13 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
         hairRepayFile = YinLiuRepayFile(data, self.productId, repayTermNo='1', repayDate=repayDate)
-        hairRepayFile.creditDisInterestFile()
+        hairRepayFile.creditHairDisInterestFile()
 
         # 【引流】账单日机构贴息批量还款入账定时任务流
-        # self.repayPublicBizImpl.job.update_and_trigger_job_byJobId('859053695655079936', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
+        self.repayPublicBizImpl.job.update_and_trigger_job_byJobId('859053695655079936', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
 
         # 【引流】账单日机构贴息批量还款入账定时任务流
-        # self.repayPublicBizImpl.job.trigger_job_byId("859053695655079936")
+        self.repayPublicBizImpl.job.trigger_job_byId("859053695655079936")
         # 输入指定借据号
         # self.repayRes = json.loads(HaLo.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId="").get('body'))  # 按期还款
 

@@ -326,7 +326,7 @@ weicai = {
                 "tenantId": "000"
             },
             "body": {
-                "repayScene": "01",    # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
+                "repayScene": "01",  # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
                 "repayApplySerialNo": "6",  # 还款申请流水号 每笔还款申请流水号唯一，支付宝还款传支付宝扣款订单号
                 "thirdWithholdId": "",  # 三方代扣编号 线下还款、逾期还款通知：传机构代扣编号；支付宝还款通知：传支付宝扣款订单号；其他还款场景不传
                 "appAuthToken": "6",  # 支付宝授权令牌 支付宝还款通知必传
@@ -541,5 +541,45 @@ weicai = {
                 "applyId": ""  # 结清证明编号
             }
         }
+    },
+
+    # 微财理赔文件 键值对字典数据模板
+    "weiCaiClaimTemple": {
+        'loan_no': '',  # 借据号
+        'name': '',  # 姓名
+        'cer_no': '',  # 身份证号
+        'current_period': '',  # 期次
+        'repay_amt': '',  # 代偿总额
+        'repay_date': '',  # 代偿日期
+        'business_no': '',  # 流水号
+        'product_id': '',  # 产品号
+        'type_flag': '1',  # 类型标志
+        'loan_amt': '',  # 贷款总金额
+        'loan_period': '',  # 贷款总期次
+        'loan_date': '',  # 放款时间
+        'paid_prin_amt': '',  # 本金
+        'paid_int_amt': '',  # 利息
+        'left_repay_amt': '',  # 在贷余额
+        'compensationOverdueFee': '',  # 代偿罚息
+    },
+
+    # 微财理赔文件 键值对字典数据模板
+    "weiCaiBuyBackTemple": {
+        'loan_no': '',  # 借据号
+        'name': '',  # 姓名
+        'cer_no': '',  # 身份证号
+        'current_period': '',  # 期次
+        'repay_amt': '',  # 代偿总额
+        'repay_date': '',  # 代偿日期
+        'business_no': '',  # 流水号
+        'product_id': '',  # 产品号
+        'type_flag': '1',  # 类型标志
+        'loan_amt': '',  # 贷款总金额
+        'loan_period': '',  # 贷款总期次
+        'loan_date': '',  # 放款时间
+        'paid_prin_amt': '',  # 本金
+        'paid_int_amt': '',  # 利息
+        'left_repay_amt': '',  # 在贷余额
+        'compensationOverdueFee': '',  # 代偿罚息
     },
 }
