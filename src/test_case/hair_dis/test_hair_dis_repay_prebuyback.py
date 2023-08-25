@@ -17,7 +17,7 @@ class MyTestCase(unittest.TestCase):
         self.productId = ProductIdEnum.HAIR_DISCOUNT.value
 
     """ 测试步骤 """
-    def test_repay_apply(self, repayDate='2024-01-15'):
+    def test_repay_apply(self, repayDate='2023-06-05'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 

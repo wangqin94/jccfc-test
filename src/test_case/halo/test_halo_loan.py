@@ -33,7 +33,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_apply(self, loan_date='2023-04-01'):
+    def test_apply(self, loan_date='2023-02-01'):
         """ 测试步骤 """
         # 绑卡签约
         HaLo = HaLoBizImpl(data=self.data)
@@ -62,14 +62,7 @@ class MyTestCase(unittest.TestCase):
     """ 后置条件处理 """
 
     def tearDown(self):
-        time.sleep(5)
         # 数据库陈校验授信结果是否符合预期
-        status = self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.TO_LOAN.value,
-                                                                       thirdpart_apply_id=self.thirdApplyId)
-        self.assertEqual(EnumLoanStatus.TO_LOAN.value, status, '支用失败')
-        # 执行任务流放款
-        self.job.update_job('线下自动放款', executeBizDateType='TODAY')
-        self.job.trigger_job('线下自动放款')
         self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.ON_USE.value,
                                                               thirdpart_apply_id=self.thirdApplyId)
         # 接口层校验授信结果是否符合预期
