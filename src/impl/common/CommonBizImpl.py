@@ -2,8 +2,8 @@
 # ------------------------------------------
 # 基于项目级业务层公共方法
 # ------------------------------------------
-from urllib import parse
-
+from src.enums.EnumsCommon import ProductIdEnum
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Models import *
 from config.globalConfig import *
 from src.test_data.module_data.common import *
@@ -79,5 +79,25 @@ def limit_invalid(self, productId, data):
     return response
 
 
+# 根据输入产品编号获取对应产品年利率
+def getInterestRate(productId):
+    """
+    @param productId: 产品ID
+    @return: 产品年利率：interest_fixed_rate
+    """
+
+    try:
+        product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
+                                                                      product_id=productId,
+                                                                      param_key='interest_fixed_rate')
+        if product_product_param:
+            interestRate = product_product_param['param_value']
+            return interestRate
+        else:
+            raise AssertionError("产品配置表年利率参数为空")
+    except Exception as err:
+        raise err
+
+
 if __name__ == '__main__':
-    print(common.get('limit')['interface'])
+    print(getInterestRate(ProductIdEnum.HALO.value))

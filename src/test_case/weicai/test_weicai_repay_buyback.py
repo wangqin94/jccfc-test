@@ -4,7 +4,7 @@ import warnings
 import time
 
 from src.enums.EnumsCommon import ProductIdEnum
-from src.impl.common.YinLiuCreateFileBizImpl import YinLiuRepayFile
+from src.impl.public.YinLiuCreateFileBizImpl import YinLiuRepayFile
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_case.weicai.person import data
 

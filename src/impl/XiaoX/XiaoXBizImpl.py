@@ -4,36 +4,11 @@
 # ------------------------------------------
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
-from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import XiaoX
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
 from dateutil.parser import parse
-
-
-def computeMD5(message):
-    m = hashlib.md5()
-    m.update(message.encode(encoding='utf-8'))
-    return m.hexdigest()
-
-
-def get_bill_day(loan_date=None):
-    """
-    @param loan_date: 放款时间，如果放款时间空，则默认当前时间 eg:2022-01-01
-    @return: 返回首期账单日
-    """
-    if not loan_date:
-        loan_date = time.strftime('%Y-%m-%d', time.localtime())  # 当前时间
-    date_list = str(loan_date).split('-')
-    bill_year, bill_month, bill_day = map(int, date_list)
-    bill_month += 1
-    if bill_month > 12:
-        bill_year += 1
-        bill_month -= 12
-    bill_day = 28 if bill_day > 27 else bill_day
-    bill_data = '{}-{}-{}'.format(str(bill_year), str("%02d" % bill_month), str("%02d" % bill_day))
-    return bill_data
 
 
 class XiaoXBizImpl(MysqlInit):
@@ -53,6 +28,7 @@ class XiaoXBizImpl(MysqlInit):
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
+        self.interestRate = getInterestRate(ProductIdEnum.XIAOX.value)
 
         # 初始化产品
         self.merchantId = merchantId
@@ -176,7 +152,7 @@ class XiaoXBizImpl(MysqlInit):
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
         credit_data['thirdApplyTime'] = self.date
-        credit_data['interestRate'] = 9.5
+        credit_data['interestRate'] = self.interestRate
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '1'  # 固定传1-取现
@@ -243,10 +219,9 @@ class XiaoXBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=9.5, **kwargs):
+    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        @param rate: 支用利率
         @param loan_date: 放款时间，默认当前时间 eg:2022-01-01
         @param thirdApplyId: 三方申请号，与授信申请号一致
         @param loanAmt: 支用申请金额, 默认1000 单位元
@@ -284,7 +259,7 @@ class XiaoXBizImpl(MysqlInit):
 
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
-        applyLoan_data['interestRate'] = rate
+        applyLoan_data['interestRate'] = self.interestRate
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
@@ -297,8 +272,8 @@ class XiaoXBizImpl(MysqlInit):
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
 
         # 还款计划
-        applyLoan_data['repaymentPlans'] = OldSysLoanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
-                                                              yearRate=rate, term=loanTerm)
+        applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
+                                                                   yearRate=self.interestRate, term=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -776,5 +751,4 @@ class XiaoXBizImpl(MysqlInit):
 
 
 if __name__ == '__main__':
-    s = OldSysLoanByAvgAmt(billDate='2022-12-20', loanAmt=12300, yearRate=9.5, term=3)
-    print(json.dumps(s))
+    pass
