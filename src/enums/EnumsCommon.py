@@ -39,6 +39,8 @@ class ProductIdEnum(Enum):
     HAIR_DISCOUNT = 'G23E041'
     HAIR = 'G23E042'
     WEICAI = 'G23E051'
+    JIKE = 'G22E021'
+    XIAOX = 'G23E011'
 
 
 class EnumProductYearRate(Enum):

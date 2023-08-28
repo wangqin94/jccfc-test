@@ -2,7 +2,7 @@ import unittest
 import warnings
 
 import time
-from src.impl.common.YinLiuCreateFileBizImpl import YinLiuRepayFile
+from src.impl.public.YinLiuCreateFileBizImpl import YinLiuRepayFile
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_case.XiaoX.person import data
 

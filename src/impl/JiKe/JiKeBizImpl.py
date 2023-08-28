@@ -4,7 +4,6 @@
 # ------------------------------------------
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
-from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import JiKe
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
@@ -155,7 +154,7 @@ class JiKeBizImpl(MysqlInit):
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
-        self.interestRate = 9.0
+        self.interestRate = getInterestRate(ProductIdEnum.JIKE.value)
 
         # 初始化payload变量
         self.active_payload = {}

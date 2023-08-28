@@ -5,7 +5,6 @@
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
-from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import weicai
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
@@ -468,7 +467,7 @@ class WeiCaiBizImpl(MysqlInit):
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days = '0' ORDER BY 'current_num'".format(
                 loanInvoiceId)
             currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm else 0  # 宽限期利息
+            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm and currentTerm['current_num'] != repayTerm else 0  # 宽限期利息
             repay_apply_data["repayInterest"] = round(repay_apply_data["repayInterest"] + currentTermInterest, 2)  # 总利息
             self.log.demsg("宽限期利息：{}".format(repay_apply_data["repayInterest"]))
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
