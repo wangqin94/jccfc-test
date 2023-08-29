@@ -73,6 +73,9 @@ class MyTestCase(unittest.TestCase):
         loanPublicBizImpl = LoanPublicBizImpl()
         loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.thirdApplyId, loanDate=self.loan_date)
 
+        # 关闭放款mock
+        loanPublicBizImpl.updateLoanDateMock(flag=False)
+
 
 if __name__ == '__main__':
     unittest.main()
