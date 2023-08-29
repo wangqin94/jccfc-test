@@ -178,6 +178,11 @@ JiKe = {
                         "fileType": "16",  # 学信网截图
                         "fileUrl": "xdgl/jike/test/test.jpg",
                         "fileName": "test.jpg"
+                    },
+                    {
+                        "fileType": "17",  # 人脸识别查询授权书
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     }
                 ],
                 "authenticationInfo": {

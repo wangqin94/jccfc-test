@@ -5,7 +5,6 @@
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
-from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import Hair
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
@@ -33,7 +32,7 @@ class HairBizImpl(MysqlInit):
         # 初始化产品、商户、门店号
         self.productId = productId if productId else ProductIdEnum.HAIR_DISCOUNT.value
         self.merchantId = EnumMerchantId.HAIR.value
-        self.interestRate = self.getInterestRate()
+        self.interestRate = getInterestRate(self.productId)
         self.storeCode = 'NHairStore'  # 需保证测试环境有此storeCode门店
 
         # 初始化payload变量
@@ -41,16 +40,6 @@ class HairBizImpl(MysqlInit):
 
         self.encrypt_url = self.host + self.cfg['encrypt']['interface'].format(self.merchantId)
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
-
-    def getInterestRate(self):
-        # 根据输入产品编号获取对应产品年利率
-        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            interestRate = EnumProductYearRate.HAIR_DISCOUNT.value
-        elif self.productId == ProductIdEnum.HAIR.value:
-            interestRate = EnumProductYearRate.HAIR.value
-        else:
-            raise Exception('产品编号输入错误：{}'.format(self.productId))
-        return interestRate
 
     def getRepayPlan(self, billDate, loanAmt, yearRate, term):
         # 根据输入产品编号获取对应产品年利率
@@ -504,8 +493,8 @@ class HairBizImpl(MysqlInit):
             # 非贴息产品应收当期利息+宽限期期次利息， 贴息产品应收当前期利息
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days = '0' ORDER BY 'current_num'".format(
                 loanInvoiceId)
-            currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
-            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm else 0  # 宽限期利息
+            currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
+            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm and currentTerm['current_num'] != repayTerm else 0  # 宽限期利息
             repay_apply_data["repayInterest"] = round(repay_apply_data["repayInterest"] + currentTermInterest, 2)  # 总利息
             # 贴息产品，账单日贴息已入账，只出当前期利息
             if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:

@@ -1,4 +1,3 @@
-import random
 import unittest
 import warnings
 
@@ -8,11 +7,9 @@ import time
 
 from src.enums.EnumsCommon import *
 from src.impl.common.CheckBizImpl import CheckBizImpl
-from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.impl.weicai.WeiCaiBizImpl import WeiCaiBizImpl
 from src.impl.weicai.WeiCaiCheckBizImpl import WeiCaiCheckBizImpl
 from src.impl.public.LoanPublicBizImpl import LoanPublicBizImpl
-from src.test_case.weicai.person import data
 from utils.JobCenter import JOB
 from utils.Logger import MyLog
 from utils.Models import get_base_data
@@ -35,13 +32,13 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_apply(self, loan_date='2023-07-19'):
+    def test_apply(self, loan_date='2023-02-01'):
         """ 测试步骤 """
         # 绑卡签约
         wc = WeiCaiBizImpl(data=self.data)
         wc.sharedWithholdingAgreement()
 
-        term = 6
+        term = 3
         # amount = random.randrange(1000, 2000, 100)
         amount = 1000
 
@@ -74,10 +71,14 @@ class MyTestCase(unittest.TestCase):
         # 更新放款时间
         loanPublicBizImpl = LoanPublicBizImpl()
         loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.thirdApplyId, loanDate=self.loan_date)
+
+        # 关闭放款mock
+        loanPublicBizImpl.updateLoanDateMock(flag=False)
+
         # 同步保费
         wc = WeiCaiBizImpl(data=self.data)
-        credit_loan_invoice = wc.MysqlBizImpl.get_credit_database_info('credit_apply_guarantee_merchant',third_apply_id=self.thirdApplyId)
-        wc.syncGuaranteePlan( loanInvoiceId=credit_loan_invoice['loan_invoice_id'], guaranteeAmt=10)
+        credit_loan_invoice = wc.MysqlBizImpl.get_credit_database_info('credit_apply_guarantee_merchant', third_apply_id=self.thirdApplyId)
+        wc.syncGuaranteePlan(loanInvoiceId=credit_loan_invoice['loan_invoice_id'], guaranteeAmt=10)
 
 
 if __name__ == '__main__':

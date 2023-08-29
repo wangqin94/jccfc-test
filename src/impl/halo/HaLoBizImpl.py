@@ -2,14 +2,15 @@
 # ------------------------------------------
 # 哈喽接口数据封装类
 # ------------------------------------------
+from dateutil.parser import parse
+
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
+from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import HaLo
-from src.impl.common.CommonBizImpl import *
-from utils.FileHandle import Files
 from utils.Apollo import Apollo
-from dateutil.parser import parse
+from utils.FileHandle import Files
 
 
 def computeMD5(message):
@@ -53,6 +54,7 @@ class HaLoBizImpl(MysqlInit):
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
+        self.interestRate = getInterestRate(ProductIdEnum.HALO.value)
 
         # 初始化产品
         self.merchantId = merchantId if merchantId else EnumMerchantId.HALO.value
@@ -154,7 +156,7 @@ class HaLoBizImpl(MysqlInit):
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
         credit_data['thirdApplyTime'] = self.date
-        credit_data['interestRate'] = 9.5
+        credit_data['interestRate'] = self.interestRate
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '1'  # 固定传1-取现
@@ -221,10 +223,9 @@ class HaLoBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, rate=9.5, **kwargs):
+    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
-        @param rate: 支用利率
         @param loan_date: 放款时间，默认当前时间 eg:2022-01-01
         @param thirdApplyId: 三方申请号，与授信申请号一致
         @param loanAmt: 支用申请金额, 默认1000 单位元
@@ -262,7 +263,7 @@ class HaLoBizImpl(MysqlInit):
 
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
-        applyLoan_data['interestRate'] = rate
+        applyLoan_data['interestRate'] = self.interestRate
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
@@ -276,7 +277,7 @@ class HaLoBizImpl(MysqlInit):
 
         # 还款计划
         applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
-                                                                   yearRate=rate, term=loanTerm)
+                                                                   yearRate=self.interestRate, term=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)

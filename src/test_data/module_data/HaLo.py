@@ -173,6 +173,16 @@ HaLo = {
                         "fileType": "10",
                         "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
+                    },
+                    {
+                        "fileType": "16",  # 学信网截图
+                        "fileUrl": "xdgl/jike/test/test.jpg",
+                        "fileName": "test.jpg"
+                    },
+                    {
+                        "fileType": "17",  # 人脸识别查询授权书
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     }
                 ],
                 "authenticationInfo": {
