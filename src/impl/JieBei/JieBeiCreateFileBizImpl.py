@@ -28,7 +28,7 @@ class creditFile(EnvInit):
 
 
     # 银河授信文件
-    def start_creditFile(self, apply_type='ADMIT_APPLY', creditAmt='1000000', creditRate='0.00060'):
+    def start_creditFile(self, apply_type='ADMIT_APPLY', creditAmt='5000000', creditRate='0.00060'):
         if apply_type == 'ADMIT_APPLY':
             applyNo = self.creditNo
         else:
