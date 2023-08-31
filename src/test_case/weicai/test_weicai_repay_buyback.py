@@ -33,7 +33,7 @@ class MyTestCase(unittest.TestCase):
         time.sleep(3)
 
         # 自动入账
-        # self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
+        self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
         # 输入指定借据号
         # self.repayRes = json.loads(HaLo.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId="").get('body'))  # 按期还款
 
