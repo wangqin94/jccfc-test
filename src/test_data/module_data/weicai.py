@@ -333,6 +333,8 @@ weicai = {
                 "thirdRepayTime": "",  # 线下还款、支付宝还款必传，客户实际还款时间
                 "thirdRepayAccountType": "中国工商银行",  # 线下还款、支付宝还款必传，银行卡还款传开户行名称，微信、支付宝还款传支付平台名称，如：微信、支付宝、中国工商银行 等；
                 "repaymentAccountNo": "6",  # 还款账号 线上还款、线下还款、支付宝还款必传
+                "repaymentAccountName": "",  # 还款账号户名 线上还款必传
+                "repaymentAccountPhone": "",  # 还款账号银行预留手机号 线上还款必传
                 "repayType": "1",  # 还款类型 EnumTrialRepayType
                 "repayNum": 1,  # 期数 前结清，将各期金额合并，期数传开始期次
                 "repayAmount": 0,  # 资还款总金额

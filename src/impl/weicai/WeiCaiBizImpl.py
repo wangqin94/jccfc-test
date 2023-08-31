@@ -505,6 +505,8 @@ class WeiCaiBizImpl(MysqlInit):
         # 线上还款
         if repay_scene == '01':
             repay_apply_data['repaymentAccountNo'] = self.data['bankid']
+            repay_apply_data['repaymentAccountName'] = self.data['name']
+            repay_apply_data['repaymentAccountPhone'] = self.data['telephone']
         # 线下还款、逾期还款
         if repay_scene == '02' or '05':
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings

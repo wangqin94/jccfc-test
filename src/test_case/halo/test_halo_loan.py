@@ -29,6 +29,7 @@ class MyTestCase(unittest.TestCase):
         self.log = MyLog.get_log()
         self.job = JOB()
         self.CheckBizImpl = CheckBizImpl()
+        self.loanPublicBizImpl = LoanPublicBizImpl()
         self.HaLoCheckBizImpl = HaLoCheckBizImpl(merchantId=None, data=self.data)
 
     """ 测试步骤 """
@@ -59,9 +60,6 @@ class MyTestCase(unittest.TestCase):
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
         HaLo.applyLoan(loan_date=loan_date, loanAmt=amount, loanTerm=term, thirdApplyId=self.thirdApplyId)
 
-    """ 后置条件处理 """
-
-    def tearDown(self):
         # 数据库陈校验授信结果是否符合预期
         self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.ON_USE.value,
                                                               thirdpart_apply_id=self.thirdApplyId)
@@ -70,11 +68,13 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(YinLiuApiLoanStatusEnum.SUCCESS.value, status, '支用失败')
 
         # 更新放款时间
-        loanPublicBizImpl = LoanPublicBizImpl()
-        loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.thirdApplyId, loanDate=self.loan_date)
+        self.loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.thirdApplyId, loanDate=self.loan_date)
 
+    """ 后置条件处理 """
+
+    def tearDown(self):
         # 关闭放款mock
-        loanPublicBizImpl.updateLoanDateMock(flag=False)
+        self.loanPublicBizImpl.updateLoanDateMock(flag=False)
 
 
 if __name__ == '__main__':
