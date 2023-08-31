@@ -341,11 +341,11 @@ class WeiCaiBizImpl(MysqlInit):
         credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
         term = credit_loan_invoice['installment_num']
         guaranteePlans = []
-        for period in range(1, term + 1):
+        for period in range(1, term+2):
             guaranteePlan = {"period": period, "guaranteeAmt": guaranteeAmt}
             guaranteePlans.append(guaranteePlan)
+        # guaranteePlans[2]["period"] = 3
         syncGuaranteePlan['guaranteePlans'] = guaranteePlans
-
         # 更新 payload 字段值
         syncGuaranteePlan.update(kwargs)
         parser = DataUpdate(self.cfg['syncGuaranteePlan']['payload'], **syncGuaranteePlan)
@@ -415,10 +415,10 @@ class WeiCaiBizImpl(MysqlInit):
         repay_apply_data['requestTime'] = self.date
         repay_apply_data['merchantId'] = self.merchantId
         # body
+        repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
         repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
-        repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayType'] = repay_type
         if repayTerm:
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
