@@ -1,3 +1,4 @@
+import random
 import unittest
 import warnings
 
@@ -10,6 +11,7 @@ from src.impl.common.CheckBizImpl import CheckBizImpl
 from src.impl.weicai.WeiCaiBizImpl import WeiCaiBizImpl
 from src.impl.weicai.WeiCaiCheckBizImpl import WeiCaiCheckBizImpl
 from src.impl.public.LoanPublicBizImpl import LoanPublicBizImpl
+from src.test_case.weicai.person import *
 from utils.JobCenter import JOB
 from utils.Logger import MyLog
 from utils.Models import get_base_data
@@ -32,13 +34,14 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_apply(self, loan_date='2023-02-01'):
+    def test_apply(self, loan_date='2023-08-22'):
         """ 测试步骤 """
-        # 绑卡签约
-        wc = WeiCaiBizImpl(data=self.data)
-        wc.sharedWithholdingAgreement()
 
-        term = 3
+        wc = WeiCaiBizImpl(data=self.data)
+        # 绑卡签约
+        # wc.sharedWithholdingAgreement()
+
+        term = 6
         # amount = random.randrange(1000, 2000, 100)
         amount = 1000
 
