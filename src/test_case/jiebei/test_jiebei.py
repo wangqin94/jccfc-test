@@ -18,7 +18,7 @@ class TestCase(object):
         pass
 
     # # [0: 特征取数接口（2次）  1:初审数据准备 2:复审数据准备（多次调用） 3.授信通知接口 4.结清证明开具]
-    def process(self, flag=1):
+    def process(self, flag=2):
         """ 测试步骤 """
         # 特征取数接口  初审："featureCodes":["jc_cs_result","jc_cs_failCode","jc_cs_failReason"]
         # 复审："featureCodes":["jc_fs_result","jc_fs_failCode","jc_fs_failReason","jc_fs_pbocBlankAccLevel"]   ........
@@ -26,7 +26,7 @@ class TestCase(object):
         # 提额："featureCodes":["jc_limit_up_result","jc_limit_up_failCode","jc_limit_up_failReason"]
         # 降额："featureCodes":["jc_limit_down_result","jc_limit_down_failCode","jc_limit_down_failReason"]
         if flag == 0:
-            jb = JieBeiBizImpl(data=None)
+            jb = JieBeiBizImpl(data=data)
             jb.feature(bizActionType='LOAN_DECISION',
                        featureCodes=["jc_loan_result", "jc_loan_failCode", "jc_loan_failReason"])
 
@@ -38,14 +38,14 @@ class TestCase(object):
         # 复审数据准备 applyType:#授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY
         elif flag == 2:
             jb = JieBeiBizImpl(data=data)
-            jb.datapreFs(applyType='ADMIT_APPLY')
+            jb.datapreFs(applyType='ADMIT_APPLY', creditAmt='5000000')
 
         # 授信通知接口
         # ADMIT_APPLY 授信申请 LOAN_APPLY 支用申请 ADJUST_AMT_APPLY 提额申请 DECREASE_AMT_APPLY 降额申请
         # ADJUST_RATE_APPLY 提价申请 DECREASE_RATE_APPLY 降价
         elif flag == 3:
             jb = JieBeiBizImpl(data=data)
-            jb.creditNotice(bizType='ADMIT_APPLY', creditAmt=5000000, agreeFlag='N')
+            jb.creditNotice(bizType='ADMIT_APPLY', creditAmt='5000000', agreeFlag='Y')
 
         elif flag == 5:
             c = '浙江省杭州市⻄湖区学院路128号A1座12'.encode()

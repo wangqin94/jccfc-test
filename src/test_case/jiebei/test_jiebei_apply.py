@@ -13,22 +13,29 @@ class MyTestCase(unittest.TestCase):
         self.job = JOB()
 
     """ 测试步骤 """
-    def test_apply(self):
-        jb = JieBeiCheckBizImpl(data=None)
-        jb_apply_file = creditFile(data=jb.data)
-        # 初审
-        jb.datapreCs()
+    def test_apply(self, applyType='ADMIT_APPLY', creditAmt='1500000'):
+        """
+        授信或调额流程
+        :param applyType: #授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY
+        :param creditAmt: 授信额度，或调整后的额度，单位分
+        :return:
+        """
+        jb = JieBeiCheckBizImpl(data=data)
         self.applyNo = jb.data['applyno']
-        # 检查初审结果
-        jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
+        if applyType == 'ADMIT_APPLY':
+            # 初审
+            jb.datapreCs()
+            # 检查初审结果
+            jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
         # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客
-        jb.datapreFs(applyType='ADMIT_APPLY', tc_NoSource_ToPlatformOne='Y')
+        jb.datapreFs(applyType=applyType, creditAmt=creditAmt, tc_NoSource_ToPlatformOne='Y')
         # 检查复审结果
         jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)
         # 授信通知
-        jb.creditNotice(bizType='ADMIT_APPLY', creditAmt=5000000)
+        jb.creditNotice(bizType=applyType, creditAmt=creditAmt)
         # 创建授信文件
-        jb_apply_file.start_creditFile()
+        jb_apply_file = creditFile(data=jb.data)
+        jb_apply_file.start_creditFile(apply_type=applyType, creditAmt=creditAmt)
         # 处理授信对账文件
         self.job.update_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB')
