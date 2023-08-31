@@ -208,13 +208,13 @@ class YinLiuRepayFile(EnvInit):
         buyBackTemple['loan_period'] = creditLoanInvoiceInfo['installment_num']
         buyBackTemple['loan_amt'] = creditLoanInvoiceInfo['loan_amount']
         buyBackTemple['loan_date'] = str(creditLoanInvoiceInfo['loan_pay_time']).split()[0].replace('-', '')
-        buyBackTemple['repay_amt'] = str(asset_repay_plan["left_repay_amount"])  # 总金额
+        buyBackTemple['repay_amt'] = str(asset_repay_plan["left_repay_principal"])  # 总金额
         buyBackTemple['paid_prin_amt'] = str(asset_repay_plan["left_repay_principal"])  # 本金
-        buyBackTemple['paid_int_amt'] = str(asset_repay_plan["left_repay_interest"])  # 利息
+        buyBackTemple['paid_int_amt'] = 0  # 利息
         buyBackTemple['left_repay_amt'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
         return buyBackTemple
 
-    # 回购文件内容
+    # 贴息文件内容
     def creditDisInterestData(self):
         """
         @return: 融担模式贴息对账文件数据-通用模板
@@ -309,13 +309,19 @@ class YinLiuRepayFile(EnvInit):
         # 依次写入回购所有期次还款数据
         termNo = int(self.repayTermNo)
         while int(totalTerm) >= termNo:
-            creditBuyBackData = self.creditBuyBackData(termNo)
-            # 获取罚息
+            # 获取当期还款计划
             creditLoanInvoiceInfo = self.getInvoiceInfo()
             loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
+            creditBuyBackData = self.creditBuyBackData(termNo)
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
                                                                          loan_invoice_id=loanInvoiceId,
                                                                          current_num=self.repayTermNo)
+            # 获取回购当期已计提利息
+            if termNo == int(self.repayTermNo):
+                days = get_day(asset_repay_plan['start_date'], self.repayDate)
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['paid_prin_amt'])
+                creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
+            # 获取罚息
             creditBuyBackData['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
             payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
             # 开始写入文件内容

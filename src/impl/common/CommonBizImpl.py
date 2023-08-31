@@ -99,5 +99,48 @@ def getInterestRate(productId):
         raise err
 
 
+# 根据输入产品编号获取对应产品年利率
+def getInterestRate(productId):
+    """
+    @param productId: 产品ID
+    @return: 产品年利率：interest_fixed_rate
+    """
+
+    try:
+        product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
+                                                                      product_id=productId,
+                                                                      param_key='interest_fixed_rate')
+        if product_product_param:
+            interestRate = product_product_param['param_value']
+            return interestRate
+        else:
+            raise AssertionError("产品配置表年利率参数为空")
+    except Exception as err:
+        raise err
+
+
+# 计算当月计提利息
+def getDailyAccrueInterest(productId, days, leftAmt):
+    """
+    @param leftAmt: 当期剩余应还本金
+    @param days: 计提天数
+    @param productId: 产品ID
+    @return: 当月计提利息
+    """
+    try:
+        # 年基准天数
+        product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
+                                                                      product_id=productId,
+                                                                      param_key='days_per_year')
+        if product_product_param:
+            daysPerYear = product_product_param['param_value']
+            dailyAccrueInterest = float(leftAmt) * (float(getInterestRate(productId)) / float(daysPerYear)/100) * days
+            return round(dailyAccrueInterest, 2)
+        else:
+            raise AssertionError("产品配置表年基准天数参数为空")
+    except Exception as err:
+        raise err
+
+
 if __name__ == '__main__':
     print(getInterestRate(ProductIdEnum.HALO.value))
