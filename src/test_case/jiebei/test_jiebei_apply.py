@@ -13,14 +13,14 @@ class MyTestCase(unittest.TestCase):
         self.job = JOB()
 
     """ 测试步骤 """
-    def test_apply(self, applyType='ADMIT_APPLY', creditAmt='5000000'):
+    def test_apply(self, data=None, applyType='ADMIT_APPLY', creditAmt='6000000'):
         """
         授信或调额流程
         :param applyType: #授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY
         :param creditAmt: 授信额度，或调整后的额度，单位分
         :return:
         """
-        jb = JieBeiCheckBizImpl(data=None)
+        jb = JieBeiCheckBizImpl(data=data)
         self.applyNo = jb.data['applyno']
         if applyType == 'ADMIT_APPLY':
             # 初审
@@ -28,10 +28,17 @@ class MyTestCase(unittest.TestCase):
             # 检查初审结果
             jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
         applyNo = "amtNo" + str(int(round(time.time() * 1000)))
-        # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客
+        # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客  applyNo：调额申请号
         jb.datapreFs(applyType=applyType, creditAmt=creditAmt, applyNo=applyNo, tc_NoSource_ToPlatformOne='Y')
-        # 检查复审结果
-        jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)
+        if applyType == 'ADMIT_APPLY':
+            # 检查复审结果
+            jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)
+        elif applyType == 'ADJUST_AMT_APPLY':
+            # 检查升额复审结果
+            jb.jiebei_check_feature_detail('jc_limit_up_result', applyNo)
+        elif applyType == 'DECREASE_AMT_APPLY':
+            # 检查降额复审结果
+            jb.jiebei_check_feature_detail('jc_limit_down_result', applyNo)
         # 授信通知
         jb.creditNotice(bizType=applyType, creditAmt=creditAmt)
         # 创建授信文件
