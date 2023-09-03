@@ -68,7 +68,7 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def datapreFs(self, applyType, **kwargs):
+    def datapreFs(self, applyType, creditAmt='2000000', creditRate='0.00060', applyNo=None, **kwargs):
         datapreFs_data = dict()
         #
         datapreFs_data['name'] = self.data['name']
@@ -76,10 +76,13 @@ class JieBeiBizImpl(EnvInit):
         datapreFs_data['mobileNo'] = self.data['telephone']
         datapreFs_data['cardNo'] = self.data['bankid']
         datapreFs_data['applyType'] = applyType
+        datapreFs_data['suggestAmtMax'] = creditAmt
+        datapreFs_data['suggestAmtMin'] = creditAmt
+        datapreFs_data['suggestRateMax'] = creditRate
+        datapreFs_data['suggestRateMax'] = creditRate
 
         if applyType == 'ADJUST_AMT_APPLY' or applyType == 'DECREASE_AMT_APPLY':
-            datapreFs_data['applyNo'] = "amtNo" + str(int(round(time.time() * 1000)))
-            # datapreFs_data['applyNo'] = "amtNo1678695062765"
+            datapreFs_data['applyNo'] = applyNo if applyNo else "amtNo" + str(int(round(time.time() * 1000)))
         else:
             datapreFs_data['applyNo'] = self.data['applyno']
 
