@@ -21,7 +21,7 @@ _readconfig = ReadConfig.Config()
 
 
 def getApolloEnv(env):
-    hj = ['hsit', 'huat', 'hdev', 'hqas', 'hpre']
+    hj = ['hsit', 'huat', 'hdev', 'hqas', 'hpre', 'hpet', 'hyear']
     credit = ['uat', 'rts', 'dev', 'sit', 'year']
     # apolloEnv = None
     try:

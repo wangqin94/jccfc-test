@@ -87,9 +87,14 @@ def getInterestRate(productId):
     """
 
     try:
-        product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
-                                                                      product_id=productId,
-                                                                      param_key='interest_fixed_rate')
+        if productId == ProductIdEnum.HAIR_DISCOUNT.value:
+            product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
+                                                                          product_id=productId,
+                                                                          param_key='discount_interest_rate')
+        else:
+            product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
+                                                                          product_id=productId,
+                                                                          param_key='interest_fixed_rate')
         if product_product_param:
             interestRate = product_product_param['param_value']
             return float(interestRate)
@@ -114,7 +119,7 @@ def getDailyAccrueInterest(productId, days, leftAmt):
                                                                       param_key='days_per_year')
         if product_product_param:
             daysPerYear = product_product_param['param_value']
-            dailyAccrueInterest = float(leftAmt) * (getInterestRate(productId) / float(daysPerYear)/100) * days
+            dailyAccrueInterest = float(leftAmt) * (getInterestRate(productId) / float(daysPerYear) / 100) * days
             return round(dailyAccrueInterest, 2)
         else:
             raise AssertionError("产品配置表年基准天数参数为空")

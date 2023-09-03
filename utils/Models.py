@@ -106,7 +106,7 @@ def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
         f.write('\n')
         f.write('data = {}  # {}'.format(str(data), env))
     _log.demsg('当前测试环境: {}'.format(TEST_ENV_INFO))
-    _log.info('用户四要素信息: {}'.format(data))
+    _log.info('随机生成用户四要素信息: {}'.format(data))
     return data
 
 
@@ -143,7 +143,7 @@ def get_base_data_temp(*project, age=None, bankName=None, **kwargs):
         for key, value in kwargs.items():
             data[key] = str(value)
     _log.demsg('当前测试环境: {}'.format(TEST_ENV_INFO))
-    _log.info('用户四要素信息: {}'.format(data))
+    _log.info('随机生成用户四要素信息: {}'.format(data))
     return data
 
 
