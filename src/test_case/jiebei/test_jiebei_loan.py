@@ -24,10 +24,11 @@ class MyTestCase(unittest.TestCase):
         """
         # flag: 0-授信支用全流程，1-仅支用
         flag = 0
-        # 支用申请号，为空，默认loanNo替换授信编号中的applyno，注意：第二笔支用需手工填写
-        apply_no = ''
-        # 放款合约号，为空，默认contract_no替换授信编号中的applyno，注意：第二笔支用需手工填写
-        contract_no = ''
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        # 支用申请号
+        apply_no = 'loanNo' + strings
+        # 放款合约号
+        contract_no = 'contract_no' + strings
         jb = JieBeiCheckBizImpl(data=data)
         jb_apply_file = creditFile(data=jb.data)
         jb_loanapply_file = loanApplyFile(data=jb.data, apply_no=apply_no)

@@ -13,7 +13,7 @@ class MyTestCase(unittest.TestCase):
         self.job = JOB()
 
     """ 测试步骤 """
-    def test_apply(self, data=None, applyType='ADMIT_APPLY', creditAmt='6000000'):
+    def test_apply(self, data=None, applyType='ADMIT_APPLY', creditAmt='5000000'):
         """
         授信或调额流程
         :param applyType: #授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY
@@ -21,37 +21,40 @@ class MyTestCase(unittest.TestCase):
         :return:
         """
         jb = JieBeiCheckBizImpl(data=data)
-        self.applyNo = jb.data['applyno']
         if applyType == 'ADMIT_APPLY':
+            self.applyNo = jb.data['applyno']
             # 初审
             jb.datapreCs()
             # 检查初审结果
             jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
-        applyNo = "amtNo" + str(int(round(time.time() * 1000)))
+        else:
+            self.applyNo = "amtNo" + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客  applyNo：调额申请号
-        jb.datapreFs(applyType=applyType, creditAmt=creditAmt, applyNo=applyNo, tc_NoSource_ToPlatformOne='Y')
+        jb.datapreFs(applyType=applyType, creditAmt=creditAmt, applyNo=self.applyNo, tc_NoSource_ToPlatformOne='Y')
         if applyType == 'ADMIT_APPLY':
             # 检查复审结果
             jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)
         elif applyType == 'ADJUST_AMT_APPLY':
             # 检查升额复审结果
-            jb.jiebei_check_feature_detail('jc_limit_up_result', applyNo)
+            jb.jiebei_check_feature_detail('jc_limit_up_result', self.applyNo)
         elif applyType == 'DECREASE_AMT_APPLY':
             # 检查降额复审结果
-            jb.jiebei_check_feature_detail('jc_limit_down_result', applyNo)
+            jb.jiebei_check_feature_detail('jc_limit_down_result', self.applyNo)
         # 授信通知
-        jb.creditNotice(bizType=applyType, creditAmt=creditAmt)
+        jb.creditNotice(bizType=applyType, applyNo=self.applyNo, creditAmt=creditAmt)
         # 创建授信文件
         jb_apply_file = creditFile(data=jb.data)
-        jb_apply_file.start_creditFile(apply_type=applyType, creditAmt=creditAmt, applyNo=applyNo)
+        jb_apply_file.start_creditFile(apply_type=applyType, creditAmt=creditAmt, applyNo=self.applyNo)
         # 处理授信对账文件
         self.job.update_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB')
+        if applyType == 'ADMIT_APPLY':
+            # 检查授信状态
+            self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.applyNo)
 
     """ 后置条件处理 """
     def tearDown(self):
-        # 检查授信状态
-        self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.applyNo)
+        pass
 
 
 if __name__ == '__main__':
