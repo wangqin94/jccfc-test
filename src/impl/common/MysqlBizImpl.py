@@ -317,7 +317,7 @@ class MysqlBizImpl(MysqlInit):
 
     def update_channel_database_info(self, table, attr, **kwargs):
         """
-        更新op-channel数据库结构
+        更新op-channel数据库数据
         @param table: 更新表
         @param attr: 更新条件 tuple
         @param kwargs: 更新值，字典类型
@@ -326,6 +326,39 @@ class MysqlBizImpl(MysqlInit):
         sql = update_sql_qurey_str(table, self.op_channel_database_name, attr=attr, **kwargs)
         self.mysql_op_channel.update(sql)
         self.log.info("sql：更新成功 [{}]".format(sql))
+
+    def insert_channel_database_info(self, table, **kwargs):
+        """
+        插入数据到op-channel数据库
+        :param table: 表
+        :param kwargs: 数据
+        :return:
+        """
+        self.mysql_op_channel.insert(table,**kwargs)
+
+
+    def delete_channel_database_info(self,table,**kwargs):
+        """
+        删除op-channel数据库 数据
+        :param table: 删除指定表
+        :param kwargs: 条件
+        :return: None
+        """
+        sql = delete_sql_qurey_str(table,self.op_channel_database_name,**kwargs)
+        self.mysql_op_channel.delete(sql)
+
+
+    def select_channel_database_info(self, table, *args, **kwargs):
+        """
+        查询op-channel数据库 数据
+        :param table: 查询表
+        :param args: 查询数据
+        :param kwargs: 条件
+        :return: 满足条件数据条数
+        """
+        sql = get_sql_qurey_str(table, *args, db=self.op_channel_database_name, **kwargs)
+        self.log.info(sql)
+        return len(self.mysql_op_channel.select(sql))
 
     def delete_asset_database_info(self, table, **kwargs):
         """
