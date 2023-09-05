@@ -99,15 +99,15 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def creditNotice(self, bizType, **kwargs):
+    def creditNotice(self, bizType, applyNo=None, **kwargs):
         creditNotice_data = dict()
 
         creditNotice_data['name'] = self.data['name']
         creditNotice_data['certNo'] = self.data['cer_no']
         creditNotice_data['mobile'] = self.data['telephone']
         creditNotice_data['timestamp'] = int(time.time() * 1000)
-        creditNotice_data['applyNo'] = self.data['applyno']
         creditNotice_data['bizType'] = bizType
+        creditNotice_data['applyNo'] = applyNo if applyNo else self.data['applyno']
 
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)
