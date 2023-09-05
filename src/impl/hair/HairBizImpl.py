@@ -188,6 +188,7 @@ class HairBizImpl(MysqlInit):
                                                            second_loan_amount='0.0000', total_loan_amount='0.0000',
                                                            first_balance='15900.0000', second_balance='0.0000'
                                                            , total_balance='521000.0000', business_date=date, status=0)
+
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         credit_data = dict()
