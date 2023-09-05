@@ -1,12 +1,11 @@
 
-import os
-import time, datetime
+import datetime
 
-from config.TestEnvInfo import TEST_ENV_INFO
 from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import ProductEnum
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from utils.Logger import Logs
+from utils.Models import *
 
 _log = Logs()
 _ProjectPath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
@@ -24,7 +23,7 @@ class creditFile(EnvInit):
         self.creditNo = data['applyno']
         self.businessDate = time.strftime('%Y%m%d', time.localtime())
         self.applyDate = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-        self.expireDate = (datetime.datetime.now() + datetime.timedelta(days=31)).strftime('%Y-%m-%d 00:00:00')
+        self.expireDate = (datetime.now() + datetimes.timedelta(days=31)).strftime('%Y-%m-%d 00:00:00')
 
     # 银河授信文件
     def start_creditFile(self, apply_type='ADMIT_APPLY', creditAmt='5000000', creditRate='0.00060', applyNo=None):
@@ -55,15 +54,18 @@ class creditFile(EnvInit):
         self.MysqlBizImpl.mysql_op_channel.update(sql)
 
 class loanApplyFile(EnvInit):
-    def __init__(self, data, apply_no=None):
+    def __init__(self, data):
         super(loanApplyFile, self).__init__()
         self.MysqlBizImpl = MysqlBizImpl()
-
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        self.apply_no = 'loanNo' + strings
+        data['loanNo'] = self.apply_no
+        update_user_info(newData=data)
+        self.data = data
         self.name = data['name']
         self.certNo = data['cer_no']
         self.telephone = data['telephone']
         self.creditNo = data['applyno']
-        self.apply_no = apply_no if apply_no else data['applyno'].replace('applyno', 'loanNo')
         self.businessDate = time.strftime('%Y%m%d', time.localtime())
         self.applyDate = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
@@ -78,7 +80,7 @@ class loanApplyFile(EnvInit):
         self.MysqlBizImpl.mysql_op_channel.update(sql)
 
 class loandetailFile(EnvInit):
-    def __init__(self, data, contract_no=None, apply_no=None):
+    def __init__(self, data):
         super(loandetailFile, self).__init__()
         self.MysqlBizImpl = MysqlBizImpl()
 
@@ -86,11 +88,11 @@ class loandetailFile(EnvInit):
         self.certNo = data['cer_no']
         self.telephone = data['telephone']
         self.creditNo = data['applyno']
-        self.contract_no = contract_no if contract_no else data['applyno'].replace('applyno', 'contract_no')
-        self.apply_no = apply_no if apply_no else data['applyno'].replace('applyno', 'loanNo')
+        self.contract_no = data['loanNo'].replace('loanNo', 'contract_no')
+        self.apply_no = data['loanNo']
         self.businessDate = time.strftime('%Y%m%d', time.localtime())
-        self.endDate = datetime.datetime.now().strftime('%Y%m%d')
-        self.repayDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.endDate = datetime.now().strftime('%Y%m%d')
+        self.repayDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.applyDate = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         self.seqNo = "seqNo" + str(int(round(time.time() * 100000000000)))
 

@@ -24,15 +24,10 @@ class MyTestCase(unittest.TestCase):
         """
         # flag: 0-授信支用全流程，1-仅支用
         flag = 0
-        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        # 支用申请号
-        apply_no = 'loanNo' + strings
-        # 放款合约号
-        contract_no = 'contract_no' + strings
         jb = JieBeiCheckBizImpl(data=data)
         jb_apply_file = creditFile(data=jb.data)
-        jb_loanapply_file = loanApplyFile(data=jb.data, apply_no=apply_no)
-        jb_loandetail_file = loandetailFile(data=jb.data, contract_no=contract_no, apply_no=apply_no)
+        jb_loanapply_file = loanApplyFile(data=jb.data)
+        jb_loandetail_file = loandetailFile(data=jb_loanapply_file.data)
         self.third_loan_no = jb_loandetail_file.contract_no
         if flag == 0:
             # 初审
@@ -62,9 +57,9 @@ class MyTestCase(unittest.TestCase):
         # 创建放款合约+分期
         jb_loandetail_file.start_loandetailFile(loanAmt=loanAmt)
         # 删除保存待放款redis
-        self.redis.del_key('000:OBJ:SAVE_THIRD_LOAN:{}'.format(datetime.datetime.now().strftime('%Y%m%d')))
+        self.redis.del_key('000:OBJ:SAVE_THIRD_LOAN:{}'.format(datetime.now().strftime('%Y%m%d')))
         # 创建放款失败+在途处理完成redis
-        self.redis.add_key('000:OBJ:PUSH_LOAN_TO_ASSET:{}'.format(datetime.datetime.now().strftime('%Y%m%d')))
+        self.redis.add_key('000:OBJ:PUSH_LOAN_TO_ASSET:{}'.format(datetime.now().strftime('%Y%m%d')))
         # 执行放款登记入库
         self.job.update_job('借呗step5-借呗放款登记入线下待放款表任务流(轮询)', group=13, executeBizDateType='TODAY')
         self.job.trigger_job('借呗step5-借呗放款登记入线下待放款表任务流(轮询)', group=13)

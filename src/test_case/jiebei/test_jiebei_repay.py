@@ -13,7 +13,7 @@ class MyTestCase(unittest.TestCase):
         self.MysqlBizImpl = MysqlBizImpl()
 
     """ 测试步骤 """
-    def test_repay(self, repay_pri='3000000', repay_int='300', settle_status='CLEAR'):
+    def test_repay(self, repay_pri='3000000', repay_int='300', settle_status='NORMAL'):
         """
         还款流程
         :param repay_pri: 还款本金
@@ -39,14 +39,14 @@ class MyTestCase(unittest.TestCase):
         # 执行渠道还款任务
         self.job.update_job('渠道还款任务(新核心)', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('渠道还款任务(新核心)', group=13, job_type='VIRTUAL_JOB')
-        # 执行渠道还款额度恢复任务
-        self.job.update_job('渠道还款额度恢复任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
-        self.job.trigger_job('渠道还款额度恢复任务', group=13, job_type='VIRTUAL_JOB')
 
     """ 后置条件处理 """
     def tearDown(self):
-        # 数据库层校验支用状态-使用中
+        # 数据库层校验还款状态-03还款成功
         self.CheckBizImpl.check_channel_repay_status(third_loan_id=self.third_loan_no)
+        # 执行渠道还款额度恢复任务
+        self.job.update_job('渠道还款额度恢复任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
+        self.job.trigger_job('渠道还款额度恢复任务', group=13, job_type='VIRTUAL_JOB')
 
 
 if __name__ == '__main__':
