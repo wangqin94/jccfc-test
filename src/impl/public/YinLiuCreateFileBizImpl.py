@@ -7,7 +7,7 @@ from src.enums.EnumYinLiu import EnumFileType
 from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import Hair, weicai, HaLo
+from src.test_data.module_data import Hair, WeiCai, HaLo, YiXin
 from utils.KS3 import KS3
 from utils.Logger import Logs
 
@@ -271,7 +271,39 @@ class YinLiuRepayFile(EnvInit):
         if os.path.exists(claimFileName):
             os.remove(claimFileName)
         # 获取微财理赔对账文件参数
-        templePath = weicai.weicai
+        templePath = WeiCai.WeiCai
+        wcClaimTemple = templePath['weiCaiClaimTemple']
+
+        # 获取罚息
+        creditLoanInvoiceInfo = self.getInvoiceInfo()
+        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
+        asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan", loan_invoice_id=loanInvoiceId,
+                                                                     current_num=self.repayTermNo)
+        wcClaimTemple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
+
+        # 文件赋值
+        self.creditClaimData().update(**kwargs)
+        payload = DataUpdate(wcClaimTemple, **self.creditClaimData()).parser
+        self.log.demsg("待写入理赔文件数据：{}".format(payload))
+        # 开始写入文件内容
+        write_repay_file(claimFileName, **payload)
+
+        # 开始上传文件到ks3
+        self.uploadFile(fileType=EnumFileType.CLAIM_FILE.fileType, assetFilePath=EnumFileType.CLAIM_FILE.folderName)
+
+    # 微财理赔文件生成
+    def creditYiXinClaimFile(self, **kwargs):
+        """
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: 融担模式微财理赔对账文件
+        """
+        # 初始化理赔文件
+        localFilePath = self.getLocalFilePath(EnumFileType.CLAIM_FILE.fileType)
+        claimFileName = self.getLocalFileName(localFilePath, EnumFileType.CLAIM_FILE.fileType)
+        if os.path.exists(claimFileName):
+            os.remove(claimFileName)
+        # 获取微财理赔对账文件参数
+        templePath = YiXin.YiXin
         wcClaimTemple = templePath['weiCaiClaimTemple']
 
         # 获取罚息
@@ -302,26 +334,68 @@ class YinLiuRepayFile(EnvInit):
         if os.path.exists(buyBackFileName):
             os.remove(buyBackFileName)
         # 获取微财理赔对账文件参数
-        templePath = weicai.weicai
+        templePath = WeiCai.WeiCai
         buyBackTemple = templePath['weiCaiBuyBackTemple']
         # 获取借据总期数
         totalTerm = self.getInvoiceInfo()['installment_num']
+        creditLoanInvoiceInfo = self.getInvoiceInfo()
+        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
         # 依次写入回购所有期次还款数据
         termNo = int(self.repayTermNo)
         while int(totalTerm) >= termNo:
             # 获取当期还款计划
-            creditLoanInvoiceInfo = self.getInvoiceInfo()
-            loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
             creditBuyBackData = self.creditBuyBackData(termNo)
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
                                                                          loan_invoice_id=loanInvoiceId,
-                                                                         current_num=self.repayTermNo)
+                                                                         current_num=termNo)
             # 获取回购当期已计提利息
             if termNo == int(self.repayTermNo):
                 days = get_day(asset_repay_plan['start_date'], self.repayDate)
                 creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['paid_prin_amt'])
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
             # 获取罚息
+
+            creditBuyBackData['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
+            payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
+            # 开始写入文件内容
+            write_repay_file(buyBackFileName, **payload)
+            termNo += 1
+
+        # 开始上传文件到ks3
+        self.uploadFile(fileType=EnumFileType.BUYBACK_FILE.fileType, assetFilePath=EnumFileType.BUYBACK_FILE.folderName)
+
+    # 微财回购文件生成
+    def creditYiXinBuyBackFile(self):
+        """
+        @return: 融担模式微财回购对账文件
+        """
+        # 初始化文件
+        localFilePath = self.getLocalFilePath(EnumFileType.BUYBACK_FILE.fileType)
+        buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.BUYBACK_FILE.fileType)
+        if os.path.exists(buyBackFileName):
+            os.remove(buyBackFileName)
+        # 获取微财理赔对账文件参数
+        templePath = YiXin.YiXin
+        buyBackTemple = templePath['weiCaiBuyBackTemple']
+        # 获取借据总期数
+        totalTerm = self.getInvoiceInfo()['installment_num']
+        creditLoanInvoiceInfo = self.getInvoiceInfo()
+        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
+        # 依次写入回购所有期次还款数据
+        termNo = int(self.repayTermNo)
+        while int(totalTerm) >= termNo:
+            # 获取当期还款计划
+            creditBuyBackData = self.creditBuyBackData(termNo)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
+                                                                         loan_invoice_id=loanInvoiceId,
+                                                                         current_num=termNo)
+            # 获取回购当期已计提利息
+            if termNo == int(self.repayTermNo):
+                days = get_day(asset_repay_plan['start_date'], self.repayDate)
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['paid_prin_amt'])
+                creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
+            # 获取罚息
+
             creditBuyBackData['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
             payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
             # 开始写入文件内容
