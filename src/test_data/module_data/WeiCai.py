@@ -7,7 +7,7 @@
 # -----------------------------------------------------------
 # 微财项目配置
 # -----------------------------------------------------------
-weicai = {
+WeiCai = {
     # 加密接口-哈喽
     'encrypt': {
         'interface': '/api/v1/yinliu/secret/thirdEncryptData/{}',
@@ -109,10 +109,10 @@ weicai = {
                 "workAddrProvinceName": "北京市",  # 工作地址省份名称
                 "workAddrCityName": "北京市",  # 工作地址市级名称
                 "workAddrAreaName": "海淀区",  # 工作地址区名称
-                "liveAddress": "北京市海淀医院",  # 工作详细地址
-                "liveProvinceName": "北京市",  # 居住地址省份名称
-                "liveCityName": "北京市",  # 居住地址市级名称
-                "liveAreaName": "海淀区",  # 居住地址区名称
+                "liveAddress": "辽宁省博物馆",  # 工作详细地址
+                "liveProvinceName": "辽宁省",  # 居住地址省份名称
+                "liveCityName": "沈阳市",  # 居住地址市级名称
+                "liveAreaName": "浑南区",  # 居住地址区名称
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
                 "liabilities": "0",  # EnumLiabilities，可传多个枚举，码值间以英文逗号“,”分隔；0-无贷款时，不支持多个枚举

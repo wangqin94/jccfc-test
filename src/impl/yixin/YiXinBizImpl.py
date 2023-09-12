@@ -5,14 +5,13 @@
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
-from src.test_data.module_data import WeiCai
+from src.test_data.module_data import YiXin
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
-from dateutil.parser import parse
 
 
-class WeiCaiBizImpl(MysqlInit):
+class YiXinBizImpl(MysqlInit):
     def __init__(self, data=None, encrypt_flag=True, person=True):
         """
         @param data: 四要素 为空系统随机获取，若person=True四要输写入person文件
@@ -23,14 +22,15 @@ class WeiCaiBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         # 解析项目特性配置
-        self.cfg = WeiCai.WeiCai
+        self.cfg = YiXin.YiXin
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
+        self.interestRate = getInterestRate(ProductIdEnum.YIXIN.value)
         # 初始化产品、商户
-        self.productId = ProductIdEnum.WEICAI.value
-        self.merchantId = EnumMerchantId.WEICAI.value
+        self.productId = ProductIdEnum.YIXIN.value
+        self.merchantId = EnumMerchantId.YIXIN.value
 
         # 初始化payload变量
         self.active_payload = {}
@@ -44,40 +44,62 @@ class WeiCaiBizImpl(MysqlInit):
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WEICAI.value))
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.YIXIN.value))
             else:
                 base_data = get_base_data_temp()
         return base_data
 
     # 发起代扣协议申请
-    def sharedWithholdingAgreement(self, **kwargs):
+    def getCardRealNameMessage(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        sharedWithholdingAgreement = dict()
+        getCardRealNameMessage = dict()
         # head
-        sharedWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
-        sharedWithholdingAgreement['requestTime'] = self.date
-        sharedWithholdingAgreement['merchantId'] = self.merchantId
+        getCardRealNameMessage['requestSerialNo'] = 'requestNo' + strings + "_1000"
+        getCardRealNameMessage['requestTime'] = self.date
+        getCardRealNameMessage['merchantId'] = self.merchantId
         # body
-        sharedWithholdingAgreement['aggrementNum'] = 'aggrementNum' + strings
-        sharedWithholdingAgreement['payerIdNum'] = self.data['cer_no']
-        sharedWithholdingAgreement['payer'] = self.data['name']
-        sharedWithholdingAgreement['mobileNo'] = self.data['telephone']
-        sharedWithholdingAgreement['payerBankCardNum'] = self.data['bankid']
-        sharedWithholdingAgreement['payerPhoneNum'] = self.data['telephone']
-        sharedWithholdingAgreement['agreementTime'] = self.date
+        getCardRealNameMessage['payerIdNum'] = self.data['cer_no']
+        getCardRealNameMessage['payer'] = self.data['name']
+        getCardRealNameMessage['mobileNo'] = self.data['telephone']
+        getCardRealNameMessage['payerBankCardNum'] = self.data['bankid']
+        getCardRealNameMessage['payerPhoneNum'] = self.data['telephone']
 
         # 更新 payload 字段值
-        sharedWithholdingAgreement.update(kwargs)
-        parser = DataUpdate(self.cfg['sharedWithholdingAgreement']['payload'], **sharedWithholdingAgreement)
+        getCardRealNameMessage.update(kwargs)
+        parser = DataUpdate(self.cfg['getCardRealNameMessage']['payload'], **getCardRealNameMessage)
         self.active_payload = parser.parser
 
         self.log.demsg('发起绑卡请求...')
-        url = self.host + self.cfg['sharedWithholdingAgreement']['interface']
+        url = self.host + self.cfg['getCardRealNameMessage']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 确认绑卡申请payload
+    def bindCardRealName(self, tradeSerialNo, **kwargs):
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        bindCardRealName_data = dict()
+        # head
+        bindCardRealName_data['requestSerialNo'] = 'requestNo' + strings + "_1000"
+        bindCardRealName_data['requestTime'] = self.date
+        bindCardRealName_data['merchantId'] = self.merchantId
+        # body
+        bindCardRealName_data['tradeSerialNo'] = tradeSerialNo  # 同发起代扣签约返回的交易流水号
+        bindCardRealName_data['mobileNo'] = self.data['telephone']
+        bindCardRealName_data['payerPhoneNum'] = self.data['telephone']
+
+        # 更新 payload 字段值
+        bindCardRealName_data.update(kwargs)
+        parser = DataUpdate(self.cfg['bindCardRealName']['payload'], **bindCardRealName_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('确认绑卡请求...')
+        url = self.host + self.cfg['bindCardRealName']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
@@ -247,6 +269,10 @@ class WeiCaiBizImpl(MysqlInit):
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
 
+        # 还款计划
+        applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
+                                                                   yearRate=self.interestRate, term=loanTerm)
+
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -315,44 +341,6 @@ class WeiCaiBizImpl(MysqlInit):
 
         self.log.demsg('借款&还款计划查询请求...')
         url = self.host + self.cfg['repayPlan_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-                                     encrypt_flag=self.encrypt_flag)
-        return response
-
-    # 担保费同步
-    def syncGuaranteePlan(self, loanInvoiceId, guaranteeAmt=10, **kwargs):
-        """
-        注意：键名必须与接口原始数据的键名一致
-        @param guaranteeAmt: 每期担保费
-        @param loanInvoiceId: 锦程借据号
-        @param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return: response 接口响应参数 数据类型：json
-        """
-        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        syncGuaranteePlan = dict()
-        # head
-        syncGuaranteePlan['requestSerialNo'] = 'requestNo' + strings + "_7000"
-        syncGuaranteePlan['requestTime'] = self.date
-        syncGuaranteePlan['merchantId'] = self.merchantId
-
-        # body
-        syncGuaranteePlan['loanInvoiceId'] = loanInvoiceId
-        # 组装担保费计划
-        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
-        term = credit_loan_invoice['installment_num']
-        guaranteePlans = []
-        for period in range(1, term+2):
-            guaranteePlan = {"period": period, "guaranteeAmt": guaranteeAmt}
-            guaranteePlans.append(guaranteePlan)
-        # guaranteePlans[2]["period"] = 3
-        syncGuaranteePlan['guaranteePlans'] = guaranteePlans
-        # 更新 payload 字段值
-        syncGuaranteePlan.update(kwargs)
-        parser = DataUpdate(self.cfg['syncGuaranteePlan']['payload'], **syncGuaranteePlan)
-        self.active_payload = parser.parser
-
-        self.log.demsg('担保费同步...')
-        url = self.host + self.cfg['syncGuaranteePlan']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
@@ -558,102 +546,6 @@ class WeiCaiBizImpl(MysqlInit):
 
         self.log.demsg('还款查询请求...')
         url = self.host + self.cfg['repay_query']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-                                     encrypt_flag=self.encrypt_flag)
-        return response
-
-    # 退货申请
-    def returnGoods_apply(self, loanInvoiceId, term, repayDate, **kwargs):
-        """
-        注意：10天内免息
-        @param term: 当前待还期次
-        @param repayDate: 退货时间
-        @param loanInvoiceId: 借据号 必填
-        @param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return: response 接口响应参数 数据类型：json
-        """
-        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        returnGoods_apply_data = dict()
-        # head
-        returnGoods_apply_data['requestSerialNo'] = 'requestNo' + strings + "_1200"
-        returnGoods_apply_data['requestTime'] = self.date
-        returnGoods_apply_data['merchantId'] = self.merchantId
-        # body
-        returnGoods_apply_data['loanInvoiceId'] = loanInvoiceId
-        returnGoods_apply_data['returnGoodsSerialNo'] = 'GoodsSerialNo' + strings
-
-        # 计算剩余应还本金(最早未还期次:期初计息余额before_calc_principal)
-        key = "loan_invoice_id = '{}' and repay_plan_status in('1','4') ORDER BY 'current_num'".format(
-            loanInvoiceId)
-        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
-        returnGoods_apply_data["returnGoodsPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-
-        # 计算退货应收利息， 放款10日内退货不收罚息
-        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                         loan_invoice_id=loanInvoiceId)
-        loanDate = str(credit_loan_invoice['loan_pay_time']).split()[0]
-        # loanDate = datetime.strptime(loanDate, '%Y-%m-%d').date()
-        # date = datetime.strptime(date, '%Y-%m-%d').date()
-        loanDate = parse(loanDate)
-        repayDateFormat = parse(repayDate)
-        if 10 > int((repayDateFormat - loanDate).days):
-            returnGoods_apply_data['returnGoodsInterest'] = 0
-            returnGoods_apply_data['returnGoodsOverdueFee'] = 0
-        else:
-            self.log.demsg("利息查asset_repay_plan表")
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         current_num=term)
-            dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
-            self.log.demsg("当期利息：{}".format(dangqi_interest))
-            # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
-            key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3,4) ORDER BY 'current_num'".format(
-                loanInvoiceId)
-            KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
-            kuanxianqi_interest = float(KXQRepayAmt['pre_repay_interest']) if KXQRepayAmt else 0  # 宽限期利息
-            self.log.demsg("宽限期利息：{}".format(kuanxianqi_interest))
-            # 逾期借据=逾期期次利息+当期利息
-            oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                    'sum(left_repay_fee)',
-                                                                    'sum(pre_repay_interest)',
-                                                                    'sum(pre_repay_overdue_fee)',
-                                                                    loan_invoice_id=loanInvoiceId,
-                                                                    repay_plan_status='4')
-            if oveRepayAmt['sum(pre_repay_interest)']:
-                left_repay_fee = float("{:.2f}".format(oveRepayAmt['sum(left_repay_fee)']))  # 未还期次费用
-                weihuan_interest = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_interest)']))  # 未还期次利息
-                pre_repay_overdue_fee = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
-            else:
-                left_repay_fee = 0
-                weihuan_interest = 0
-                pre_repay_overdue_fee = 0
-            self.log.demsg("逾期期次利息：{}".format(weihuan_interest))
-            returnGoods_apply_data['returnGoodsInterest'] = float(
-                "{:.2f}".format(dangqi_interest + weihuan_interest +
-                                kuanxianqi_interest))
-            # 罚息、费用
-            returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee  # 罚息
-            returnGoods_apply_data['returnGoodsFee'] = left_repay_fee  # 费用
-
-        # 当期已还款，利息0
-        days = get_day(asset_repay_plan["start_date"], repayDate)
-        # 如果当期已还款，提前还款利息应收0
-        if days <= 0:
-            returnGoods_apply_data["returnGoodsInterest"] = 0
-        # 更新退货mock时间
-        apollo_data = dict()
-        apollo_data['yinliu.return.goods.trade.date.mock'] = "true"
-        apollo_data['yinliu.return.goods.date.mock'] = str(repayDate).replace('-', '')
-        self.apollo.update_config(appId='jccfc-op-channel', namespace='000', **apollo_data)
-        time.sleep(3)
-
-        # 更新 payload 字段值
-        returnGoods_apply_data.update(kwargs)
-        parser = DataUpdate(self.cfg['returnGoods_apply']['payload'], **returnGoods_apply_data)
-        self.active_payload = parser.parser
-
-        self.log.demsg('退货请求...')
-        url = self.host + self.cfg['returnGoods_apply']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
