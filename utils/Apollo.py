@@ -161,10 +161,10 @@ if __name__ == '__main__':
 
     # 设置放款mock时间
     # updateKeys['credit.loan.trade.date.mock'] = "true"
-    # updateKeys['credit.loan.date.mock'] = "2023-03-29"
+    # updateKeys['credit.loan.date.mock'] = "2023-08-04"
     # apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **updateKeys)
 
     # 配置还款mock时间
     updateKeys['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-    updateKeys['credit.mock.repay.date'] = "{} 12:00:00".format("2023-04-05")
+    updateKeys['credit.mock.repay.date'] = "{} 12:00:00".format("2023-09-20")
     apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **updateKeys)
