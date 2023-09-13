@@ -152,6 +152,7 @@ class YiXinBizImpl(MysqlInit):
 
         # body
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
+        credit_data['thirdApplyTime'] = self.date
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '1'  # EnumOrderType 固定传1-取现
