@@ -159,25 +159,8 @@ class HairBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
-        date = str(get_before_day(1)).replace('-', '')
-        channel_loan_amount_num = self.MysqlBizImpl.select_channel_database_info('channel_loan_amount',
-                                                                                 product_id='G23E041',
-                                                                                 business_date=date
-                                                                                 )
-        if channel_loan_amount_num > 1:
-            self.MysqlBizImpl.delete_channel_database_info("channel_loan_amount", product_id='G23E041',
-                                                           business_date=date)
-            self.MysqlBizImpl.insert_channel_database_info("channel_loan_amount", product_id='G23E041',
-                                                           first_loan_amount='0.0000',
-                                                           second_loan_amount='0.0000', total_loan_amount='0.0000',
-                                                           first_balance='15900.0000', second_balance='0.0000'
-                                                           , total_balance='521000.0000', business_date=date, status=0)
-        elif channel_loan_amount_num == 0:
-            self.MysqlBizImpl.insert_channel_database_info("channel_loan_amount", product_id='G23E041',
-                                                           first_loan_amount='0.0000',
-                                                           second_loan_amount='0.0000', total_loan_amount='0.0000',
-                                                           first_balance='15900.0000', second_balance='0.0000'
-                                                           , total_balance='521000.0000', business_date=date, status=0)
+        # 初始化产品的放款金额
+        ComBizImpl().initChannelLoanAmountInfo(self.productId)
 
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
