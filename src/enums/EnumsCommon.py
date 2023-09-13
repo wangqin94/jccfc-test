@@ -59,7 +59,7 @@ class EnumMerchantId(Enum):
     HALO = 'G23E03HALO'
     HAIR = 'G23E04HAIR'
     WEICAI = 'G23E05WEIC'
-    YIXIN = 'G23E06YXIN'
+    YIXIN = 'G23E06YIXN'
 
 
 @unique
