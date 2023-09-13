@@ -7,16 +7,14 @@ from src.test_data.module_data import jiebei
 from utils.Models import *
 
 
-
 class JieBeiBizImpl(EnvInit):
-    def __init__(self, *, data=None, encrypt_flag=False):
+    def __init__(self, *, data=None, encrypt_flag=False, person=True):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = jiebei.jiebei
 
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JIEBEI.value), "applyno")
-
+        self.data = self.get_user_info(data=data, person=person)
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
 
@@ -25,6 +23,17 @@ class JieBeiBizImpl(EnvInit):
 
         # 初始化payload变量
         self.active_payload = {}
+
+    def get_user_info(self, data=None, person=True):
+        # 获取四要素信息
+        if data:
+            base_data = data
+        else:
+            if person:
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JIEBEI.value), "applyno")
+            else:
+                base_data = get_base_data_temp()
+        return base_data
 
     def feature(self, bizActionType, **kwargs):
         feature_data = dict()
@@ -99,15 +108,15 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def creditNotice(self, bizType, **kwargs):
+    def creditNotice(self, bizType, applyNo=None, **kwargs):
         creditNotice_data = dict()
 
         creditNotice_data['name'] = self.data['name']
         creditNotice_data['certNo'] = self.data['cer_no']
         creditNotice_data['mobile'] = self.data['telephone']
         creditNotice_data['timestamp'] = int(time.time() * 1000)
-        creditNotice_data['applyNo'] = self.data['applyno']
         creditNotice_data['bizType'] = bizType
+        creditNotice_data['applyNo'] = applyNo if applyNo else self.data['applyno']
 
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)

@@ -2,14 +2,16 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
+from dateutil.parser import parse
+
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
-from src.test_data.module_data import Hair
 from src.impl.common.CommonBizImpl import *
-from utils.FileHandle import Files
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
+from src.test_data.module_data import Hair
 from utils.Apollo import Apollo
-from dateutil.parser import parse
+from utils.FileHandle import Files
 
 
 class HairBizImpl(MysqlInit):
@@ -157,6 +159,26 @@ class HairBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
+        date = str(get_before_day(1)).replace('-', '')
+        channel_loan_amount_num = self.MysqlBizImpl.select_channel_database_info('channel_loan_amount',
+                                                                                 product_id='G23E041',
+                                                                                 business_date=date
+                                                                                 )
+        if channel_loan_amount_num > 1:
+            self.MysqlBizImpl.delete_channel_database_info("channel_loan_amount", product_id='G23E041',
+                                                           business_date=date)
+            self.MysqlBizImpl.insert_channel_database_info("channel_loan_amount", product_id='G23E041',
+                                                           first_loan_amount='0.0000',
+                                                           second_loan_amount='0.0000', total_loan_amount='0.0000',
+                                                           first_balance='15900.0000', second_balance='0.0000'
+                                                           , total_balance='521000.0000', business_date=date, status=0)
+        elif channel_loan_amount_num == 0:
+            self.MysqlBizImpl.insert_channel_database_info("channel_loan_amount", product_id='G23E041',
+                                                           first_loan_amount='0.0000',
+                                                           second_loan_amount='0.0000', total_loan_amount='0.0000',
+                                                           first_balance='15900.0000', second_balance='0.0000'
+                                                           , total_balance='521000.0000', business_date=date, status=0)
+
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         credit_data = dict()
