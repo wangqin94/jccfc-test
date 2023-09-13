@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------
-# 微财接口数据封装类
+# 宜信接口数据封装类
 # ------------------------------------------
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
