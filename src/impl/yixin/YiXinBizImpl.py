@@ -178,7 +178,6 @@ class YiXinBizImpl(MysqlInit):
 
         self.log.demsg('开始授信申请...')
         url = self.host + self.cfg['credit_apply']['interface']
-        print(self.encrypt_url)
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
