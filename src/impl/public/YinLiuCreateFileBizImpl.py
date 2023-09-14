@@ -351,7 +351,7 @@ class YinLiuRepayFile(EnvInit):
             # 获取回购当期已计提利息
             if termNo == int(self.repayTermNo):
                 days = get_day(asset_repay_plan['start_date'], self.repayDate)
-                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['paid_prin_amt'])
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
             # 获取罚息
 
@@ -392,7 +392,7 @@ class YinLiuRepayFile(EnvInit):
             # 获取回购当期已计提利息
             if termNo == int(self.repayTermNo):
                 days = get_day(asset_repay_plan['start_date'], self.repayDate)
-                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['paid_prin_amt'])
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
             # 获取罚息
 
