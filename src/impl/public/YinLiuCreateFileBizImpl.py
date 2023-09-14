@@ -2,7 +2,6 @@
 """
     Function: 理赔/回购文件生成
 """
-from engine.EnvInit import EnvInit
 from src.enums.EnumYinLiu import EnumFileType
 from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import *
@@ -183,6 +182,7 @@ class YinLiuRepayFile(EnvInit):
         claimTemple['paid_prin_amt'] = str(asset_repay_plan["left_repay_principal"])  # 本金
         claimTemple['paid_int_amt'] = str(asset_repay_plan["left_repay_interest"])  # 利息
         claimTemple['left_repay_amt'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
+        claimTemple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
         return claimTemple
 
     # 回购文件内容
@@ -212,6 +212,7 @@ class YinLiuRepayFile(EnvInit):
         buyBackTemple['paid_prin_amt'] = str(asset_repay_plan["left_repay_principal"])  # 本金
         buyBackTemple['paid_int_amt'] = 0  # 利息
         buyBackTemple['left_repay_amt'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
+        buyBackTemple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
         return buyBackTemple
 
     # 贴息文件内容
@@ -274,13 +275,6 @@ class YinLiuRepayFile(EnvInit):
         templePath = WeiCai.WeiCai
         wcClaimTemple = templePath['weiCaiClaimTemple']
 
-        # 获取罚息
-        creditLoanInvoiceInfo = self.getInvoiceInfo()
-        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
-        asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan", loan_invoice_id=loanInvoiceId,
-                                                                     current_num=self.repayTermNo)
-        wcClaimTemple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
-
         # 文件赋值
         self.creditClaimData().update(**kwargs)
         payload = DataUpdate(wcClaimTemple, **self.creditClaimData()).parser
@@ -305,13 +299,6 @@ class YinLiuRepayFile(EnvInit):
         # 获取微财理赔对账文件参数
         templePath = YiXin.YiXin
         wcClaimTemple = templePath['weiCaiClaimTemple']
-
-        # 获取罚息
-        creditLoanInvoiceInfo = self.getInvoiceInfo()
-        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
-        asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan", loan_invoice_id=loanInvoiceId,
-                                                                     current_num=self.repayTermNo)
-        wcClaimTemple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
 
         # 文件赋值
         self.creditClaimData().update(**kwargs)
@@ -351,11 +338,9 @@ class YinLiuRepayFile(EnvInit):
             # 获取回购当期已计提利息
             if termNo == int(self.repayTermNo):
                 days = get_day(asset_repay_plan['start_date'], self.repayDate)
-                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['paid_prin_amt'])
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, asset_repay_plan['left_principal'])
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
-            # 获取罚息
 
-            creditBuyBackData['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
             payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
             # 开始写入文件内容
             write_repay_file(buyBackFileName, **payload)
@@ -394,9 +379,7 @@ class YinLiuRepayFile(EnvInit):
                 days = get_day(asset_repay_plan['start_date'], self.repayDate)
                 creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['paid_prin_amt'])
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
-            # 获取罚息
 
-            creditBuyBackData['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
             payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
             # 开始写入文件内容
             write_repay_file(buyBackFileName, **payload)

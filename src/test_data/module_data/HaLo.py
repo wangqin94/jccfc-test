@@ -160,19 +160,9 @@ HaLo = {
                         "fileName": "credit.pdf"
                     },
                     {
-                        "fileType": "6",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_non_student_202000000948071964.pdf"
-                    },
-                    {
                         "fileType": "7",  # 三方查询授权书
                         "fileUrl": "xdgl/jike/test/third.pdf",
                         "fileName": "third.pdf"
-                    },
-                    {
-                        "fileType": "10",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_third_auth_202000000948071964.pdf"
                     },
                     {
                         "fileType": "16",  # 学信网截图
@@ -573,6 +563,7 @@ HaLo = {
         'paid_prin_amt': '',  # 本金
         'paid_int_amt': '',  # 利息
         'left_repay_amt': '',  # 在贷余额
+        'compensationOverdueFee': '',  # 代偿罚息
     },
 
     # 理赔文件 键值对字典数据模板
@@ -592,5 +583,6 @@ HaLo = {
         'paid_prin_amt': '',  # 本金
         'paid_int_amt': '',  # 利息
         'left_repay_amt': '',  # 在贷余额
+        'compensationOverdueFee': '',  # 代偿罚息
     },
 }
