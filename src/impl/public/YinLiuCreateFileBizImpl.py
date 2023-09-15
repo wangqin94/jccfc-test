@@ -285,31 +285,6 @@ class YinLiuRepayFile(EnvInit):
         # 开始上传文件到ks3
         self.uploadFile(fileType=EnumFileType.CLAIM_FILE.fileType, assetFilePath=EnumFileType.CLAIM_FILE.folderName)
 
-    # 微财理赔文件生成
-    def creditYiXinClaimFile(self, **kwargs):
-        """
-        @param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return: 融担模式微财理赔对账文件
-        """
-        # 初始化理赔文件
-        localFilePath = self.getLocalFilePath(EnumFileType.CLAIM_FILE.fileType)
-        claimFileName = self.getLocalFileName(localFilePath, EnumFileType.CLAIM_FILE.fileType)
-        if os.path.exists(claimFileName):
-            os.remove(claimFileName)
-        # 获取微财理赔对账文件参数
-        templePath = YiXin.YiXin
-        wcClaimTemple = templePath['weiCaiClaimTemple']
-
-        # 文件赋值
-        self.creditClaimData().update(**kwargs)
-        payload = DataUpdate(wcClaimTemple, **self.creditClaimData()).parser
-        self.log.demsg("待写入理赔文件数据：{}".format(payload))
-        # 开始写入文件内容
-        write_repay_file(claimFileName, **payload)
-
-        # 开始上传文件到ks3
-        self.uploadFile(fileType=EnumFileType.CLAIM_FILE.fileType, assetFilePath=EnumFileType.CLAIM_FILE.folderName)
-
     # 微财回购文件生成
     def creditWeiCaiBuyBackFile(self):
         """
@@ -349,7 +324,7 @@ class YinLiuRepayFile(EnvInit):
         # 开始上传文件到ks3
         self.uploadFile(fileType=EnumFileType.BUYBACK_FILE.fileType, assetFilePath=EnumFileType.BUYBACK_FILE.folderName)
 
-    # 微财回购文件生成
+    # 宜信回购文件生成
     def creditYiXinBuyBackFile(self):
         """
         @return: 融担模式微财回购对账文件

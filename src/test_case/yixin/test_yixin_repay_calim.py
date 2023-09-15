@@ -25,8 +25,8 @@ class MyTestCase(unittest.TestCase):
         # 还款环境配置,清理缓存配置账务时间
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
-        yinLiuRepayFile = YinLiuRepayFile(data, productId, repayTermNo='4', repayDate=repayDate)
-        yinLiuRepayFile.creditYiXinClaimFile()
+        yinLiuRepayFile = YinLiuRepayFile(data, productId, repayTermNo='1', repayDate=repayDate)
+        yinLiuRepayFile.creditClaimFile()
 
         self.repayPublicBizImpl.job.update_job('【引流】代偿文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
         self.repayPublicBizImpl.job.trigger_job('【引流】代偿文件分片任务流', group=13)
