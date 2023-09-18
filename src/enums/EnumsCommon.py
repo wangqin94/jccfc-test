@@ -23,6 +23,7 @@ class ProductEnum(Enum):
     HaLo = 'halo'
     HAIR = 'hair'
     WEICAI = 'weicai'
+    FQLGRT = 'fql_grt'
 
 
 @unique
@@ -41,6 +42,7 @@ class ProductIdEnum(Enum):
     WEICAI = 'G23E051'
     JIKE = 'G22E021'
     XIAOX = 'G23E011'
+    FQLGRT = 'G23E091'
 
 
 class EnumProductYearRate(Enum):
@@ -57,6 +59,7 @@ class EnumMerchantId(Enum):
     HALO = 'G23E03HALO'
     HAIR = 'G23E04HAIR'
     WEICAI = 'G23E05WEIC'
+    FQLGRT = 'G23E09FNQL'
 
 
 @unique
