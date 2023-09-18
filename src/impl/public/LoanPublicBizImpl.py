@@ -59,4 +59,4 @@ class LoanPublicBizImpl(MysqlInit):
 
 if __name__ == '__main__':
     loanPublicBizImpl = LoanPublicBizImpl()
-    loanPublicBizImpl.updateLoanInfo(thirdLoanId='thirdApplyId16673594266645555', loanDate='2022-10-25')
+    loanPublicBizImpl.updateLoanInfo(thirdLoanId='thirdApplyId16944238465703538', loanDate='2023-08-12')

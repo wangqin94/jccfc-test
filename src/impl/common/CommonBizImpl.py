@@ -2,11 +2,12 @@
 # ------------------------------------------
 # 基于项目级业务层公共方法
 # ------------------------------------------
+from config.globalConfig import *
+from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import ProductIdEnum
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from utils.Models import *
-from config.globalConfig import *
 from src.test_data.module_data.common import *
+from utils.Models import *
 
 _log = MyLog.get_log()
 
@@ -127,5 +128,29 @@ def getDailyAccrueInterest(productId, days, leftAmt):
         raise err
 
 
+class ComBizImpl(EnvInit):
+    def __init__(self):
+        super().__init__()
+        self.MysqlBizImpl = MysqlBizImpl()
+
+    # 初始化渠道在贷余额
+    def initChannelLoanAmountInfo(self, productId, businessDate=None):
+        """
+        @param businessDate: 业务时间 默认昨日
+        @param productId: 产品编号
+        @return:初始化渠道在贷余额
+        """
+        _log.info('channel_loan_amount表初始化放款金额，不存则新增一条记录...')
+        date = businessDate if businessDate else str(get_before_day(1)).replace('-', '')
+        data = self.MysqlBizImpl.get_op_channel_database_info('channel_loan_amount', product_id=productId,
+                                                              business_date=date)
+        if data:
+            _log.info('存在 business_date={} 放款金额初始化记录，无需新增'.format(date))
+        else:
+            self.MysqlBizImpl.insert_channel_database_info("channel_loan_amount", product_id=productId,
+                                                           first_balance='10000.0000', total_balance='500000.0000',
+                                                           business_date=date)
+
+
 if __name__ == '__main__':
-    print(getInterestRate(ProductIdEnum.HALO.value))
+    print(ComBizImpl().initChannelLoanAmountInfo(ProductIdEnum.HAIR_DISCOUNT.value))

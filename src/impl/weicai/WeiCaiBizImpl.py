@@ -5,7 +5,7 @@
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
-from src.test_data.module_data import weicai
+from src.test_data.module_data import WeiCai
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
@@ -23,7 +23,7 @@ class WeiCaiBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         # 解析项目特性配置
-        self.cfg = weicai.weicai
+        self.cfg = WeiCai.WeiCai
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳

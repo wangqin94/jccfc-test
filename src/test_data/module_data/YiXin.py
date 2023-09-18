@@ -5,10 +5,10 @@
 # # ---------------------------------------------------------
 
 # -----------------------------------------------------------
-# 微财项目配置
+# 宜信项目配置
 # -----------------------------------------------------------
-weicai = {
-    # 加密接口-哈喽
+YiXin = {
+    # 加密接口
     'encrypt': {
         'interface': '/api/v1/yinliu/secret/thirdEncryptData/{}',
     },
@@ -17,12 +17,12 @@ weicai = {
     'decrypt': {
         'interface': '/api/v1/yinliu/secret/thirdDecryptData',
     },
-    # 代扣申请接口
-    'sharedWithholdingAgreement': {
-        'interface': '/api/v1/yl/common/sharedWithholdingAgreement',
+    # 代扣签约申请接口
+    'getCardRealNameMessage': {
+        'interface': '/api/v1/yl/common/getCardRealNameMessage',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -35,8 +35,26 @@ weicai = {
                 "payerIdNum": "",  # 付款方身份证号
                 "payerBankCardNum": "",  # 付款方银行卡号
                 "payerBankCode": "0102",  # 付款方银行编号
-                "aggrementNum": "",  # 代扣协议号
-                "payChannel": "1010",  # 支付通道  固定传1010-宝付协议支付渠道
+            }
+        }
+    },
+    # 确认代扣签约接口
+    'bindCardRealName': {
+        'interface': '/api/v1/yl/common/bindCardRealName',
+        'payload': {
+            "head": {
+                "merchantId": "G23E01XIAX",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "tradeSerialNo": "",  # 同发起代扣签约返回的交易流水号
+                "mobileNo": "",  # 注册手机号
+                "payerPhoneNum": "",  # 付款方银行卡预留手机号
+                "userId": "",  # 锦程用户编号
+                "smsCode": "111111",  # 验证码
             }
         }
     },
@@ -45,7 +63,7 @@ weicai = {
         'interface': '/api/v1/yl/common/queryWithholdingAgreement',
         'payload': {
             "head": {
-                "merchantId": "G22E02JIKE",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
                 "requestSerialNo": "cqrn20210415155213618",
                 "requestTime": "2020-08-28 17:16:41",
@@ -72,6 +90,7 @@ weicai = {
             },
             "body": {
                 "thirdApplyId": "",  # 三方授信申请编号  与放款申请编号保持一致
+                "thirdApplyTime": "",  # 客户三方申请时间  yyyyMMddHHmmss
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "orderType": "1",  # 订单类型  固定传1-取现
                 "goodsName": "美容贷",  # 商品名称  取现为：取现借款、分期购物为：商品名称
@@ -84,6 +103,7 @@ weicai = {
                 "sex": "1",  # 性别  UNKNOWN("0", "未知的性别"),MALE("1", "男"),FEMALE("2", "女"),NOT_EXPLAINED("9", "未说明的性别");
                 "mobileNo": "手机号码",  # 手机号码
                 "education": "11",  # 学历 EnumEduLevel
+                "degree": "0",  # 最高学位 EnumCreditDegree
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
                 "idExpiryDate": "1990.1.1-2053.06.25",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
@@ -107,14 +127,21 @@ weicai = {
                 "industryCategory": "A",  # 行业类别 EnumIndustryType
                 "workAddrAddress": "北京市海淀医院",  # 工作详细地址
                 "workAddrProvinceName": "北京市",  # 工作地址省份名称
+                "workAddrProvinceCode": "110000",  # 工作地址省份代码
                 "workAddrCityName": "北京市",  # 工作地址市级名称
+                "workAddrCityCode": "110100",  # 工作地址市级代码
                 "workAddrAreaName": "海淀区",  # 工作地址区名称
+                "workAddrAreaCode": "110108",  # 工作地址区代码
                 "liveAddress": "北京市海淀医院",  # 工作详细地址
                 "liveProvinceName": "北京市",  # 居住地址省份名称
+                "liveProvinceCode": "110000",  # 居住地址省份代码
                 "liveCityName": "北京市",  # 居住地址市级名称
+                "liveCityCode": "110100",  # 居住地址市级代码
                 "liveAreaName": "海淀区",  # 居住地址区名称
+                "liveAreaCode": "110108",  # 居住地址区代码
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
+                "familyMonthIncome": 2000,  # 家庭月收入  元
                 "liabilities": "0",  # EnumLiabilities，可传多个枚举，码值间以英文逗号“,”分隔；0-无贷款时，不支持多个枚举
                 "contactRelationList": [
                     {
@@ -160,25 +187,6 @@ weicai = {
                         "fileName": "JC_third_auth_202000000948071964.pdf"
                     }
                 ],
-                "authenticationInfo": {
-                    "appRegistraDate": "20210101 101010",  # App注册时间
-                    "policeApproveSupplier": "公安认证认证供应商",  # 公安认证认证供应商
-                    "policeApproveNum": "公安认证客户认证交易号",  # 公安认证客户认证交易号
-                    "policeApproveReqTime": "20210101 101010",  # 公安认证认证请求时间
-                    "policeApproveRspTime": "20210101 111010",  # 公安认证认证结果返回时间
-                    "policeApproveRst": "公安认证认证结果",  # 公安认证认证结果
-                    "livingBodySupplier": "活体识别认证供应商",  # 活体识别认证供应商
-                    "livingBodyNum": "活体识别客户认证交易号",  # 活体识别客户认证交易号
-                    "livingBodyReqTime": "20210101 121010",  # 活体识别认证请求时间
-                    "livingBodyRspTime": "20210101 131010",  # 活体识别认证结果返回时间
-                    "livingBodyRst": "公安认证认证结果",  # 活体识别认证结果
-                    "quaternCerReqTime": "20210101 141010",  # 四元认证请求时间
-                    "quaternCerRspTime": "20210101 151010",  # 四元认证响应时间
-                    "quaternCerRst": "四元认证结果"  # 四元认证结果
-                },
-                "featureField": {
-                    "thirdCreditLine": "30000",  # 授信额度
-                }
             }
         }
 
@@ -231,6 +239,15 @@ weicai = {
                         "fileType": "9",
                         "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
+                    }
+                ],
+                "repaymentPlans": [
+                    {
+                        "period": "1",  # 期数
+                        "billDate": "2022-02-03",  # 账单日
+                        "principalAmt": 1,  # 本金金额
+                        "interestAmt": 1,  # 利息金额
+                        "guaranteeAmt": 1,  # 担保费金额
                     }
                 ],
             }
@@ -333,8 +350,6 @@ weicai = {
                 "thirdRepayTime": "",  # 线下还款、支付宝还款必传，客户实际还款时间
                 "thirdRepayAccountType": "中国工商银行",  # 线下还款、支付宝还款必传，银行卡还款传开户行名称，微信、支付宝还款传支付平台名称，如：微信、支付宝、中国工商银行 等；
                 "repaymentAccountNo": "6",  # 还款账号 线上还款、线下还款、支付宝还款必传
-                "repaymentAccountName": "",  # 还款账号户名 线上还款必传
-                "repaymentAccountPhone": "",  # 还款账号银行预留手机号 线上还款必传
                 "repayType": "1",  # 还款类型 EnumTrialRepayType
                 "repayNum": 1,  # 期数 前结清，将各期金额合并，期数传开始期次
                 "repayAmount": 0,  # 资还款总金额
@@ -364,26 +379,6 @@ weicai = {
         }
     },
 
-    # 退货申请查询
-    'returnGoods_apply': {
-        'interface': '/api/v1/yl/common/returnGoods/apply',
-        'payload': {
-            "head": {
-                "merchantId": "G23E01XIAX",
-                "channelNo": "01",
-                "requestSerialNo": "cqrn20210415155213618",
-                "requestTime": "2020-08-28 17:16:41",
-                "tenantId": "000"
-            },
-            "body": {
-                "loanInvoiceId": "",  # 资金方放款编号
-                "returnGoodsSerialNo": "",  # 退货申请流水号  每一笔退货申请唯一
-                "returnGoodsPrincipal": 0,  # 退货总本金
-                "returnGoodsInterest": 0,  # 退货总利息
-                "returnGoodsOverdueFee": 0,  # 退货罚息
-            }
-        }
-    },
 
     # 附件补录
     'supplementAttachment': {
@@ -544,8 +539,8 @@ weicai = {
         }
     },
 
-    # 微财理赔文件 键值对字典数据模板
-    "weiCaiClaimTemple": {
+    # 宜信理赔文件 键值对字典数据模板
+    "yiXinClaimTemple": {
         'loan_no': '',  # 借据号
         'name': '',  # 姓名
         'cer_no': '',  # 身份证号
@@ -564,8 +559,8 @@ weicai = {
         'compensationOverdueFee': '',  # 代偿罚息
     },
 
-    # 微财理赔文件 键值对字典数据模板
-    "weiCaiBuyBackTemple": {
+    # 宜信回购文件 键值对字典数据模板
+    "yiXinBuyBackTemple": {
         'loan_no': '',  # 借据号
         'name': '',  # 姓名
         'cer_no': '',  # 身份证号

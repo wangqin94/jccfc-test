@@ -1,23 +1,19 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------
-# 百度接口数据封装类
+# 宜信接口数据封装类
 # ------------------------------------------
-from dateutil.parser import parse
-
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
+from src.test_data.module_data import YiXin
 from src.impl.common.CommonBizImpl import *
-from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import Hair
-from utils.Apollo import Apollo
 from utils.FileHandle import Files
+from utils.Apollo import Apollo
 
 
-class HairBizImpl(MysqlInit):
-    def __init__(self, productId=None, data=None, encrypt_flag=True, person=True):
+class YiXinBizImpl(MysqlInit):
+    def __init__(self, data=None, encrypt_flag=True, person=True):
         """
-        @param productId: 默认贴息产品号（主产品号）：G23E041， 否则非贴息产品号（子产品号）：G23E042
         @param data: 四要素 为空系统随机获取，若person=True四要输写入person文件
         @param encrypt_flag: 接口加密标识，默认加密
         @param person: 若person=True四要输写入person文件，否则不写入
@@ -26,16 +22,15 @@ class HairBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         # 解析项目特性配置
-        self.cfg = Hair.Hair
+        self.cfg = YiXin.YiXin
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
-        # 初始化产品、商户、门店号
-        self.productId = productId if productId else ProductIdEnum.HAIR_DISCOUNT.value
-        self.merchantId = EnumMerchantId.HAIR.value
-        self.interestRate = getInterestRate(self.productId)
-        self.storeCode = 'NHairStore'  # 需保证测试环境有此storeCode门店
+        self.interestRate = getInterestRate(ProductIdEnum.YIXIN.value)
+        # 初始化产品、商户
+        self.productId = ProductIdEnum.YIXIN.value
+        self.merchantId = EnumMerchantId.YIXIN.value
 
         # 初始化payload变量
         self.active_payload = {}
@@ -43,25 +38,13 @@ class HairBizImpl(MysqlInit):
         self.encrypt_url = self.host + self.cfg['encrypt']['interface'].format(self.merchantId)
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
 
-    def getRepayPlan(self, billDate, loanAmt, yearRate, term):
-        # 根据输入产品编号获取对应产品年利率
-        if self.productId == ProductIdEnum.HAIR.value:
-            repayPlan = yinLiuRepayPlanByAvgAmt(billDate=billDate, loanAmt=loanAmt,
-                                                yearRate=yearRate, term=term)
-        elif self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            repayPlan = yinLiuRepayPlanByAvgPrincipal(billDate=billDate, loanAmt=loanAmt,
-                                                      yearRate=yearRate, term=term, guaranteeAmt=0)
-        else:
-            raise Exception('产品编号输入错误：{}'.format(self.productId))
-        return repayPlan
-
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
         if data:
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.HAIR.value))
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.YIXIN.value))
             else:
                 base_data = get_base_data_temp()
         return base_data
@@ -159,9 +142,6 @@ class HairBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
-        # 初始化产品的放款金额
-        ComBizImpl().initChannelLoanAmountInfo(self.productId)
-
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         credit_data = dict()
@@ -172,11 +152,10 @@ class HairBizImpl(MysqlInit):
 
         # body
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
-        credit_data['interestRate'] = self.interestRate
+        credit_data['thirdApplyTime'] = self.date
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
-        credit_data['orderType'] = '2'  # 固定传2-赊销(分期购物)
-        credit_data['storeCode'] = self.storeCode  # 需保证测试环境有此storeCode门店
+        credit_data['orderType'] = '1'  # EnumOrderType 固定传1-取现
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -185,8 +164,7 @@ class HairBizImpl(MysqlInit):
         credit_data['mobileNo'] = self.data['telephone']
 
         # 还款方式
-        credit_data[
-            'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_AMT_INTEREST.value
+        credit_data['repayType'] = EnumRepayType.EQUAL_AMT_INTEREST.value
         # 银行卡信息
         credit_data['userBankCardNo'] = self.data['bankid']
 
@@ -198,11 +176,6 @@ class HairBizImpl(MysqlInit):
 
         # 校验用户是否已存在
         self.MysqlBizImpl.check_user_available(self.data)
-
-        # 配置风控mock返回建议额度与授信额度一致
-        apollo_data = dict()
-        apollo_data['hj.channel.risk.credit.line.amt.mock'] = self.active_payload['body']['applyAmount']
-        self.apollo.update_config(appId='loan2.1-jcxf-credit', **apollo_data)
 
         self.log.demsg('开始授信申请...')
         url = self.host + self.cfg['credit_apply']['interface']
@@ -283,7 +256,7 @@ class HairBizImpl(MysqlInit):
 
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
-        applyLoan_data['interestRate'] = self.interestRate
+        applyLoan_data['orderType'] = '1'  # EnumOrderType 固定传1-取现
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
@@ -291,23 +264,20 @@ class HairBizImpl(MysqlInit):
         applyLoan_data['reserveMobile'] = self.data['telephone']
         applyLoan_data['name'] = self.data['name']
         applyLoan_data['accountNo'] = self.data['bankid']
+
         # 还款方式
-        applyLoan_data[
-            'repayType'] = EnumRepayType.EQUAL_AMT_PRINCIPLE.value if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else EnumRepayType.EQUAL_AMT_INTEREST.value
+        applyLoan_data['repayType'] = EnumRepayType.EQUAL_AMT_INTEREST.value
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
+
         # 还款计划
-        applyLoan_data['repaymentPlans'] = self.getRepayPlan(billDate=firstRepayDate, loanAmt=loanAmt,
-                                                             yearRate=self.interestRate, term=loanTerm)
+        applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
+                                                                   yearRate=self.interestRate, term=loanTerm)
+
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
         self.active_payload = parser.parser
-        # 门店信息
-        onlineStoreInfo = self.MysqlBizImpl.get_user_database_info('user_online_store_partnership',
-                                                                   third_store_id=self.storeCode)
-        self.active_payload['body']['storeAccountNo'] = onlineStoreInfo['account']  # 门店银行号
-        self.active_payload['body']['storeBankName'] = onlineStoreInfo['account_name']  # 门店银行名称
 
         self.log.demsg('发起支用请求...')
         url = self.host + self.cfg['loan_apply']['interface']
@@ -413,7 +383,6 @@ class HairBizImpl(MysqlInit):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param loanInvoiceId: 借据号 必填
-
         @param repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         @param repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期； 9 宽限期提前结清； 10 逾期提前结清
         @param repayTerm: 还款期次，默认取当前借据最早未还期次
@@ -427,7 +396,7 @@ class HairBizImpl(MysqlInit):
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         # 如果是贴息产品，担保费为0
-        repayGuaranteeFee = 0 if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else repayGuaranteeFee
+        repayGuaranteeFee = repayGuaranteeFee
         # 构造还款参数
         repay_apply_data = dict()
         # head
@@ -435,10 +404,10 @@ class HairBizImpl(MysqlInit):
         repay_apply_data['requestTime'] = self.date
         repay_apply_data['merchantId'] = self.merchantId
         # body
+        repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
         repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
-        repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayType'] = repay_type
         if repayTerm:
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
@@ -456,18 +425,6 @@ class HairBizImpl(MysqlInit):
         repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
         repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
         repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
-
-        # 如果是贴息产品，贴息还款计划表查询利息，并重新计算还款总金额
-        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            # 贴息产品，查询贴息还款计划
-            asset_repay_plan_merchant_interest = self.MysqlBizImpl.get_asset_database_info(
-                'asset_repay_plan_merchant_interest',
-                loan_invoice_id=loanInvoiceId,
-                current_num=int(asset_repay_plan['current_num']))
-            repay_apply_data["repayInterest"] += float(asset_repay_plan_merchant_interest['left_repay_interest'])  # 利息
-            repay_apply_data["repayAmount"] = round(
-                float(asset_repay_plan_merchant_interest['left_repay_interest']) + repay_apply_data["repayAmount"],
-                2)  # 总金额
 
         # 线下还款，担保费必须为0
         if repay_scene == '02':  # 线下还款
@@ -495,19 +452,12 @@ class HairBizImpl(MysqlInit):
         # 宽限期提前结清
         if repay_type == "9":
             repay_apply_data['repayType'] = "2"
-            # 非贴息产品应收当期利息+宽限期期次利息， 贴息产品应收当前期利息
+            # 应收当期利息+宽限期期次利息
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days = '0' ORDER BY 'current_num'".format(
                 loanInvoiceId)
             currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
             currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm and currentTerm['current_num'] != repayTerm else 0  # 宽限期利息
             repay_apply_data["repayInterest"] = round(repay_apply_data["repayInterest"] + currentTermInterest, 2)  # 总利息
-            # 贴息产品，账单日贴息已入账，只出当前期利息
-            if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-                asset_repay_plan_merchant_interest = self.MysqlBizImpl.get_asset_database_info(
-                    'asset_repay_plan_merchant_interest',
-                    loan_invoice_id=loanInvoiceId,
-                    current_num=int(currentTerm['current_num']))
-                repay_apply_data["repayInterest"] = float(asset_repay_plan_merchant_interest["left_repay_interest"])
             self.log.demsg("宽限期利息：{}".format(repay_apply_data["repayInterest"]))
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
@@ -533,16 +483,6 @@ class HairBizImpl(MysqlInit):
                 overdue_interest = 0
                 pre_repay_overdue_fee = 0
             repay_apply_data["repayInterest"] = overdue_interest  # 总利息
-            # 贴息产品，账单日贴息已入账，只出当前期利息
-            if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-                key = "loan_invoice_id = '{}' and repay_plan_status in ('4', '5') ORDER BY 'current_num' DESC".format(
-                    loanInvoiceId)
-                getRepayTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
-                asset_repay_plan_merchant_interest = self.MysqlBizImpl.get_asset_database_info(
-                    'asset_repay_plan_merchant_interest',
-                    loan_invoice_id=loanInvoiceId,
-                    current_num=int(getRepayTerm['current_num']))
-                repay_apply_data["repayInterest"] = float(asset_repay_plan_merchant_interest["left_repay_interest"])
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
             repay_apply_data['repayOverdueFee'] = pre_repay_overdue_fee  # 罚息
@@ -554,6 +494,8 @@ class HairBizImpl(MysqlInit):
         # 线上还款
         if repay_scene == '01':
             repay_apply_data['repaymentAccountNo'] = self.data['bankid']
+            repay_apply_data['repaymentAccountName'] = self.data['name']
+            repay_apply_data['repaymentAccountPhone'] = self.data['telephone']
         # 线下还款、逾期还款
         if repay_scene == '02' or '05':
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
@@ -568,16 +510,8 @@ class HairBizImpl(MysqlInit):
             apollo_data['hj.payment.alipay.order.query.switch'] = "1"
             apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
                                                                              2)  # 总金额
-            if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-                apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(
-                    repay_apply_data["repayPrincipal"] * 100, 2)  # 总本金
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
 
-        # 配置还款mock时间
-        # apollo_data = dict()
-        # apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        # apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
-        # self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_apply']['payload'], **repay_apply_data)
@@ -617,159 +551,11 @@ class HairBizImpl(MysqlInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    # 退货申请
-    def returnGoods_apply(self, loanInvoiceId, term, repayDate, **kwargs):
-        """
-        注意：10天内免息
-        @param term: 当前待还期次
-        @param repayDate: 退货时间
-        @param loanInvoiceId: 借据号 必填
-        @param kwargs: 需要临时装填的字段以及值 eg: key=value
-        @return: response 接口响应参数 数据类型：json
-        """
-        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-        returnGoods_apply_data = dict()
-        # head
-        returnGoods_apply_data['requestSerialNo'] = 'requestNo' + strings + "_1200"
-        returnGoods_apply_data['requestTime'] = self.date
-        returnGoods_apply_data['merchantId'] = self.merchantId
-        # body
-        returnGoods_apply_data['loanInvoiceId'] = loanInvoiceId
-        returnGoods_apply_data['returnGoodsSerialNo'] = 'GoodsSerialNo' + strings
-
-        # 计算剩余应还本金(最早未还期次:期初计息余额before_calc_principal)
-        key = "loan_invoice_id = '{}' and repay_plan_status in('1','4') ORDER BY 'current_num'".format(
-            loanInvoiceId)
-        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-        returnGoods_apply_data["returnGoodsPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-
-        # 计算退货应收利息， 放款10日内退货不收罚息
-        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                         loan_invoice_id=loanInvoiceId)
-        loanDate = str(credit_loan_invoice['loan_pay_time']).split()[0]
-        # loanDate = datetime.strptime(loanDate, '%Y-%m-%d').date()
-        # date = datetime.strptime(date, '%Y-%m-%d').date()
-        loanDate = parse(loanDate)
-        repayDateFormat = parse(repayDate)
-        if 10 >= int((repayDateFormat - loanDate).days):
-            returnGoods_apply_data['returnGoodsInterest'] = 0
-            returnGoods_apply_data['returnGoodsOverdueFee'] = 0
-        else:
-            # 贴息
-            if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-                self.log.demsg("贴息产品,利息查asset_repay_plan_merchant_interest表； 罚息费用查asset_repay_plan表", )
-                asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
-                                                                             loan_invoice_id=loanInvoiceId,
-                                                                             current_num=term)
-                dangqi_interest = float(asset_repay_plan['left_repay_interest'])  # 当期利息
-                # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
-                key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3,4) ORDER BY 'current_num'".format(
-                    loanInvoiceId)
-                KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-                if KXQRepayAmt:
-                    asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
-                                                                                 loan_invoice_id=loanInvoiceId,
-                                                                                 current_num=KXQRepayAmt['current_num'])
-                    kuanxianqi_interest = float(asset_repay_plan['left_repay_interest'])  # 宽限期利息
-                else:
-                    kuanxianqi_interest = 0  # 宽限期利息
-
-                # 逾期借据=计算逾期期次利息+当期利息
-                oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
-                                                                        'sum(pre_repay_interest)',
-                                                                        loan_invoice_id=loanInvoiceId,
-                                                                        repay_plan_status='4')
-                if oveRepayAmt['sum(pre_repay_interest)']:
-                    weihuan_interest = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_interest)']))  # 未还期次利息
-                else:
-                    weihuan_interest = 0
-                returnGoods_apply_data['returnGoodsInterest'] = float(
-                    "{:.2f}".format(dangqi_interest + weihuan_interest +
-                                    kuanxianqi_interest))
-
-                # 逾期借据=计算逾期期次罚息、费用
-                oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                        'sum(left_repay_fee)',
-                                                                        'sum(pre_repay_overdue_fee)',
-                                                                        loan_invoice_id=loanInvoiceId,
-                                                                        repay_plan_status='4')
-                if oveRepayAmt['sum(left_repay_fee)'] or oveRepayAmt['sum(pre_repay_overdue_fee)']:
-                    left_repay_fee = float("{:.2f}".format(oveRepayAmt['sum(left_repay_fee)']))  # 未还期次费用
-                    pre_repay_overdue_fee = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
-                else:
-                    left_repay_fee = 0
-                    pre_repay_overdue_fee = 0
-                returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee  # 罚息
-                returnGoods_apply_data['returnGoodsFee'] = left_repay_fee  # 费用
-            else:
-                # 非贴息
-                self.log.demsg("非贴息产品,利息查asset_repay_plan表")
-                asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                             loan_invoice_id=loanInvoiceId,
-                                                                             current_num=term)
-                dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
-                self.log.demsg("当期利息：{}".format(dangqi_interest))
-                # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
-                key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3,4) ORDER BY 'current_num'".format(
-                    loanInvoiceId)
-                KXQRepayAmt = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-                kuanxianqi_interest = float(KXQRepayAmt['pre_repay_interest']) if KXQRepayAmt else 0  # 宽限期利息
-                self.log.demsg("宽限期利息：{}".format(kuanxianqi_interest))
-                # 逾期借据=逾期期次利息+当期利息
-                oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                        'sum(left_repay_fee)',
-                                                                        'sum(pre_repay_interest)',
-                                                                        'sum(pre_repay_overdue_fee)',
-                                                                        loan_invoice_id=loanInvoiceId,
-                                                                        repay_plan_status='4')
-                if oveRepayAmt['sum(pre_repay_interest)']:
-                    left_repay_fee = float("{:.2f}".format(oveRepayAmt['sum(left_repay_fee)']))  # 未还期次费用
-                    weihuan_interest = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_interest)']))  # 未还期次利息
-                    pre_repay_overdue_fee = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
-                else:
-                    left_repay_fee = 0
-                    weihuan_interest = 0
-                    pre_repay_overdue_fee = 0
-                self.log.demsg("逾期期次利息：{}".format(weihuan_interest))
-                returnGoods_apply_data['returnGoodsInterest'] = float(
-                    "{:.2f}".format(dangqi_interest + weihuan_interest +
-                                    kuanxianqi_interest))
-                # 罚息、费用
-                returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee  # 罚息
-                returnGoods_apply_data['returnGoodsFee'] = left_repay_fee  # 费用
-
-        # 当期已还款，利息0
-        days = get_day(asset_repay_plan["start_date"], repayDate)
-        # 如果当期已还款，提前还款利息应收0
-        if days <= 0:
-            returnGoods_apply_data["returnGoodsInterest"] = 0
-        # 更新退货mock时间
-        apollo_data = dict()
-        apollo_data['yinliu.return.goods.trade.date.mock'] = "true"
-        apollo_data['yinliu.return.goods.date.mock'] = str(repayDate).replace('-', '')
-        self.apollo.update_config(appId='jccfc-op-channel', namespace='000', **apollo_data)
-        time.sleep(3)
-        # 配置还款mock时间
-        apollo_data = dict()
-        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
-        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
-
-        # 更新 payload 字段值
-        returnGoods_apply_data.update(kwargs)
-        parser = DataUpdate(self.cfg['returnGoods_apply']['payload'], **returnGoods_apply_data)
-        self.active_payload = parser.parser
-
-        self.log.demsg('退货请求...')
-        url = self.host + self.cfg['returnGoods_apply']['interface']
-        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
-                                     encrypt_flag=self.encrypt_flag)
-        return response
-
     # 附件补录
-    def supplementAttachment(self, thirdApplyId, **kwargs):
+    def supplementAttachment(self, thirdApplyId, fileType=1, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致
+        @param fileType: 附件类型
         @param thirdApplyId: 渠道申请编号
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
@@ -785,7 +571,7 @@ class HairBizImpl(MysqlInit):
 
         # 附件信息
         fileInfos = []
-        fileInfo = {'fileType': "14", 'fileName': "action1.jpg"}
+        fileInfo = {'fileType': fileType, 'fileName': "action1.jpg"}
         positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/idCardFile/action1.jpg'))
         # positive = get_base64_from_img(os.path.join(project_dir(), r'src/test_data/testFile/temp/userInfo.txt'))
         fileInfo['file'] = positive  # 身份证正面base64字符串
@@ -943,6 +729,64 @@ class HairBizImpl(MysqlInit):
 
         self.log.demsg('支持银行列表获取...')
         url = self.host + self.cfg['querySupportBank']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 结清证明申请
+    def applySettlementCer(self, *args, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        applySettlementCer_data = dict()
+        # head
+        applySettlementCer_data['requestSerialNo'] = 'requestNo' + strings + "_1400"
+        applySettlementCer_data['requestTime'] = self.date
+        applySettlementCer_data['merchantId'] = self.merchantId
+        # body
+        applySettlementCer_data['name'] = self.data['name']
+        applySettlementCer_data['idNo'] = self.data['cer_no']
+        applySettlementCer_data['mobileNo'] = self.data['telephone']
+        applySettlementCer_data['loanApplyIdList'] = list(args)
+        # 更新 payload 字段值
+        applySettlementCer_data.update(kwargs)
+        parser = DataUpdate(self.cfg['applySettlementCer']['payload'], **applySettlementCer_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('结清证明申请...')
+        url = self.host + self.cfg['applySettlementCer']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 结清证明下载
+    def settlementCerDownload(self, applyId, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param applyId: 结清证明编号
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        settlementCerDownload_data = dict()
+        # head
+        settlementCerDownload_data['requestSerialNo'] = 'requestNo' + strings + "_1400"
+        settlementCerDownload_data['requestTime'] = self.date
+        settlementCerDownload_data['merchantId'] = self.merchantId
+        # body
+        settlementCerDownload_data['name'] = self.data['name']
+        settlementCerDownload_data['idNo'] = self.data['cer_no']
+        settlementCerDownload_data['applyId'] = applyId
+        # 更新 payload 字段值
+        settlementCerDownload_data.update(kwargs)
+        parser = DataUpdate(self.cfg['settlementCerDownload']['payload'], **settlementCerDownload_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('结清证明下载...')
+        url = self.host + self.cfg['settlementCerDownload']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
