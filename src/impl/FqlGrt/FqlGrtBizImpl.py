@@ -39,7 +39,7 @@ class FqlGrtBizImpl(MysqlInit):
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQLZX.value), 'applyId')
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQLGRT.value), 'applyId')
             else:
                 base_data = get_base_data_temp('applyId')
         return base_data
