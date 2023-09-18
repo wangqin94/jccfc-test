@@ -11,7 +11,7 @@ from src.test_data.module_data import FqlGrt
 from utils.Apollo import Apollo
 
 
-class FqlZxBizImpl(MysqlInit):
+class FqlGrtBizImpl(MysqlInit):
     def __init__(self, data=None, encrypt_flag=True, person=True):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
