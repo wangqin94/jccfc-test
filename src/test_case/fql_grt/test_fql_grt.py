@@ -23,55 +23,55 @@ class TestCase(object):
     def process(flag=0):
         # 授信
         if flag == 0:
-            fql_zx = FqlGrtBizImpl(data=None)
+            fql_grt = FqlGrtBizImpl(data=None)
             # orderType: 1-赊销 3-取现 4-乐花卡
-            fql_zx.credit(orderType='1', creditAmount=30000, loanPrincipal=30000, loanTerm=3)
+            fql_grt.credit(orderType='1', creditAmount=30000, loanPrincipal=30000, loanTerm=3)
 
         # 授信查询
         if flag == 1:
-            fql_zx = FqlGrtBizImpl(data=data)
-            fql_zx.credit_query()
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.credit_query()
 
         # 支用申请
         if flag == 2:
-            fql_zx = FqlGrtBizImpl(data=data)
+            fql_grt = FqlGrtBizImpl(data=data)
             # orderType: 1-赊销 3-取现 4-乐花卡
-            fql_zx.loan(orderType=1, loanPrincipal=30000, loanTerm=3, fixedBillDay=10, fixedRepayDay=20)
+            fql_grt.loan(orderType=1, loanPrincipal=30000, loanTerm=3, fixedBillDay=10, fixedRepayDay=20)
 
         # 支用查询
         if flag == 3:
-            fql_zx = FqlGrtBizImpl(data=data)
-            fql_zx.loan_query()
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.loan_query()
 
         # 还款计划查询
         if flag == 4:
-            fql_zx = FqlGrtBizImpl(data=data)
-            fql_zx.repayPlan_query()
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.repayPlan_query()
 
         # 还款试算
         if flag == 5:
-            fql_zx = FqlGrtBizImpl(data=data)
-            fql_zx.repay_trial()
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.repay_trial()
 
         # 还款通知
         if flag == 6:
-            fql_zx = FqlGrtBizImpl(data=data)
-            fql_zx.repay()
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.repay()
 
         # 还款通知查询
         if flag == 7:
-            fql_zx = FqlGrtBizImpl(data=data)
-            fql_zx.repay_query()
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.repay_query()
 
         # 代扣申请
         if flag == 8:
-            fql_zx = FqlGrtBizImpl(data=data)
-            fql_zx.withhold()
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.withhold()
 
         # 代扣查询
         if flag == 9:
-            fql_zx = FqlGrtBizImpl(data=data)
-            fql_zx.withhold_query()
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.withhold_query()
 
 
 if __name__ == '__main__':
