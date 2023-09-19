@@ -108,9 +108,9 @@ class FqlGrtBizImpl(MysqlInit):
             loan_data['debitAccountName'] = self.data['name']
             loan_data['debitAccountNo'] = self.data['bankid']
         else:
-            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', userid=self.merchantId)
+            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.merchantId)
             bank_info = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
-                                                                 resource_id=resource['resource_id'])
+                                                                 resource_id=resource['resource_id'], account_type='1')
             loan_data['debitAccountName'] = bank_info['account_name']
             loan_data['debitOpenAccountBank'] = bank_info['branch_name']
             loan_data['debitAccountNo'] = bank_info['account']
