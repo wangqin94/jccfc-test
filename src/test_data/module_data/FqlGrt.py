@@ -66,37 +66,37 @@ FqlGrt = {
             "fileInfos": [
                 {
                     "fileType": "1",
-                    "filePath": "/hj/xdgl/fql_grt/upload/credit",
+                    "filePath": "/hj/xdgl/FqlGrt/upload/credit",
                     "fileName": "idcard_front_1123071816044097130384.jpg"
                 },
                 {
                     "fileType": "2",
-                    "filePath": "/hj/xdgl/fql_grt/upload/credit",
+                    "filePath": "/hj/xdgl/FqlGrt/upload/credit",
                     "fileName": "idcard_back_1123071816044097130384.jpg"
                 },
                 {
                     "fileType": "3",
-                    "filePath": "/hj/xdgl/fql_grt/upload/credit",
+                    "filePath": "/hj/xdgl/FqlGrt/upload/credit",
                     "fileName": "face_distinguish_1123071816044097130384.jpg"
                 },
                 {
                     "fileType": "4",
-                    "filePath": "/hj/xdgl/fql_grt/upload/credit",
+                    "filePath": "/hj/xdgl/FqlGrt/upload/credit",
                     "fileName": "JC_userauth_1123071816044097130384.pdf"
                 },
                 {
                     "fileType": "5",
-                    "filePath": "/hj/xdgl/fql_grt/upload/credit",
+                    "filePath": "/hj/xdgl/FqlGrt/upload/credit",
                     "fileName": "JC_third_auth_1123071816044097130384.pdf"
                 },
                 {
                     "fileType": "6",
-                    "filePath": "/hj/xdgl/fql_grt/upload/credit",
+                    "filePath": "/hj/xdgl/FqlGrt/upload/credit",
                     "fileName": "JC_non_student_1123071816044097130384.pdf"
                 },
                 {
                     "fileType": "7",
-                    "filePath": "/hj/xdgl/fql_grt/upload/credit",
+                    "filePath": "/hj/xdgl/FqlGrt/upload/credit",
                     "fileName": "JC_face_identify_authorization_1123071816044097130384.pdf"
                 }
             ]
