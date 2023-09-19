@@ -73,6 +73,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['credit']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 授信查询
@@ -89,6 +91,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['credit_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 支用申请
@@ -128,6 +132,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['loan']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 支用查询
@@ -144,6 +150,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['loan_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 还款计划查询
@@ -166,6 +174,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['repayPlan_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 还款试算
@@ -187,6 +197,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['repay_trial']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 还款通知
@@ -262,6 +274,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['repay']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 还款通知查询
@@ -285,6 +299,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['repay_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 代扣申请
@@ -365,6 +381,8 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['withhold']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
 
     # 代扣查询
@@ -381,4 +399,6 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['withhold_query']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        response = response['bizContent']
+        self.log.info("解析后报文：{}".format(response))
         return response
