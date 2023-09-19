@@ -54,6 +54,7 @@ class FqlGrtBizImpl(MysqlInit):
         credit_data['identiNo'] = self.data['cer_no']
         credit_data['mobileNo'] = self.data['telephone']
         credit_data['userBankCardNo'] = self.data['bankid']
+        credit_data['orderType'] = orderType
         if orderType == '3':
             credit_data['debitAccountName'] = self.data['name']
             credit_data['debitAccountNo'] = self.data['bankid']
@@ -101,6 +102,7 @@ class FqlGrtBizImpl(MysqlInit):
         loan_data['partnerCode'] = self.merchantId
         loan_data['mobileNo'] = self.data['telephone']
         loan_data['userBankCardNo'] = self.data['bankid']
+        loan_data['orderType'] = orderType
         if orderType == 3:
             loan_data['debitAccountName'] = self.data['name']
             loan_data['debitAccountNo'] = self.data['bankid']
@@ -191,7 +193,7 @@ class FqlGrtBizImpl(MysqlInit):
         return response
 
     # 还款通知
-    def repay(self, billId='', rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId=None, term=None, rpyDate=None, **kwargs):
+    def repay(self, rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId=None, term=None, rpyDate=None, **kwargs):
         repay_data = dict()
         repay_data['partnerCode'] = self.merchantId
         repay_data['assetId'] = self.data['applyId']
@@ -201,9 +203,10 @@ class FqlGrtBizImpl(MysqlInit):
                                                                        loan_apply_id=loan_apply_info['loan_apply_id'])
         loanInvoiceId = loanInvoiceId if loanInvoiceId else loan_invoice_info['loan_invoice_id']
         repay_data['capitalLoanNo'] = loanInvoiceId
-        repay_data['billId'] = billId
+        repay_data['billId'] = "billId" + self.strings
         rpyDate = rpyDate if rpyDate else time.strftime('%Y-%m-%d', time.localtime())
         repay_data['rpyDate'] = rpyDate
+        repay_data['rpyType'] = rpyType
         if term:
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
                                                                          loan_invoice_id=loanInvoiceId,
@@ -265,10 +268,10 @@ class FqlGrtBizImpl(MysqlInit):
         return response
 
     # 还款通知查询
-    def repay_query(self, billId='', loanInvoiceId=None, **kwargs):
+    def repay_query(self, loanInvoiceId=None, **kwargs):
         repay_query_data = dict()
         repay_query_data['partnerCode'] = self.merchantId
-        repay_query_data['billId'] = billId
+        repay_query_data['billId'] = "billId" + self.strings
         loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                      thirdpart_apply_id=self.data['applyId'])
         loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
@@ -296,7 +299,7 @@ class FqlGrtBizImpl(MysqlInit):
         withhold_data['cardNo'] = self.data['bankid']
         withhold_data['idNo'] = self.data['cer_no']
         withhold_data['phoneNo'] = self.data['telephone']
-
+        withhold_data['rpyType'] = rpyType
         withhold_data['assetId'] = self.data['applyId']
         loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                      thirdpart_apply_id=self.data['applyId'])
