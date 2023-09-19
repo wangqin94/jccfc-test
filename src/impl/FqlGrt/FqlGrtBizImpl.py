@@ -60,7 +60,7 @@ class FqlGrtBizImpl(MysqlInit):
         else:
             resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.merchantId)
             bank_info = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
-                                                                 resource_id=resource['resource_id'])
+                                                                 resource_id=resource['resource_id'], account_type='1')
             credit_data['debitAccountName'] = bank_info['account_name']
             credit_data['debitOpenAccountBank'] = bank_info['branch_name']
             credit_data['debitAccountNo'] = bank_info['account']
