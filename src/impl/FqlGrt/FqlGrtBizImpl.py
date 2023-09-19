@@ -82,7 +82,7 @@ class FqlGrtBizImpl(MysqlInit):
         credit_query_data['partnerCode'] = self.merchantId
         # 更新 payload 字段值
         credit_query_data.update(kwargs)
-        parser = DataUpdate(self.cfg['credit_apply']['payload'], **credit_query_data)
+        parser = DataUpdate(self.cfg['credit_query']['payload'], **credit_query_data)
         self.active_payload = parser.parser
 
         self.log.demsg('开始授信查询...')
