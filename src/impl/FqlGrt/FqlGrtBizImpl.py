@@ -33,8 +33,6 @@ class FqlGrtBizImpl(MysqlInit):
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
         if data:
-            data['applyId'] = "applyId" + self.strings
-            update_user_info(data)
             base_data = data
         else:
             if person:
