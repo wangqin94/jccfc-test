@@ -19,12 +19,11 @@ class FqlGrtBizImpl(MysqlInit):
         # 解析项目特性配置
         self.cfg = FqlGrt.FqlGrt
         self.encrypt_flag = encrypt_flag
+        self.strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
-        self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
         self.merchantId = EnumMerchantId.FQLGRT.value
         self.interestRate = getInterestRate(ProductIdEnum.FQLGRT.value)
-        self.strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         # 初始化payload变量
         self.active_payload = {}
 
