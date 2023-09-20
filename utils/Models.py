@@ -82,6 +82,11 @@ def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
     data['bankid'] = BankNo().get_bank_card(bankName=bankName)[0]
     data['bankcode'] = BankNo().get_bank_card(bankName=bankName)[1]
 
+    if os.path.exists("person.py"):
+        pass
+    else:
+        file = open("person.py", "w")
+        file.close()
     # 读取文件行数，超过20行删除历史数据
     with open('person.py', "r", encoding='utf-8') as f:  # 打开文件
         back_data = f.readlines()  # 读取文件
