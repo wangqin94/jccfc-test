@@ -71,9 +71,9 @@ def create_attachment_image(person, imageName):
     draw.text((230, 280), person['name'], font=font_ch, fill=(0, 0, 0))
     draw.text((230, 320), person['cer_no'], font=font_d, fill=(0, 0, 0))
     back_image.save(p_path[:p_path.index("jccfc-test") + len(
-        "jccfc-test")] + f'/image/temp/{imageName}{person["name"]}.png')
+        "jccfc-test")] + f'/image/temp{imageName}.png')
     return p_path[
-           :p_path.index("jccfc-test") + len("jccfc-test")] + f'/image/temp/{imageName}.png'
+           :p_path.index("jccfc-test") + len("jccfc-test")] + f'/image/temp{imageName}.png'
 
 
 def create_attachment_pdf(filename, person=None):

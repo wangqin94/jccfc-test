@@ -10,7 +10,7 @@ from src.impl.common.CommonBizImpl import post_with_encrypt
 from src.impl.common.MysqlBizImpl import MysqlBizImpl, time, get_base_data, get_base_data_temp, DataUpdate
 from src.test_data.module_data import Didi
 from utils.Apollo import Apollo
-from utils.FileCreator import create_attachment_pdf
+from utils.FileCreator import create_attachment_pdf, create_attachment_image
 from utils.SFTP import SFTP
 
 
@@ -255,26 +255,27 @@ class DidiBizImpl(MysqlInit):
         attachment = p_path[:p_path.index("jccfc-test") + len("jccfc-test")] + '/image/temp/'
         if os.path.exists(attachment):
             os.removedirs(attachment)
-        else:
-            os.mkdir(attachment)
+        os.mkdir(attachment)
 
         sftpDir_credit = '/hj/xdgl/didi/credit'
-        front = "/10" + applicationId + "_01.png"
-
-        back = "/10" + applicationId + "_02.png"
-        face = "/10" + applicationId + "_03.png"
+        front = "/10" + applicationId + "_01"
+        create_attachment_image(self.data, front)
+        back = "/10" + applicationId + "_02"
+        create_attachment_image(self.data, back)
+        face = "/10" + applicationId + "_03"
+        create_attachment_image(self.data, face)
         # 征信查询授权书
         INVESTIGATION = "/20" + applicationId + "INVESTIGATION"
-        create_attachment_pdf(INVESTIGATION,person=self.data)
+        create_attachment_pdf(INVESTIGATION, person=self.data)
         # 三方数据查询授权书
         PINFOOUERY = "/20" + applicationId + "PINFOOUERY"
-        create_attachment_pdf(PINFOOUERY,person=self.data)
+        create_attachment_pdf(PINFOOUERY, person=self.data)
         # 人脸识别授权书(暂时待定)
         PINFOUSE = "/20" + applicationId + "PINFOUSE"
-        create_attachment_pdf(PINFOUSE,person=self.data)
+        create_attachment_pdf(PINFOUSE, person=self.data)
         # 授信合同
         LOANCREDIT = "/20" + applicationId + "LOANCREDIT"
-        create_attachment_pdf(LOANCREDIT,person=self.data)
+        create_attachment_pdf(LOANCREDIT, person=self.data)
 
         self.sftp.upload_dir(attachment, sftpDir_credit)
 
