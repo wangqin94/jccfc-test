@@ -50,9 +50,9 @@ class FqlGrtBizImpl(MysqlInit):
         credit_data['name'] = self.data['name']
         credit_data['identiNo'] = self.data['cer_no']
         credit_data['mobileNo'] = self.data['telephone']
-        credit_data['userBankCardNo'] = self.data['bankid']
         credit_data['orderType'] = orderType
         if orderType == '3':
+            credit_data['userBankCardNo'] = self.data['bankid']
             credit_data['debitAccountName'] = self.data['name']
             credit_data['debitAccountNo'] = self.data['bankid']
         else:
@@ -238,7 +238,7 @@ class FqlGrtBizImpl(MysqlInit):
                                                                              current_num=i)
                 repay_detail_data = dict()
                 repay_detail_data['rpyTerm'] = i
-                repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_interest'])
+                repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_principal'])
                 if i == min_term:
                     repay_detail_data['rpyAmt'] = float(asset_repay_plan['pre_repay_amount'])
                     day_rate = round(self.interestRate / (100 * 360), 6)
@@ -256,7 +256,7 @@ class FqlGrtBizImpl(MysqlInit):
         else:
             repay_detail_data['rpyTerm'] = min_term
             repay_detail_data['rpyAmt'] = float(asset_repay_plan['pre_repay_amount'])
-            repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_interest'])
+            repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_principal'])
             repay_detail_data['rpyFeeAmt'] = float(asset_repay_plan['pre_repay_interest'])
             repay_detail_data['rpyMuclt'] = float(asset_repay_plan['pre_repay_overdue_fee'])
             repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
@@ -344,7 +344,7 @@ class FqlGrtBizImpl(MysqlInit):
                                                                              current_num=i)
                 repay_detail_data = dict()
                 repay_detail_data['rpyTerm'] = i
-                repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_interest'])
+                repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_principal'])
                 if i == min_term:
                     repay_detail_data['rpyAmt'] = float(asset_repay_plan['pre_repay_amount'])
                     day_rate = round(self.interestRate / (100 * 360), 6)
@@ -362,7 +362,7 @@ class FqlGrtBizImpl(MysqlInit):
         else:
             repay_detail_data['rpyTerm'] = min_term
             repay_detail_data['rpyAmt'] = float(asset_repay_plan['pre_repay_amount'])
-            repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_interest'])
+            repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_principal'])
             repay_detail_data['rpyFeeAmt'] = float(asset_repay_plan['pre_repay_interest'])
             repay_detail_data['rpyMuclt'] = float(asset_repay_plan['pre_repay_overdue_fee'])
             repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
