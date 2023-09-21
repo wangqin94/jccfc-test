@@ -7,8 +7,8 @@ from fpdf import FPDF
 from config.TestEnvInfo import TEST_ENV_INFO
 from utils.ID_address import ID_address
 from utils.Models import get_base_data
-
-
+from warnings import filterwarnings
+filterwarnings('ignore')
 def create_cer_image(person=None, fileName=None):
     if person is None:
         person = get_base_data(TEST_ENV_INFO)
@@ -89,11 +89,11 @@ def create_attachment_pdf(filename, person=None):
     pdf = FPDF()
     pdf.add_page()
     pdf.add_font('simkai', '', "C:\\Windows\\Fonts\\simkai.ttf", True)
-    pdf.set_font("simkai", size=8)
-    pdf.cell(0, 10, person['name'], 0, 1)
-    pdf.cell(0, 10, person['cer_no'], 0, 1)
-    pdf.cell(0, 10, filename, 0, 1)
-
+    pdf.set_font("simkai", size=6)
+    pdf.cell(0, 12, person['name'], 0, 1)
+    pdf.cell(0, 12, person['cer_no'], 0, 1)
+    pdf.cell(0, 12, filename, 0, 1)
+    filterwarnings('ignore')
     file = p_path[:p_path.index("jccfc-test") + len("jccfc-test")] + f'/image/temp{filename}.pdf'
 
     pdf.output(file)

@@ -19,9 +19,9 @@ class MyTestCase(unittest.TestCase):
         # 发起授信申请
         self.thirdApplyId = self.Didi.credit(applyAmount=20000)
         # 授信申请查询
-        self.Didi.queryCreditResult(123123)
+        # self.Didi.queryCreditResult()
         # 检查授信结果
-        # self.CheckBizImpl.check_credit_apply_status(123123)
+        self.CheckBizImpl.check_credit_apply_status()
         # 发起授信申请
         self.Didi.loanRiskCheck()
 

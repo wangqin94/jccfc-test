@@ -12,14 +12,14 @@ Didi = {
     "credit_apply": {
         "interface": "/api/v1/didi/credit/creditApply",
         "payload": {
-            "sftpDir": "hj/xdgl/didi/credit",
+            "sftpDir": "/hj/xdgl/didi/credit",
             "userInfo": {
                 "name": "张三",  # ⽤户姓名
                 "idNo": "411023199909011011",  # 身份证号
                 "phone": "17633336333",  # 银⾏卡绑定⼿机号
                 "bankCardNo": "",  # 银⾏卡号
-                "bankName": "",  # 银行名称
-                "bankAddr": "",  # 银行编码
+                "bankName": "中国银行",  # 银行名称
+                "bankAddr": "BOC",  # 银行编码
                 "jobType": "1",
                 # 职业 0:机关、党群组织、企事业单位负责⼈， 1:专业技术⼈员， 3:办事⼈员和有关⼈员， 4:商业、服务业⼈员，
                 # 5:农林牧渔⽔利业⽣产⼈员， 6 ⽣产、运输设备操作相关⼈员， X: 军⼈ Y：其他从业⼈员

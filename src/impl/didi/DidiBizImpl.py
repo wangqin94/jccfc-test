@@ -3,14 +3,16 @@
 # 滴滴-滴水贷接口数据封装类
 # ------------------------------------------
 import os
+import time
 
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import EnumMerchantId, ProductEnum
 from src.impl.common.CommonBizImpl import post_with_encrypt
-from src.impl.common.MysqlBizImpl import MysqlBizImpl, time, get_base_data, get_base_data_temp, DataUpdate
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import Didi
 from utils.Apollo import Apollo
 from utils.FileCreator import create_attachment_pdf, create_attachment_image
+from utils.Models import get_base_data, get_base_data_temp, DataUpdate
 from utils.SFTP import SFTP
 
 
@@ -20,25 +22,27 @@ class DidiBizImpl(MysqlInit):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
+        self.sftp = SFTP()
         # 解析项目特性配置
         self.cfg = Didi.Didi
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
+        # self.MysqlBizImpl.check_user_available(self.data)
 
-        self.sftp = SFTP()
         # 初始化产品
         self.merchantId = merchantId if merchantId else EnumMerchantId.DIDI.value
 
         # 初始化payload变量
         self.active_payload = {}
 
+        self.applicationId = f'DC00{self.date}{self.times}'
+        # 上传文件
+        self.upload_file()
+
         self.encrypt_url = self.host + self.cfg['encrypt']['interface']
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
-
-        self.applicationId = f'DC0000000000000000{int(round(time.time() * 1000))}'
-        self.upload_file()
 
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
@@ -46,7 +50,7 @@ class DidiBizImpl(MysqlInit):
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.DIDI.value))
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.DIDI.value), bankName='中国银行')
             else:
                 base_data = get_base_data_temp()
         return base_data
@@ -58,7 +62,7 @@ class DidiBizImpl(MysqlInit):
         :param kwargs:
         :return:
         """
-        self.log.demsg('用户四要素信息: {}'.format(self.data))
+        # self.log.demsg('用户四要素信息: {}'.format(self.data))
         # strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         credit_data = dict()
         credit_data['userInfo'] = dict()
@@ -73,21 +77,21 @@ class DidiBizImpl(MysqlInit):
         credit_data['ocrInfo']['gender'] = self.data['telephone']
 
         credit_data['userScoreInfo'] = dict()
-        credit_data['userScoreInfo']['scoreOne'] = applyAmount * 100  # 单位 分
-        credit_data['userScoreInfo']['scoreTwo'] = int(0.000666 * 1000000)  # *百万分之一 互金存的年化利率
-        credit_data['userScoreInfo']['scoreThree'] = int(0.000415 * 1000000)  # *百万分之一 互金存的年化利率
+        credit_data['userScoreInfo']['scoreOne'] = applyAmount * 100 + 260000 # 单位 分
+        credit_data['userScoreInfo']['scoreTwo'] = 666*40+350000  # *百万分之一 互金存的年化利率 * 360
+        credit_data['userScoreInfo']['scoreThree'] = 415*20+360000  # *百万分之一 互金存的年化利率 * 360
         # 银行卡信息
 
         parser = DataUpdate(self.cfg['credit_apply']['payload'], **credit_data['userInfo'])
-        parser = DataUpdate(parser.data, **credit_data['ocrInfo'])
-        parser = DataUpdate(parser.data, **credit_data['userScoreInfo'])
+        parser = DataUpdate(parser.parser, **credit_data['ocrInfo'])
+        parser = DataUpdate(parser.parser, **credit_data['userScoreInfo'])
         self.active_payload = parser.parser
         self.active_payload['applicationId'] = self.applicationId
+
         # 更新 payload 字段值
         self.active_payload.update(kwargs)
         # 校验用户是否已存在
-        self.MysqlBizImpl.check_user_available(self.data)
-
+        # self.MysqlBizImpl.check_user_available(self.data)
         # 配置风控mock返回建议额度与授信额度一致
         apollo_data = dict()
         apollo_data['hj.channel.risk.credit.line.amt.mock'] = applyAmount
@@ -253,31 +257,52 @@ class DidiBizImpl(MysqlInit):
             applicationId = self.applicationId
         p_path = os.path.abspath(os.path.dirname(__file__))
         attachment = p_path[:p_path.index("jccfc-test") + len("jccfc-test")] + '/image/temp/'
-        if os.path.exists(attachment):
-            os.removedirs(attachment)
+        png_path = attachment + "/10/"
+        pdf_path = attachment + "/20/"
+        if os.path.exists(png_path):
+            os.removedirs(png_path)
+        if os.path.exists(pdf_path):
+            os.removedirs(pdf_path)
         os.mkdir(attachment)
+        os.mkdir(attachment + "/10/")
+        os.mkdir(attachment + "/20/")
 
-        sftpDir_credit = '/hj/xdgl/didi/credit'
-        front = "/10" + applicationId + "_01"
-        create_attachment_image(self.data, front)
-        back = "/10" + applicationId + "_02"
-        create_attachment_image(self.data, back)
-        face = "/10" + applicationId + "_03"
-        create_attachment_image(self.data, face)
+        sftpDir_credit_png = '/hj/xdgl/didi/credit/10'
+        sftpDir_credit_pdf = '/hj/xdgl/didi/credit/20'
+        front = "/10/" + applicationId + "_01"
+        back = "/10/" + applicationId + "_02"
+        face = "/10/" + applicationId + "_03"
+
+        front_path = create_attachment_image(self.data, front)
+        back_path = create_attachment_image(self.data, back)
+        face_path = create_attachment_image(self.data, face)
+
         # 征信查询授权书
-        INVESTIGATION = "/20" + applicationId + "INVESTIGATION"
-        create_attachment_pdf(INVESTIGATION, person=self.data)
+        INVESTIGATION = "/20/" + applicationId + "INVESTIGATION"
+        INVESTIGATION_path = create_attachment_pdf(INVESTIGATION, person=self.data)
         # 三方数据查询授权书
-        PINFOOUERY = "/20" + applicationId + "PINFOOUERY"
-        create_attachment_pdf(PINFOOUERY, person=self.data)
-        # 人脸识别授权书(暂时待定)
-        PINFOUSE = "/20" + applicationId + "PINFOUSE"
-        create_attachment_pdf(PINFOUSE, person=self.data)
-        # 授信合同
-        LOANCREDIT = "/20" + applicationId + "LOANCREDIT"
-        create_attachment_pdf(LOANCREDIT, person=self.data)
+        PINFOOUERY = "/20/" + applicationId + "PINFOQUERY"
+        PINFOOUERY_path = create_attachment_pdf(PINFOOUERY, person=self.data)
 
-        self.sftp.upload_dir(attachment, sftpDir_credit)
+        # # 人脸识别授权书(暂时待定)
+        # PINFOUSE = "/20/" + applicationId + "PINFOUSE"
+        # create_attachment_pdf(PINFOUSE, person=self.data)
+
+        # 授信合同
+        LOANCREDIT = "/20/" + applicationId + "LOANCREDIT"
+        LOANCREDIT_path = create_attachment_pdf(LOANCREDIT, person=self.data)
+
+        self.sftp.upload_dir(png_path, sftpDir_credit_png)
+        self.sftp.upload_dir(pdf_path, sftpDir_credit_pdf)
+        # self.sftp.sftp_close()
+
+        # 删除本地文件
+        os.remove(front_path)
+        os.remove(back_path)
+        os.remove(face_path)
+        os.remove(INVESTIGATION_path)
+        os.remove(PINFOOUERY_path)
+        os.remove(LOANCREDIT_path)
 
     def initiateRepay(self):
         """
