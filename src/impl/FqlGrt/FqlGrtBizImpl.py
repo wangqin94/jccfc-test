@@ -353,7 +353,7 @@ class FqlGrtBizImpl(MysqlInit):
                     repay_detail_data['rpyMuclt'] = float(asset_repay_plan['pre_repay_overdue_fee'])
                     repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
                 else:
-                    repay_detail_data['rpyAmt'] = float(asset_repay_plan['pre_repay_interest'])
+                    repay_detail_data['rpyAmt'] = float(asset_repay_plan['pre_repay_principal'])
                     repay_detail_data['rpyFeeAmt'] = 0
                     repay_detail_data['rpyMuclt'] = 0
                     repay_detail_data['rpyGuaranteeAmt'] = 0
