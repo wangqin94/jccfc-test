@@ -47,8 +47,6 @@ class FqlBizImpl(EnvInit):
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
         if data:
-            data['applyId'] = "applyId" + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
-            update_user_info(data)
             base_data = data
         else:
             if person:
