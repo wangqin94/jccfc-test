@@ -25,7 +25,7 @@ class TestCase(object):
         if flag == 0:
             fql_grt = FqlGrtBizImpl(data=None)
             # orderType: 1-赊销 3-取现 4-乐花卡
-            fql_grt.credit(orderType='1', creditAmount=30000, loanPrincipal=30000, loanTerm=3)
+            fql_grt.credit(orderType='1', loanPrincipal=30000, loanTerm=1)
 
         # 授信查询
         if flag == 1:
@@ -56,7 +56,8 @@ class TestCase(object):
         # 还款通知
         if flag == 6:
             fql_grt = FqlGrtBizImpl(data=data)
-            fql_grt.repay()
+            # rpyType 10-正常还款 30-提前结清 40-逾期还款
+            fql_grt.repay(rpyType=10)
 
         # 还款通知查询
         if flag == 7:
@@ -66,7 +67,8 @@ class TestCase(object):
         # 代扣申请
         if flag == 8:
             fql_grt = FqlGrtBizImpl(data=data)
-            fql_grt.withhold()
+            # rpyType 10-正常还款 30-提前结清 40-逾期还款
+            fql_grt.withhold(rpyType=10)
 
         # 代扣查询
         if flag == 9:
