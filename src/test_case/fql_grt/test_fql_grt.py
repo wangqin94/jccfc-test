@@ -20,23 +20,23 @@ class TestCase(object):
         pass
 
     @staticmethod
-    def process(flag=0):
+    def process(flag=10):
         # 授信
         if flag == 0:
             fql_grt = FqlGrtBizImpl(data=None)
             # orderType: 1-赊销 3-取现 4-乐花卡
-            fql_grt.credit(orderType='1', loanPrincipal=30000, loanTerm=1)
+            fql_grt.credit(orderType='1', loanPrincipal=30000, loanTerm=15)
 
         # 授信查询
         if flag == 1:
             fql_grt = FqlGrtBizImpl(data=data)
-            fql_grt.credit_query()
+            fql_grt.credit_query(applyId='123456789')
 
         # 支用申请
         if flag == 2:
             fql_grt = FqlGrtBizImpl(data=data)
             # orderType: 1-赊销 3-取现 4-乐花卡
-            fql_grt.loan(orderType=1, loanPrincipal=30000, loanTerm=3, fixedBillDay=10, fixedRepayDay=20)
+            fql_grt.loan(orderType=1, loanPrincipal=30000, loanTerm=3, fixedBillDay=21, fixedRepayDay=20)
 
         # 支用查询
         if flag == 3:
@@ -57,7 +57,7 @@ class TestCase(object):
         if flag == 6:
             fql_grt = FqlGrtBizImpl(data=data)
             # rpyType 10-正常还款 30-提前结清 40-逾期还款
-            fql_grt.repay(rpyType=10)
+            fql_grt.repay(rpyType=30)
 
         # 还款通知查询
         if flag == 7:
@@ -74,6 +74,11 @@ class TestCase(object):
         if flag == 9:
             fql_grt = FqlGrtBizImpl(data=data)
             fql_grt.withhold_query()
+
+        # 生成代偿文件
+        if flag == 10:
+            fql_grt = FqlGrtBizImpl(data=data)
+            fql_grt.compensation(repay_date='2023-11-04')
 
 
 if __name__ == '__main__':

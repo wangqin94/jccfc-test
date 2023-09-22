@@ -7,8 +7,10 @@ from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
+from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_data.module_data import FqlGrt
 from utils.Apollo import Apollo
+from utils.SFTP import SFTP
 
 
 class FqlGrtBizImpl(MysqlInit):
@@ -16,6 +18,8 @@ class FqlGrtBizImpl(MysqlInit):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
+        self.RepayPublicBizImpl = RepayPublicBizImpl()
+        self.SFTP = SFTP()
         # 解析项目特性配置
         self.cfg = FqlGrt.FqlGrt
         self.encrypt_flag = encrypt_flag
@@ -222,7 +226,7 @@ class FqlGrtBizImpl(MysqlInit):
                                                                          loan_invoice_id=loanInvoiceId,
                                                                          current_num=term)
         else:
-            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
+            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4','5') ORDER BY 'current_num'".format(
                 loanInvoiceId)
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
         min_term = int(asset_repay_plan['current_num'])
@@ -406,3 +410,49 @@ class FqlGrtBizImpl(MysqlInit):
         response = response['bizContent']
         self.log.info("解析后报文：{}".format(response))
         return response
+
+    # 代偿文件
+    def compensation(self, repay_date=None):
+        repay_date = repay_date if repay_date else time.strftime('%Y-%m-%d', time.localtime())
+        # self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+        key = "merchant_id = '{}' and repay_plan_status = '4' and overdue_days >= 15".format(self.merchantId)
+        loan_invoice_info = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key=key, record=999)
+        compensation_list = list()
+        for i in loan_invoice_info:
+            compensation_data = dict()
+            credit_loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                                  loan_invoice_id=i['loan_invoice_id'])
+            loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
+                                                                         loan_apply_id=credit_loan_invoice_info[
+                                                                             'loan_apply_id'])
+            compensation_data['applyId'] = loan_apply_info['third_loan_invoice_id']
+            compensation_data['capitalLoanNo'] = i['loan_invoice_id']
+            compensation_data['term'] = i['current_num']
+            compensation_data['repay_type'] = "50"
+            compensation_data['principal'] = float(i['pre_repay_principal'])
+            compensation_data['interest'] = float(i['pre_repay_interest'])
+            compensation_data['overdue_fee'] = float(i['pre_repay_overdue_fee'])
+            compensation_data['repay_date'] = repay_date
+            compensation_data['backup'] = ""
+            compensation_list.append(compensation_data)
+
+        # 初始化目录
+        _ProjectPath = os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
+        _FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.FQLGRT.value, TEST_ENV_INFO)  # 文件存放目录
+        if not os.path.exists(_FilePath):
+            os.makedirs(_FilePath)
+        data_save_path = os.path.join(_FilePath, 'compensation', repay_date.replace('-', ''))
+        if not os.path.exists(data_save_path):
+            os.makedirs(data_save_path)
+        # 初始化代偿文件名
+        compensation_file = os.path.join(data_save_path, 'compensation_%s.txt' % (repay_date.replace('-', '')))
+        compensation_ok = os.path.join(data_save_path, 'compensation_%s.ok' % (repay_date.replace('-', '')))
+        os.open(compensation_ok, os.O_CREAT)
+        with open(compensation_file, 'w+', encoding='utf-8') as f:
+            for item in compensation_list:
+                val_list = map(str, [item[key] for key in item])
+                strs = '|'.join(val_list)
+                f.write(strs + '\n')
+        self.SFTP.sftp_upload(data_save_path,
+                              'hj/xdgl/fqlgrt/upload/fql_grt/{}'.format(repay_date.replace('-', '')))
