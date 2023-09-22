@@ -21,47 +21,46 @@ FqlGrt = {
         "interface": "/api/v2/fql/credit/apply",
         "payload": {
             "creditApplyId": "applyId16935583718691328",
-            "partnerCode": "G23E09FNQL",
+            "partnerCode": "fql_grt",
             "name": "诸天巧",
-            "creditAmount": "30000",
-            "maritalStatus": "0",
-            "age": 24,
-            "sex": "1",
+            "maritalStatus": "1",
+            "age": 17,
+            "sex": "0",
             "identiType": "1",
             "identiNo": "452229199507031827",
             "idCardValidDate": "20201230",
             "idCardExpireDate": "20401230",
-            "idAddr": "成都市高新区府城大道中段88号910",
-            "issuedAgency": "成都市公安局高新分局",
+            "idAddr": "成都市西南航空港经济开发区学府路一段24号",
+            "issuedAgency": "成都市公安局双流分局",
             "birthday": "1995-07-03",
             "nationality": "中国",
             "nation": "汉",
             "mobileNo": "18425430891",
-            "userBankCardNo": "6217591693558210853",
-            "contactName": "联系人",
+            "userBankCardNo": "",
+            "contactName": "配偶姓名",
             "contactMobile": "15816881688",
             "contactRel": "2",
-            "livingAddress": "四川省成都市高新区府城大道中段88号910",
-            "companyAddress": "",
-            "companyName": "",
+            "livingAddress": "四川省成都市高新区世纪城路1129号",
+            "companyAddress": "四川省成都市高新区府城大道中段88号",
+            "companyName": "四川锦程消费金融有限责任公司",
             "monthlyIncome": 6000,
             "education": 1,
-            "userOccupation": "5",
-            "userIndustryCategory": "13",
+            "userOccupation": "1",
+            "userIndustryCategory": "2",
             "orderType": "3",
             "loanPrincipal": "30000",
-            "repayType": 1,
-            "fixedBillDay": 10,
-            "fixedRepayDay": 20,
+            "repayType": "1",
+            "fixedBillDay": "10",
+            "fixedRepayDay": "20",
             "loanTerm": 15,
-            "loanUse": "1",
+            "loanUse": "3",
             "debitAccountName": "诸天巧",
             "debitOpenAccountBank": "建设银行",
             "debitAccountNo": "6217591693558210853",
             "debitCnaps": "",
-            "insureId": "danbao123456789",
+            "insureId": "10022",
             "interestRate": 7.5,
-            "protocolId": "",
+            "protocolId": "S202309210001",
             "extend": {},
             "fileInfos": [
                 {
@@ -107,7 +106,7 @@ FqlGrt = {
         "interface": "/api/v2/fql/credit/query",
         "payload": {
             "applyId": "applyId16935583718691328",
-            "partnerCode": "G23E09FNQL"
+            "partnerCode": "fql_grt"
         }
     },
     # 支用申请
@@ -115,8 +114,8 @@ FqlGrt = {
         "interface": "/api/v2/fql/loan/apply",
         "payload": {
             "applyId": "applyId16935583718691328",
-            "partnerCode": "G23E09FNQL",
-            "orderType": 3,
+            "partnerCode": "fql_grt",
+            "orderType": 9,
             "loanPrincipal": 30000,
             "repayType": 1,
             "fixedBillDay": 10,
@@ -136,7 +135,7 @@ FqlGrt = {
         "interface": "/api/v2/fql/loan/query",
         "payload": {
             "applyId": "applyId16935583718691328",
-            "partnerCode": "G23E09FNQL"
+            "partnerCode": "fql_grt"
         }
     },
     # 还款计划查询
@@ -144,7 +143,7 @@ FqlGrt = {
         "interface": "/api/v2/fql/repayPlan/query",
         "payload": {
             "applyId": "applyId16935583718691328",
-            "partnerCode": "G23E09FNQL",
+            "partnerCode": "fql_grt",
             "capitalLoanNo": "000LI0001353086498709504001"
         }
     },
@@ -162,7 +161,7 @@ FqlGrt = {
     "repay": {
         "interface": "/api/v2/fql/repay/apply",
         "payload": {
-            "partnerCode": "G23E09FNQL",
+            "partnerCode": "fql_grt",
             "billId": "000LI0001353086498709504001-1",
             "assetId": "applyId16935583718691328",
             "capitalLoanNo": "000LI0001353086498709504001",
@@ -187,7 +186,7 @@ FqlGrt = {
     "repay_query": {
         "interface": "/api/v2/fql/repay/query",
         "payload": {
-            "partnerCode": "G23E09FNQL",
+            "partnerCode": "fql_grt",
             "billId": "000LI0001353086498709504001-1",
             "capitalLoanNo": "000LI0001353086498709504001"
         }
@@ -197,7 +196,7 @@ FqlGrt = {
         "interface": "/api/v2/fql/withhold/apply",
         "payload": {
             "withholdSerialNo": "withholdSerialNo123456789",
-            "partnerCode": "G23E09FNQL",
+            "partnerCode": "fql_grt",
             "repayChannel": "1",
             "bindCardInfo": [
                 {
@@ -294,7 +293,7 @@ FqlGrt = {
         "interface": "/api/v2/fql/withhold/query",
         "payload": {
             "withholadSerialNo": "withholdSerialNo123456789",
-            "partnerCode": "G23E09FNQL"
+            "partnerCode": "fql_grt"
         }
     }
 }

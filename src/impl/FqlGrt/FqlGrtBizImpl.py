@@ -22,7 +22,7 @@ class FqlGrtBizImpl(MysqlInit):
         self.strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.data = self.get_user_info(data=data, person=person)
-        self.merchantId = EnumMerchantId.FQLGRT.value
+        self.partnerCode = 'fql_grt'
         self.interestRate = getInterestRate(ProductIdEnum.FQLGRT.value)
         # 初始化payload变量
         self.active_payload = {}
@@ -46,7 +46,7 @@ class FqlGrtBizImpl(MysqlInit):
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         credit_data = dict()
         credit_data['creditApplyId'] = self.data['applyId']
-        credit_data['partnerCode'] = self.merchantId
+        credit_data['partnerCode'] = self.partnerCode
         credit_data['name'] = self.data['name']
         credit_data['identiNo'] = self.data['cer_no']
         credit_data['mobileNo'] = self.data['telephone']
@@ -56,7 +56,7 @@ class FqlGrtBizImpl(MysqlInit):
             credit_data['debitAccountName'] = self.data['name']
             credit_data['debitAccountNo'] = self.data['bankid']
         else:
-            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.merchantId)
+            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.partnerCode)
             bank_info = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
                                                                  resource_id=resource['resource_id'], account_type='1')
             credit_data['debitAccountName'] = bank_info['account_name']
@@ -81,7 +81,7 @@ class FqlGrtBizImpl(MysqlInit):
     def credit_query(self, **kwargs):
         credit_query_data = dict()
         credit_query_data['applyId'] = self.data['applyId']
-        credit_query_data['partnerCode'] = self.merchantId
+        credit_query_data['partnerCode'] = self.partnerCode
         # 更新 payload 字段值
         credit_query_data.update(kwargs)
         parser = DataUpdate(self.cfg['credit_query']['payload'], **credit_query_data)
@@ -100,7 +100,7 @@ class FqlGrtBizImpl(MysqlInit):
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         loan_data = dict()
         loan_data['applyId'] = self.data['applyId']
-        loan_data['partnerCode'] = self.merchantId
+        loan_data['partnerCode'] = self.partnerCode
         loan_data['mobileNo'] = self.data['telephone']
         loan_data['userBankCardNo'] = self.data['bankid']
         loan_data['orderType'] = orderType
@@ -108,7 +108,7 @@ class FqlGrtBizImpl(MysqlInit):
             loan_data['debitAccountName'] = self.data['name']
             loan_data['debitAccountNo'] = self.data['bankid']
         else:
-            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.merchantId)
+            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.partnerCode)
             bank_info = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
                                                                  resource_id=resource['resource_id'], account_type='1')
             loan_data['debitAccountName'] = bank_info['account_name']
@@ -140,7 +140,7 @@ class FqlGrtBizImpl(MysqlInit):
     def loan_query(self, **kwargs):
         loan_query_data = dict()
         loan_query_data['applyId'] = self.data['applyId']
-        loan_query_data['partnerCode'] = self.merchantId
+        loan_query_data['partnerCode'] = self.partnerCode
         # 更新 payload 字段值
         loan_query_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_query']['payload'], **loan_query_data)
@@ -158,7 +158,7 @@ class FqlGrtBizImpl(MysqlInit):
     def repayPlan_query(self, loanInvoiceId=None, **kwargs):
         repayPlan_query_data = dict()
         repayPlan_query_data['applyId'] = self.data['applyId']
-        repayPlan_query_data['partnerCode'] = self.merchantId
+        repayPlan_query_data['partnerCode'] = self.partnerCode
         loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                      thirdpart_apply_id=self.data['applyId'])
         loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
@@ -204,7 +204,7 @@ class FqlGrtBizImpl(MysqlInit):
     # 还款通知
     def repay(self, rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId=None, term=None, rpyDate=None, **kwargs):
         repay_data = dict()
-        repay_data['partnerCode'] = self.merchantId
+        repay_data['partnerCode'] = self.partnerCode
         repay_data['assetId'] = self.data['applyId']
         loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                      thirdpart_apply_id=self.data['applyId'])
@@ -282,7 +282,7 @@ class FqlGrtBizImpl(MysqlInit):
     # 还款通知查询
     def repay_query(self, loanInvoiceId=None, **kwargs):
         repay_query_data = dict()
-        repay_query_data['partnerCode'] = self.merchantId
+        repay_query_data['partnerCode'] = self.partnerCode
         repay_query_data['billId'] = "billId" + self.strings
         loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                      thirdpart_apply_id=self.data['applyId'])
@@ -308,7 +308,7 @@ class FqlGrtBizImpl(MysqlInit):
     def withhold(self, rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId=None, term=None, rpyDate=None, **kwargs):
         withhold_data = dict()
         withhold_data['withholdSerialNo'] = 'withholdSerialNo' + self.strings
-        withhold_data['partnerCode'] = self.merchantId
+        withhold_data['partnerCode'] = self.partnerCode
         withhold_data['userName'] = self.data['name']
         withhold_data['cardNo'] = self.data['bankid']
         withhold_data['idNo'] = self.data['cer_no']
@@ -391,7 +391,7 @@ class FqlGrtBizImpl(MysqlInit):
     # 代扣查询
     def withhold_query(self, **kwargs):
         withhold_query_data = dict()
-        withhold_query_data['partnerCode'] = self.merchantId
+        withhold_query_data['partnerCode'] = self.partnerCode
 
         # 更新 payload 字段值
         withhold_query_data.update(kwargs)
