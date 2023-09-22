@@ -23,6 +23,7 @@ class FqlGrtBizImpl(MysqlInit):
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.data = self.get_user_info(data=data, person=person)
         self.partnerCode = 'fql_grt'
+        self.merchantId = EnumMerchantId.FQLGRT.value
         self.interestRate = getInterestRate(ProductIdEnum.FQLGRT.value)
         # 初始化payload变量
         self.active_payload = {}
@@ -56,7 +57,7 @@ class FqlGrtBizImpl(MysqlInit):
             credit_data['debitAccountName'] = self.data['name']
             credit_data['debitAccountNo'] = self.data['bankid']
         else:
-            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.partnerCode)
+            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.merchantId)
             bank_info = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
                                                                  resource_id=resource['resource_id'], account_type='1')
             credit_data['debitAccountName'] = bank_info['account_name']
@@ -108,7 +109,7 @@ class FqlGrtBizImpl(MysqlInit):
             loan_data['debitAccountName'] = self.data['name']
             loan_data['debitAccountNo'] = self.data['bankid']
         else:
-            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.partnerCode)
+            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.merchantId)
             bank_info = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
                                                                  resource_id=resource['resource_id'], account_type='1')
             loan_data['debitAccountName'] = bank_info['account_name']
