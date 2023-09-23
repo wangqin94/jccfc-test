@@ -17,8 +17,7 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl = RepayPublicBizImpl()
 
     """ 测试步骤 """
-    # 哈喽 G23E031
-    def test_repay_apply(self, productId=ProductIdEnum.WEICAI.value, repayDate='2023-09-05'):
+    def test_repay_apply(self, productId=ProductIdEnum.YIXIN.value, repayDate='2023-09-20'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 

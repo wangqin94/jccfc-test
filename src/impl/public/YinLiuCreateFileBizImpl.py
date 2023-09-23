@@ -310,11 +310,16 @@ class YinLiuRepayFile(EnvInit):
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
                                                                          loan_invoice_id=loanInvoiceId,
                                                                          current_num=termNo)
+            # 回购当期逾期天数
+            days = get_day(asset_repay_plan['start_date'], self.repayDate)
+            self.log.info("当前逾期天数：{}天, T+8利息为0，T+9利息按日计提".format(days))
             # 获取回购当期已计提利息
-            if termNo == int(self.repayTermNo):
-                days = get_day(asset_repay_plan['start_date'], self.repayDate)
-                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])
+            if termNo == int(self.repayTermNo) and days > 8:
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])  # T+9利息按日计提
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
+            else:
+                creditBuyBackData['paid_int_amt'] = 0  # T+8免息，利息为0
+                creditBuyBackData['repay_amt'] = creditBuyBackData['paid_prin_amt']  # T+8还款总额只包含当期本金
 
             payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
             # 开始写入文件内容
@@ -336,7 +341,7 @@ class YinLiuRepayFile(EnvInit):
             os.remove(buyBackFileName)
         # 获取微财理赔对账文件参数
         templePath = YiXin.YiXin
-        buyBackTemple = templePath['weiCaiBuyBackTemple']
+        buyBackTemple = templePath['yiXinBuyBackTemple']
         # 获取借据总期数
         totalTerm = self.getInvoiceInfo()['installment_num']
         creditLoanInvoiceInfo = self.getInvoiceInfo()
@@ -349,12 +354,16 @@ class YinLiuRepayFile(EnvInit):
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
                                                                          loan_invoice_id=loanInvoiceId,
                                                                          current_num=termNo)
+            # 回购当期逾期天数
+            days = get_day(asset_repay_plan['start_date'], self.repayDate)
             # 获取回购当期已计提利息
-            if termNo == int(self.repayTermNo):
-                days = get_day(asset_repay_plan['start_date'], self.repayDate)
-                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])
+            if termNo == int(self.repayTermNo) and days > 8:
+                self.log.info("当前逾期天数：{}天, T+8利息为0，T+9利息按日计提".format(days))
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])  # T+9利息按日计提
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
-
+            else:
+                creditBuyBackData['paid_int_amt'] = 0  # T+8免息，利息为0
+                creditBuyBackData['repay_amt'] = creditBuyBackData['paid_prin_amt']  # T+8还款总额只包含当期本金
             payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
             # 开始写入文件内容
             write_repay_file(buyBackFileName, **payload)

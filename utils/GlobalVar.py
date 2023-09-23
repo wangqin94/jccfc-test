@@ -46,7 +46,7 @@ class GlobalMap:
             del self.map[key]
             return self.map
         except KeyError:
-            _log.error("key:'" + str(key) + "'  不存在")
+            raise "全局变量中不存在当前key:{}".format(key)
 
     def get(self, *args):
         try:
@@ -61,5 +61,4 @@ class GlobalMap:
                     dic[key] = self.map[key]
             return dic
         except KeyError:
-            _log.warning("key:'" + str(key) + "'  不存在")
-            return 'Null'
+            raise "全局变量中不存在当前key:{}".format(args)
