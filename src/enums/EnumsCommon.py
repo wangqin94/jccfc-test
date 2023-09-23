@@ -80,6 +80,7 @@ class EnumLoanStatus(Enum):
     LOANING = '16'  # 放款中
     LOAN_AUDITING = '23'  # 放款审核中
     INITIALIZATION = '01'  # 初始化
+    TO_SIGN = '11'  # 待签约
 
 
 @unique

@@ -1,5 +1,6 @@
 import os
 import random
+from warnings import filterwarnings
 
 from PIL import ImageFont, ImageDraw, Image
 from fpdf import FPDF
@@ -7,8 +8,10 @@ from fpdf import FPDF
 from config.TestEnvInfo import TEST_ENV_INFO
 from utils.ID_address import ID_address
 from utils.Models import get_base_data
-from warnings import filterwarnings
+
 filterwarnings('ignore')
+
+
 def create_cer_image(person=None, fileName=None):
     if person is None:
         person = get_base_data(TEST_ENV_INFO)
@@ -76,7 +79,7 @@ def create_attachment_image(person, imageName):
            :p_path.index("jccfc-test") + len("jccfc-test")] + f'/image/temp{imageName}.png'
 
 
-def create_attachment_pdf(filename, person=None):
+def create_attachment_pdf(filename, person=None, contentText=None):
     """
     生成pdf文件
     :param person:
@@ -86,13 +89,17 @@ def create_attachment_pdf(filename, person=None):
     if person is None:
         person = get_base_data(TEST_ENV_INFO)
     p_path = os.path.abspath(os.path.dirname(__file__))
+
+    if contentText is None:
+        contentText = filename
+
     pdf = FPDF()
     pdf.add_page()
     pdf.add_font('simkai', '', "C:\\Windows\\Fonts\\simkai.ttf", True)
     pdf.set_font("simkai", size=6)
     pdf.cell(0, 12, person['name'], 0, 1)
     pdf.cell(0, 12, person['cer_no'], 0, 1)
-    pdf.cell(0, 12, filename, 0, 1)
+    pdf.cell(0, 12, contentText, 0, 1)
     filterwarnings('ignore')
     file = p_path[:p_path.index("jccfc-test") + len("jccfc-test")] + f'/image/temp{filename}.pdf'
 

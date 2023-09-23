@@ -27,7 +27,7 @@ class DidiBizImpl(MysqlInit):
         self.cfg = Didi.Didi
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
-        self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
+        self.times = str(int(round(time.time())))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
         # self.MysqlBizImpl.check_user_available(self.data)
 
@@ -36,11 +36,8 @@ class DidiBizImpl(MysqlInit):
 
         # 初始化payload变量
         self.active_payload = {}
-
-        self.applicationId = f'DC00{self.date}{self.times}'
-        # 上传文件
-        self.upload_file()
-
+        self.applicationId = f'DC00003080{self.date}{self.times}'
+        self.loanOrderId = self.date
         self.encrypt_url = self.host + self.cfg['encrypt']['interface']
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
 
@@ -62,6 +59,9 @@ class DidiBizImpl(MysqlInit):
         :param kwargs:
         :return:
         """
+        # 上传文件
+        self.upload_file()
+
         # self.log.demsg('用户四要素信息: {}'.format(self.data))
         # strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         credit_data = dict()
@@ -71,27 +71,26 @@ class DidiBizImpl(MysqlInit):
         credit_data['userInfo']['idNo'] = self.data['cer_no']
         credit_data['userInfo']['name'] = self.data['name']
         credit_data['userInfo']['phone'] = self.data['telephone']
+        credit_data['userInfo']['bankCardNo'] = self.data['bankid']
 
         credit_data['ocrInfo']['name'] = self.data['name']
         credit_data['ocrInfo']['idNo'] = self.data['cer_no']
-        credit_data['ocrInfo']['gender'] = self.data['telephone']
+        credit_data['ocrInfo']['gender'] = '⼥'
 
         credit_data['userScoreInfo'] = dict()
-        credit_data['userScoreInfo']['scoreOne'] = applyAmount * 100 + 260000 # 单位 分
-        credit_data['userScoreInfo']['scoreTwo'] = 666*40+350000  # *百万分之一 互金存的年化利率 * 360
-        credit_data['userScoreInfo']['scoreThree'] = 415*20+360000  # *百万分之一 互金存的年化利率 * 360
+        credit_data['userScoreInfo']['scoreOne'] = applyAmount * 100 + 260000  # 单位 分
+        credit_data['userScoreInfo']['scoreTwo'] = 650 * 40 + 350000  # *百万分之一 互金存的年化利率 * 360
+        credit_data['userScoreInfo']['scoreThree'] = 415 * 20 + 360000  # *百万分之一 互金存的年化利率 * 360
         # 银行卡信息
 
-        parser = DataUpdate(self.cfg['credit_apply']['payload'], **credit_data['userInfo'])
-        parser = DataUpdate(parser.parser, **credit_data['ocrInfo'])
-        parser = DataUpdate(parser.parser, **credit_data['userScoreInfo'])
+        parser = DataUpdate(self.cfg['credit_apply']['payload'], **credit_data)
         self.active_payload = parser.parser
         self.active_payload['applicationId'] = self.applicationId
 
         # 更新 payload 字段值
         self.active_payload.update(kwargs)
         # 校验用户是否已存在
-        # self.MysqlBizImpl.check_user_available(self.data)
+        self.MysqlBizImpl.check_user_available(self.data)
         # 配置风控mock返回建议额度与授信额度一致
         apollo_data = dict()
         apollo_data['hj.channel.risk.credit.line.amt.mock'] = applyAmount
@@ -111,14 +110,14 @@ class DidiBizImpl(MysqlInit):
         :return:
         """
         queryCreditResult_data = dict()
-        if not thirdApplyId:
+        if thirdApplyId is None:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'])
-            queryCreditResult_data['thirdApplyId'] = credit_apply_info['thirdpart_apply_id']
+            queryCreditResult_data['applicationId'] = credit_apply_info['thirdpart_apply_id']
         else:
-            queryCreditResult_data['thirdApplyId'] = thirdApplyId
+            queryCreditResult_data['applicationId'] = thirdApplyId
         parser = DataUpdate(self.cfg['credit_query']['payload'], **queryCreditResult_data)
-
         self.active_payload = parser.parser
+
         url = self.host + self.cfg['credit_query']['interface']
         self.log.demsg('开始授信查询...')
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
@@ -142,30 +141,27 @@ class DidiBizImpl(MysqlInit):
         loan_risk_check_data['userInfo']['bankCardNo'] = self.data['bankid']
         loan_risk_check_data['userInfo']['phone'] = self.data['telephone']
 
-        parser = DataUpdate(self.cfg['loan_risk_check']['payload'], **loan_risk_check_data['userInfo'])
         loan_risk_check_data['ocrInfo'] = dict()
         loan_risk_check_data['ocrInfo']['name'] = self.data['name']
         loan_risk_check_data['ocrInfo']['idNo'] = self.data['cer_no']
         loan_risk_check_data['ocrInfo']['gender'] = self.data['telephone']
 
-        parser = DataUpdate(parser.data, **loan_risk_check_data['ocrInfo'])
+        loan_risk_check_data['applicationId'] = self.applicationId
+        loan_risk_check_data['loanOrderId'] = self.loanOrderId
+        loan_risk_check_data['loanAmount'] = loanAmount * 100
+        loan_risk_check_data['interestType'] = 1
+        loan_risk_check_data['totalInstallment'] = applyTerm
+        loan_risk_check_data['interestRate'] = 650  # *百万分之一 互金存的年化利率
+        loan_risk_check_data['interestPenaltyRate'] = 415  # *百万分之一 互金存的年化利率
+        loan_risk_check_data['sftpDir'] = "/hj/xdgl/didi/credit"
+        loan_risk_check_data['callbackUrl'] = "www.baidu.com"
+        loan_risk_check_data['finProductType'] = 1  # 产品类型: 1.随借随还， 2.固定期限
+        loan_risk_check_data['rateType'] = 2  # 产品类型: 1.随借随还， 2.固定期限
+        loan_risk_check_data['loanUsage'] = '1'
+        loan_risk_check_data['preAbsId'] = self.date
 
+        parser = DataUpdate(self.cfg['loan_risk_check']['payload'], **loan_risk_check_data)
         self.active_payload = parser.parser
-
-        self.active_payload['applicationId'] = ''
-        self.active_payload['loanOrderId'] = ''
-        self.active_payload['loanAmount'] = loanAmount * 100
-        self.active_payload['interestType'] = 1
-        self.active_payload['totalInstallment'] = applyTerm
-        self.active_payload['scoreTwo'] = int(0.000666 * 1000000)  # *百万分之一 互金存的年化利率
-        self.active_payload['scoreThree'] = int(0.000415 * 1000000)  # *百万分之一 互金存的年化利率
-        self.active_payload['sftpDir'] = "/12312312"
-        self.active_payload['callbackUrl'] = "www.baidu.com"
-        self.active_payload['finProductType'] = 1  # 产品类型: 1.随借随还， 2.固定期限
-        self.active_payload['rateType'] = 0  # 产品类型: 1.随借随还， 2.固定期限
-        self.active_payload['loanUsage'] = '1'
-        self.active_payload['preAbsId'] = ''
-
         self.active_payload.update(kwargs)
 
         url = self.host + self.cfg['loan_risk_check']['interface']
@@ -181,7 +177,7 @@ class DidiBizImpl(MysqlInit):
             queryLoanRiskCheck_data['applicationId'] = credit_apply_info['thirdpart_apply_id']
         else:
             queryLoanRiskCheck_data['applicationId'] = thirdApplyId
-        queryLoanRiskCheck_data['loanOrderId'] = '?'  # todo 到时直接查数据库
+        queryLoanRiskCheck_data['loanOrderId'] = self.loanOrderId  # todo 到时直接查数据库
 
         parser = DataUpdate(self.cfg['query_loan_risk_check']['payload'], **queryLoanRiskCheck_data)
 
@@ -202,6 +198,7 @@ class DidiBizImpl(MysqlInit):
         :param kwargs:
         :return:
         """
+
         apply_loan_data = dict()
 
         apply_loan_data['userInfo'] = dict()
@@ -214,8 +211,8 @@ class DidiBizImpl(MysqlInit):
 
         self.active_payload = parser.parser
         self.active_payload['applicationId'] = thirdApplyId
-        self.active_payload['loanOrderId'] = ''
-        self.active_payload['loanAmount'] = loanAmount
+        self.active_payload['loanOrderId'] = self.loanOrderId
+        self.active_payload['loanAmount'] = loanAmount*100
         self.active_payload['repayDay'] = '5'
         self.active_payload['callbackUrl'] = "www.baidu.com"
 
@@ -235,8 +232,8 @@ class DidiBizImpl(MysqlInit):
         :return:
         """
         queryLoanResult_data = dict()
-        if not loanOrderId:
-            queryLoanResult_data['loanOrderId'] = '?'  # todo 查询数据库
+        if loanOrderId is None:
+            queryLoanResult_data['loanOrderId'] = self.loanOrderId  # todo 查询数据库
         else:
             queryLoanResult_data['loanOrderId'] = loanOrderId
         parser = DataUpdate(self.cfg['query_loan_result']['payload'], **queryLoanResult_data)

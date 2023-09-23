@@ -6,25 +6,24 @@
 import base64
 import datetime as datetimes
 import hashlib
+import json
+import os
 import random
 import string
-import json
 import time
-import os
+from datetime import datetime
+from functools import wraps
+from inspect import getcallargs
 
 import demjson as demjson
 import requests
-from inspect import getcallargs
-from datetime import datetime
-from functools import wraps
+from dateutil.relativedelta import relativedelta
 
 from config.TestEnvInfo import TEST_ENV_INFO
 from utils.BankNo import BankNo
 from utils.GenName import get_name
 from utils.Identity import IdNumber
 from utils.Logger import MyLog
-
-from dateutil.relativedelta import relativedelta
 
 _log = MyLog.get_log()
 
@@ -407,8 +406,12 @@ class DataUpdate(object):
     def _update_data(self, data, key, value):
         """ # 遍历嵌套字典或list并替换字典的key """
         if isinstance(data, dict):  # 使用isinstance检测数据类型，如果是字典
-            if key in data.keys():  # 替换字典第一层中所有key与传参一致的key
-                data[key] = value
+            if key in data.keys():  # 替换字典中所有key与传参一致的key
+                if isinstance(value, dict):
+                    for itemKey in value.keys():
+                        data[key] = self._update_data(data[key], itemKey, value[itemKey])
+                else:
+                    data[key] = value
                 if self.unique:
                     return data
             # # TODO:

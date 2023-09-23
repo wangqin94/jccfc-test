@@ -19,6 +19,9 @@ class MyTestCase(unittest.TestCase):
         """
         # 发起授信申请
         self.thirdApplyId = self.Didi.credit(applyAmount=20000)
+        self.Didi.queryCreditResult(self.thirdApplyId)
+        # 检查授信结果
+        self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId)
 
 
 if __name__ == '__main__':
