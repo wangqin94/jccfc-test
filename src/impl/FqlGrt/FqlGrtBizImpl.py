@@ -236,24 +236,26 @@ class FqlGrtBizImpl(MysqlInit):
         totalAmount = 0
         if rpyType == 30:
             days = get_day(asset_repay_plan["start_date"], rpyDate)
-            loan_term = int(asset_repay_plan['repay_num'])
-            for i in range(min_term, loan_term + 1):
-                asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                             loan_invoice_id=loanInvoiceId,
-                                                                             current_num=i)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                         loan_invoice_id=loanInvoiceId,
+                                                                         record=999)
+            for i in asset_repay_plan:
                 repay_detail_data = dict()
-                repay_detail_data['rpyTerm'] = i
-                repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_principal'])
-                if i == min_term:
+                repay_detail_data['rpyTerm'] = i['current_num']
+                repay_detail_data['rpyPrincipal'] = float(i['pre_repay_principal'])
+                if i['current_num'] == min_term:
+                    if min_term == 1:
+                        days = days if days != 0 else 1
                     day_rate = round(self.interestRate / (100 * 360), 6)
-                    repay_detail_data['rpyFeeAmt'] = float(asset_repay_plan[
-                                                               "before_calc_principal"]) * days * day_rate if days > 0 else 0
-                    repay_detail_data['rpyMuclt'] = float(asset_repay_plan['pre_repay_overdue_fee'])
+                    repay_detail_data['rpyFeeAmt'] = round(float(
+                        i['before_calc_principal']) * days * day_rate, 2) if days > 0 else 0
+                    repay_detail_data['rpyMuclt'] = float(i['pre_repay_overdue_fee'])
                     repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
                     repay_detail_data['rpyAmt'] = round(
-                        float(asset_repay_plan['pre_repay_principal']) + repay_detail_data['rpyFeeAmt'], 2)
+                        float(i['pre_repay_principal']) + repay_detail_data['rpyFeeAmt'] + repay_detail_data[
+                            'rpyMuclt'], 2)
                 else:
-                    repay_detail_data['rpyAmt'] = float(asset_repay_plan['pre_repay_principal'])
+                    repay_detail_data['rpyAmt'] = float(i['pre_repay_principal'])
                     repay_detail_data['rpyFeeAmt'] = 0
                     repay_detail_data['rpyMuclt'] = 0
                     repay_detail_data['rpyGuaranteeAmt'] = 0
@@ -343,24 +345,26 @@ class FqlGrtBizImpl(MysqlInit):
         totalAmount = 0
         if rpyType == 30:
             days = get_day(asset_repay_plan["start_date"], rpyDate)
-            loan_term = int(asset_repay_plan['repay_num'])
-            for i in range(min_term, loan_term + 1):
-                asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                             loan_invoice_id=loanInvoiceId,
-                                                                             current_num=i)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                         loan_invoice_id=loanInvoiceId,
+                                                                         record=999)
+            for i in asset_repay_plan:
                 repay_detail_data = dict()
-                repay_detail_data['rpyTerm'] = i
-                repay_detail_data['rpyPrincipal'] = float(asset_repay_plan['pre_repay_principal'])
-                if i == min_term:
+                repay_detail_data['rpyTerm'] = i['current_num']
+                repay_detail_data['rpyPrincipal'] = float(i['pre_repay_principal'])
+                if i['current_num'] == min_term:
+                    if min_term == 1:
+                        days = days if days != 0 else 1
                     day_rate = round(self.interestRate / (100 * 360), 6)
-                    repay_detail_data['rpyFeeAmt'] = float(asset_repay_plan[
-                                                               "before_calc_principal"]) * days * day_rate if days > 0 else 0
-                    repay_detail_data['rpyMuclt'] = float(asset_repay_plan['pre_repay_overdue_fee'])
+                    repay_detail_data['rpyFeeAmt'] = round(float(
+                        i['before_calc_principal']) * days * day_rate, 2) if days > 0 else 0
+                    repay_detail_data['rpyMuclt'] = float(i['pre_repay_overdue_fee'])
                     repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
                     repay_detail_data['rpyAmt'] = round(
-                        float(asset_repay_plan['pre_repay_principal']) + repay_detail_data['rpyFeeAmt'], 2)
+                        float(i['pre_repay_principal']) + repay_detail_data['rpyFeeAmt'] + repay_detail_data[
+                            'rpyMuclt'], 2)
                 else:
-                    repay_detail_data['rpyAmt'] = float(asset_repay_plan['pre_repay_principal'])
+                    repay_detail_data['rpyAmt'] = float(i['pre_repay_principal'])
                     repay_detail_data['rpyFeeAmt'] = 0
                     repay_detail_data['rpyMuclt'] = 0
                     repay_detail_data['rpyGuaranteeAmt'] = 0
@@ -414,7 +418,7 @@ class FqlGrtBizImpl(MysqlInit):
     # 代偿文件
     def compensation(self, repay_date=None):
         repay_date = repay_date if repay_date else time.strftime('%Y-%m-%d', time.localtime())
-        # self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+        self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
         key = "merchant_id = '{}' and repay_plan_status = '4' and overdue_days >= 15".format(self.merchantId)
         loan_invoice_info = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key=key, record=999)
         compensation_list = list()
@@ -432,11 +436,11 @@ class FqlGrtBizImpl(MysqlInit):
             compensation_data['principal'] = float(i['pre_repay_principal'])
             compensation_data['interest'] = float(i['pre_repay_interest'])
             compensation_data['overdue_fee'] = float(i['pre_repay_overdue_fee'])
-            compensation_data['repay_date'] = repay_date
+            compensation_data['repay_date'] = repay_date.replace('-', '')
             compensation_data['backup'] = ""
             compensation_list.append(compensation_data)
 
-        # 初始化目录
+        # 初始化本地目录
         _ProjectPath = os.path.dirname(
             os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))  # 项目根目录
         _FilePath = os.path.join(_ProjectPath, 'FilePath', ProductEnum.FQLGRT.value, TEST_ENV_INFO)  # 文件存放目录
@@ -448,11 +452,14 @@ class FqlGrtBizImpl(MysqlInit):
         # 初始化代偿文件名
         compensation_file = os.path.join(data_save_path, 'compensation_%s.txt' % (repay_date.replace('-', '')))
         compensation_ok = os.path.join(data_save_path, 'compensation_%s.ok' % (repay_date.replace('-', '')))
+        # 生成空文件
         os.open(compensation_ok, os.O_CREAT)
+        # 写入代偿文件
         with open(compensation_file, 'w+', encoding='utf-8') as f:
             for item in compensation_list:
                 val_list = map(str, [item[key] for key in item])
                 strs = '|'.join(val_list)
                 f.write(strs + '\n')
+        # 上传文件
         self.SFTP.sftp_upload(data_save_path,
                               'hj/xdgl/fqlgrt/upload/fql_grt/{}'.format(repay_date.replace('-', '')))
