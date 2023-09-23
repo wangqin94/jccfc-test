@@ -234,7 +234,7 @@ class FqlGrtBizImpl(MysqlInit):
                 loanInvoiceId)
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
         min_term = int(asset_repay_plan['current_num'])
-        self.log.demsg('当期最早未还期次{}'.format(min_term))
+        self.log.demsg('当期最早未还期次: {}'.format(min_term))
         rpyDetails = list()
         repay_detail_data = dict()
         totalAmount = 0
@@ -332,7 +332,8 @@ class FqlGrtBizImpl(MysqlInit):
             loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                          thirdpart_apply_id=self.data['applyId'])
             loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                           loan_apply_id=loan_apply_info['loan_apply_id'])
+                                                                           loan_apply_id=loan_apply_info[
+                                                                               'loan_apply_id'])
             loanInvoiceId = loan_invoice_info['loan_invoice_id']
         withhold_data['capitalLoanNo'] = loanInvoiceId
         rpyDate = rpyDate if rpyDate else time.strftime('%Y-%m-%d', time.localtime())
@@ -346,7 +347,7 @@ class FqlGrtBizImpl(MysqlInit):
                 loanInvoiceId)
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
         min_term = int(asset_repay_plan['current_num'])
-        self.log.demsg('当期最早未还期次{}'.format(min_term))
+        self.log.demsg('当期最早未还期次: {}'.format(min_term))
         rpyDetails = list()
         repay_detail_data = dict()
         totalAmount = 0
@@ -386,11 +387,18 @@ class FqlGrtBizImpl(MysqlInit):
             repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
             rpyDetails.append(repay_detail_data)
             totalAmount = repay_detail_data['rpyAmt'] + repay_detail_data['rpyGuaranteeAmt']
-        withhold_data['rpyDetails'] = rpyDetails
+        withhold_data['billDetails'] = rpyDetails
         withhold_data['rpyTotalAmt'] = round(totalAmount, 2)
+        withhold_data['withholdAmt'] = round(totalAmount, 2)
         withhold_data['sepOutInfo'] = [
             {"type": "1", "amt": round(totalAmount - 3.56, 2), "account": self.data['bankid']},
             {"type": "2", "amt": "3.56", "account": "11015898003004"}]
+        withhold_data['sepInInfo'] = [
+            {"type": "1", "amt": round(totalAmount - 3.56, 2), "account": self.data['bankid'], "orgType": "1",
+             "sepMerchCode": "FQL-123456", "sepBankId": "南京银行",
+             "detail": [{"from": "1", "amt": round(totalAmount - 3.56 * 2, 2)}, {"from": "2", "amt": "3.56"}]},
+            {"type": "2", "amt": "3.56", "account": "758873775131", "orgType": "2", "sepMerchCode": "HF-123456",
+             "sepBankId": "工商银行", "detail": [{"from": "1", "amt": "3.01"}, {"from": "2", "amt": "0.55"}]}]
         # 更新 payload 字段值
         withhold_data.update(kwargs)
         parser = DataUpdate(self.cfg['withhold']['payload'], **withhold_data)
