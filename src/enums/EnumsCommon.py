@@ -24,6 +24,7 @@ class ProductEnum(Enum):
     HAIR = 'hair'
     WEICAI = 'weicai'
     YIXIN = 'yixin'
+    FQLGRT = 'fql_grt'
 
 
 @unique
@@ -43,6 +44,7 @@ class ProductIdEnum(Enum):
     JIKE = 'G22E021'
     XIAOX = 'G23E011'
     YIXIN = 'G23E061'
+    FQLGRT = 'G23E091'
 
 
 class EnumProductYearRate(Enum):
@@ -60,6 +62,7 @@ class EnumMerchantId(Enum):
     HAIR = 'G23E04HAIR'
     WEICAI = 'G23E05WEIC'
     YIXIN = 'G23E06YIXN'
+    FQLGRT = 'G23E09FNQL'
 
 
 @unique
