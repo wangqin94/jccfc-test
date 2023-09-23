@@ -211,11 +211,15 @@ class FqlGrtBizImpl(MysqlInit):
         repay_data = dict()
         repay_data['partnerCode'] = self.partnerCode
         repay_data['assetId'] = self.data['applyId']
-        loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
-                                                                     thirdpart_apply_id=self.data['applyId'])
-        loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                       loan_apply_id=loan_apply_info['loan_apply_id'])
-        loanInvoiceId = loanInvoiceId if loanInvoiceId else loan_invoice_info['loan_invoice_id']
+        if loanInvoiceId:
+            loanInvoiceId = loanInvoiceId
+        else:
+            loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
+                                                                         thirdpart_apply_id=self.data['applyId'])
+            loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                           loan_apply_id=loan_apply_info[
+                                                                               'loan_apply_id'])
+            loanInvoiceId = loan_invoice_info['loan_invoice_id']
         repay_data['capitalLoanNo'] = loanInvoiceId
         repay_data['billId'] = "billId" + self.strings
         rpyDate = rpyDate if rpyDate else time.strftime('%Y-%m-%d', time.localtime())
@@ -322,11 +326,14 @@ class FqlGrtBizImpl(MysqlInit):
         withhold_data['phoneNo'] = self.data['telephone']
         withhold_data['rpyType'] = rpyType
         withhold_data['assetId'] = self.data['applyId']
-        loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
-                                                                     thirdpart_apply_id=self.data['applyId'])
-        loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                       loan_apply_id=loan_apply_info['loan_apply_id'])
-        loanInvoiceId = loanInvoiceId if loanInvoiceId else loan_invoice_info['loan_invoice_id']
+        if loanInvoiceId:
+            loanInvoiceId = loanInvoiceId
+        else:
+            loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
+                                                                         thirdpart_apply_id=self.data['applyId'])
+            loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                           loan_apply_id=loan_apply_info['loan_apply_id'])
+            loanInvoiceId = loan_invoice_info['loan_invoice_id']
         withhold_data['capitalLoanNo'] = loanInvoiceId
         rpyDate = rpyDate if rpyDate else time.strftime('%Y-%m-%d', time.localtime())
         withhold_data['rpyDate'] = rpyDate
