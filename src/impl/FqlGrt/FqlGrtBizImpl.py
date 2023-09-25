@@ -412,7 +412,7 @@ class FqlGrtBizImpl(MysqlInit):
         parser = DataUpdate(withhold_detail, **withhold_detail_data)
         detail_data = parser.parser
         self.log.info('代扣明细: {}'.format(detail_data))
-        return detail_data
+        return dict(detail_data)
 
     # 多个代扣明细组装list
     def withhold_detail_list(self, *detail_data):
@@ -440,16 +440,15 @@ class FqlGrtBizImpl(MysqlInit):
         withhold_data['cardNo'] = self.data['bankid']
         withhold_data['idNo'] = self.data['cer_no']
         withhold_data['phoneNo'] = self.data['telephone']
-        withholdAmt = 0
-        for i in detail_list:
-            withholdAmt += i['rpyTotalAmt']
+        withholdAmt = sum([detail['rpyTotalAmt'] for detail in detail_list])
         withhold_data['withholdAmt'] = round(withholdAmt, 2)
-        withhold_data['withhold_detail'] = detail_list
 
         # 更新 payload 字段值
         withhold_data.update(kwargs)
-        parser = DataUpdate(self.cfg['withhold']['payload'], unique=False, **withhold_data)
+        parser = DataUpdate(self.cfg['withhold']['payload'], **withhold_data)
         self.active_payload = parser.parser
+        # 更新代扣明细
+        self.active_payload['withholdDetail'] = detail_list
         # 更新出账信息
         self.active_payload['sepOutInfo'][0]['amt'] = round(withholdAmt - 3.56, 2)
         self.active_payload['sepOutInfo'][0]['account'] = self.data['bankid']
