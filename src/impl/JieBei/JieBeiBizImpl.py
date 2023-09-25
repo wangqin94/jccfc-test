@@ -120,7 +120,7 @@ class JieBeiBizImpl(EnvInit):
 
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)
-        parser = DataUpdate(self.cfg['creditNotice']['payload'], **creditNotice_data)
+        parser = DataUpdate(self.cfg['creditNotice']['payload'], unique=False, **creditNotice_data)
         self.active_payload = parser.parser
 
         self.log.demsg('授信通知接口...')
