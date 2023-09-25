@@ -3,24 +3,22 @@
 test case script
 """
 import os
+
 if not os.path.exists('person.py'):
     open('person.py', 'w')
 import time
 from person import *
 from src.impl.FqlGrt.FqlGrtBizImpl import FqlGrtBizImpl
+from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from utils.Logger import MyLog
 
 
 class TestCase(object):
     def __init__(self):
         self.process()
+        self.RepayPublicBizImpl = RepayPublicBizImpl()
 
-    def preprocess(self):
-        """ 预置条件处理 """
-        pass
-
-    @staticmethod
-    def process(flag=10):
+    def process(self, flag=8):
         # 授信
         if flag == 0:
             fql_grt = FqlGrtBizImpl(data=None)
@@ -36,7 +34,7 @@ class TestCase(object):
         if flag == 2:
             fql_grt = FqlGrtBizImpl(data=data)
             # orderType: 1-赊销 3-取现 4-乐花卡
-            fql_grt.loan(orderType=1, loanPrincipal=30000, loanTerm=3, fixedBillDay=21, fixedRepayDay=20)
+            fql_grt.loan(orderType=1, loanPrincipal=30000, loanTerm=15, fixedBillDay=1, fixedRepayDay=10, loanUse='6')
 
         # 支用查询
         if flag == 3:
@@ -56,8 +54,10 @@ class TestCase(object):
         # 还款通知
         if flag == 6:
             fql_grt = FqlGrtBizImpl(data=data)
+            repay_date = '2023-09-25'
+            self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
             # rpyType 10-正常还款 30-提前结清 40-逾期还款
-            fql_grt.repay(rpyType=30)
+            fql_grt.repay(rpyType=30, rpyDate=repay_date)
 
         # 还款通知查询
         if flag == 7:
@@ -67,8 +67,13 @@ class TestCase(object):
         # 代扣申请
         if flag == 8:
             fql_grt = FqlGrtBizImpl(data=data)
+            repay_date = '2023-09-25'
+            self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
             # rpyType 10-正常还款 30-提前结清 40-逾期还款
-            fql_grt.withhold(rpyType=10)
+            detail = fql_grt.withhold_detail(rpyType=10, loanInvoiceId='000LI0001437130418922092001', term=2,
+                                             rpyDate=repay_date)
+            detail_list = fql_grt.withhold_detail_list(detail)
+            fql_grt.withhold(detail_list=detail_list)
 
         # 代扣查询
         if flag == 9:
@@ -78,7 +83,9 @@ class TestCase(object):
         # 生成代偿文件
         if flag == 10:
             fql_grt = FqlGrtBizImpl(data=data)
-            fql_grt.compensation(repay_date='2023-11-04')
+            repay_date = '2023-09-25'
+            self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+            fql_grt.compensation(repay_date=repay_date)
 
 
 if __name__ == '__main__':

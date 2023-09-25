@@ -61,13 +61,14 @@ class FqlGrtBizImpl(MysqlInit):
             credit_data['debitAccountName'] = self.data['name']
             credit_data['debitAccountNo'] = self.data['bankid']
         else:
-            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.merchantId)
-            bank_info = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
-                                                                 resource_id=resource['resource_id'], account_type='1')
-            credit_data['debitAccountName'] = bank_info['account_name']
-            credit_data['debitOpenAccountBank'] = bank_info['branch_name']
-            credit_data['debitAccountNo'] = bank_info['account']
-            credit_data['debitCnaps'] = bank_info['union_bank_id']
+            sql = "select account_name,branch_name,account,union_bank_id from user_financial_instrument_info " \
+                  "where resource_id in (select resource_id from user_role_resource_relation where user_id = '{}') " \
+                  "and account_type='1'".format(self.merchantId)
+            bank_info = self.MysqlBizImpl.mysql_user.select(sql)
+            credit_data['debitAccountName'] = bank_info[0][0]
+            credit_data['debitOpenAccountBank'] = bank_info[0][1]
+            credit_data['debitAccountNo'] = bank_info[0][2]
+            credit_data['debitCnaps'] = bank_info[0][3]
 
         # 更新 payload 字段值
         credit_data.update(kwargs)
@@ -113,13 +114,14 @@ class FqlGrtBizImpl(MysqlInit):
             loan_data['debitAccountName'] = self.data['name']
             loan_data['debitAccountNo'] = self.data['bankid']
         else:
-            resource = self.MysqlBizImpl.get_user_database_info('user_role_resource_relation', user_id=self.merchantId)
-            bank_info = self.MysqlBizImpl.get_user_database_info('user_financial_instrument_info',
-                                                                 resource_id=resource['resource_id'], account_type='1')
-            loan_data['debitAccountName'] = bank_info['account_name']
-            loan_data['debitOpenAccountBank'] = bank_info['branch_name']
-            loan_data['debitAccountNo'] = bank_info['account']
-            loan_data['debitCnaps'] = bank_info['union_bank_id']
+            sql = "select account_name,branch_name,account,union_bank_id from user_financial_instrument_info " \
+                  "where resource_id in (select resource_id from user_role_resource_relation where user_id = '{}') " \
+                  "and account_type='1'".format(self.merchantId)
+            bank_info = self.MysqlBizImpl.mysql_user.select(sql)
+            loan_data['debitAccountName'] = bank_info[0][0]
+            loan_data['debitOpenAccountBank'] = bank_info[0][1]
+            loan_data['debitAccountNo'] = bank_info[0][2]
+            loan_data['debitCnaps'] = bank_info[0][3]
 
         # 设置apollo放款mock时间 默认当前时间
         loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
@@ -213,7 +215,14 @@ class FqlGrtBizImpl(MysqlInit):
         repay_data['assetId'] = self.data['applyId']
         if loanInvoiceId:
             loanInvoiceId = loanInvoiceId
+            loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                           loan_invoice_id=loanInvoiceId)
+            loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
+                                                                         loan_apply_id=loan_invoice_info[
+                                                                             'loan_apply_id'])
+            repay_data['assetId'] = loan_apply_info['thirdpart_apply_id']
         else:
+            repay_data['assetId'] = self.data['applyId']
             loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                          thirdpart_apply_id=self.data['applyId'])
             loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
@@ -315,29 +324,38 @@ class FqlGrtBizImpl(MysqlInit):
         self.log.info("解析后报文：{}".format(response))
         return response
 
-    # 代扣申请
-    def withhold(self, rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId=None, term=None, rpyDate=None, **kwargs):
-        withhold_data = dict()
-        withhold_data['withholdSerialNo'] = 'withholdSerialNo' + self.strings
-        withhold_data['partnerCode'] = self.partnerCode
-        withhold_data['userName'] = self.data['name']
-        withhold_data['cardNo'] = self.data['bankid']
-        withhold_data['idNo'] = self.data['cer_no']
-        withhold_data['phoneNo'] = self.data['telephone']
-        withhold_data['rpyType'] = rpyType
-        withhold_data['assetId'] = self.data['applyId']
+    # 代扣明细组装
+    def withhold_detail(self, rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId=None, term=None, rpyDate=None):
+        """
+        组装单笔代扣明细
+        :param rpyType: 还款方式
+        :param rpyGuaranteeAmt: 担保金额
+        :param loanInvoiceId: 借据号
+        :param term: 最小未还款期次
+        :param rpyDate: 代扣日期
+        :return:
+        """
+        withhold_detail_data = dict()
+        withhold_detail_data['rpyType'] = rpyType
+        rpyDate = rpyDate if rpyDate else time.strftime('%Y-%m-%d', time.localtime())
+        withhold_detail_data['rpyDate'] = rpyDate
         if loanInvoiceId:
             loanInvoiceId = loanInvoiceId
+            loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                           loan_invoice_id=loanInvoiceId)
+            loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
+                                                                         loan_apply_id=loan_invoice_info[
+                                                                             'loan_apply_id'])
+            withhold_detail_data['assetId'] = loan_apply_info['thirdpart_apply_id']
         else:
+            withhold_detail_data['assetId'] = self.data['applyId']
             loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                          thirdpart_apply_id=self.data['applyId'])
             loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
                                                                            loan_apply_id=loan_apply_info[
                                                                                'loan_apply_id'])
             loanInvoiceId = loan_invoice_info['loan_invoice_id']
-        withhold_data['capitalLoanNo'] = loanInvoiceId
-        rpyDate = rpyDate if rpyDate else time.strftime('%Y-%m-%d', time.localtime())
-        withhold_data['rpyDate'] = rpyDate
+        withhold_detail_data['capitalLoanNo'] = loanInvoiceId
         if term:
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
                                                                          loan_invoice_id=loanInvoiceId,
@@ -387,22 +405,57 @@ class FqlGrtBizImpl(MysqlInit):
             repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
             rpyDetails.append(repay_detail_data)
             totalAmount = repay_detail_data['rpyAmt'] + repay_detail_data['rpyGuaranteeAmt']
-        withhold_data['billDetails'] = rpyDetails
-        withhold_data['rpyTotalAmt'] = round(totalAmount, 2)
-        withhold_data['withholdAmt'] = round(totalAmount, 2)
-        withhold_data['sepOutInfo'] = [
-            {"type": "1", "amt": round(totalAmount - 3.56, 2), "account": self.data['bankid']},
-            {"type": "2", "amt": "3.56", "account": "11015898003004"}]
-        withhold_data['sepInInfo'] = [
-            {"type": "1", "amt": round(totalAmount - 3.56, 2), "account": self.data['bankid'], "orgType": "1",
-             "sepMerchCode": "FQL-123456", "sepBankId": "南京银行",
-             "detail": [{"from": "1", "amt": round(totalAmount - 3.56 * 2, 2)}, {"from": "2", "amt": "3.56"}]},
-            {"type": "2", "amt": "3.56", "account": "758873775131", "orgType": "2", "sepMerchCode": "HF-123456",
-             "sepBankId": "工商银行", "detail": [{"from": "1", "amt": "3.01"}, {"from": "2", "amt": "0.55"}]}]
+        withhold_detail_data['billDetails'] = rpyDetails
+        withhold_detail_data['rpyTotalAmt'] = round(totalAmount, 2)
+        # 更新代扣明细字段值
+        withhold_detail = self.cfg['withhold']['payload']['withholdDetail'][0]
+        parser = DataUpdate(withhold_detail, **withhold_detail_data)
+        detail_data = parser.parser
+        return detail_data
+
+    # 多个代扣明细组装list
+    def withhold_detail_list(self, *detail_data):
+        """
+        将多笔借据代扣明细组装到list
+        :param detail_data: 多个代扣明细
+        :return: 代扣明细list
+        """
+        detail_list = list()
+        detail_list.append(*detail_data)
+        return detail_list
+
+    # 代扣申请
+    def withhold(self, detail_list, **kwargs):
+        """
+        组装代扣申请
+        :param detail_list: 代扣明细组合
+        :param kwargs:
+        :return:
+        """
+        withhold_data = dict()
+        withhold_data['withholdSerialNo'] = 'withholdSerialNo' + self.strings
+        withhold_data['partnerCode'] = self.partnerCode
+        withhold_data['userName'] = self.data['name']
+        withhold_data['cardNo'] = self.data['bankid']
+        withhold_data['idNo'] = self.data['cer_no']
+        withhold_data['phoneNo'] = self.data['telephone']
+        withholdAmt = 0
+        for i in detail_list:
+            withholdAmt += i['rpyTotalAmt']
+        withhold_data['withholdAmt'] = round(withholdAmt, 2)
+        withhold_data['withhold_detail'] = detail_list
+
         # 更新 payload 字段值
         withhold_data.update(kwargs)
-        parser = DataUpdate(self.cfg['withhold']['payload'], **withhold_data)
+        parser = DataUpdate(self.cfg['withhold']['payload'], unique=False, **withhold_data)
         self.active_payload = parser.parser
+        # 更新出账信息
+        self.active_payload['sepOutInfo'][0]['amt'] = round(withholdAmt - 3.56, 2)
+        self.active_payload['sepOutInfo'][0]['account'] = self.data['bankid']
+        # 更新分账信息
+        self.active_payload['sepInInfo'][0]['amt'] = round(withholdAmt - 3.56, 2)
+        self.active_payload['sepInInfo'][0]['account'] = self.data['bankid']
+        self.active_payload['sepInInfo'][0]['detail'][0]['amt'] = round(withholdAmt - 3.56 * 2, 2)
 
         self.log.demsg('开始代扣申请...')
         url = self.host + self.cfg['withhold']['interface']
@@ -433,7 +486,6 @@ class FqlGrtBizImpl(MysqlInit):
     # 代偿文件
     def compensation(self, repay_date=None):
         repay_date = repay_date if repay_date else time.strftime('%Y-%m-%d', time.localtime())
-        self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
         key = "merchant_id = '{}' and repay_plan_status = '4' and overdue_days >= 15".format(self.merchantId)
         loan_invoice_info = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key=key, record=999)
         compensation_list = list()
