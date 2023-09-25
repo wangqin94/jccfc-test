@@ -16,9 +16,9 @@ from utils.Logger import MyLog
 class TestCase(object):
     def __init__(self):
         self.process()
-        self.RepayPublicBizImpl = RepayPublicBizImpl()
 
-    def process(self, flag=8):
+    @staticmethod
+    def process(flag=8):
         # 授信
         if flag == 0:
             fql_grt = FqlGrtBizImpl(data=None)
@@ -55,7 +55,7 @@ class TestCase(object):
         if flag == 6:
             fql_grt = FqlGrtBizImpl(data=data)
             repay_date = '2023-09-25'
-            self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+            RepayPublicBizImpl().pre_repay_config(repayDate=repay_date)
             # rpyType 10-正常还款 30-提前结清 40-逾期还款
             fql_grt.repay(rpyType=30, rpyDate=repay_date)
 
@@ -68,11 +68,11 @@ class TestCase(object):
         if flag == 8:
             fql_grt = FqlGrtBizImpl(data=data)
             repay_date = '2023-09-25'
-            self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+            # RepayPublicBizImpl().pre_repay_config(repayDate=repay_date)
             # rpyType 10-正常还款 30-提前结清 40-逾期还款
-            detail = fql_grt.withhold_detail(rpyType=10, loanInvoiceId='000LI0001437130418922092001', term=2,
-                                             rpyDate=repay_date)
-            detail_list = fql_grt.withhold_detail_list(detail)
+            detail1 = fql_grt.withhold_detail(rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId='000LI0001437130418922334065', term=1, rpyDate=repay_date)
+            detail2 = fql_grt.withhold_detail(rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId='000LI0001437130418922336065', term=1, rpyDate=repay_date)
+            detail_list = fql_grt.withhold_detail_list(detail1, detail2)
             fql_grt.withhold(detail_list=detail_list)
 
         # 代扣查询
@@ -84,7 +84,7 @@ class TestCase(object):
         if flag == 10:
             fql_grt = FqlGrtBizImpl(data=data)
             repay_date = '2023-09-25'
-            self.RepayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+            RepayPublicBizImpl().pre_repay_config(repayDate=repay_date)
             fql_grt.compensation(repay_date=repay_date)
 
 

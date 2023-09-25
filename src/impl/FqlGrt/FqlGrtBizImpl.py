@@ -411,6 +411,7 @@ class FqlGrtBizImpl(MysqlInit):
         withhold_detail = self.cfg['withhold']['payload']['withholdDetail'][0]
         parser = DataUpdate(withhold_detail, **withhold_detail_data)
         detail_data = parser.parser
+        self.log.info('代扣明细: {}'.format(detail_data))
         return detail_data
 
     # 多个代扣明细组装list
@@ -420,8 +421,8 @@ class FqlGrtBizImpl(MysqlInit):
         :param detail_data: 多个代扣明细
         :return: 代扣明细list
         """
-        detail_list = list()
-        detail_list.append(*detail_data)
+        detail_list = list(detail_data)
+        self.log.info('代扣明细list: {}'.format(detail_list))
         return detail_list
 
     # 代扣申请
