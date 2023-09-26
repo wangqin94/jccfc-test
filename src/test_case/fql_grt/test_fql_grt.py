@@ -18,7 +18,8 @@ class TestCase(object):
         self.process()
 
     @staticmethod
-    def process(flag=8):
+    def process(flag=0):
+        # flag: 0-授信 1-授信查询 2-支用 3-支用查询 4-还款计划查询 5-试算 6-还款通知 7-通知查询 8-代扣 9-代扣查询 10-代偿
         # 授信
         if flag == 0:
             fql_grt = FqlGrtBizImpl(data=None)
