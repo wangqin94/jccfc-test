@@ -56,7 +56,7 @@ class FqlGrtBizImpl(MysqlInit):
         credit_data['identiNo'] = self.data['cer_no']
         credit_data['mobileNo'] = self.data['telephone']
         credit_data['orderType'] = orderType
-        if orderType == '3':
+        if int(orderType) == 3:
             credit_data['userBankCardNo'] = self.data['bankid']
             credit_data['debitAccountName'] = self.data['name']
             credit_data['debitAccountNo'] = self.data['bankid']
@@ -110,7 +110,7 @@ class FqlGrtBizImpl(MysqlInit):
         loan_data['mobileNo'] = self.data['telephone']
         loan_data['userBankCardNo'] = self.data['bankid']
         loan_data['orderType'] = orderType
-        if orderType == 3:
+        if int(orderType) == 3:
             loan_data['debitAccountName'] = self.data['name']
             loan_data['debitAccountNo'] = self.data['bankid']
         else:
@@ -122,13 +122,6 @@ class FqlGrtBizImpl(MysqlInit):
             loan_data['debitOpenAccountBank'] = bank_info[0][1]
             loan_data['debitAccountNo'] = bank_info[0][2]
             loan_data['debitCnaps'] = bank_info[0][3]
-
-        # 设置apollo放款mock时间 默认当前时间
-        loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
-        apollo_data = dict()
-        apollo_data['credit.loan.trade.date.mock'] = True
-        apollo_data['credit.loan.date.mock'] = loan_date
-        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         # 更新 payload 字段值
         loan_data.update(kwargs)
@@ -249,9 +242,8 @@ class FqlGrtBizImpl(MysqlInit):
         totalAmount = 0
         if rpyType == 30:
             days = get_day(asset_repay_plan["start_date"], rpyDate)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         record=999)
+            key = "loan_invoice_id = '{}' and current_num >= '{}'".format(loanInvoiceId, min_term)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key=key, record=999)
             for i in asset_repay_plan:
                 repay_detail_data = dict()
                 repay_detail_data['rpyTerm'] = i['current_num']
@@ -263,7 +255,7 @@ class FqlGrtBizImpl(MysqlInit):
                     repay_detail_data['rpyFeeAmt'] = round(float(
                         i['before_calc_principal']) * days * day_rate, 2) if days > 0 else 0
                     repay_detail_data['rpyMuclt'] = float(i['pre_repay_overdue_fee'])
-                    repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
+                    repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt if days > 0 else 0
                     repay_detail_data['rpyAmt'] = round(
                         float(i['pre_repay_principal']) + repay_detail_data['rpyFeeAmt'] + repay_detail_data[
                             'rpyMuclt'], 2)
@@ -303,7 +295,6 @@ class FqlGrtBizImpl(MysqlInit):
     def repay_query(self, loanInvoiceId=None, **kwargs):
         repay_query_data = dict()
         repay_query_data['partnerCode'] = self.partnerCode
-        repay_query_data['billId'] = "billId" + self.strings
         loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
                                                                      thirdpart_apply_id=self.data['applyId'])
         loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
@@ -371,9 +362,8 @@ class FqlGrtBizImpl(MysqlInit):
         totalAmount = 0
         if rpyType == 30:
             days = get_day(asset_repay_plan["start_date"], rpyDate)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         record=999)
+            key = "loan_invoice_id = '{}' and current_num >= '{}'".format(loanInvoiceId, min_term)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key=key, record=999)
             for i in asset_repay_plan:
                 repay_detail_data = dict()
                 repay_detail_data['rpyTerm'] = i['current_num']
@@ -385,7 +375,7 @@ class FqlGrtBizImpl(MysqlInit):
                     repay_detail_data['rpyFeeAmt'] = round(float(
                         i['before_calc_principal']) * days * day_rate, 2) if days > 0 else 0
                     repay_detail_data['rpyMuclt'] = float(i['pre_repay_overdue_fee'])
-                    repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt
+                    repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt if days > 0 else 0
                     repay_detail_data['rpyAmt'] = round(
                         float(i['pre_repay_principal']) + repay_detail_data['rpyFeeAmt'] + repay_detail_data[
                             'rpyMuclt'], 2)
