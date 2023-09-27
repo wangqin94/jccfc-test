@@ -2,6 +2,7 @@ import unittest
 
 from src.impl.common.CheckBizImpl import *
 from src.impl.FqlGrt.FqlGrtBizImpl import *
+from src.impl.public.LoanPublicBizImpl import *
 from person import *
 
 
@@ -15,23 +16,25 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_loan(self, loan_date='2023-09-26'):
+    def test_loan(self, loan_date='2023-09-27'):
         """ 测试步骤 """
         # 授信-授信校验-放款-放款校验
         fql_grt = FqlGrtBizImpl(data=None)
-        amount = random.randint(1000, 9999)
+        amount = random.randint(100, 50000)
         # amount = 20000
-        term = 2
+        term = 3
         # orderType: 1-赊销 3-取现 4-乐花卡
-        orderType = 4
+        orderType = 1
         # 发起授信申请
         fql_grt.credit(orderType=orderType, loanPrincipal=amount, loanTerm=term)
         self.applyId = fql_grt.data['applyId']
         # 检查授信状态
         time.sleep(10)
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.applyId)
+        # 设置放款日mock  flag: True-使用mock, False-使用真实系统放款日
+        LoanPublicBizImpl().updateLoanDateMock(date=loan_date, flag=True)
         # 发起支用申请
-        fql_grt.loan(orderType=orderType, loanPrincipal=amount, loanTerm=term, fixedBillDay=1, fixedRepayDay=10,
+        fql_grt.loan(orderType=orderType, loanPrincipal=amount, loanTerm=term, fixedBillDay=22, fixedRepayDay=1,
                      loan_date=loan_date)
 
     """ 后置条件处理 """
