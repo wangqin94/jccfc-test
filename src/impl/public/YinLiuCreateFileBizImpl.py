@@ -6,7 +6,7 @@ from src.enums.EnumYinLiu import EnumFileType
 from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import Hair, WeiCai, HaLo, YiXin
+from src.test_data.module_data import Hair, WeiCai, HaLo, YiXin, JiRo
 from utils.KS3 import KS3
 from utils.Logger import Logs
 
@@ -342,6 +342,49 @@ class YinLiuRepayFile(EnvInit):
         # 获取微财理赔对账文件参数
         templePath = YiXin.YiXin
         buyBackTemple = templePath['yiXinBuyBackTemple']
+        # 获取借据总期数
+        totalTerm = self.getInvoiceInfo()['installment_num']
+        creditLoanInvoiceInfo = self.getInvoiceInfo()
+        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
+        # 依次写入回购所有期次还款数据
+        termNo = int(self.repayTermNo)
+        while int(totalTerm) >= termNo:
+            # 获取当期还款计划
+            creditBuyBackData = self.creditBuyBackData(termNo)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
+                                                                         loan_invoice_id=loanInvoiceId,
+                                                                         current_num=termNo)
+            # 回购当期逾期天数
+            days = get_day(asset_repay_plan['start_date'], self.repayDate)
+            # 获取回购当期已计提利息
+            if termNo == int(self.repayTermNo) and days > 8:
+                self.log.info("当前逾期天数：{}天, T+8利息为0，T+9利息按日计提".format(days))
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])  # T+9利息按日计提
+                creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
+            else:
+                creditBuyBackData['paid_int_amt'] = 0  # T+8免息，利息为0
+                creditBuyBackData['repay_amt'] = creditBuyBackData['paid_prin_amt']  # T+8还款总额只包含当期本金
+            payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
+            # 开始写入文件内容
+            write_repay_file(buyBackFileName, **payload)
+            termNo += 1
+
+        # 开始上传文件到ks3
+        self.uploadFile(fileType=EnumFileType.BUYBACK_FILE.fileType, assetFilePath=EnumFileType.BUYBACK_FILE.folderName)
+
+    # 极融回购文件生成
+    def creditJiRoBuyBackFile(self):
+        """
+        @return: 融担模式微财回购对账文件
+        """
+        # 初始化文件
+        localFilePath = self.getLocalFilePath(EnumFileType.BUYBACK_FILE.fileType)
+        buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.BUYBACK_FILE.fileType)
+        if os.path.exists(buyBackFileName):
+            os.remove(buyBackFileName)
+        # 获取微财理赔对账文件参数
+        templePath = JiRo.JiRo
+        buyBackTemple = templePath['jiRoBuyBackTemple']
         # 获取借据总期数
         totalTerm = self.getInvoiceInfo()['installment_num']
         creditLoanInvoiceInfo = self.getInvoiceInfo()

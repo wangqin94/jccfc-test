@@ -25,6 +25,7 @@ class ProductEnum(Enum):
     WEICAI = 'weicai'
     YIXIN = 'yixin'
     FQLGRT = 'fql_grt'
+    JIRO = 'jiro'
 
 
 @unique
@@ -45,6 +46,7 @@ class ProductIdEnum(Enum):
     XIAOX = 'G23E011'
     YIXIN = 'G23E061'
     FQLGRT = 'G23E091'
+    JIRO = 'G23E081'
 
 
 class EnumProductYearRate(Enum):
@@ -63,6 +65,7 @@ class EnumMerchantId(Enum):
     WEICAI = 'G23E05WEIC'
     YIXIN = 'G23E06YIXN'
     FQLGRT = 'G23E09FNQL'
+    JIRO = 'G23E08JIRO'
 
 
 @unique
