@@ -40,14 +40,13 @@ class MyTestCase(unittest.TestCase):
         # 绑卡签约
         res = jiro.getCardRealNameMessage().get('body')
         jiro.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
-        term = 9
         # amount = random.randrange(1000, 2000, 100)
         amount = 5000
 
         self.loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
 
         # 发起授信申请
-        self.thirdApplyId = jiro.credit(applyAmount=amount, loanTerm=term).get('body')['thirdApplyId']
+        self.thirdApplyId = jiro.credit(applyAmount=amount).get('body')['thirdApplyId']
 
         # 数据库陈校验授信结果是否符合预期
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId)
@@ -58,7 +57,7 @@ class MyTestCase(unittest.TestCase):
         jiro.queryLprInfo(thirdApplyId=self.thirdApplyId)
 
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
-        jiro.applyLoan(loan_date=loan_date, loanAmt=amount, loanTerm=term, thirdApplyId=self.thirdApplyId)
+        jiro.applyLoan(loan_date=loan_date, loanAmt=amount, thirdApplyId=self.thirdApplyId)
 
         # 数据库陈校验授信结果是否符合预期
         self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.ON_USE.value,

@@ -279,11 +279,6 @@ class YiXinBizImpl(MysqlInit):
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
-        # 首期还款日
-        firstRepayDate = get_bill_day(loan_date)
-        applyLoan_data['firstRepayDate'] = firstRepayDate
-        applyLoan_data['fixedRepayDay'] = firstRepayDate.split('-')[2]
-
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
         applyLoan_data['orderType'] = '1'  # EnumOrderType 固定传1-取现
@@ -300,6 +295,8 @@ class YiXinBizImpl(MysqlInit):
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
 
+        # 首期账单日
+        firstRepayDate = get_bill_day(loan_date)
         # 还款计划
         applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
                                                                    yearRate=self.interestRate, term=loanTerm)

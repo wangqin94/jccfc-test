@@ -279,10 +279,8 @@ class JiRoBizImpl(MysqlInit):
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
-        # 首期还款日
+        # 首期账单日
         firstRepayDate = get_bill_day(loan_date)
-        applyLoan_data['firstRepayDate'] = firstRepayDate
-        applyLoan_data['fixedRepayDay'] = firstRepayDate.split('-')[2]
 
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm

@@ -240,8 +240,6 @@ JiRo = {
             "body": {
                 "thirdApplyId": "",  # 放款申请编号  与授信申请编号保持一致
                 "loanAmt": 1000,  # 借款金额
-                "firstRepayDate": "",  # 首期还款日期 yyyy-MM-dd
-                "fixedRepayDay": "",  # 固定还款日  例：3，就是每月的3号,取值范围0-28，若29、30、31日放款，传28
                 "loanTerm": 12,  # 贷款期数
                 "name": "",  # 借款人姓名
                 "idNo": "",  # 证件号码
