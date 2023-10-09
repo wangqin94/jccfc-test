@@ -121,6 +121,16 @@ class TestCase(object):
             yixin = YiXinBizImpl(data=data)
             yixin.settlementCerDownload("488958292D324978AC873742067CC783")
 
+        # 还款计划试算
+        elif flag == 18:
+            yixin = YiXinBizImpl(data=data)
+            yixin.repayPlanTrial(loanDate=None)
+
+        # 还款试算
+        elif flag == 19:
+            yixin = YiXinBizImpl(data=data)
+            yixin.repayTrial(loanInvoiceId='', repayTerm='', repayType='', repayDate=None)
+
     def postprocess(self):
         """ 后置条件处理 """
         pass

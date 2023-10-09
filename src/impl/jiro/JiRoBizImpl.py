@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------
-# 宜信接口数据封装类
+# 极融接口数据封装类
 # ------------------------------------------
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
-from src.test_data.module_data import YiXin
+from src.test_data.module_data import JiRo
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
 
 
-class YiXinBizImpl(MysqlInit):
+class JiRoBizImpl(MysqlInit):
     def __init__(self, data=None, encrypt_flag=True, person=True):
         """
         @param data: 四要素 为空系统随机获取，若person=True四要输写入person文件
@@ -22,15 +22,15 @@ class YiXinBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         # 解析项目特性配置
-        self.cfg = YiXin.YiXin
+        self.cfg = JiRo.JiRo
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
-        self.interestRate = getInterestRate(ProductIdEnum.YIXIN.value)
+        self.interestRate = getInterestRate(ProductIdEnum.JIRO.value)
         # 初始化产品、商户
-        self.productId = ProductIdEnum.YIXIN.value
-        self.merchantId = EnumMerchantId.YIXIN.value
+        self.productId = ProductIdEnum.JIRO.value
+        self.merchantId = EnumMerchantId.JIRO.value
 
         # 初始化payload变量
         self.active_payload = {}
@@ -44,7 +44,7 @@ class YiXinBizImpl(MysqlInit):
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.YIXIN.value))
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JIRO.value))
             else:
                 base_data = get_base_data_temp()
         return base_data
@@ -279,6 +279,9 @@ class YiXinBizImpl(MysqlInit):
         apollo_data['credit.loan.date.mock'] = loan_date
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
+        # 首期账单日
+        firstRepayDate = get_bill_day(loan_date)
+
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
         applyLoan_data['orderType'] = '1'  # EnumOrderType 固定传1-取现
@@ -295,8 +298,6 @@ class YiXinBizImpl(MysqlInit):
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
 
-        # 首期账单日
-        firstRepayDate = get_bill_day(loan_date)
         # 还款计划
         applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
                                                                    yearRate=self.interestRate, term=loanTerm)
