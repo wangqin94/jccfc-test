@@ -69,7 +69,7 @@ Didi = {
             "totalInstallment": 0,  # 贷款总期数
             "interestRate": 0,  # ⽇利率
             "interestPenaltyRate": 0,  # ⽇罚息率
-            "loanUsage": "1",  # 1：⽇常消费、 2：汽⻋加油 3：修⻋保养、 5：医疗⽀出、 6：教育深造、 7：房屋装修  8：旅游出⾏ 28: 其他消费⽤款  默认⽇常消费
+            "loanUsage": "5",  # 1：⽇常消费、 2：汽⻋加油 3：修⻋保养、 5：医疗⽀出、 6：教育深造、 7：房屋装修  8：旅游出⾏ 28: 其他消费⽤款  默认⽇常消费
             "sftpDir": "/hj/xdgl/didi/credit",  # 必须设置，与活体、 OCR及合同路径相关
             "callbackUrl": "",  # 接收异步通知回调的地址
             "finProductType": "",  # 产品类型: 1.随借随还， 2.固定期限
@@ -139,11 +139,23 @@ Didi = {
                 "nationality": "中国",  # 国籍
                 "certificateType": "1",  # 证件类型 默认身份证
             },
-        },
-        "repayDay": "",  # 还款⽇，滴滴侧计算⽣成
-        "callbackUrl": "",  # 接收异步通知回调的地址
-        "guaranteeOrgCode": '',  # 融担机构标识
-        "guaranteeOrgName": '',  # 融担机构名称
+            "ocrInfo": {
+                "name": "张三",
+                "gender": "⼥",
+                "race": "汉",
+                "birthday": "1995-03-09",
+                "address": "贵州市六盘⽔市⽔调⽔个",
+                "idNo": "411023199909011011",
+                "validDate": "2015.12.24-2035.12.24",
+                "authority": "六盘⽔公安局"
+            },
+
+            "repayDay": "",  # 还款⽇，滴滴侧计算⽣成
+            "callbackUrl": "http://manhattanloantest.xiaojukeji.com/manhattan/loan/openfin/superpartner/standard/loanResult",
+            # 接收异步通知回调的地址
+            "guaranteeOrgCode": 'DB0006',  # 融担机构标识
+            "guaranteeOrgName": '河北银海融资担保有限公司',  # 融担机构名称
+        }
     },
     # 查询借款结果接口
     "query_loan_result": {
@@ -195,7 +207,6 @@ Didi = {
             "applicationId": "DC0000308020230923180538979cf73"
         }
     },
-
 
     # 渠道还款通知
     "initiate_Repay": {

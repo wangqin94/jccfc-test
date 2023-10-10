@@ -30,7 +30,10 @@ class SFTP(object):
     #         _log.error(err)
 
     def __login_sftp(self):
-        sf = paramiko.Transport(*(self.sftp_host, self.sftp_port))
+        if self.env =='didi':
+            sf = paramiko.Transport((self.sftp_host, self.sftp_port))
+        else:
+            sf = paramiko.Transport(*(self.sftp_host, self.sftp_port))
         sf.connect(username=self.sftp_user, password=self.sftp_passwd)
         return paramiko.SFTPClient.from_transport(sf)
 

@@ -406,14 +406,10 @@ class DataUpdate(object):
     def _update_data(self, data, key, value):
         """ # 遍历嵌套字典或list并替换字典的key """
         if isinstance(data, dict):  # 使用isinstance检测数据类型，如果是字典
-            if key in data.keys():  # 替换字典中所有key与传参一致的key
-                if isinstance(value, dict):
-                    for itemKey in value.keys():
-                        data[key] = self._update_data(data[key], itemKey, value[itemKey])
-                else:
-                    data[key] = value
-                if self.unique:
-                    return data
+            if key in data.keys():  # 替换字典第一层中所有key与传参一致的key
+                data[key] = value
+            if self.unique:
+                return data
             # # TODO:
             # # 遍历字典的所有子层级，将子层级赋值为变量chdict，
             # # 分别替换子层级第一层中所有key对应的value，

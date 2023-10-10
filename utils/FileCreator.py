@@ -76,7 +76,7 @@ def create_attachment_image(person, imageName):
     back_image.save(p_path[:p_path.index("jccfc-test") + len(
         "jccfc-test")] + f'/image/temp{imageName}.png')
     return p_path[
-           :p_path.index("jccfc-test") + len("jccfc-test")] + f'/image/temp{imageName}.png'
+           :p_path.index("jccfc-test") + len("jccfc-test")] + f'/image/temp/{imageName}.png'
 
 
 def create_attachment_pdf(filename, person=None, contentText=None):
