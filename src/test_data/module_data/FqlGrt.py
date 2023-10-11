@@ -53,7 +53,7 @@ FqlGrt = {
             "fixedBillDay": "10",
             "fixedRepayDay": "20",
             "loanTerm": 15,
-            "loanUse": "3",
+            "loanUse": "2",
             "debitAccountName": "诸天巧",
             "debitOpenAccountBank": "建设银行",
             "debitAccountNo": "6217591693558210853",
@@ -62,7 +62,7 @@ FqlGrt = {
             "interestRate": 7.5,
             "protocolId": "S202309210001",
             "extend": {},
-            "fileInfos": [
+            "uploadInfo": [
                 {
                     "fileType": "1",
                     "filePath": "/upload/credit",
@@ -121,7 +121,7 @@ FqlGrt = {
             "fixedBillDay": 10,
             "fixedRepayDay": 20,
             "loanTerm": 15,
-            "loanUse": "1",
+            "loanUse": "2",
             "mobileNo": "18425430891",
             "debitAccountName": "诸天巧",
             "debitOpenAccountBank": "建设银行",
@@ -162,13 +162,13 @@ FqlGrt = {
         "interface": "/api/v2/fql/repay/apply",
         "payload": {
             "partnerCode": "fql_grt",
-            "billId": "000LI0001353086498709504001-1",
+            "billId": "000LI0001353086498709504001",
             "assetId": "applyId16935583718691328",
             "capitalLoanNo": "000LI0001353086498709504001",
             "rpyTotalAmt": 2607.47,
             "rpyType": 40,
             "rpyDate": "2023-09-16",
-            "repayChannel": "1",
+            "repayChannel": "",
             "withholdSerialNo": "",
             "rpyDetails": [
                 {
@@ -210,7 +210,7 @@ FqlGrt = {
                     "phoneNo": "18425430891"
                 }
             ],
-            "bankId": "0104",
+            "bankId": "0105",
             "withholdAmt": 2609.92,
             "signNum": "S00202309160001",
             "payMode": 0,
@@ -223,7 +223,7 @@ FqlGrt = {
                 },
                 {
                     "type": "2",
-                    "amt": "3.56",
+                    "amt": "5.55",
                     "account": "11015898003004"
                 }
             ],
@@ -292,7 +292,7 @@ FqlGrt = {
     "withhold_query": {
         "interface": "/api/v2/fql/withhold/query",
         "payload": {
-            "withholadSerialNo": "withholdSerialNo123456789",
+            "withholdSerialNo": "withholdSerialNo123456789",
             "partnerCode": "fql_grt"
         }
     }
