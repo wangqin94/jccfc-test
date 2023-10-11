@@ -119,8 +119,9 @@ def getDailyAccrueInterest(productId, days, leftAmt):
                                                                       product_id=productId,
                                                                       param_key='days_per_year')
         if product_product_param:
-            daysPerYear = product_product_param['param_value']
-            dailyAccrueInterest = float(leftAmt) * (getInterestRate(productId) / float(daysPerYear) / 100) * days
+            yearRate = product_product_param['param_value']  # 产品配置年利率
+            daysRate = round(getInterestRate(productId) / float(yearRate) / 100, 6)  # 日利率
+            dailyAccrueInterest = float(leftAmt) * daysRate * days
             return round(dailyAccrueInterest, 2)
         else:
             raise AssertionError("产品配置表年基准天数参数为空")

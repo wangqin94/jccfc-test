@@ -5,10 +5,10 @@
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
-from src.test_data.module_data import JiRo
 from src.impl.common.CommonBizImpl import *
-from utils.FileHandle import Files
+from src.test_data.module_data import JiRo
 from utils.Apollo import Apollo
+from utils.FileHandle import Files
 
 
 class JiRoBizImpl(MysqlInit):
@@ -298,10 +298,19 @@ class JiRoBizImpl(MysqlInit):
         # 担保合同号
         applyLoan_data['guaranteeContractNo'] = 'ContractNo' + strings + "_5000"
 
+        # 获取还款计划试算中的保费
+        preRepayInsuranceFee = self.repayPlanTrial(loanDate=loan_date, applyAmount=loanAmt, term=loanTerm)['body'][
+            'repayPlanList']
+
         # 还款计划
         applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
                                                                    yearRate=self.interestRate, term=loanTerm)
-
+        # 取资产还款计划中红线保费值，替换还款计划中保费值
+        for key1 in preRepayInsuranceFee:
+            for key2 in applyLoan_data['repaymentPlans']:
+                if key2.get('period') == key1["currentNum"]:
+                    key2['guaranteeAmt'] = key1['preRepayInsuranceFee']
+                    break
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -504,9 +513,18 @@ class JiRoBizImpl(MysqlInit):
         days = get_day(asset_repay_plan["start_date"], repayDate)
         if repay_type == "2":
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-            # 如果当期已还款，提前还款利息应收0
-            repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
-            # repay_apply_data["repayInterest"] = 33.45
+            if days == 0:
+                repay_apply_data["repayInterest"] = 0  # 上期账单日提前结清，利息应收0
+            if days > 30:
+                repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"]  # 计提超过30天，按照30天收整期利息
+            else:
+                repay_apply_data["repayInterest"] = getDailyAccrueInterest(self.productId, days,
+                                                                           asset_repay_plan[
+                                                                               'before_calc_principal'])  # 提前结清按日计息
+            # 提前结清 实还保费<=红线保费（放款保费/30*计提天数）
+            channel_agency_repay_plan_detail_sync = self.MysqlBizImpl.get_op_channel_database_info(
+                'channel_agency_repay_plan_detail_sync', loan_invoice_id=loanInvoiceId, repay_term=repayTerm)
+            repayGuaranteeFee = round(float(channel_agency_repay_plan_detail_sync['pre_guarantee_fee'] * days / 30), 2)
             repay_apply_data["repayAmount"] = round(
                 repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
                 2)  # 总金额
@@ -519,7 +537,11 @@ class JiRoBizImpl(MysqlInit):
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days = '0' ORDER BY 'current_num'".format(
                 loanInvoiceId)
             currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm and currentTerm['current_num'] != repayTerm else 0  # 宽限期利息
+            # 宽限期期次利息--按日计提
+            if currentTerm and currentTerm['current_num'] != repayTerm:
+                currentTermInterest = getDailyAccrueInterest(self.productId, days, currentTerm['before_calc_principal'])
+            else:
+                currentTermInterest = 0
             repay_apply_data["repayInterest"] = round(repay_apply_data["repayInterest"] + currentTermInterest, 2)  # 总利息
             self.log.demsg("宽限期利息：{}".format(repay_apply_data["repayInterest"]))
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
@@ -528,23 +550,24 @@ class JiRoBizImpl(MysqlInit):
                 repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repay_apply_data[
                     'repayOverdueFee'] + repay_apply_data["repayFee"] + repayGuaranteeFee, 2)  # 总金额
 
-        # 逾期提前结清
+        # 逾期提前结清 -- 不支持
         if repay_type == "10":
             repay_apply_data['repayType'] = "2"
             oveRepayAmt = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
                                                                     'sum(left_repay_fee)',
-                                                                    'sum(pre_repay_interest)',
+                                                                    'sum(left_repay_interest)',
                                                                     'sum(pre_repay_overdue_fee)',
                                                                     loan_invoice_id=loanInvoiceId,
                                                                     repay_plan_status='4')
-            if oveRepayAmt['sum(pre_repay_interest)']:
+            if oveRepayAmt['sum(left_repay_interest)']:
                 left_repay_fee = float("{:.2f}".format(oveRepayAmt['sum(left_repay_fee)']))  # 未还期次费用
-                overdue_interest = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_interest)']))  # 未还期次利息
+                overdue_interest = float("{:.2f}".format(oveRepayAmt['sum(left_repay_interest)']))  # 未还期次费用
                 pre_repay_overdue_fee = float("{:.2f}".format(oveRepayAmt['sum(pre_repay_overdue_fee)']))  # 未还期次罚息
             else:
                 left_repay_fee = 0
                 overdue_interest = 0
                 pre_repay_overdue_fee = 0
+            # 当前期次利息
             repay_apply_data["repayInterest"] = overdue_interest  # 总利息
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息

@@ -2,8 +2,12 @@
 # # - 测试环境配置
 # # --------------------------------------
 
-__all__ = ['EnvList', 'TEST_ENV_INFO']
+__all__ = ['EnvList', 'hj', 'credit', 'TEST_ENV_INFO']
 
+# 互金组环境列表
+hj = ['hsit', 'huat', 'hdev', 'hqas', 'hpre', 'hpet', 'hyear']
+# 新核心组环境列表
+credit = ['uat', 'rts', 'dev', 'sit', 'year']
 # 测试环境列表
 EnvList = ['hsit', 'huat', 'hdev', 'hqas', 'uat', 'hpre', 'dev', 'rts', 'year', 'hpet', 'hyear']
 # TEST_ENV_INFO = 'huat'
