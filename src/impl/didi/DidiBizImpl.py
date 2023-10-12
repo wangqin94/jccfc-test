@@ -61,7 +61,7 @@ class DidiBizImpl(MysqlInit):
         :return:
         """
         # 上传文件
-        self.upload_file('DC00003080202309251854212953d8')
+        # self.upload_file('DC00003080202309251854212953d8')
 
         # self.log.demsg('用户四要素信息: {}'.format(self.data))
         # strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
@@ -142,13 +142,13 @@ class DidiBizImpl(MysqlInit):
         loan_risk_check_data['loanAmount'] = loanAmount * 100
         loan_risk_check_data['interestType'] = 2
         loan_risk_check_data['totalInstallment'] = applyTerm
-        loan_risk_check_data['interestRate'] = 650  # *百万分之一 互金存的年化利率
-        loan_risk_check_data['interestPenaltyRate'] = 415  # *百万分之一 互金存的年化利率
+        loan_risk_check_data['loanRating'] = 650  # *百万分之一 互金存的年化利率
+        loan_risk_check_data['penaltyInterestRate'] = 415  # *百万分之一 互金存的年化利率
         loan_risk_check_data['sftpDir'] = "/hj/xdgl/didi/credit"
         loan_risk_check_data['callbackUrl'] = "www.baidu.com"
         loan_risk_check_data['finProductType'] = 1  # 产品类型: 1.随借随还， 2.固定期限
         loan_risk_check_data['rateType'] = 2  # 产品类型: 1.随借随还， 2.固定期限
-        loan_risk_check_data['loanUsage'] = '5'
+        loan_risk_check_data['loanUsage'] = '2'
         loan_risk_check_data['preAbsId'] = self.date
 
         parser = DataUpdate(self.cfg['loan_risk_check']['payload'], unique=False, **loan_risk_check_data)
@@ -307,25 +307,67 @@ class DidiBizImpl(MysqlInit):
         :return: Response
         """
         initiateRepay_data = dict()
-        initiateRepay_data['applicationId'] = ''
-        initiateRepay_data['loanOrderId'] = ''
-        initiateRepay_data['payId'] = ''
-        initiateRepay_data['payType'] = ''
-        initiateRepay_data['repayType'] = ''
-        initiateRepay_data['loanNumbers'] = ''
-        initiateRepay_data['callbackUrl'] = ''
-        initiateRepay_data['agreementNo'] = ''
-        initiateRepay_data['repayAmountInfo'] = ''
-        initiateRepay_data['repayDate'] = ''
-        initiateRepay_data['subAccStatus'] = ''
-        initiateRepay_data['subAcctList'] = ''
-        initiateRepay_data['userInfo'] = ''
+        initiateRepay_data['applicationId'] = 'DC00003080202310121713431697102024'
+        initiateRepay_data['loanOrderId'] = '20231012171343'
+        initiateRepay_data['payId'] = '202310121502550002150ff9df70b0l1'
+        initiateRepay_data['payType'] = 1
+        initiateRepay_data['repayType'] = 1
+        initiateRepay_data['loanNumbers'] = "1"
+        initiateRepay_data[
+            'callbackUrl'] = 'http://manhattanloantest.xiaojukeji.com/manhattan/loan/openfin/superpartner/standard/activeRepayResult'
+        initiateRepay_data['agreementNo'] = '00000000000204572242'
+        initiateRepay_data['repayAmountInfo'] = {
+            "principal": 7477,
+            "interestPenalty": 1950,
+            "advanceClearFee": 0,
+            "totalAmount": 9427,
+            "guaranteeFee": 0,
+            "insuranceFee": 0,
+            "interest": 0,
+            "ratedInterest": 0,
+            "principalPenalty": 0,
+            "guaranteeConsultFee": 0
+        }
+        initiateRepay_data['repayDate'] = '2023-10-12'
+        initiateRepay_data['subAccStatus'] = 0
+        initiateRepay_data['subAcctList'] = []
+        initiateRepay_data['userInfo'] = {
+            "name": "印凝竹",
+            "idNo": "230306198511128342",
+            "phone": "13056409217",
+            "bankCardNo": "6217861697102024366",
+            "bankName": "中国银行",
+            "bankAddr": "BOC",
+            "jobType": "1",
+            "province": "四川",
+            "city": "成都",
+            "county": "高新",
+            "address": "中航城市广场",
+            "nationality": "中国",
+            "certificateType": "1"
+        }
         # 更新当前方法层数据
-        parser = DataUpdate(self.cfg['repay']['payload'], **initiateRepay_data)
+        parser = DataUpdate(self.cfg['repay']['payload'], unique=False, **initiateRepay_data)
         # 更新调用层数据
         parser = DataUpdate(parser.parser, **kwargs)
-
+        self.active_payload = parser.parser
         url = self.host + self.cfg['repay']['interface']
+        self.log.demsg('查询放款结果...')
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    def queryRepayResult(self, loanOrderId=None, payId=None, **kwargs):
+        queryRepayResultData = dict()
+        queryRepayResultData['loanOrderId'] = loanOrderId
+        queryRepayResultData['payId'] = payId
+
+        parser = DataUpdate(self.cfg['query_repay_result']['payload'], unique=False, **queryRepayResultData)
+        parser = DataUpdate(parser.parser, **kwargs)
+
+        parser = DataUpdate(parser.parser, **kwargs)
+        self.active_payload = parser.parser
+        url = self.host + self.cfg['query_repay_result']['interface']
         self.log.demsg('查询放款结果...')
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)

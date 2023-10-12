@@ -18,10 +18,10 @@ class MyTestCase(unittest.TestCase):
         :return:
         """
         # 发起授信申请
-        self.thirdApplyId = self.Didi.credit(applyAmount=20000)
+        self.thirdApplyId = self.Didi.credit(applyAmount=20000)['applicationId']
         self.Didi.queryCreditResult(self.thirdApplyId)
         # 检查授信结果
-        self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId)
+        self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId,t=5)
 
 
 if __name__ == '__main__':

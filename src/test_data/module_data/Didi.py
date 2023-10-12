@@ -44,7 +44,7 @@ Didi = {
                 "scoreOne": 650,
                 "scoreTwo": 19500,
                 "scoreThree": 1690000,
-                "endDate": "2024-05-20 22:16:54"
+                "endDate": "2024-05-20"
             },
             "applicationId": "DC00003080202309231729191413d8",  # 授信申请单号  64位
             "callbackUrl": "http://manhattanloantest.xiaojukeji.com/manhattan/loan/openfin/superpartner/standard/creditResult"
@@ -67,8 +67,8 @@ Didi = {
             "loanAmount": "",  # 贷款⾦额，单位分
             "interestType": 2,  # 还款类型： 1 等额本⾦； 2 等额本息； 3 先息后本
             "totalInstallment": 0,  # 贷款总期数
-            "interestRate": 0,  # ⽇利率
-            "interestPenaltyRate": 0,  # ⽇罚息率
+            "loanRating": 0,  # ⽇利率
+            "penaltyInterestRate": 0,  # ⽇罚息率
             "loanUsage": "5",  # 1：⽇常消费、 2：汽⻋加油 3：修⻋保养、 5：医疗⽀出、 6：教育深造、 7：房屋装修  8：旅游出⾏ 28: 其他消费⽤款  默认⽇常消费
             "sftpDir": "/hj/xdgl/didi/credit",  # 必须设置，与活体、 OCR及合同路径相关
             "callbackUrl": "",  # 接收异步通知回调的地址
@@ -166,7 +166,7 @@ Didi = {
     },
     # 主动还款
     "repay": {
-        'interface': 'api/v1/didi/repay/repay',
+        'interface': '/api/v1/didi/repay/repay',
         "payload": {
             "userInfo": {
                 "address": "浙江省杭州市上城区御景湾3栋4303号",
@@ -208,35 +208,6 @@ Didi = {
         }
     },
 
-    # 渠道还款通知
-    "initiate_Repay": {
-        'interface': '/api/v1/didi/repay/initiateRepay',
-        'payload': {
-            "applicationId": "",  # 授信申请单号
-            "loanOrderId": "",  # 贷款ID
-            "payId": "",  # 还款⽀付流⽔单号，幂等字段
-            "payType": "",  # 还款⽀付⽅式： 1 ⽤户主动还款； 2 合作⽅发起代扣还款； 3 滴滴发起代扣还款； 4 滴滴发起的线下还款； 9 代偿； 10 ⽀付宝还
-            "repayType": "",  # 1.当期还款， 2.结清全部
-            "loanNumbers": "",  # 还款期数：多期还款时还款期数之间通过英⽂逗号","隔开；
-            "callbackUrl": "",  # 接收异步通知回调的地址
-            "agreementNo": "",  # 中⾦绑卡协议流⽔号
-            "repayAmountInfo": "",  # 应还⾦额信息
-            "repayDate": "",  # 还款时间, ⾮必填, 格式: yyyy-MM-dd,默认当前⽇期
-            "subAccStatus": 0,  # 0:不分账 1:分账
-            "subAcctList": [
-                {
-                    'subAcctNo': '',  # 分账账号
-                    'subAmount': ''  # 分账⾦额
-                }
-            ],  # 分账列表
-            "userInfo": {
-                "name": "",
-                "idNo": "",
-                "bankCardNo": "",
-                "phone": ""
-            },
-        }
-    },
     # 查询还款结果
     "query_repay_result": {
         'interface': '/api/v1/didi/repay/queryRepayResult',
@@ -244,6 +215,33 @@ Didi = {
             "loanOrderId": "",  # 贷款ID
             "payId": "",  # 还款⽀付流⽔单号，幂等字段
         }
+    },
+
+    # 还款入账通知
+    "collectActiveRepayResult": {
+        'interface': '/api/v1/didi/repay/repayNotify',
+        'payload': {
+            "repayType": "",  #
+            "loanOrderId": "",  #
+            "payChannel": "",
+            "payId": "",
+            "repayDetails": [
+                {
+                    "repayAmountInfo": {
+                        "principal": 0,
+                        "totalAmount": 0,
+                        "interest": 0,
+                        "principalPenalty": 0
+                    },
+                    "loanNumber": 1
+                }
+            ],
+            "repayTime": "2023-10-12 09:57:06",
+            "repayStatus": 1,
+            "loanNumbers": "1",
+            "payType": 1
+        }
     }
+
 
 }
