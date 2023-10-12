@@ -2,6 +2,7 @@
 # ------------------------------------------
 # 分期乐半增信数据封装类
 # ------------------------------------------
+import datetime
 
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
@@ -252,8 +253,15 @@ class FqlGrtBizImpl(MysqlInit):
                     if min_term == 1:
                         days = days if days != 0 else 1
                     day_rate = round(self.interestRate / (100 * 360), 6)
-                    repay_detail_data['rpyFeeAmt'] = round(float(
-                        i['before_calc_principal']) * days * day_rate, 2) if days > 0 else 0
+                    pre_repay_date = datetime.strptime(str(i['pre_repay_date']), "%Y-%m-%d").date()
+                    repay_date = datetime.strptime(rpyDate, "%Y-%m-%d").date()
+                    if days > 0:
+                        if repay_date < pre_repay_date:
+                            repay_detail_data['rpyFeeAmt'] = round(float(i['before_calc_principal']) * days * day_rate, 2)
+                        else:
+                            repay_detail_data['rpyFeeAmt'] = float(i['pre_repay_interest'])
+                    else:
+                        repay_detail_data['rpyFeeAmt'] = 0
                     repay_detail_data['rpyMuclt'] = float(i['pre_repay_overdue_fee'])
                     repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt if days > 0 else 0
                     repay_detail_data['rpyAmt'] = round(
@@ -372,8 +380,16 @@ class FqlGrtBizImpl(MysqlInit):
                     if min_term == 1:
                         days = days if days != 0 else 1
                     day_rate = round(self.interestRate / (100 * 360), 6)
-                    repay_detail_data['rpyFeeAmt'] = round(float(
-                        i['before_calc_principal']) * days * day_rate, 2) if days > 0 else 0
+                    pre_repay_date = datetime.strptime(str(i['pre_repay_date']), "%Y-%m-%d").date()
+                    repay_date = datetime.strptime(rpyDate, "%Y-%m-%d").date()
+                    if days > 0:
+                        if repay_date < pre_repay_date:
+                            repay_detail_data['rpyFeeAmt'] = round(float(i['before_calc_principal']) * days * day_rate,
+                                                                   2)
+                        else:
+                            repay_detail_data['rpyFeeAmt'] = float(i['pre_repay_interest'])
+                    else:
+                        repay_detail_data['rpyFeeAmt'] = 0
                     repay_detail_data['rpyMuclt'] = float(i['pre_repay_overdue_fee'])
                     repay_detail_data['rpyGuaranteeAmt'] = rpyGuaranteeAmt if days > 0 else 0
                     repay_detail_data['rpyAmt'] = round(
@@ -433,6 +449,7 @@ class FqlGrtBizImpl(MysqlInit):
         withholdAmt = sum([detail['rpyTotalAmt'] for detail in detail_list])
         withhold_data['withholdAmt'] = round(withholdAmt, 2)
 
+
         # 更新 payload 字段值
         withhold_data.update(kwargs)
         parser = DataUpdate(self.cfg['withhold']['payload'], **withhold_data)
@@ -440,7 +457,7 @@ class FqlGrtBizImpl(MysqlInit):
         # 更新代扣明细
         self.active_payload['withholdDetail'] = detail_list
         # 更新出账信息
-        self.active_payload['sepOutInfo'][0]['amt'] = round(withholdAmt - 3.56, 2)
+        self.active_payload['sepOutInfo'][0]['amt'] = round(withholdAmt - 5.55, 2)
         self.active_payload['sepOutInfo'][0]['account'] = self.data['bankid']
         # 更新分账信息
         self.active_payload['sepInInfo'][0]['amt'] = round(withholdAmt - 3.56, 2)
