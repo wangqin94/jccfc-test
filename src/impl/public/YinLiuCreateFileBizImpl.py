@@ -6,7 +6,7 @@ from src.enums.EnumYinLiu import EnumFileType
 from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import Hair, WeiCai, HaLo, YiXin, JiRo
+from src.test_data.module_data import Hair, WeiCai, HaLo
 from utils.KS3 import KS3
 from utils.Logger import Logs
 
@@ -113,6 +113,18 @@ class YinLiuRepayFile(EnvInit):
             sqlCreditLoanInvoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
         return sqlCreditLoanInvoice
 
+    def getAssetRepayPlan(self, loanInvoiceId, repayTerm):
+        """
+        # 获取资产还款计划
+        @param loanInvoiceId: 借据号
+        @param repayTerm: 期次
+        @return:
+        """
+        asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
+                                                                     loan_invoice_id=loanInvoiceId,
+                                                                     current_num=repayTerm)
+        return asset_repay_plan
+
     # 海尔回购文件内容
     def creditHairBuyBackData(self, termNo):
         """
@@ -135,8 +147,7 @@ class YinLiuRepayFile(EnvInit):
         temple['loan_amt'] = creditLoanInvoiceInfo['loan_amount']
         temple['loan_date'] = str(creditLoanInvoiceInfo['loan_pay_time']).split()[0].replace('-', '')
         # 根据借据Id和期次获取资产侧还款计划
-        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loanInvoiceId, str(termNo))
-        asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
+        asset_repay_plan = self.getAssetRepayPlan(loanInvoiceId, termNo)
         temple['repay_amt'] = str(asset_repay_plan["left_repay_amount"])  # 总金额
         temple['compensationPrincipal'] = str(asset_repay_plan["left_repay_principal"])  # 本金
         temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
@@ -165,8 +176,8 @@ class YinLiuRepayFile(EnvInit):
         # 获取用户借据信息
         creditLoanInvoiceInfo = self.getInvoiceInfo()
         loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
-        asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan", loan_invoice_id=loanInvoiceId,
-                                                                     current_num=self.repayTermNo)
+        asset_repay_plan = self.getAssetRepayPlan(loanInvoiceId, self.repayTermNo)
+
         # 组装理赔文件内容
         claimTemple['name'] = self.userData['name']
         claimTemple['cer_no'] = self.userData['cer_no']
@@ -195,8 +206,8 @@ class YinLiuRepayFile(EnvInit):
         # 获取用户借据信息
         creditLoanInvoiceInfo = self.getInvoiceInfo()
         loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
-        asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan", loan_invoice_id=loanInvoiceId,
-                                                                     current_num=termNo)
+        # 根据借据Id和期次获取资产侧还款计划
+        asset_repay_plan = self.getAssetRepayPlan(loanInvoiceId, termNo)
         # 组装理赔文件内容
         buyBackTemple['name'] = self.userData['name']
         buyBackTemple['cer_no'] = self.userData['cer_no']
@@ -250,9 +261,20 @@ class YinLiuRepayFile(EnvInit):
         # 获取理赔对账文件模板参数-哈啰为通用模板标准
         templePath = HaLo.HaLo
         claimTemple = templePath['haloClaimTemple']
+        # 写入理赔文件数据
+        creditClaimData = self.creditClaimData()
+        # 获取用户借据信息
+        creditLoanInvoiceInfo = self.getInvoiceInfo()
+        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
+        asset_repay_plan = self.getAssetRepayPlan(loanInvoiceId, self.repayTermNo)
+        # 回购当期逾期天数
+        days = get_day(asset_repay_plan['pre_repay_date'], self.repayDate)
+        # 宜信、极融D+8理赔，罚息0，大于D+8收取罚息
+        if days == 8:
+            creditClaimData['compensationOverdueFee'] = "0"  # 罚息
         # 文件赋值
-        self.creditClaimData().update(**kwargs)
-        payload = DataUpdate(claimTemple, **self.creditClaimData()).parser
+        creditClaimData.update(**kwargs)
+        payload = DataUpdate(claimTemple, **creditClaimData).parser
         self.log.demsg("待写入理赔文件数据：{}".format(payload))
         # 开始写入文件内容
         write_repay_file(claimFileName, **payload)
@@ -285,17 +307,18 @@ class YinLiuRepayFile(EnvInit):
         # 开始上传文件到ks3
         self.uploadFile(fileType=EnumFileType.CLAIM_FILE.fileType, assetFilePath=EnumFileType.CLAIM_FILE.folderName)
 
-    # 微财回购文件生成
-    def creditWeiCaiBuyBackFile(self):
+    # 回购文件生成（按日收息）
+    def creditBuyBackFileByDays(self):
         """
-        @return: 融担模式微财回购对账文件
+        # 通用模板-以微财文件文件模板为准
+        @return: 融担模式回购对账文件
         """
         # 初始化文件
         localFilePath = self.getLocalFilePath(EnumFileType.BUYBACK_FILE.fileType)
         buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.BUYBACK_FILE.fileType)
         if os.path.exists(buyBackFileName):
             os.remove(buyBackFileName)
-        # 获取微财理赔对账文件参数
+        # 获取回购对账文件模板参数-微财为通用模板标准
         templePath = WeiCai.WeiCai
         buyBackTemple = templePath['weiCaiBuyBackTemple']
         # 获取借据总期数
@@ -304,67 +327,25 @@ class YinLiuRepayFile(EnvInit):
         loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
         # 依次写入回购所有期次还款数据
         termNo = int(self.repayTermNo)
+        # 根据借据Id和期次获取资产侧还款计划
+        asset_repay_plan = self.getAssetRepayPlan(loanInvoiceId, self.repayTermNo)
+        # 回购当期逾期天数
+        days = get_day(asset_repay_plan['start_date'], self.repayDate)
         while int(totalTerm) >= termNo:
             # 获取当期还款计划
             creditBuyBackData = self.creditBuyBackData(termNo)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         current_num=termNo)
-            # 回购当期逾期天数
-            days = get_day(asset_repay_plan['start_date'], self.repayDate)
-            self.log.info("当前逾期天数：{}天, T+8利息为0，T+9利息按日计提".format(days))
-            # 获取回购当期已计提利息
-            if termNo == int(self.repayTermNo) and days > 8:
-                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])  # T+9利息按日计提
-                creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
-            else:
-                creditBuyBackData['paid_int_amt'] = 0  # T+8免息，利息为0
-                creditBuyBackData['repay_amt'] = creditBuyBackData['paid_prin_amt']  # T+8还款总额只包含当期本金
-
-            payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
-            # 开始写入文件内容
-            write_repay_file(buyBackFileName, **payload)
-            termNo += 1
-
-        # 开始上传文件到ks3
-        self.uploadFile(fileType=EnumFileType.BUYBACK_FILE.fileType, assetFilePath=EnumFileType.BUYBACK_FILE.folderName)
-
-    # 宜信回购文件生成
-    def creditYiXinBuyBackFile(self):
-        """
-        @return: 融担模式微财回购对账文件
-        """
-        # 初始化文件
-        localFilePath = self.getLocalFilePath(EnumFileType.BUYBACK_FILE.fileType)
-        buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.BUYBACK_FILE.fileType)
-        if os.path.exists(buyBackFileName):
-            os.remove(buyBackFileName)
-        # 获取微财理赔对账文件参数
-        templePath = YiXin.YiXin
-        buyBackTemple = templePath['yiXinBuyBackTemple']
-        # 获取借据总期数
-        totalTerm = self.getInvoiceInfo()['installment_num']
-        creditLoanInvoiceInfo = self.getInvoiceInfo()
-        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
-        # 依次写入回购所有期次还款数据
-        termNo = int(self.repayTermNo)
-        while int(totalTerm) >= termNo:
-            # 获取当期还款计划
-            creditBuyBackData = self.creditBuyBackData(termNo)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         current_num=termNo)
-            # 回购当期逾期天数
-            days = get_day(asset_repay_plan['start_date'], self.repayDate)
             # 获取回购当期已计提利息
             if termNo == int(self.repayTermNo) and days > 8:
                 self.log.info("当前逾期天数：{}天, T+8利息为0，T+9利息按日计提".format(days))
                 creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])  # T+9利息按日计提
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
             else:
+                self.log.info("当前逾期天数：{}天, T+8利息为0".format(days))
                 creditBuyBackData['paid_int_amt'] = 0  # T+8免息，利息为0
                 creditBuyBackData['repay_amt'] = creditBuyBackData['paid_prin_amt']  # T+8还款总额只包含当期本金
+
             payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
+            self.log.demsg("写入第{}回购数据".format(termNo))
             # 开始写入文件内容
             write_repay_file(buyBackFileName, **payload)
             termNo += 1
@@ -372,56 +353,12 @@ class YinLiuRepayFile(EnvInit):
         # 开始上传文件到ks3
         self.uploadFile(fileType=EnumFileType.BUYBACK_FILE.fileType, assetFilePath=EnumFileType.BUYBACK_FILE.folderName)
 
-    # 极融回购文件生成
-    def creditJiRoBuyBackFile(self):
-        """
-        @return: 融担模式微财回购对账文件
-        """
-        # 初始化文件
-        localFilePath = self.getLocalFilePath(EnumFileType.BUYBACK_FILE.fileType)
-        buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.BUYBACK_FILE.fileType)
-        if os.path.exists(buyBackFileName):
-            os.remove(buyBackFileName)
-        # 获取微财理赔对账文件参数
-        templePath = JiRo.JiRo
-        buyBackTemple = templePath['jiRoBuyBackTemple']
-        # 获取借据总期数
-        totalTerm = self.getInvoiceInfo()['installment_num']
-        creditLoanInvoiceInfo = self.getInvoiceInfo()
-        loanInvoiceId = creditLoanInvoiceInfo['loan_invoice_id']
-        # 依次写入回购所有期次还款数据
-        termNo = int(self.repayTermNo)
-        while int(totalTerm) >= termNo:
-            # 获取当期还款计划
-            creditBuyBackData = self.creditBuyBackData(termNo)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info("asset_repay_plan",
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         current_num=termNo)
-            # 回购当期逾期天数
-            days = get_day(asset_repay_plan['start_date'], self.repayDate)
-            # 获取回购当期已计提利息
-            if termNo == int(self.repayTermNo) and days > 8:
-                self.log.info("当前逾期天数：{}天, T+8利息为0，T+9利息按日计提".format(days))
-                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])  # T+9利息按日计提
-                creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
-            else:
-                creditBuyBackData['paid_int_amt'] = 0  # T+8免息，利息为0
-                creditBuyBackData['repay_amt'] = creditBuyBackData['paid_prin_amt']  # T+8还款总额只包含当期本金
-            payload = DataUpdate(buyBackTemple, **creditBuyBackData).parser
-            # 开始写入文件内容
-            write_repay_file(buyBackFileName, **payload)
-            termNo += 1
-
-        # 开始上传文件到ks3
-        self.uploadFile(fileType=EnumFileType.BUYBACK_FILE.fileType, assetFilePath=EnumFileType.BUYBACK_FILE.folderName)
-
-    # 回购文件生成
-    def creditBuyBackFile(self, **kwargs):
+    # 回购文件生成(按月收息)
+    def creditBuyBackFileByMonth(self, **kwargs):
         """
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: 融担模式回购对账文件-通用模板
         """
-
         # 初始化文件
         localFilePath = self.getLocalFilePath(EnumFileType.BUYBACK_FILE.fileType)
         buyBackFileName = self.getLocalFileName(localFilePath, EnumFileType.BUYBACK_FILE.fileType)
@@ -537,7 +474,7 @@ if __name__ == '__main__':
              'bankid': '6215591662020086765'}  # hqas
     t = YinLiuRepayFile(data1, "G23E011", repayTermNo='5', repayDate='2022-05-24')
     # t.creditClaimFile()
-    t.creditBuyBackFile()
+    t.creditBuyBackFileByDays()
     # t.bill_day_repay_file(repay_term_no='2')
     # t.pre_repay_file(repay_date="2022-04-01", repay_term_no='2')
     # t = MeiTuanLoanFile(data1, apply_date='2022-03-07')

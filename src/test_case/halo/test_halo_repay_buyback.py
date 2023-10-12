@@ -26,7 +26,7 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
         xiaoXRepayFile = YinLiuRepayFile(data, productId, repayTermNo='5', repayDate=repayDate)
-        xiaoXRepayFile.creditBuyBackFile()
+        xiaoXRepayFile.creditBuyBackFileByMonth()
 
         self.repayPublicBizImpl.job.update_job('【引流】回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
         self.repayPublicBizImpl.job.trigger_job('【引流】回购清单文件分片任务流', group=13)

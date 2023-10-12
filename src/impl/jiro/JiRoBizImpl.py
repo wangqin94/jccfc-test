@@ -2,6 +2,8 @@
 # ------------------------------------------
 # 极融接口数据封装类
 # ------------------------------------------
+import math
+
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
@@ -515,7 +517,7 @@ class JiRoBizImpl(MysqlInit):
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
             if days == 0:
                 repay_apply_data["repayInterest"] = 0  # 上期账单日提前结清，利息应收0
-            if days > 30:
+            if days >= 30:
                 repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"]  # 计提超过30天，按照30天收整期利息
             else:
                 repay_apply_data["repayInterest"] = getDailyAccrueInterest(self.productId, days,
@@ -524,7 +526,8 @@ class JiRoBizImpl(MysqlInit):
             # 提前结清 实还保费<=红线保费（放款保费/30*计提天数）
             channel_agency_repay_plan_detail_sync = self.MysqlBizImpl.get_op_channel_database_info(
                 'channel_agency_repay_plan_detail_sync', loan_invoice_id=loanInvoiceId, repay_term=repayTerm)
-            repayGuaranteeFee = round(float(channel_agency_repay_plan_detail_sync['pre_guarantee_fee'] * days / 30), 2)
+            repayGuaranteeFee = math.floor(
+                channel_agency_repay_plan_detail_sync['pre_guarantee_fee'] / 30 * days * 100) / 100
             repay_apply_data["repayAmount"] = round(
                 repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
                 2)  # 总金额
@@ -539,6 +542,7 @@ class JiRoBizImpl(MysqlInit):
             currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
             # 宽限期期次利息--按日计提
             if currentTerm and currentTerm['current_num'] != repayTerm:
+                days = get_day(currentTerm["start_date"], repayDate)
                 currentTermInterest = getDailyAccrueInterest(self.productId, days, currentTerm['before_calc_principal'])
             else:
                 currentTermInterest = 0
