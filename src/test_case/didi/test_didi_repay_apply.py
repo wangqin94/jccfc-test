@@ -1,7 +1,7 @@
 import time
 import unittest
 
-from src.impl.common.CheckBizImpl import CheckBizImpl, EnumLoanStatus
+from src.impl.common.CheckBizImpl import CheckBizImpl
 from src.impl.didi.DidiBizImpl import DidiBizImpl
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 
@@ -24,7 +24,7 @@ class MyTestCase(unittest.TestCase):
 
         self.Didi.repay()
         time.sleep(5)
-        self.Didi.queryRepayResult(loanOrderId='20231012171343',payId='202310121502550002150ff9df70b0l1')
+        self.Didi.queryRepayResult(loanOrderId='20231012171343', payId='202310121502550002150ff9df70b0l1')
 
     def tearDown(self):
         pass
