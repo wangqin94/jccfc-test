@@ -24,10 +24,7 @@ class MyTestCase(unittest.TestCase):
 
         self.Didi.repay()
         time.sleep(5)
-        self.Didi.queryRepayResult(loanOrderId='20231012171343', payId='202310121502550002150ff9df70b0l1')
-
-    def tearDown(self):
-        pass
+        self.Didi.queryRepayResult(loanOrderId='20231013103542', payId='202310121142470002160ff9df8194b0l')
 
 
 if __name__ == '__main__':

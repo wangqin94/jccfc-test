@@ -13,8 +13,9 @@ class MyTestCase(unittest.TestCase):
         self.CheckBizImpl = CheckBizImpl()
         self.repayPublicBizImpl = RepayPublicBizImpl()
         self.Didi = DidiBizImpl(data=None)
-        self.repayDate = '2023-10-12'
-        self.loanDate = '2023-09-12'
+        self.repayDate = '2023-10-13'
+        self.loanDate = '2023-07-12'
+
     def test_loan(self):
         """
         授信申请-》支用申请
@@ -39,11 +40,13 @@ class MyTestCase(unittest.TestCase):
         self.Didi.queryLoanResult()
         self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.ON_USE.value,
                                                               thirdpart_apply_id=self.loanOrderId)
-        loanPublicBizImpl = LoanPublicBizImpl()
-        loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.loanOrderId, loanDate=self.loanDate)
 
-    def tearDown(self):
-        pass
+        # 更改放款时间
+        loanPublicBizImpl = LoanPublicBizImpl()
+
+        loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.loanOrderId, loanDate=self.loanDate)
+        # 设置账务时间
+        self.repayPublicBizImpl.pre_repay_config(repayDate=self.repayDate)
 
 
 if __name__ == '__main__':

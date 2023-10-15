@@ -23,6 +23,7 @@ class MyTestCase(unittest.TestCase):
         # 检查授信结果
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId,t=5)
 
+    # def test
 
 if __name__ == '__main__':
     unittest.main()

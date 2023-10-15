@@ -317,7 +317,7 @@ class DidiBizImpl(MysqlInit):
             'callbackUrl'] = 'http://manhattanloantest.xiaojukeji.com/manhattan/loan/openfin/superpartner/standard/activeRepayResult'
         initiateRepay_data['agreementNo'] = '00000000000204572242'
         initiateRepay_data['repayAmountInfo'] = {
-            "principal": 7477,
+            "principal": 7477,  # 本金
             "interestPenalty": 1950,
             "advanceClearFee": 0,
             "totalAmount": 9427,
@@ -358,6 +358,13 @@ class DidiBizImpl(MysqlInit):
         return response
 
     def queryRepayResult(self, loanOrderId=None, payId=None, **kwargs):
+        '''
+        查询代扣结果
+        :param loanOrderId:
+        :param payId:
+        :param kwargs:
+        :return:
+        '''
         queryRepayResultData = dict()
         queryRepayResultData['loanOrderId'] = loanOrderId
         queryRepayResultData['payId'] = payId
@@ -372,3 +379,27 @@ class DidiBizImpl(MysqlInit):
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
+
+    def repayNotify(self, loanOrderId, payId, **kwargs):
+        repayNotifyData = dict()
+
+        repayNotifyData['loanOrderId'] = loanOrderId
+        repayNotifyData['payId'] = payId
+        repayNotifyData['loanNumbers'] = ''
+        repayNotifyData['totalRepayAmountInfo'] = ''
+        repayNotifyData['repayType'] = '1'
+        repayNotifyData['payChannel'] = '291'  # 还款⽀付渠道5: ⽀付宝14: 转账还款(招⾏⼤额)99：线下还款(对公⾏⽅户)291：中⾦协议⽀付
+        repayNotifyData['payType'] = '1'  # 1: 主动还款  3：批量扣款 4: 线下还款
+        repayNotifyData['payChannelAccountId'] = ''  # 还款⽀付卡号  如果是银⾏卡，则为银⾏卡号；  如果是⽀付宝&微信为对应的账户Id； 如果是线下对公还款则为空；
+        repayNotifyData['repayStatus'] = '1'  # 还款状态  1：还款成功  2：还款失败
+        repayNotifyData['tranDate'] = ''  # 交易⽇期（账务⽇期） ,格式为： yyyy-MM-dd，还款成功后必填。
+        repayNotifyData['repayDetails'] = [
+
+        ]  #
+
+        parser = DataUpdate(self.cfg['query_repay_result']['payload'], **repayNotifyData)
+        parser = DataUpdate(parser.parser, **kwargs)
+        url = self.host + self.cfg['query_repay_result']['interface']
+        self.log.demsg('查询放款结果...')
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
