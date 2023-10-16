@@ -271,6 +271,7 @@ class YinLiuRepayFile(EnvInit):
         days = get_day(asset_repay_plan['pre_repay_date'], self.repayDate)
         # 宜信、极融D+8理赔，罚息0，大于D+8收取罚息
         if days == 8:
+            creditClaimData['repay_amt'] = creditClaimData['repay_amt'] - creditClaimData['compensationOverdueFee']  # 重算总金额
             creditClaimData['compensationOverdueFee'] = "0"  # 罚息
         # 文件赋值
         creditClaimData.update(**kwargs)
@@ -295,7 +296,7 @@ class YinLiuRepayFile(EnvInit):
             os.remove(claimFileName)
         # 获取微财理赔对账文件参数
         templePath = WeiCai.WeiCai
-        wcClaimTemple = templePath['weiCaiClaimTemple']
+        wcClaimTemple = templePath['yiXinClaimTemple']
 
         # 文件赋值
         self.creditClaimData().update(**kwargs)
