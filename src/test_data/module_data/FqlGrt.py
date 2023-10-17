@@ -28,10 +28,10 @@ FqlGrt = {
             "sex": "0",
             "identiType": "1",
             "identiNo": "452229199507031827",
-            "idCardValidDate": "20201230",
-            "idCardExpireDate": "20401230",
+            "idCardValidDate": "20190530",
+            "idCardExpireDate": "20991231",
             "idAddr": "成都市西南航空港经济开发区学府路一段24号",
-            "issuedAgency": "成都市公安局双流分局",
+            "issuedAgency": "成都市公安局天府新区分局",
             "birthday": "1995-07-03",
             "nationality": "中国",
             "nation": "汉",
@@ -86,7 +86,7 @@ FqlGrt = {
                 {
                     "fileType": "5",
                     "filePath": "/upload/credit",
-                    "fileName": "JC_third_auth_1123071816044097130384.pdf"
+                    "fileName": "JC_userinfo_1123071816044097130384.pdf"
                 },
                 {
                     "fileType": "6",
@@ -200,6 +200,7 @@ FqlGrt = {
             "repayChannel": "1",
             "bindCardInfo": [
                 {
+                    "uid": 3103223,
                     "userName": "诸天巧",
                     "cardNo": "6217591693558210853",
                     "bankType": "CCB",
@@ -212,55 +213,57 @@ FqlGrt = {
             ],
             "bankId": "0105",
             "withholdAmt": 2609.92,
-            "signNum": "S00202309160001",
+            "signNum": "202306081108302862",
             "payMode": 0,
-            "subMerchantId": "FQL-123456",
+            "subMerchantId": "81470000",
             "sepOutInfo": [
                 {
-                    "type": "1",
-                    "amt": "2606.36",
+                    "type": 1,
+                    "amt": 2609.92,
                     "account": "6217591693558210853"
                 },
                 {
-                    "type": "2",
-                    "amt": "5.55",
+                    "type": 2,
+                    "amt": 0,
                     "account": "11015898003004"
                 }
             ],
             "sepInInfo": [
                 {
-                    "type": "1",
-                    "amt": "2609.92",
-                    "account": "200815626122340500030",
-                    "orgType": "1",
-                    "sepMerchCode": "FQL-123456",
-                    "sepBankId": "南京银行",
+                    "type": 1,
+                    "amt": 2609.92,
+                    "withholdMerchants": 1,
+                    "account": "8253000082530000",
+                    "orgType": 1,
+                    "sepMerchCode": "82530000",
+                    "sepBankId": "03040000",
                     "detail": [
                         {
-                            "from": "1",
-                            "amt": "2606.36"
+                            "from": 1,
+                            "amt": 2609.92
                         },
                         {
-                            "from": "2",
-                            "amt": "3.56"
+                            "from": 2,
+                            "amt": 0
                         }
                     ]
                 },
                 {
-                    "type": "2",
-                    "amt": "3.56",
-                    "account": "758873775131",
-                    "orgType": "2",
-                    "sepMerchCode": "HF-123456",
-                    "sepBankId": "工商银行",
+                    "type": 2,
+                    "amt": 3.56,
+                    "withholdMerchants": 0,
+                    "account": "8175000081750000",
+                    "orgType": 2,
+                    "sepMerchCode": "81750000",
+                    "sepBankId": "01000000",
                     "detail": [
                         {
-                            "from": "1",
-                            "amt": "3.01"
+                            "from": 1,
+                            "amt": 3.56
                         },
                         {
-                            "from": "2",
-                            "amt": "0.55"
+                            "from": 2,
+                            "amt": 0
                         }
                     ]
                 }
