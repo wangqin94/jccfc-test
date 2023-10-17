@@ -271,7 +271,8 @@ class YinLiuRepayFile(EnvInit):
         days = get_day(asset_repay_plan['pre_repay_date'], self.repayDate)
         # 宜信、极融D+8理赔，罚息0，大于D+8收取罚息
         if days == 8:
-            creditClaimData['repay_amt'] = creditClaimData['repay_amt'] - creditClaimData['compensationOverdueFee']  # 重算总金额
+            creditClaimData['repay_amt'] = creditClaimData['repay_amt'] - creditClaimData[
+                'compensationOverdueFee']  # 重算总金额
             creditClaimData['compensationOverdueFee'] = "0"  # 罚息
         # 文件赋值
         creditClaimData.update(**kwargs)
@@ -335,13 +336,22 @@ class YinLiuRepayFile(EnvInit):
         while int(totalTerm) >= termNo:
             # 获取当期还款计划
             creditBuyBackData = self.creditBuyBackData(termNo)
-            # 获取回购当期已计提利息
-            if termNo == int(self.repayTermNo) and days > 8:
-                self.log.info("当前逾期天数：{}天, T+8利息为0，T+9利息按日计提".format(days))
-                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData['left_repay_amt'])  # T+9利息按日计提
-                creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData['paid_int_amt']
+            # 获取回购当期已计提利息---微财宽限期8天
+            if termNo == int(self.repayTermNo) and days > 8 and self.productId == ProductIdEnum.WEICAI.value:
+                self.log.info("当前逾期天数：{}天, 超过宽限期，T+9利息按日计提".format(days))
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData[
+                    'left_repay_amt'])  # T+9利息按日计提
+                creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData[
+                    'paid_int_amt']
+            # 获取回购当期已计提利息---宜信、极融宽限期4天
+            elif termNo == int(self.repayTermNo) and days > 4 and self.productId in (ProductIdEnum.YIXIN.value, ProductIdEnum.JIRO.value):
+                self.log.info("当前逾期天数：{}天, 超过宽限期，T+5利息按日计提".format(days))
+                creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData[
+                    'left_repay_amt'])  # T+5利息按日计提
+                creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData[
+                    'paid_int_amt']
             else:
-                self.log.info("当前逾期天数：{}天, T+8利息为0".format(days))
+                self.log.info("第{}期利息为0".format(termNo))
                 creditBuyBackData['paid_int_amt'] = 0  # T+8免息，利息为0
                 creditBuyBackData['repay_amt'] = creditBuyBackData['paid_prin_amt']  # T+8还款总额只包含当期本金
 
