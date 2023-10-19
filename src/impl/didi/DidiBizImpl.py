@@ -9,6 +9,7 @@ from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import EnumMerchantId, ProductEnum
 from src.impl.common.CommonBizImpl import post_with_encrypt
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
+from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_data.module_data import Didi
 from utils.Apollo import Apollo
 from utils.FileCreator import create_attachment_pdf, create_attachment_image
@@ -18,8 +19,10 @@ from utils.SFTP import SFTP
 
 class DidiBizImpl(MysqlInit):
 
-    def __init__(self, merchantId=None, data=None, encrypt_flag=True, person=True):
+    def __init__(self, merchantId=None, data=None, encrypt_flag=True, person=True, loan_invoice_id=None):
         super().__init__()
+        self.repayPublicBizImpl = RepayPublicBizImpl()
+        self.loan_invoice_id = loan_invoice_id
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         self.sftp = SFTP('didi')
@@ -146,8 +149,8 @@ class DidiBizImpl(MysqlInit):
         loan_risk_check_data['penaltyInterestRate'] = 415  # *百万分之一 互金存的年化利率
         loan_risk_check_data['sftpDir'] = "/hj/xdgl/didi/credit"
         loan_risk_check_data['callbackUrl'] = "www.baidu.com"
-        loan_risk_check_data['finProductType'] = 1  # 产品类型: 1.随借随还， 2.固定期限
-        loan_risk_check_data['rateType'] = 2  # 产品类型: 1.随借随还， 2.固定期限
+        loan_risk_check_data['finProductType'] = 2  # 产品类型: 1.随借随还， 2.固定期限
+        loan_risk_check_data['rateType'] = 0  # 是否涉及营销定价优惠；默认为【0】否  1 是
         loan_risk_check_data['loanUsage'] = '2'
         loan_risk_check_data['preAbsId'] = self.date
 
@@ -300,41 +303,81 @@ class DidiBizImpl(MysqlInit):
         os.remove(PINFOOUERY_path)
         os.remove(LOANCREDIT_path)
 
-    def repay(self, **kwargs):
+    def repay(self, repay_date, repay_term_no, loanOrderId, repayType=0, **kwargs):
         """
-        主动还款
+        主动还款--代扣
+        :param repay_date:  还款日
+        :param repay_term_no: 还款期数
+        :param loanOrderId: 三方支用号
+        :param repayType: 还款类型： 1.当期还款， 2.结清全部
         :param kwargs:
-        :return: Response
+        :return:
         """
+
+        # 还款前置任务
+        self.repayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+
+        # 根据openId查询支用信息
+        key1 = "thirdpart_apply_id = '{}'".format(loanOrderId)
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
+        key_1 = "credit_apply_id = '{}'".format(credit_loan_apply['credit_apply_id'])
+        credit_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_apply", key=key_1)
+
+        # 根据支用申请单号查询借据信息
+        if self.loan_invoice_id:
+            loan_invoice_id = self.loan_invoice_id
+            key2 = "loan_invoice_id = '{}'".format(loan_invoice_id)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            loan_apply_id = credit_loan_invoice["loan_apply_id"]
+            key21 = "loan_apply_id = '{}'".format(loan_apply_id)
+            credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key21)
+        else:
+            loan_apply_id = credit_loan_apply["loan_apply_id"]
+            key2 = "loan_apply_id = '{}'".format(loan_apply_id)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
+
+        # 取资产执行利率
+        asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
+                                                                            loan_invoice_id=loan_invoice_id)
+        execute_rate = asset_loan_invoice_info["execute_rate"]
+        # 根据借据Id和期次获取还款计划
+        key3 = "loan_invoice_id = '{}' and current_num in ({})".format(loan_invoice_id, repay_term_no)
+        key4 = 'sum(pre_repay_amount),sum(pre_repay_principal),sum(pre_repay_interest),sum(pre_repay_overdue_fee),sum(pre_repay_fee)'
+        asset_repay_plan = self.MysqlBizImpl.get_asset_repay_plan(table="asset_repay_plan", key=key3, key1=key4)
+
         initiateRepay_data = dict()
-        initiateRepay_data['applicationId'] = 'DC00003080202310121713431697102024'
-        initiateRepay_data['loanOrderId'] = '20231012171343'
-        initiateRepay_data['payId'] = '202310121502550002150ff9df70b0l1'
-        initiateRepay_data['payType'] = 1
-        initiateRepay_data['repayType'] = 1
-        initiateRepay_data['loanNumbers'] = "1"
+        initiateRepay_data['applicationId'] = credit_apply['thirdpart_apply_id']
+        initiateRepay_data['loanOrderId'] = loanOrderId
+        initiateRepay_data['payId'] = 'DD00' + time.strftime('%Y%m%d%H%M%S', time.localtime())
+        initiateRepay_data['payType'] = 1  # 还款⽀付⽅式： 1 ⽤户主动还款； 2 合作⽅发起代扣还款； 3 滴滴发起代扣还
+        initiateRepay_data['repayType'] = repayType  # 还款类型： 1.当期还款， 2.结清全部
+        initiateRepay_data['loanNumbers'] = repay_term_no
         initiateRepay_data[
             'callbackUrl'] = 'http://manhattanloantest.xiaojukeji.com/manhattan/loan/openfin/superpartner/standard/activeRepayResult'
-        initiateRepay_data['agreementNo'] = '00000000000204572242'
+        initiateRepay_data['agreementNo'] = '00000000000204572240'
         initiateRepay_data['repayAmountInfo'] = {
-            "principal": 7477,  # 本金
-            "interestPenalty": 1950,
+            "principal": int(asset_repay_plan['sum(pre_repay_principal)'] * 100),  # 本金
+            "interestPenalty": int(asset_repay_plan['sum(pre_repay_overdue_fee)'] * 100),
             "advanceClearFee": 0,
-            "totalAmount": 9427,
+            "totalAmount": int(asset_repay_plan['sum(pre_repay_amount)'] * 100),
             "guaranteeFee": 0,
             "insuranceFee": 0,
-            "interest": 0,
+            "interest": int(asset_repay_plan['sum(pre_repay_interest)'] * 100),
             "ratedInterest": 0,
             "principalPenalty": 0,
             "guaranteeConsultFee": 0
         }
-        initiateRepay_data['repayDate'] = '2023-10-12'
+        if repayType == 2:
+            initiateRepay_data['repayAmountInfo']['advanceClearFee'] = int(initiateRepay_data['repayAmountInfo'][
+                'principal']*4/100)
+        initiateRepay_data['repayDate'] = repay_date
         initiateRepay_data['subAccStatus'] = 0
         initiateRepay_data['subAcctList'] = []
         initiateRepay_data['userInfo'] = {
-            "name": "印凝竹",
-            "idNo": "230306198511128342",
-            "phone": "13056409217",
+            "name": credit_apply['user_name'],
+            "idNo": credit_apply['certificate_no'],
+            "phone": credit_apply['user_tel'],
             "bankCardNo": "6217861697102024366",
             "bankName": "中国银行",
             "bankAddr": "BOC",
@@ -380,26 +423,159 @@ class DidiBizImpl(MysqlInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def repayNotify(self, loanOrderId, payId, **kwargs):
+    def repayNotify(self, loanOrderId, payId, repay_date, repay_term_no='1,2', payChannel=291, repayType=1, **kwargs):
+        """
+        滴滴通知入账接口
+        :param loanOrderId:
+        :param payId:
+        :param repay_date:
+        :param repay_term_no:
+        :param kwargs:
+        :return:
+        """
         repayNotifyData = dict()
 
+        # 还款前置任务
+        self.repayPublicBizImpl.pre_repay_config(repayDate=repay_date)
+
+        # 根据openId查询支用信息
+        key1 = "thirdpart_apply_id = '{}'".format(loanOrderId)
+        credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key1)
+
+        # 根据支用申请单号查询借据信息
+        if self.loan_invoice_id:
+            loan_invoice_id = self.loan_invoice_id
+            key2 = "loan_invoice_id = '{}'".format(loan_invoice_id)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            loan_apply_id = credit_loan_invoice["loan_apply_id"]
+            key21 = "loan_apply_id = '{}'".format(loan_apply_id)
+            credit_loan_apply = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_apply", key=key21)
+        else:
+            loan_apply_id = credit_loan_apply["loan_apply_id"]
+            key2 = "loan_apply_id = '{}'".format(loan_apply_id)
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key2)
+            loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
+
+        # 取资产执行利率
+        asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
+                                                                            loan_invoice_id=loan_invoice_id)
+        execute_rate = asset_loan_invoice_info["execute_rate"]
+        # 根据借据Id和期次获取还款计划
+        key3 = "loan_invoice_id = '{}' and current_num in ({})".format(loan_invoice_id, repay_term_no)
+        key4 = 'sum(pre_repay_amount),sum(pre_repay_principal),sum(pre_repay_interest),sum(pre_repay_overdue_fee),sum(pre_repay_fee)'
+        asset_repay_plan = self.MysqlBizImpl.get_asset_repay_plan(table="asset_repay_plan", key=key3, key1=key4)
+
+        # 通知payload
         repayNotifyData['loanOrderId'] = loanOrderId
         repayNotifyData['payId'] = payId
-        repayNotifyData['loanNumbers'] = ''
-        repayNotifyData['totalRepayAmountInfo'] = ''
+        repayNotifyData['loanNumbers'] = repay_term_no
+
+        repayNotifyData['totalRepayAmountInfo'] = {
+            'totalAmount': int(asset_repay_plan['sum(pre_repay_amount)'] * 100),  # 总金额
+            'principal': int(asset_repay_plan['sum(pre_repay_principal)'] * 100),  # 本金
+            'interest': int(asset_repay_plan['sum(pre_repay_interest)'] * 100),  # 利息
+            'principalPenalty': int(asset_repay_plan['sum(pre_repay_overdue_fee)'] * 100),  # 逾期罚息
+            'advanceClearFee': 0 if repayType==1 else int(asset_repay_plan['sum(pre_repay_principal)'] * 4)   # 手续费
+        }
+
+        repayNotifyData['repayDetails'] = list()
+        repay_term_list = repay_term_no.split(',')
+        for num in repay_term_list:
+            key5 = "loan_invoice_id = '{}' and current_num in ({})".format(loan_invoice_id, num)
+            asset_repay_plan_num = self.MysqlBizImpl.get_asset_repay_plan(table="asset_repay_plan", key=key5, key1=key4)
+            repayAmountInfo = {
+                "repayAmountInfo": {
+                    "guaranteeConsultFee": 0,
+                    "guaranteeFee": 0,
+                    "totalAmount": int(asset_repay_plan_num['sum(pre_repay_amount)'] * 100),
+                    "ratedInterest": 0,
+                    "advanceClearFee": int(asset_repay_plan_num['sum(pre_repay_principal)'] * 4) if repayType ==2 else 0,
+                    "interestPenalty": 0,
+                    "principal": int(asset_repay_plan_num['sum(pre_repay_principal)'] * 100),
+                    "insuranceFee": 0,
+                    "principalPenalty": int(asset_repay_plan_num['sum(pre_repay_overdue_fee)'] * 100),
+                    "interest": int(asset_repay_plan_num['sum(pre_repay_interest)'] * 100),
+                    "preferentialInterest": 0
+                },
+                "loanNumber": int(num)
+            }
+            repayNotifyData['repayDetails'].append(repayAmountInfo)
+
         repayNotifyData['repayType'] = '1'
-        repayNotifyData['payChannel'] = '291'  # 还款⽀付渠道5: ⽀付宝14: 转账还款(招⾏⼤额)99：线下还款(对公⾏⽅户)291：中⾦协议⽀付
+        repayNotifyData['payChannel'] = payChannel  # 还款⽀付渠道5: ⽀付宝14: 转账还款(招⾏⼤额)99：线下还款(对公⾏⽅户)291：中⾦协议⽀付
         repayNotifyData['payType'] = '1'  # 1: 主动还款  3：批量扣款 4: 线下还款
         repayNotifyData['payChannelAccountId'] = ''  # 还款⽀付卡号  如果是银⾏卡，则为银⾏卡号；  如果是⽀付宝&微信为对应的账户Id； 如果是线下对公还款则为空；
         repayNotifyData['repayStatus'] = '1'  # 还款状态  1：还款成功  2：还款失败
-        repayNotifyData['tranDate'] = ''  # 交易⽇期（账务⽇期） ,格式为： yyyy-MM-dd，还款成功后必填。
-        repayNotifyData['repayDetails'] = [
-
-        ]  #
-
-        parser = DataUpdate(self.cfg['query_repay_result']['payload'], **repayNotifyData)
+        repayNotifyData['tranDate'] = time.strftime('%Y-%m-%d',
+                                                    time.localtime())  # 交易⽇期（账务⽇期） ,格式为： yyyy-MM-dd，还款成功后必填。
+        repayNotifyData['repayTime'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        parser = DataUpdate(self.cfg['collectActiveRepayResult']['payload'], **repayNotifyData)
         parser = DataUpdate(parser.parser, **kwargs)
-        url = self.host + self.cfg['query_repay_result']['interface']
-        self.log.demsg('查询放款结果...')
+        self.active_payload = parser.parser
+        url = self.host + self.cfg['collectActiveRepayResult']['interface']
+        self.log.demsg('滴滴入账通知...')
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
+        # 跑入账定时任务
+
+        return response
+
+    def userScoreAdvice(self, applicationId, scoreType, applyAmount=None, scoreTwo=None, scoreThree=None,
+                        endDate=None):
+        """
+         滴滴贷中评分调整
+        :param applicationId:
+        :param scoreType:
+        :param applyAmount:
+        :param scoreTwo:
+        :param scoreThree:
+        :param endDate:
+        :return:
+        """
+        userScoreAdviceData = dict()
+        userScoreAdviceData['orderId'] = time.strftime('%Y%m%d%H%M%S', time.localtime())
+        userScoreAdviceData['applicationId'] = applicationId
+        userScoreAdviceData['scoreType'] = scoreType
+
+        parser = DataUpdate(self.cfg['userScoreAdvice']['payload'], **userScoreAdviceData)
+        self.active_payload = parser.parser
+        if scoreType == 1:
+            self.active_payload['scoreOne'] = applyAmount * 100 + 260000
+
+        if scoreType == 2:
+            self.active_payload['scoreTwo'] = scoreTwo * 40 + 350000
+            self.active_payload['scoreThree'] = scoreThree * 20 + 360000
+        if scoreType == 6:
+            self.active_payload['scoreSix'] = 3
+        if scoreType == 7:
+            self.active_payload['endDate'] = time.strftime('%Y-%m-%d', time.localtime()) if endDate is None else endDate
+
+        url = self.host + self.cfg['userScoreAdvice']['interface']
+
+        self.log.demsg('滴滴贷中评分...')
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    def userScoreQuery(self, orderId):
+        """
+        滴滴贷中评分调整查询
+        :param orderId:
+        :return:
+        """
+        self.active_payload = self.cfg['userScoreQuery']['payload']
+        self.active_payload['orderId'] = orderId
+        self.log.demsg('滴滴贷中评分结果查询...')
+        url = self.host + self.cfg['userScoreQuery']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    def didiNotifyPartnerUploadFile(self, **kwargs):
+        pass
+
+    def queryPartnerUploadFileResult(self, **kwargs):
+        pass
+
+    def didiUploadFile(self, **kwargs):
+        pass

@@ -61,6 +61,25 @@ class MysqlBizImpl(MysqlInit):
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
+    def get_asset_repay_plan(self, table='asset_repay_plan', key1='查询字段', key="查询条件", record=-1):
+
+        sql = "select {} from {}.{} where {};".format(key1, self.asset_database_name, table, key)
+
+        keys = key1.split(",")
+        # 获取查询内容
+        values = self.mysql_asset.select(sql)
+        try:
+            # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
+            return data
+        except Exception as err:
+            self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
+
     def credit_apply_query(self, data):
         """ # 接口数据payload解密
             :return:                查询状态
@@ -334,19 +353,17 @@ class MysqlBizImpl(MysqlInit):
         :param kwargs: 数据
         :return:
         """
-        self.mysql_op_channel.insert(table,**kwargs)
+        self.mysql_op_channel.insert(table, **kwargs)
 
-
-    def delete_channel_database_info(self,table,**kwargs):
+    def delete_channel_database_info(self, table, **kwargs):
         """
         删除op-channel数据库 数据
         :param table: 删除指定表
         :param kwargs: 条件
         :return: None
         """
-        sql = delete_sql_qurey_str(table,self.op_channel_database_name,**kwargs)
+        sql = delete_sql_qurey_str(table, self.op_channel_database_name, **kwargs)
         self.mysql_op_channel.delete(sql)
-
 
     def select_channel_database_info(self, table, *args, **kwargs):
         """

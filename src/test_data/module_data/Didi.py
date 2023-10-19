@@ -241,7 +241,30 @@ Didi = {
             "loanNumbers": "1",
             "payType": 1
         }
-    }
+    },
 
+    # 贷中调评分
+    "userScoreAdvice": {
+        'interface': '/api/v1/didi/user/userScoreAdvice',
+        'payload': {
+            'scoreType': 1,
+            # 调整类型 1 调额, 取scoreOne 2 调价, 取scoreTwo利率和 scoreThree罚息 6 状态 取scoreSix 7 评分有效截⽌时间，格式为年⽉⽇ 取endDate
+            'orderId': '',
+            'applicationId': '',
+            'callbackUrl': 'http://manhattanloantest.xiaojukeji.com/manhattan/loan/openfin/superpartner/standard/userScoreResult',
+            # 'scoreOne': '',  # 评分1 调额
+            # 'scoreTwo': '',  # 评分2 ⽇利率
+            # 'scoreThree': '',  # 评分3 ⽇罚息率
+            # 'scoreSix': '',  # 评分6 额度状态,⽬前只有 3失效
+            # 'endDate': '',  # scoreType为7时必传 评分有效截⽌时间，格式为： 2020-09-15
+        }
+    },
 
+    # 滴滴贷中评分同步申请结果查询接⼝
+    "userScoreQuery": {
+        'interface': '/api/v1/didi/user/userScoreQuery',
+        'payload': {
+            'orderId': '',  # 业务订单号
+        }
+    },
 }

@@ -111,7 +111,7 @@ class JOB(object):
         """
         任务过滤接口，按条件过滤，记录为1命中搜索
         @param desc: 任务描述 必填
-        @param group: 执行器ID 5：credit； 6：assert
+        @param group: 执行器ID 5：credit； 6：assert 19：bizjob
         @param job_type: 任务层级 MAIN_TRIGGER_JOB：任务流； VIRTUAL_JOB=任务；
         @return: 任务id
         """
