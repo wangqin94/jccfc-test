@@ -103,7 +103,7 @@ class FqlGrtBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def loan(self, orderType=1, loan_date=None, **kwargs):
+    def loan(self, orderType=1, **kwargs):
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         loan_data = dict()
         loan_data['applyId'] = self.data['applyId']
@@ -165,7 +165,7 @@ class FqlGrtBizImpl(MysqlInit):
         loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
                                                                        loan_apply_id=loan_apply_info['loan_apply_id'])
         loanInvoiceId = loanInvoiceId if loanInvoiceId else loan_invoice_info['loan_invoice_id']
-        repayPlan_query_data['capitalLoanNo'] = loan_invoice_info['loan_invoice_id']
+        repayPlan_query_data['capitalLoanNo'] = loanInvoiceId
         # 更新 payload 字段值
         repayPlan_query_data.update(kwargs)
         parser = DataUpdate(self.cfg['repayPlan_query']['payload'], **repayPlan_query_data)
@@ -257,7 +257,8 @@ class FqlGrtBizImpl(MysqlInit):
                     repay_date = datetime.strptime(rpyDate, "%Y-%m-%d").date()
                     if days > 0:
                         if repay_date < pre_repay_date:
-                            repay_detail_data['rpyFeeAmt'] = round(float(i['before_calc_principal']) * days * day_rate, 2)
+                            repay_detail_data['rpyFeeAmt'] = round(float(i['before_calc_principal']) * days * day_rate,
+                                                                   2)
                         else:
                             repay_detail_data['rpyFeeAmt'] = float(i['pre_repay_interest'])
                     else:
@@ -432,7 +433,7 @@ class FqlGrtBizImpl(MysqlInit):
         return detail_list
 
     # 代扣申请
-    def withhold(self, detail_list, **kwargs):
+    def withhold(self, detail_list, rpyGuaranteeAmt=3.14, **kwargs):
         """
         组装代扣申请
         :param detail_list: 代扣明细组合
@@ -449,20 +450,24 @@ class FqlGrtBizImpl(MysqlInit):
         withholdAmt = sum([detail['rpyTotalAmt'] for detail in detail_list])
         withhold_data['withholdAmt'] = round(withholdAmt, 2)
 
-
         # 更新 payload 字段值
-        withhold_data.update(kwargs)
         parser = DataUpdate(self.cfg['withhold']['payload'], **withhold_data)
-        self.active_payload = parser.parser
+        withhold_payload = parser.parser
         # 更新代扣明细
-        self.active_payload['withholdDetail'] = detail_list
+        withhold_payload['withholdDetail'] = detail_list
         # 更新出账信息
-        self.active_payload['sepOutInfo'][0]['amt'] = round(withholdAmt - 5.55, 2)
-        self.active_payload['sepOutInfo'][0]['account'] = self.data['bankid']
+        withhold_payload['sepOutInfo'][0]['amt'] = round(withholdAmt, 2)
+        withhold_payload['sepOutInfo'][0]['account'] = self.data['bankid']
         # 更新分账信息
-        self.active_payload['sepInInfo'][0]['amt'] = round(withholdAmt - 3.56, 2)
-        self.active_payload['sepInInfo'][0]['account'] = self.data['bankid']
-        self.active_payload['sepInInfo'][0]['detail'][0]['amt'] = round(withholdAmt - 3.56 * 2, 2)
+        withhold_payload['sepInInfo'][0]['amt'] = round(withholdAmt - rpyGuaranteeAmt, 2)
+        withhold_payload['sepInInfo'][0]['detail'][0]['amt'] = round(withholdAmt - rpyGuaranteeAmt, 2)
+        withhold_payload['sepInInfo'][1]['amt'] = rpyGuaranteeAmt
+        withhold_payload['sepInInfo'][1]['detail'][0]['amt'] = rpyGuaranteeAmt
+
+        withhold_data1 = dict()
+        withhold_data1.update(kwargs)
+        parser1 = DataUpdate(withhold_payload, **withhold_data1)
+        self.active_payload = parser1.parser
 
         self.log.demsg('开始代扣申请...')
         url = self.host + self.cfg['withhold']['interface']
@@ -491,12 +496,18 @@ class FqlGrtBizImpl(MysqlInit):
         return response
 
     # 代偿文件
-    def compensation(self, repay_date=None):
+    def compensation(self, loan_invoice_id=None, repay_date=None):
         repay_date = repay_date if repay_date else time.strftime('%Y-%m-%d', time.localtime())
-        key = "merchant_id = '{}' and repay_plan_status = '4' and overdue_days >= 15".format(self.merchantId)
-        loan_invoice_info = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key=key, record=999)
+        if loan_invoice_id:
+            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','4') ORDER BY 'current_num' limit 1".format(
+                loan_invoice_id)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key=key, record=999)
+        else:
+            key = "merchant_id = '{}' and repay_plan_status = '4' and overdue_days >= 15 ORDER BY 'current_num'".format(
+                self.merchantId)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key=key, record=999)
         compensation_list = list()
-        for i in loan_invoice_info:
+        for i in asset_repay_plan:
             compensation_data = dict()
             credit_loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
                                                                                   loan_invoice_id=i['loan_invoice_id'])
