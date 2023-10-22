@@ -12,7 +12,7 @@ Didi = {
     "credit_apply": {
         "interface": "/api/v1/didi/credit/creditApply",
         "payload": {
-            "sftpDir": "/hj/xdgl/didi/credit",
+            "sftpDir": "/data/P0057/20231019/10/",
             "userInfo": {
                 "name": "张三",  # ⽤户姓名
                 "idNo": "411023199909011011",  # 身份证号

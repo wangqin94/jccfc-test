@@ -31,8 +31,8 @@ class MyTestCase(unittest.TestCase):
         :return:
         """
         orderId = \
-            self.Didi.userScoreAdvice(applicationId='DC00003080202310191116001697685361', scoreType=1, applyAmount=21000,
-                                      scoreThree=975)[
+            self.Didi.userScoreAdvice(applicationId='DD00003080202310191125314b595e', scoreType=1, applyAmount=200000,
+                                      )[
                 'orderId']
 
         while True:
@@ -41,7 +41,7 @@ class MyTestCase(unittest.TestCase):
                 break
             time.sleep(1)
 
-        self.Didi.queryCreditResult('DC00003080202310160916011697418962')
+        self.Didi.queryCreditResult('DD00003080202310191125314b595e')
 
 
 if __name__ == '__main__':

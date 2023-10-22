@@ -12,7 +12,7 @@ class MyTestCase(unittest.TestCase):
         self.CheckBizImpl = CheckBizImpl()
         self.repayPublicBizImpl = RepayPublicBizImpl()
         self.Didi = DidiBizImpl(data=None)
-        self.repayDate = '2023-10-19'
+        self.repayDate = '2023-10-20'
         self.loanDate = '2023-10-17'
 
     def test_loan(self):
@@ -25,7 +25,7 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl.pre_repay_config(repayDate=self.repayDate)
 
         # 发起授信申请
-        self.thirdApplyId = self.Didi.credit(applyAmount=30000)['applicationId']
+        self.thirdApplyId = self.Didi.credit(applyAmount=80000)['applicationId']
         # 授信申请查询
         while True:
             res = self.Didi.queryCreditResult(self.thirdApplyId)
@@ -35,7 +35,7 @@ class MyTestCase(unittest.TestCase):
         # 检查授信结果
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=self.thirdApplyId, t=5)
         # 发起放款风控审核申请
-        self.loanOrderId = self.Didi.loanRiskCheck(loanAmount=2000)['loanOrderId']
+        self.loanOrderId = self.Didi.loanRiskCheck(loanAmount=20000)['loanOrderId']
         time.sleep(5)
         self.Didi.queryLoanRiskCheck(thirdApplyId=self.thirdApplyId)
         while True:

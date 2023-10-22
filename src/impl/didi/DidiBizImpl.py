@@ -64,13 +64,14 @@ class DidiBizImpl(MysqlInit):
         :return:
         """
         # 上传文件
-        # self.upload_file('DC00003080202309251854212953d8')
+        self.upload_credit_file(self.applicationId)
 
         # self.log.demsg('用户四要素信息: {}'.format(self.data))
         # strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         credit_data = dict()
 
         # 用户信息
+        credit_data['sftpDir'] = "/data/P0057/" + time.strftime('%Y%m%d', time.localtime()) + "/10/"
         credit_data['idNo'] = self.data['cer_no']
         credit_data['name'] = self.data['name']
         credit_data['phone'] = self.data['telephone']
@@ -247,7 +248,7 @@ class DidiBizImpl(MysqlInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def upload_file(self, applicationId=None):
+    def upload_credit_file(self, applicationId=None):
         """
         上传附件（模拟滴滴方附件上传到他们的SFTP）
         :return:NONE
@@ -266,8 +267,8 @@ class DidiBizImpl(MysqlInit):
         os.mkdir(attachment + "/10/")
         os.mkdir(attachment + "/20/")
 
-        sftpDir_credit_png = '/data/P0057/20230925/10/'
-        sftpDir_credit_pdf = '/data/P0057/20230925/10/'
+        sftpDir_credit_png = '/data/P0057/20231022/10/'
+        sftpDir_credit_pdf = '/data/P0057/20231022/20/' + applicationId + '/'
         front = "/10/" + applicationId + "_01"
         back = "/10/" + applicationId + "_02"
         face = "/10/" + applicationId + "_03"
@@ -277,22 +278,37 @@ class DidiBizImpl(MysqlInit):
         face_path = create_attachment_image(self.data, face)
 
         # 征信查询授权书
-        INVESTIGATION = "/10/" + applicationId + "INVESTIGATION"
+        INVESTIGATION = "/20" + "/INVESTIGATION"
         INVESTIGATION_path = create_attachment_pdf(INVESTIGATION, contentText='征信查询授权书', person=self.data)
         # 三方数据查询授权书
-        PINFOOUERY = "/10/" + applicationId + "PINFOQUERY"
-        PINFOOUERY_path = create_attachment_pdf(PINFOOUERY, contentText='三方数据查询授权书', person=self.data)
+        PINFOQUERY = "/20" + "/PINFOQUERY"
+        PINFOQUERY_path = create_attachment_pdf(PINFOQUERY, contentText='三方数据查询授权书', person=self.data)
 
-        # # 人脸识别授权书(暂时待定)
-        # PINFOUSE = "/20/" + applicationId + "PINFOUSE"
-        # create_attachment_pdf(PINFOUSE, person=self.data)
+        # 人脸识别授权书
+        PINFOUSE = "/20" + "/PINFOUSE"
+        PINFOUSE_path = create_attachment_pdf(PINFOUSE, contentText='人脸识别授权书', person=self.data)
+
+        # 非学生承诺函
+        COVENANT = "/20" + "/COVENANT"
+        COVENANT_path = create_attachment_pdf(COVENANT, contentText='非学生承诺函', person=self.data)
 
         # 授信合同
-        LOANCREDIT = "/10/" + applicationId + "LOANCREDIT"
-        LOANCREDIT_path = create_attachment_pdf(LOANCREDIT, contentText='授信合同', person=self.data)
+        # LOANCREDIT = "/20/" + applicationId + "/LOANCREDIT"
+        # LOANCREDIT_path = create_attachment_pdf(LOANCREDIT, contentText='授信合同', person=self.data)
 
         self.sftp.upload_dir(png_path, sftpDir_credit_png)
         self.sftp.upload_dir(pdf_path, sftpDir_credit_pdf)
+
+        # self.sftp = SFTP('didi')
+        self.sftp.upload_file("E:/work/hujin/jccfc-test/image/LOANCREDIT.pdf", sftpDir_credit_pdf,clean=False)
+        # 身份证正反面
+        # 人脸照
+        # 征信查询授权书(INVESTIGATION
+        #         .pdf)、三方数据查询授权书（PINFOQUERY.pdf
+        # ）、授信合同（LOANCREDIT.pdf
+        # ）、人脸识别授权书（PINFOUSE.pdf
+        # ）、非学生承诺函（COVENANT.pdf）
+
         # self.sftp.sftp_close()
 
         # 删除本地文件
@@ -300,8 +316,9 @@ class DidiBizImpl(MysqlInit):
         os.remove(back_path)
         os.remove(face_path)
         os.remove(INVESTIGATION_path)
-        os.remove(PINFOOUERY_path)
-        os.remove(LOANCREDIT_path)
+        os.remove(PINFOQUERY_path)
+        os.remove(COVENANT_path)
+        # os.remove(LOANCREDIT_path)
 
     def repay(self, repay_date, repay_term_no, loanOrderId, repayType=0, **kwargs):
         """
@@ -370,7 +387,7 @@ class DidiBizImpl(MysqlInit):
         }
         if repayType == 2:
             initiateRepay_data['repayAmountInfo']['advanceClearFee'] = int(initiateRepay_data['repayAmountInfo'][
-                'principal']*4/100)
+                                                                               'principal'] * 4 / 100)
         initiateRepay_data['repayDate'] = repay_date
         initiateRepay_data['subAccStatus'] = 0
         initiateRepay_data['subAcctList'] = []
@@ -475,7 +492,7 @@ class DidiBizImpl(MysqlInit):
             'principal': int(asset_repay_plan['sum(pre_repay_principal)'] * 100),  # 本金
             'interest': int(asset_repay_plan['sum(pre_repay_interest)'] * 100),  # 利息
             'principalPenalty': int(asset_repay_plan['sum(pre_repay_overdue_fee)'] * 100),  # 逾期罚息
-            'advanceClearFee': 0 if repayType==1 else int(asset_repay_plan['sum(pre_repay_principal)'] * 4)   # 手续费
+            'advanceClearFee': 0 if repayType == 1 else int(asset_repay_plan['sum(pre_repay_principal)'] * 4)  # 手续费
         }
 
         repayNotifyData['repayDetails'] = list()
@@ -489,7 +506,8 @@ class DidiBizImpl(MysqlInit):
                     "guaranteeFee": 0,
                     "totalAmount": int(asset_repay_plan_num['sum(pre_repay_amount)'] * 100),
                     "ratedInterest": 0,
-                    "advanceClearFee": int(asset_repay_plan_num['sum(pre_repay_principal)'] * 4) if repayType ==2 else 0,
+                    "advanceClearFee": int(
+                        asset_repay_plan_num['sum(pre_repay_principal)'] * 4) if repayType == 2 else 0,
                     "interestPenalty": 0,
                     "principal": int(asset_repay_plan_num['sum(pre_repay_principal)'] * 100),
                     "insuranceFee": 0,
