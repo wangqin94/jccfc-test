@@ -13,3 +13,9 @@ from enum import Enum
 class FqlPathEnum(Enum):
     fqlEncryptPath = "/api/fql/v1/encrypt/encryptData"
     fqlDecryptPath = "/api/fql/v1/encrypt/decryptData"
+
+
+class FqlRepayMode(Enum):
+    normal = ('1', '10')
+    overdue = ('5', '40')
+    settle = ('3', '30')

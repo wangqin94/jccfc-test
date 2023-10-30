@@ -126,7 +126,7 @@ class FqlBizImpl(EnvInit):
         return response
 
     # 支用申请payload
-    def loan(self, loanTerm='3', loan_date=None, **kwargs):
+    def loan(self, loanTerm='3', **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
@@ -159,12 +159,6 @@ class FqlBizImpl(EnvInit):
         loan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan']['payload'], **loan_data)
         self.active_payload = parser.parser
-        # 设置apollo放款mock时间 默认当前时间
-        loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
-        apollo_data = dict()
-        apollo_data['credit.loan.trade.date.mock'] = True
-        apollo_data['credit.loan.date.mock'] = loan_date
-        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
         gl.set_value('loanRequestData', self.active_payload)
         self.log.info('支用请求信息-全局变量: {}'.format(gl))
@@ -319,7 +313,7 @@ class FqlBizImpl(EnvInit):
         return response
 
     # 代扣申请
-    def payment(self, capitalLoanNo, rpyTerm, rpyType, **kwargs):
+    def payment(self, rpyTerm, rpyType, capitalLoanNo=None, **kwargs):
         payment_data = dict()
 
         # Head
@@ -337,7 +331,16 @@ class FqlBizImpl(EnvInit):
         payment_data['idNo'] = self.data['cer_no']
 
         payment_data['assetId'] = self.data['applyId']
-        payment_data['capitalLoanNo'] = capitalLoanNo
+        if capitalLoanNo:
+            payment_data['capitalLoanNo'] = capitalLoanNo
+        else:
+            loan_apply_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_apply',
+                                                                         thirdpart_apply_id=self.data['applyId'])
+            loan_invoice_info = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+                                                                           loan_apply_id=loan_apply_info[
+                                                                               'loan_apply_id'])
+            capitalLoanNo = loan_invoice_info['loan_invoice_id']
+            payment_data['capitalLoanNo'] = loan_invoice_info['loan_invoice_id']
 
         payment_data['rpyTerm'] = rpyTerm
 

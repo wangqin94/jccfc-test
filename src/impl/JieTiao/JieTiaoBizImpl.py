@@ -168,8 +168,18 @@ class JieTiaoBizImpl(EnvInit):
                                                                             loan_invoice_id=loan_invoice_id)
         execute_rate = asset_loan_invoice_info["execute_rate"]
 
+        if rpyTerm:
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                         loan_invoice_id=loan_invoice_id,
+                                                                         current_num=rpyTerm)
+        else:
+            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
+                loan_invoice_id)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
+        min_term = int(asset_repay_plan['current_num'])
+        self.log.demsg('当期最早未还期次: {}'.format(min_term))
         # 根据借据Id和期次获取还款计划
-        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, rpyTerm)
+        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, min_term)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
 
         repay_notice_data["rpyPrinAmt"] = float(asset_repay_plan['left_repay_principal'])  # 本金
