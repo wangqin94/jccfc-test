@@ -552,6 +552,7 @@ JiKe = {
         'paid_int_amt': '',  # 利息
         'left_repay_amt': '',  # 在贷余额
         'compensationOverdueFee': '',  # 代偿罚息
+        'guaranteeMerchantId': '',  # 担保商户号
     },
 
     # 理赔文件 键值对字典数据模板
@@ -572,5 +573,6 @@ JiKe = {
         'paid_int_amt': '',  # 利息
         'left_repay_amt': '',  # 在贷余额
         'compensationOverdueFee': '',  # 代偿罚息
+        'guaranteeMerchantId': '',  # 担保商户号
     },
 }

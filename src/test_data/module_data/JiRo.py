@@ -592,6 +592,7 @@ JiRo = {
         'paid_int_amt': '',  # 利息
         'left_repay_amt': '',  # 在贷余额
         'compensationOverdueFee': '',  # 代偿罚息
+        'guaranteeMerchantId': '',  # 担保商户号
     },
 
     # 极融回购文件 键值对字典数据模板
@@ -612,5 +613,6 @@ JiRo = {
         'paid_int_amt': '',  # 利息
         'left_repay_amt': '',  # 在贷余额
         'compensationOverdueFee': '',  # 代偿罚息
+        'guaranteeMerchantId': '',  # 担保商户号
     },
 }

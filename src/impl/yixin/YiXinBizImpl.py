@@ -493,6 +493,7 @@ class YiXinBizImpl(MysqlInit):
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
 
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
+        repayTerm = asset_repay_plan['current_num']
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
         repay_apply_data["repayAmount"] = float(asset_repay_plan['pre_repay_amount'])  # 总金额
         repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息

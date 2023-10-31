@@ -626,6 +626,7 @@ Hair = {
         'compensationOverdueFee': '',  # 代偿罚息
         'compensationFee': '',  # 代偿费用
         'handler_status': '',  # 是否贴息 0:未贴息 1:已贴息 EnumBool.YES'
+        'guaranteeMerchantId': '',  # 担保商户号
     },
 
     # 海尔贴息文件 键值对字典数据模板
