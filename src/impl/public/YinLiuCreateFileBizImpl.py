@@ -125,6 +125,13 @@ class YinLiuRepayFile(EnvInit):
                                                                      current_num=repayTerm)
         return asset_repay_plan
 
+    # 获取商户关联担保公司商户号
+    def getGuaranteeMerchantId(self, loanInvoiceId):
+        guaranteeMerchant = self.MysqlBizImpl.get_credit_database_info("credit_apply_guarantee_merchant",
+                                                                       loan_invoice_id=loanInvoiceId,
+                                                                       )
+        return str(guaranteeMerchant['guarantee_merchant_id'])
+
     # 海尔回购文件内容
     def creditHairBuyBackData(self, termNo):
         """
@@ -154,6 +161,7 @@ class YinLiuRepayFile(EnvInit):
         temple['loanBalance'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
         temple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
         temple['compensationFee'] = str(asset_repay_plan["left_repay_fee"])  # 费用
+        temple['guaranteeMerchantId'] = self.getGuaranteeMerchantId(loanInvoiceId)  # 担保商户号
         temple['business_no'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))  # 流水号
         temple['current_period'] = str(termNo)  # 期次
         temple['handler_status'] = "0"  # 是否贴息
@@ -194,6 +202,7 @@ class YinLiuRepayFile(EnvInit):
         claimTemple['paid_int_amt'] = str(asset_repay_plan["left_repay_interest"])  # 利息
         claimTemple['left_repay_amt'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
         claimTemple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
+        claimTemple['guaranteeMerchantId'] = self.getGuaranteeMerchantId(loanInvoiceId)  # 担保商户号
         return claimTemple
 
     # 回购文件内容
@@ -224,6 +233,7 @@ class YinLiuRepayFile(EnvInit):
         buyBackTemple['paid_int_amt'] = 0  # 利息
         buyBackTemple['left_repay_amt'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
         buyBackTemple['compensationOverdueFee'] = str(asset_repay_plan["left_repay_overdue_fee"])  # 罚息
+        buyBackTemple['guaranteeMerchantId'] = self.getGuaranteeMerchantId(loanInvoiceId)  # 担保商户号
         return buyBackTemple
 
     # 贴息文件内容
@@ -269,10 +279,10 @@ class YinLiuRepayFile(EnvInit):
         asset_repay_plan = self.getAssetRepayPlan(loanInvoiceId, self.repayTermNo)
         # 回购当期逾期天数
         days = get_day(asset_repay_plan['pre_repay_date'], self.repayDate)
-        # 宜信、极融D+8理赔，罚息0，大于D+8收取罚息
+        # 微财D+8理赔，罚息0，大于D+8收取罚息
         if days == 8:
-            creditClaimData['repay_amt'] = creditClaimData['repay_amt'] - creditClaimData[
-                'compensationOverdueFee']  # 重算总金额
+            creditClaimData['repay_amt'] = round(
+                float(creditClaimData['repay_amt']) - float(creditClaimData['compensationOverdueFee']), 2)  # 重算总金额
             creditClaimData['compensationOverdueFee'] = "0"  # 罚息
         # 文件赋值
         creditClaimData.update(**kwargs)
@@ -297,7 +307,7 @@ class YinLiuRepayFile(EnvInit):
             os.remove(claimFileName)
         # 获取微财理赔对账文件参数
         templePath = WeiCai.WeiCai
-        wcClaimTemple = templePath['yiXinClaimTemple']
+        wcClaimTemple = templePath['weiCaiClaimTemple']
 
         # 文件赋值
         self.creditClaimData().update(**kwargs)
@@ -344,7 +354,8 @@ class YinLiuRepayFile(EnvInit):
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData[
                     'paid_int_amt']
             # 获取回购当期已计提利息---宜信、极融宽限期4天
-            elif termNo == int(self.repayTermNo) and days > 4 and self.productId in (ProductIdEnum.YIXIN.value, ProductIdEnum.JIRO.value):
+            elif termNo == int(self.repayTermNo) and days > 4 and self.productId in (
+                    ProductIdEnum.YIXIN.value, ProductIdEnum.JIRO.value):
                 self.log.info("当前逾期天数：{}天, 超过宽限期，T+5利息按日计提".format(days))
                 creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData[
                     'left_repay_amt'])  # T+5利息按日计提

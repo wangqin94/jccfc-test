@@ -35,6 +35,7 @@ YiXin = {
                 "payerIdNum": "",  # 付款方身份证号
                 "payerBankCardNum": "",  # 付款方银行卡号
                 "payerBankCode": "0102",  # 付款方银行编号
+                "paymentChannel": "1032"  # 支付通道
             }
         }
     },
@@ -394,6 +395,7 @@ YiXin = {
                 "repayFee": 0,  # 还款总费用
                 "repayOverdueFee": 0,  # 还款总罚息
                 "repayCompoundInterest": 0,  # 还款总复利
+                "paymentChannel": "1032"
             }
         }
     },
@@ -592,6 +594,7 @@ YiXin = {
         'paid_int_amt': '',  # 利息
         'left_repay_amt': '',  # 在贷余额
         'compensationOverdueFee': '',  # 代偿罚息
+        'guaranteeMerchantId': '',  # 担保商户号
     },
 
     # 宜信回购文件 键值对字典数据模板
@@ -612,5 +615,6 @@ YiXin = {
         'paid_int_amt': '',  # 利息
         'left_repay_amt': '',  # 在贷余额
         'compensationOverdueFee': '',  # 代偿罚息
+        'guaranteeMerchantId': '',  # 担保商户号
     },
 }
