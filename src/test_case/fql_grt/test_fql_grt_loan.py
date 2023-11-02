@@ -16,7 +16,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_loan(self, loan_date='2023-10-25'):
+    def test_loan(self, loan_date='2023-10-10'):
         """ 测试步骤 """
         # 授信-授信校验-放款-放款校验
         self.loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())
@@ -35,7 +35,19 @@ class MyTestCase(unittest.TestCase):
         # 设置放款日mock  flag: True-使用mock, False-使用真实系统放款日
         LoanPublicBizImpl().updateLoanDateMock(date=loan_date, flag=True)
         # 发起支用申请
-        fql_grt.loan(orderType=orderType, loanPrincipal=amount, loanTerm=term, fixedBillDay=16, fixedRepayDay=26,
+        """
+        fixedBillDay：出账日，fixedRepayDay：还款日
+        出账日为1-18：
+        1）若放款日<出账日，则首期还款日在放款日当月
+        2）若放款日>=出账日，则首期还款日在放款日当月下个月
+        出账日为22-28：
+        1）若放款日<出账日，则首期还款日期在放款日的下个月
+        2）若放款日>=出账日，则首期还款日期在放款日的下下个月
+        出账日与还款日对应关系：
+        1-11,2-12,3-13,4-14,5-15,6-16,7-17,8-18,9-19,10-20,11-21,12-22,13-23,14-24,15-25,16-26,17-27,18-18,22-1,23-2,24-3
+        25-4,26-5,27-6,28-7,28-9,28-10
+        """
+        fql_grt.loan(orderType=orderType, loanPrincipal=amount, loanTerm=term, fixedBillDay=23, fixedRepayDay=2,
                      loan_date=loan_date)
 
     """ 后置条件处理 """

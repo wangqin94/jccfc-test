@@ -24,7 +24,7 @@ class TestCase(object):
         if flag == 0:
             fql_grt = FqlGrtBizImpl(data=None)
             # orderType: 1-赊销 3-取现 4-乐花卡
-            fql_grt.credit(orderType='1', loanPrincipal=30000, loanTerm=15)
+            fql_grt.credit(orderType='1', loanPrincipal=1000, loanTerm=15)
 
         # 授信查询
         if flag == 1:
@@ -72,8 +72,9 @@ class TestCase(object):
             # RepayPublicBizImpl().pre_repay_config(repayDate=repay_date)
             # rpyType 10-正常还款 30-提前结清 40-逾期还款
             detail1 = fql_grt.withhold_detail(rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId='000LI0001437130418922334065', term=1, rpyDate=repay_date)
-            detail2 = fql_grt.withhold_detail(rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId='000LI0001437130418922336065', term=1, rpyDate=repay_date)
-            detail_list = fql_grt.withhold_detail_list(detail1, detail2)
+            # 一个用户多笔借据同时代扣则添加多个detail
+            # detail2 = fql_grt.withhold_detail(rpyType=10, rpyGuaranteeAmt=3.14, loanInvoiceId='000LI0001437130418922336065', term=1, rpyDate=repay_date)
+            detail_list = fql_grt.withhold_detail_list(detail1)
             fql_grt.withhold(detail_list=detail_list)
 
         # 代扣查询
@@ -85,8 +86,15 @@ class TestCase(object):
         if flag == 10:
             fql_grt = FqlGrtBizImpl(data=data)
             repay_date = '2023-09-25'
-            RepayPublicBizImpl().pre_repay_config(repayDate=repay_date)
-            fql_grt.compensation(repay_date=repay_date)
+            # RepayPublicBizImpl().pre_repay_config(repayDate=repay_date)
+            fql_grt.compensation(loan_invoice_id='000LI0001437130418922334065', repay_date=repay_date)
+
+        # 生成追偿文件
+        if flag == 10:
+            fql_grt = FqlGrtBizImpl(data=data)
+            repay_date = '2023-09-25'
+            # RepayPublicBizImpl().pre_repay_config(repayDate=repay_date)
+            fql_grt.overdue_repay(loan_invoice_id='000LI0001437130418922334065', term=1, repay_date=repay_date)
 
 
 if __name__ == '__main__':
