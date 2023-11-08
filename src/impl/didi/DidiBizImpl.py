@@ -41,10 +41,12 @@ class DidiBizImpl(MysqlInit):
         # 初始化payload变量
         self.active_payload = {}
         self.applicationId = f'DC00003080{self.date}{self.times}'
+        # self.applicationId = 'DC00003080202311071626401699345600'
         self.loanOrderId = self.date
+        # self.loanOrderId = '20231107092001258889911122'
         self.encrypt_url = self.host + self.cfg['encrypt']['interface']
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
-
+        self.sftpDir = '/data/P0057/20231107'
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
         if data:
@@ -71,7 +73,7 @@ class DidiBizImpl(MysqlInit):
         credit_data = dict()
 
         # 用户信息
-        credit_data['sftpDir'] = "/data/P0057/" + time.strftime('%Y%m%d', time.localtime()) + "/10/"
+        credit_data['sftpDir'] = self.sftpDir + "/10/"
         credit_data['idNo'] = self.data['cer_no']
         credit_data['name'] = self.data['name']
         credit_data['phone'] = self.data['telephone']
@@ -79,17 +81,17 @@ class DidiBizImpl(MysqlInit):
 
         credit_data['gender'] = '⼥'
         credit_data['scoreOne'] = applyAmount * 100 + 260000  # 单位 分
-        credit_data['scoreTwo'] = 650 * 40 + 350000  # *百万分之一 互金存的年化利率 * 360
-        credit_data['scoreThree'] = 415 * 20 + 360000  # *百万分之一 互金存的年化利率 * 360
+        credit_data['scoreTwo'] = 300 * 40 + 350000  # *百万分之一 互金存的年化利率 * 360
+        credit_data['scoreThree'] = 415 * 20 + 360000  # *百万分之一 互金存的罚息利率 * 360
         credit_data['applicationId'] = self.applicationId
-        # 银行卡信息
+        # # 银行卡信息
 
         parser = DataUpdate(self.cfg['credit_apply']['payload'], unique=False, **credit_data)
         parser = DataUpdate(parser.parser, unique=False, **kwargs)
         self.active_payload = parser.parser
 
         # 校验用户是否已存在
-        self.MysqlBizImpl.check_user_available(self.data)
+        # self.MysqlBizImpl.check_user_available(self.data)
         # 配置风控mock返回建议额度与授信额度一致
         apollo_data = dict()
         apollo_data['hj.channel.risk.credit.line.amt.mock'] = applyAmount
@@ -132,27 +134,27 @@ class DidiBizImpl(MysqlInit):
         :param kwargs:
         :return:
         """
+
+        self.upload_loan_file(self.loanOrderId)
+
         loan_risk_check_data = dict()
 
         loan_risk_check_data['name'] = self.data['name']
         loan_risk_check_data['idNo'] = self.data['cer_no']
         loan_risk_check_data['bankCardNo'] = self.data['bankid']
         loan_risk_check_data['phone'] = self.data['telephone']
-
-        loan_risk_check_data['gender'] = self.data['telephone']
-
         loan_risk_check_data['applicationId'] = self.applicationId
         loan_risk_check_data['loanOrderId'] = self.loanOrderId
         loan_risk_check_data['loanAmount'] = loanAmount * 100
         loan_risk_check_data['interestType'] = 2
         loan_risk_check_data['totalInstallment'] = applyTerm
-        loan_risk_check_data['loanRating'] = 650  # *百万分之一 互金存的年化利率
-        loan_risk_check_data['penaltyInterestRate'] = 415  # *百万分之一 互金存的年化利率
-        loan_risk_check_data['sftpDir'] = "/hj/xdgl/didi/credit"
+        loan_risk_check_data['loanRating'] = 500  # *百万分之一 互金存的年化利率
+        loan_risk_check_data['penaltyInterestRate'] = 415  # *百万分之一 互金存的罚息利率
+        loan_risk_check_data['sftpDir'] = self.sftpDir + "/12/"
         loan_risk_check_data['callbackUrl'] = "www.baidu.com"
         loan_risk_check_data['finProductType'] = 2  # 产品类型: 1.随借随还， 2.固定期限
         loan_risk_check_data['rateType'] = 0  # 是否涉及营销定价优惠；默认为【0】否  1 是
-        loan_risk_check_data['loanUsage'] = '2'
+        loan_risk_check_data['loanUsage'] = '1'
         loan_risk_check_data['preAbsId'] = self.date
 
         parser = DataUpdate(self.cfg['loan_risk_check']['payload'], unique=False, **loan_risk_check_data)
@@ -267,8 +269,8 @@ class DidiBizImpl(MysqlInit):
         os.mkdir(attachment + "/10/")
         os.mkdir(attachment + "/20/")
 
-        sftpDir_credit_png = '/data/P0057/20231022/10/'
-        sftpDir_credit_pdf = '/data/P0057/20231022/20/' + applicationId + '/'
+        sftpDir_credit_png = self.sftpDir + '/10/'
+        sftpDir_credit_pdf = self.sftpDir + '/20/' + applicationId + '/'
         front = "/10/" + applicationId + "_01"
         back = "/10/" + applicationId + "_02"
         face = "/10/" + applicationId + "_03"
@@ -277,30 +279,45 @@ class DidiBizImpl(MysqlInit):
         back_path = create_attachment_image(self.data, back)
         face_path = create_attachment_image(self.data, face)
 
-        # 征信查询授权书
-        INVESTIGATION = "/20" + "/INVESTIGATION"
-        INVESTIGATION_path = create_attachment_pdf(INVESTIGATION, contentText='征信查询授权书', person=self.data)
-        # 三方数据查询授权书
-        PINFOQUERY = "/20" + "/PINFOQUERY"
-        PINFOQUERY_path = create_attachment_pdf(PINFOQUERY, contentText='三方数据查询授权书', person=self.data)
+        # # 身份证正面front
+        # self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\DD0000308020231023180540f780e7_01.png", sftpDir_credit_pdf,
+        #                       clean=False)
+        # # 身份证反面back
+        # self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\DD0000308020231023180540f780e7_02.png", sftpDir_credit_pdf,
+        #                       clean=False)
+        # # 人脸照face
+        # self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\DD0000308020231023180540f780e7_03.png", sftpDir_credit_pdf,
+        #                       clean=False)
+        # 征信查询授权书INVESTIGATION
+        # INVESTIGATION = "/20" + "/INVESTIGATION"
+        # INVESTIGATION_path = create_attachment_pdf(INVESTIGATION, contentText='征信查询授权书', person=self.data)
+        self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\INVESTIGATION.pdf", sftpDir_credit_pdf,
+                              clean=False)
+        # 个⼈信息查询授权协议
+        # PINFOQUERY = "/20" + "/PINFOQUERY"
+        # # PINFOQUERY_path = create_attachment_pdf(PINFOQUERY, contentText='三方数据查询授权书', person=self.data)
+        self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\PINFOQUERY.pdf", sftpDir_credit_pdf,
+                              clean=False)
+        # 人脸识别授权书PINFOUSE
+        # PINFOUSE = "/20" + "/PINFOUSE"
+        # PINFOUSE_path = create_attachment_pdf(PINFOUSE, contentText='人脸识别授权书', person=self.data)
+        self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\PINFOUSE.pdf", sftpDir_credit_pdf,
+                              clean=False)
 
-        # 人脸识别授权书
-        PINFOUSE = "/20" + "/PINFOUSE"
-        PINFOUSE_path = create_attachment_pdf(PINFOUSE, contentText='人脸识别授权书', person=self.data)
 
-        # 非学生承诺函
-        COVENANT = "/20" + "/COVENANT"
-        COVENANT_path = create_attachment_pdf(COVENANT, contentText='非学生承诺函', person=self.data)
 
         # 授信合同
         # LOANCREDIT = "/20/" + applicationId + "/LOANCREDIT"
         # LOANCREDIT_path = create_attachment_pdf(LOANCREDIT, contentText='授信合同', person=self.data)
 
-        self.sftp.upload_dir(png_path, sftpDir_credit_png)
-        self.sftp.upload_dir(pdf_path, sftpDir_credit_pdf)
-
+        # 授信合同LOANCREDIT
         # self.sftp = SFTP('didi')
-        self.sftp.upload_file("E:/work/hujin/jccfc-test/image/LOANCREDIT.pdf", sftpDir_credit_pdf,clean=False)
+        self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\LOANCREDIT.pdf", sftpDir_credit_pdf,
+                              clean=False)
+
+        self.sftp.upload_dir(png_path, sftpDir_credit_png)
+        # self.sftp.upload_dir(pdf_path, sftpDir_credit_pdf)
+
         # 身份证正反面
         # 人脸照
         # 征信查询授权书(INVESTIGATION
@@ -312,12 +329,74 @@ class DidiBizImpl(MysqlInit):
         # self.sftp.sftp_close()
 
         # 删除本地文件
-        os.remove(front_path)
-        os.remove(back_path)
-        os.remove(face_path)
-        os.remove(INVESTIGATION_path)
-        os.remove(PINFOQUERY_path)
-        os.remove(COVENANT_path)
+        # os.remove(attachment)
+        # os.remove(back_path)
+        # os.remove(face_path)
+        # os.remove(INVESTIGATION_path)
+        # os.remove(PINFOQUERY_path)
+        # os.remove(COVENANT_path)
+        # os.remove(LOANCREDIT_path)
+        # os.remove(LOAN_path)
+
+    def upload_loan_file(self, loanOrderId=None):
+        """
+        上传附件（模拟滴滴方附件上传到他们的SFTP）
+        :return:NONE
+        """
+        if loanOrderId is None:
+             loanOrderId = self.loanOrderId
+        p_path = os.path.abspath(os.path.dirname(__file__))
+        attachment = p_path[:p_path.index("jccfc-test") + len("jccfc-test")] + '/image/temp/'
+        png_path = attachment + "12/"
+        pdf_path = attachment + "20/"
+        if os.path.exists(png_path):
+            os.removedirs(png_path)
+        if os.path.exists(pdf_path):
+            os.removedirs(pdf_path)
+        os.mkdir(attachment)
+        os.mkdir(attachment + "/12/")
+        os.mkdir(attachment + "/20/")
+
+        sftpDir_credit_png = self.sftpDir + '/12/'
+        sftpDir_credit_pdf = self.sftpDir + '/20/' + self.loanOrderId + '/'
+        front = "/12/" + loanOrderId + "_01"
+        back = "/12/" + loanOrderId + "_02"
+        face = "/12/" + loanOrderId + "_03"
+
+        front_path = create_attachment_image(self.data, front)
+        back_path = create_attachment_image(self.data, back)
+        face_path = create_attachment_image(self.data, face)
+        # 身份证正面front
+        # self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\DD0000308020231023180540f780e7_01.png",
+        #                       sftpDir_credit_pdf,
+        #                       clean=False)
+        # # 身份证反面back
+        # self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\DD0000308020231023180540f780e7_02.png",
+        #                       sftpDir_credit_pdf,
+        #                       clean=False)
+        # # 人脸照face
+        # self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\DD0000308020231023180540f780e7_03.png",
+        #                       sftpDir_credit_pdf,
+        #                       clean=False)
+
+        # 支用单LOANCREDIT
+        self.sftp.upload_file(r"C:\Users\jccfc\PycharmProjects\jccfc-test\image\LOAN.pdf", sftpDir_credit_pdf,
+                              clean=False)
+
+        self.sftp.upload_dir(png_path, sftpDir_credit_png)
+        # 身份证正反面
+        # 人脸照
+        # 借款合同(LOAN)
+
+        # self.sftp.sftp_close()
+
+        # 删除本地文件
+        # os.remove(front_path)
+        # os.remove(back_path)
+        # os.remove(face_path)
+        # os.remove(INVESTIGATION_path)
+        # os.remove(PINFOQUERY_path)
+        # os.remove(COVENANT_path)
         # os.remove(LOANCREDIT_path)
 
     def repay(self, repay_date, repay_term_no, loanOrderId, repayType=0, **kwargs):
