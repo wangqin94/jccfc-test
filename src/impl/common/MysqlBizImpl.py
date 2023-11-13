@@ -67,6 +67,8 @@ class MysqlBizImpl(MysqlInit):
 
         keys = key1.split(",")
         # 获取查询内容
+
+        self.log.info(sql)
         values = self.mysql_asset.select(sql)
         try:
             # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
@@ -432,6 +434,12 @@ class MysqlBizImpl(MysqlInit):
             self.mysql_asset.insert('asset_job_ctl', tenant_id='000', job_date=job_date, job_type=job_type,
                                     job_name='日终结束任务', job_order='999', job_status='1', create_time=curtime,
                                     update_time=curtime)
+
+    def update_acct_task_info(self,date):
+        sql = f"UPDATE  acct_task_info set account_date='{date}';"
+        self.mysql_bigacct.update(sql)
+        self.log.info("sql：更新成功 [{}]".format(sql))
+
 
     def get_loan_invoice_info(self, *args, record=-1, **kwargs):
 

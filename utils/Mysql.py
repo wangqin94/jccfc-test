@@ -75,7 +75,8 @@ class Mysql(object):
             # 提交到数据库执行
             self.__mysql.commit()
         except Exception as e:
-            _log.info(e)
+            if isinstance(e, str):
+                _log.info(e)
         res_values = self.cursor.fetchall()
         return res_values
 

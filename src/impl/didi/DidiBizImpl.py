@@ -3,6 +3,7 @@
 # 滴滴-滴水贷接口数据封装类
 # ------------------------------------------
 import os
+import shutil
 import time
 
 from engine.MysqlInit import MysqlInit
@@ -63,15 +64,12 @@ class DidiBizImpl(MysqlInit):
         :param kwargs:
         :return:
         """
-        # 上传文件
-        self.upload_credit_file(self.applicationId)
 
-        # self.log.demsg('用户四要素信息: {}'.format(self.data))
-        # strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         credit_data = dict()
+        credit_data['sftpDir'] = "/data/P0057/" + time.strftime('%Y%m%d', time.localtime()) + "/10/"
 
         # 用户信息
-        credit_data['sftpDir'] = "/data/P0057/" + time.strftime('%Y%m%d', time.localtime()) + "/10/"
+
         credit_data['idNo'] = self.data['cer_no']
         credit_data['name'] = self.data['name']
         credit_data['phone'] = self.data['telephone']
@@ -79,7 +77,7 @@ class DidiBizImpl(MysqlInit):
 
         credit_data['gender'] = '⼥'
         credit_data['scoreOne'] = applyAmount * 100 + 260000  # 单位 分
-        credit_data['scoreTwo'] = 650 * 40 + 350000  # *百万分之一 互金存的年化利率 * 360
+        credit_data['scoreTwo'] = 320 * 40 + 350000  # *百万分之一 互金存的年化利率 * 360
         credit_data['scoreThree'] = 415 * 20 + 360000  # *百万分之一 互金存的年化利率 * 360
         credit_data['applicationId'] = self.applicationId
         # 银行卡信息
@@ -87,6 +85,9 @@ class DidiBizImpl(MysqlInit):
         parser = DataUpdate(self.cfg['credit_apply']['payload'], unique=False, **credit_data)
         parser = DataUpdate(parser.parser, unique=False, **kwargs)
         self.active_payload = parser.parser
+
+        # 上传附件
+        self.upload_credit_file(credit_data['sftpDir'], self.applicationId)
 
         # 校验用户是否已存在
         self.MysqlBizImpl.check_user_available(self.data)
@@ -143,29 +144,30 @@ class DidiBizImpl(MysqlInit):
 
         loan_risk_check_data['applicationId'] = self.applicationId
         loan_risk_check_data['loanOrderId'] = self.loanOrderId
+
         loan_risk_check_data['loanAmount'] = loanAmount * 100
         loan_risk_check_data['interestType'] = 2
         loan_risk_check_data['totalInstallment'] = applyTerm
-        loan_risk_check_data['loanRating'] = 650  # *百万分之一 互金存的年化利率
-        loan_risk_check_data['penaltyInterestRate'] = 415  # *百万分之一 互金存的年化利率
-        loan_risk_check_data['sftpDir'] = "/hj/xdgl/didi/credit"
+        loan_risk_check_data['loanRating'] = 340  # *百万分之一 互金存的年化利率
+        loan_risk_check_data['interestPenaltyRate'] = 415  # *百万分之一 互金存的年化利率
+        loan_risk_check_data['sftpDir'] = "/data/P0057/" + time.strftime('%Y%m%d', time.localtime()) + "/12/"
         loan_risk_check_data['callbackUrl'] = "www.baidu.com"
         loan_risk_check_data['finProductType'] = 2  # 产品类型: 1.随借随还， 2.固定期限
         loan_risk_check_data['rateType'] = 0  # 是否涉及营销定价优惠；默认为【0】否  1 是
         loan_risk_check_data['loanUsage'] = '2'
-        loan_risk_check_data['preAbsId'] = self.date
+        loan_risk_check_data['preAbsId'] = ''
 
         parser = DataUpdate(self.cfg['loan_risk_check']['payload'], unique=False, **loan_risk_check_data)
         parser = DataUpdate(parser.parser, unique=False, **kwargs)
         self.active_payload = parser.parser
-
+        self.upload_loan_file(loan_risk_check_data['sftpDir'])
         url = self.host + self.cfg['loan_risk_check']['interface']
         self.log.demsg('开始支用申请...')
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def queryLoanRiskCheck(self, thirdApplyId=None):
+    def queryLoanRiskCheck(self, thirdApplyId=None, **kwargs):
         queryLoanRiskCheck_data = dict()
         if not thirdApplyId:
             credit_apply_info = self.MysqlBizImpl.get_credit_apply_info(certificate_no=self.data['cer_no'])
@@ -175,7 +177,7 @@ class DidiBizImpl(MysqlInit):
         queryLoanRiskCheck_data['loanOrderId'] = self.loanOrderId
 
         parser = DataUpdate(self.cfg['query_loan_risk_check']['payload'], **queryLoanRiskCheck_data)
-
+        parser = DataUpdate(parser.parser, unique=False, **kwargs)
         self.active_payload = parser.parser
         url = self.host + self.cfg['query_loan_risk_check']['interface']
 
@@ -248,7 +250,7 @@ class DidiBizImpl(MysqlInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def upload_credit_file(self, applicationId=None):
+    def upload_credit_file(self, sftpdir, applicationId=None):
         """
         上传附件（模拟滴滴方附件上传到他们的SFTP）
         :return:NONE
@@ -263,12 +265,11 @@ class DidiBizImpl(MysqlInit):
             os.removedirs(png_path)
         if os.path.exists(pdf_path):
             os.removedirs(pdf_path)
-        os.mkdir(attachment)
         os.mkdir(attachment + "/10/")
         os.mkdir(attachment + "/20/")
 
-        sftpDir_credit_png = '/data/P0057/20231022/10/'
-        sftpDir_credit_pdf = '/data/P0057/20231022/20/' + applicationId + '/'
+        sftpDir_credit_png = sftpdir
+        sftpDir_credit_pdf = sftpdir[:-4] + '/20/' + applicationId + '/'
         front = "/10/" + applicationId + "_01"
         back = "/10/" + applicationId + "_02"
         face = "/10/" + applicationId + "_03"
@@ -292,24 +293,11 @@ class DidiBizImpl(MysqlInit):
         COVENANT = "/20" + "/COVENANT"
         COVENANT_path = create_attachment_pdf(COVENANT, contentText='非学生承诺函', person=self.data)
 
-        # 授信合同
-        # LOANCREDIT = "/20/" + applicationId + "/LOANCREDIT"
-        # LOANCREDIT_path = create_attachment_pdf(LOANCREDIT, contentText='授信合同', person=self.data)
-
         self.sftp.upload_dir(png_path, sftpDir_credit_png)
         self.sftp.upload_dir(pdf_path, sftpDir_credit_pdf)
 
-        # self.sftp = SFTP('didi')
-        self.sftp.upload_file("E:/work/hujin/jccfc-test/image/LOANCREDIT.pdf", sftpDir_credit_pdf,clean=False)
-        # 身份证正反面
-        # 人脸照
-        # 征信查询授权书(INVESTIGATION
-        #         .pdf)、三方数据查询授权书（PINFOQUERY.pdf
-        # ）、授信合同（LOANCREDIT.pdf
-        # ）、人脸识别授权书（PINFOUSE.pdf
-        # ）、非学生承诺函（COVENANT.pdf）
-
-        # self.sftp.sftp_close()
+        # 授信合同
+        self.sftp.upload_file("E:/work/hujin/jccfc-test/image/LOANCREDIT.pdf", sftpDir_credit_pdf, clean=False)
 
         # 删除本地文件
         os.remove(front_path)
@@ -317,8 +305,45 @@ class DidiBizImpl(MysqlInit):
         os.remove(face_path)
         os.remove(INVESTIGATION_path)
         os.remove(PINFOQUERY_path)
+        os.remove(PINFOUSE_path)
         os.remove(COVENANT_path)
         # os.remove(LOANCREDIT_path)
+
+    def upload_loan_file(self, sftpdir):
+        """
+        上传支用附件（）
+        :return:NONE
+        """
+
+        p_path = os.path.abspath(os.path.dirname(__file__))
+        attachment = p_path[:p_path.index("jccfc-test") + len("jccfc-test")] + '/image/temp/'
+        png_path = attachment + "12/"
+        pdf_path = attachment + "12/"
+        if os.path.exists(png_path):
+            os.removedirs(png_path)
+        if os.path.exists(pdf_path):
+            os.removedirs(pdf_path)
+        os.mkdir(attachment + "/12/")
+
+        sftpDir_loan_png = sftpdir
+        sftpDir_loan_pdf = sftpdir[:-4] + '/20/' + self.loanOrderId + '/'
+        front = "/12/" + self.loanOrderId + "_01"
+        back = "/12/" + self.loanOrderId + "_02"
+        face = "/12/" + self.loanOrderId + "_03"
+
+        front_path = create_attachment_image(self.data, front)
+        back_path = create_attachment_image(self.data, back)
+        face_path = create_attachment_image(self.data, face)
+
+        self.sftp.upload_dir(png_path, sftpDir_loan_png)
+
+        # 授信合同
+        self.sftp.upload_file("E:\work\hujin\jccfc-test\image\LOAN.pdf", sftpDir_loan_pdf, clean=False)
+
+        # 删除本地文件
+        os.remove(front_path)
+        os.remove(back_path)
+        os.remove(face_path)
 
     def repay(self, repay_date, repay_term_no, loanOrderId, repayType=0, **kwargs):
         """
@@ -597,3 +622,36 @@ class DidiBizImpl(MysqlInit):
 
     def didiUploadFile(self, **kwargs):
         pass
+
+    def __del__(self):
+        try:
+            self.sftp.sftp_close()
+            shutil.rmtree('E:\work\hujin\jccfc-test\image\\temp')
+        except:
+            pass
+
+    def create_channel_didi_repay_plan(self, loan_order_id, loan_invoice_id, business_date='20231106'):
+        """
+        创建 滴滴还款计划同步数据
+        :param loan_order_id:
+        :param loan_invoice_id:
+        :return:
+        """
+
+        key1 = 'current_num,start_date,pre_repay_date,pre_repay_principal,pre_repay_interest'
+        key2 = f"loan_invoice_id = '{loan_invoice_id}'"
+        asset_repay_plan = self.MysqlBizImpl.get_asset_repay_plan(table="asset_repay_plan", key=key2, key1=key1,
+                                                                  record=999)
+
+        for asset_repay_num in asset_repay_plan:
+            term_no = asset_repay_num['current_num']
+            start_date1 = asset_repay_num['start_date'].strftime('%Y%m%d')
+            end_date = asset_repay_num['pre_repay_date'].strftime('%Y%m%d')
+            prin_amt = int(asset_repay_num['pre_repay_principal'] * 100)
+            int_amt = int(asset_repay_num['pre_repay_interest'] * 100)
+
+            self.MysqlBizImpl.insert_channel_database_info(table='channel_didi_repay_plan',
+                                                           loan_order_id=loan_order_id, term_no=term_no,
+                                                           start_date=start_date1, end_date=end_date, prin_amt=prin_amt,
+                                                           int_amt=int_amt, deal_status='00',
+                                                           business_date=business_date)
