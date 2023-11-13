@@ -4,7 +4,7 @@ import warnings
 import time
 
 from src.enums.EnumsCommon import ProductIdEnum
-from src.impl.common.YinLiuCreateFileBizImpl import YinLiuRepayFile
+from src.impl.public.YinLiuCreateFileBizImpl import YinLiuRepayFile
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_case.weicai.person import data
 
@@ -18,7 +18,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
     # 哈喽 G23E031
-    def test_repay_apply(self, productId=ProductIdEnum.WEICAI.value, repayDate='2023-06-06'):
+    def test_repay_apply(self, productId=ProductIdEnum.WEICAI.value, repayDate='2023-08-28'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
@@ -26,7 +26,7 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
         repayFile = YinLiuRepayFile(data, productId, repayTermNo='5', repayDate=repayDate)
-        repayFile.creditBuyBackFile()
+        repayFile.creditBuyBackFileByDays()
 
         self.repayPublicBizImpl.job.update_job('【引流】回购清单文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
         self.repayPublicBizImpl.job.trigger_job('【引流】回购清单文件分片任务流', group=13)

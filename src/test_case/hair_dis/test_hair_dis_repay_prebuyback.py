@@ -3,7 +3,7 @@ import warnings
 import time
 
 from src.enums.EnumsCommon import ProductIdEnum
-from src.impl.common.YinLiuCreateFileBizImpl import YinLiuRepayFile
+from src.impl.public.YinLiuCreateFileBizImpl import YinLiuRepayFile
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_case.hair_dis.person import data
 
@@ -17,7 +17,7 @@ class MyTestCase(unittest.TestCase):
         self.productId = ProductIdEnum.HAIR_DISCOUNT.value
 
     """ 测试步骤 """
-    def test_repay_apply(self, repayDate='2024-01-15'):
+    def test_repay_apply(self, repayDate='2023-06-05'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 

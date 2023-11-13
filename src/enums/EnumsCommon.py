@@ -23,7 +23,9 @@ class ProductEnum(Enum):
     HaLo = 'halo'
     HAIR = 'hair'
     WEICAI = 'weicai'
-    DIDI = 'didi'
+    YIXIN = 'yixin'
+    FQLGRT = 'fql_grt'
+    JIRO = 'jiro'
 
 
 @unique
@@ -40,7 +42,11 @@ class ProductIdEnum(Enum):
     HAIR_DISCOUNT = 'G23E041'
     HAIR = 'G23E042'
     WEICAI = 'G23E051'
-    DIDI = 'G23E071'
+    JIKE = 'G22E021'
+    XIAOX = 'G23E011'
+    YIXIN = 'G23E061'
+    FQLGRT = 'G23E091'
+    JIRO = 'G23E081'
 
 
 class EnumProductYearRate(Enum):
@@ -57,6 +63,9 @@ class EnumMerchantId(Enum):
     HALO = 'G23E03HALO'
     HAIR = 'G23E04HAIR'
     WEICAI = 'G23E05WEIC'
+    YIXIN = 'G23E06YIXN'
+    FQLGRT = 'G23E09FNQL'
+    JIRO = 'G23E08JIRO'
     DIDI = 'G23E07DIDI'
 
 

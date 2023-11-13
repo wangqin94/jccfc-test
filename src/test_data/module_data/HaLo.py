@@ -160,19 +160,19 @@ HaLo = {
                         "fileName": "credit.pdf"
                     },
                     {
-                        "fileType": "6",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_non_student_202000000948071964.pdf"
-                    },
-                    {
                         "fileType": "7",  # 三方查询授权书
                         "fileUrl": "xdgl/jike/test/third.pdf",
                         "fileName": "third.pdf"
                     },
                     {
-                        "fileType": "10",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_third_auth_202000000948071964.pdf"
+                        "fileType": "16",  # 学信网截图
+                        "fileUrl": "xdgl/jike/test/test.jpg",
+                        "fileName": "test.jpg"
+                    },
+                    {
+                        "fileType": "17",  # 人脸识别查询授权书
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     }
                 ],
                 "authenticationInfo": {
@@ -544,5 +544,47 @@ HaLo = {
                 "applyId": ""  # 结清证明编号
             }
         }
+    },
+
+    # 理赔文件 键值对字典数据模板
+    "haloClaimTemple": {
+        'loan_no': '',  # 借据号
+        'name': '',  # 姓名
+        'cer_no': '',  # 身份证号
+        'current_period': '',  # 期次
+        'repay_amt': '',  # 代偿总额
+        'repay_date': '',  # 代偿日期
+        'business_no': '',  # 流水号
+        'product_id': '',  # 产品号
+        'type_flag': '1',  # 类型标志
+        'loan_amt': '',  # 贷款总金额
+        'loan_period': '',  # 贷款总期次
+        'loan_date': '',  # 放款时间
+        'paid_prin_amt': '',  # 本金
+        'paid_int_amt': '',  # 利息
+        'left_repay_amt': '',  # 在贷余额
+        'compensationOverdueFee': '',  # 代偿罚息
+        'guaranteeMerchantId': '',  # 担保商户号
+    },
+
+    # 理赔文件 键值对字典数据模板
+    "haloBuyBackTemple": {
+        'loan_no': '',  # 借据号
+        'name': '',  # 姓名
+        'cer_no': '',  # 身份证号
+        'current_period': '',  # 期次
+        'repay_amt': '',  # 代偿总额
+        'repay_date': '',  # 代偿日期
+        'business_no': '',  # 流水号
+        'product_id': '',  # 产品号
+        'type_flag': '1',  # 类型标志
+        'loan_amt': '',  # 贷款总金额
+        'loan_period': '',  # 贷款总期次
+        'loan_date': '',  # 放款时间
+        'paid_prin_amt': '',  # 本金
+        'paid_int_amt': '',  # 利息
+        'left_repay_amt': '',  # 在贷余额
+        'compensationOverdueFee': '',  # 代偿罚息
+        'guaranteeMerchantId': '',  # 担保商户号
     },
 }

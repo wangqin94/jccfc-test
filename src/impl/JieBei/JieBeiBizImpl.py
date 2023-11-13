@@ -7,16 +7,14 @@ from src.test_data.module_data import jiebei
 from utils.Models import *
 
 
-
 class JieBeiBizImpl(EnvInit):
-    def __init__(self, *, data=None, encrypt_flag=False):
+    def __init__(self, *, data=None, encrypt_flag=False, person=True):
         super().__init__()
         self.MysqlBizImpl = MysqlBizImpl()
         # 解析项目特性配置
         self.cfg = jiebei.jiebei
 
-        self.data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JIEBEI.value), "applyno")
-
+        self.data = self.get_user_info(data=data, person=person)
         self.encrypt_flag = encrypt_flag
         self.strings = str(int(round(time.time() * 1000)))
 
@@ -25,6 +23,17 @@ class JieBeiBizImpl(EnvInit):
 
         # 初始化payload变量
         self.active_payload = {}
+
+    def get_user_info(self, data=None, person=True):
+        # 获取四要素信息
+        if data:
+            base_data = data
+        else:
+            if person:
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.JIEBEI.value), "applyno")
+            else:
+                base_data = get_base_data_temp()
+        return base_data
 
     def feature(self, bizActionType, **kwargs):
         feature_data = dict()
@@ -68,7 +77,7 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def datapreFs(self, applyType, **kwargs):
+    def datapreFs(self, applyType, creditAmt='2000000', creditRate='0.00060', applyNo=None, **kwargs):
         datapreFs_data = dict()
         #
         datapreFs_data['name'] = self.data['name']
@@ -76,10 +85,13 @@ class JieBeiBizImpl(EnvInit):
         datapreFs_data['mobileNo'] = self.data['telephone']
         datapreFs_data['cardNo'] = self.data['bankid']
         datapreFs_data['applyType'] = applyType
+        datapreFs_data['suggestAmtMax'] = creditAmt
+        datapreFs_data['suggestAmtMin'] = creditAmt
+        datapreFs_data['suggestRateMax'] = creditRate
+        datapreFs_data['suggestRateMax'] = creditRate
 
         if applyType == 'ADJUST_AMT_APPLY' or applyType == 'DECREASE_AMT_APPLY':
-            datapreFs_data['applyNo'] = "amtNo" + str(int(round(time.time() * 1000)))
-            # datapreFs_data['applyNo'] = "amtNo1678695062765"
+            datapreFs_data['applyNo'] = applyNo if applyNo else "amtNo" + str(int(round(time.time() * 1000)))
         else:
             datapreFs_data['applyNo'] = self.data['applyno']
 
@@ -96,19 +108,19 @@ class JieBeiBizImpl(EnvInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def creditNotice(self, bizType, **kwargs):
+    def creditNotice(self, bizType, applyNo=None, **kwargs):
         creditNotice_data = dict()
 
         creditNotice_data['name'] = self.data['name']
         creditNotice_data['certNo'] = self.data['cer_no']
         creditNotice_data['mobile'] = self.data['telephone']
         creditNotice_data['timestamp'] = int(time.time() * 1000)
-        creditNotice_data['applyNo'] = self.data['applyno']
         creditNotice_data['bizType'] = bizType
+        creditNotice_data['applyNo'] = applyNo if applyNo else self.data['applyno']
 
         # 更新 payload 字段值
         creditNotice_data.update(kwargs)
-        parser = DataUpdate(self.cfg['creditNotice']['payload'], **creditNotice_data)
+        parser = DataUpdate(self.cfg['creditNotice']['payload'], unique=False, **creditNotice_data)
         self.active_payload = parser.parser
 
         self.log.demsg('授信通知接口...')

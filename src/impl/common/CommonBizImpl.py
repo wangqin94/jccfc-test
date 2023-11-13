@@ -2,11 +2,12 @@
 # ------------------------------------------
 # 基于项目级业务层公共方法
 # ------------------------------------------
-from urllib import parse
-
-from utils.Models import *
 from config.globalConfig import *
+from engine.EnvInit import EnvInit
+from src.enums.EnumsCommon import ProductIdEnum
+from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data.common import *
+from utils.Models import *
 
 _log = MyLog.get_log()
 
@@ -79,5 +80,78 @@ def limit_invalid(self, productId, data):
     return response
 
 
+# 根据输入产品编号获取对应产品年利率
+def getInterestRate(productId):
+    """
+    @param productId: 产品ID
+    @return: 产品年利率：interest_fixed_rate
+    """
+
+    try:
+        if productId == ProductIdEnum.HAIR_DISCOUNT.value:
+            product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
+                                                                          product_id=productId,
+                                                                          param_key='discount_interest_rate')
+        else:
+            product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
+                                                                          product_id=productId,
+                                                                          param_key='interest_fixed_rate')
+        if product_product_param:
+            interestRate = product_product_param['param_value']
+            return float(interestRate)
+        else:
+            raise AssertionError("产品配置表年利率参数为空")
+    except Exception as err:
+        raise err
+
+
+# 计算当月计提利息
+def getDailyAccrueInterest(productId, days, leftAmt):
+    """
+    @param leftAmt: 当期剩余应还本金
+    @param days: 计提天数
+    @param productId: 产品ID
+    @return: 当月计提利息
+    """
+    try:
+        # 年基准天数
+        product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
+                                                                      product_id=productId,
+                                                                      param_key='days_per_year')
+        if product_product_param:
+            yearRate = product_product_param['param_value']  # 产品配置年利率
+            daysRate = round(getInterestRate(productId) / float(yearRate) / 100, 6)  # 日利率
+            dailyAccrueInterest = float(leftAmt) * daysRate * days
+            return round(dailyAccrueInterest, 2)
+        else:
+            raise AssertionError("产品配置表年基准天数参数为空")
+    except Exception as err:
+        raise err
+
+
+class ComBizImpl(EnvInit):
+    def __init__(self):
+        super().__init__()
+        self.MysqlBizImpl = MysqlBizImpl()
+
+    # 初始化渠道在贷余额
+    def initChannelLoanAmountInfo(self, productId, businessDate=None):
+        """
+        @param businessDate: 业务时间 默认昨日
+        @param productId: 产品编号
+        @return:初始化渠道在贷余额
+        """
+        _log.info('channel_loan_amount表初始化放款金额，不存则新增一条记录...')
+        date = businessDate if businessDate else str(get_before_day(1)).replace('-', '')
+        data = self.MysqlBizImpl.get_op_channel_database_info('channel_loan_amount', product_id=productId,
+                                                              business_date=date)
+        if data:
+            _log.info('存在 business_date={} 放款金额初始化记录，无需新增'.format(date))
+        else:
+            self.MysqlBizImpl.insert_channel_database_info("channel_loan_amount", product_id=productId,
+                                                           first_balance='10000.0000', total_balance='500000.0000',
+                                                           business_date=date)
+
+
 if __name__ == '__main__':
-    print(common.get('limit')['interface'])
+    print(ComBizImpl().initChannelLoanAmountInfo(ProductIdEnum.HAIR_DISCOUNT.value))

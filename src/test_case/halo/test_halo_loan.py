@@ -29,11 +29,12 @@ class MyTestCase(unittest.TestCase):
         self.log = MyLog.get_log()
         self.job = JOB()
         self.CheckBizImpl = CheckBizImpl()
+        self.loanPublicBizImpl = LoanPublicBizImpl()
         self.HaLoCheckBizImpl = HaLoCheckBizImpl(merchantId=None, data=self.data)
 
     """ 测试步骤 """
 
-    def test_apply(self, loan_date='2023-04-01'):
+    def test_apply(self, loan_date='2023-02-01'):
         """ 测试步骤 """
         # 绑卡签约
         HaLo = HaLoBizImpl(data=self.data)
@@ -59,17 +60,7 @@ class MyTestCase(unittest.TestCase):
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
         HaLo.applyLoan(loan_date=loan_date, loanAmt=amount, loanTerm=term, thirdApplyId=self.thirdApplyId)
 
-    """ 后置条件处理 """
-
-    def tearDown(self):
-        time.sleep(5)
         # 数据库陈校验授信结果是否符合预期
-        status = self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.TO_LOAN.value,
-                                                                       thirdpart_apply_id=self.thirdApplyId)
-        self.assertEqual(EnumLoanStatus.TO_LOAN.value, status, '支用失败')
-        # 执行任务流放款
-        self.job.update_job('线下自动放款', executeBizDateType='TODAY')
-        self.job.trigger_job('线下自动放款')
         self.CheckBizImpl.check_loan_apply_status_with_expect(expect_status=EnumLoanStatus.ON_USE.value,
                                                               thirdpart_apply_id=self.thirdApplyId)
         # 接口层校验授信结果是否符合预期
@@ -77,8 +68,13 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(YinLiuApiLoanStatusEnum.SUCCESS.value, status, '支用失败')
 
         # 更新放款时间
-        loanPublicBizImpl = LoanPublicBizImpl()
-        loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.thirdApplyId, loanDate=self.loan_date)
+        self.loanPublicBizImpl.updateLoanInfo(thirdLoanId=self.thirdApplyId, loanDate=self.loan_date)
+
+    """ 后置条件处理 """
+
+    def tearDown(self):
+        # 关闭放款mock
+        self.loanPublicBizImpl.updateLoanDateMock(flag=False)
 
 
 if __name__ == '__main__':

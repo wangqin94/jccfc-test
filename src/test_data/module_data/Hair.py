@@ -605,4 +605,38 @@ Hair = {
             }
         }
     },
+
+    # 海尔回购文件 键值对字典数据模板
+    "hairBuyBackTemple": {
+        'loan_no': '',  # 借据号
+        'name': '',  # 姓名
+        'cer_no': '',  # 身份证号
+        'current_period': '',  # 期次
+        'repay_amt': '',  # 代偿总额
+        'repay_date': '',  # 代偿日期
+        'business_no': '',  # 流水号
+        'product_id': '',  # 产品号
+        'type_flag': '1',  # 类型标志
+        'loan_amt': '',  # 贷款总金额
+        'loan_period': '',  # 贷款总期次
+        'loan_date': '',  # 放款时间
+        'compensationPrincipal': '',  # 本金
+        'compensationInterest': '',  # 利息
+        'loanBalance': '',  # 在贷余额
+        'compensationOverdueFee': '',  # 代偿罚息
+        'compensationFee': '',  # 代偿费用
+        'handler_status': '',  # 是否贴息 0:未贴息 1:已贴息 EnumBool.YES'
+        'guaranteeMerchantId': '',  # 担保商户号
+    },
+
+    # 海尔贴息文件 键值对字典数据模板
+    "hairDisInterestTemple": {
+        'loanNo': '',  # 借据号
+        'repayDate': '',  # 代偿日期
+        'repayTermNo': '',  # 期次
+        'productId': '',  # 产品代码
+        'subProductId': '',  # 子产品代码
+        'merchantId': '',  # 商户号
+        'preInterest': '',  # 利息
+    },
 }

@@ -231,8 +231,18 @@ class CtripBizImpl(EnvInit):
         asset_loan_invoice_info = self.MysqlBizImpl.get_asset_database_info(table="asset_loan_invoice_info",
                                                                             loan_invoice_id=loan_invoice_id)
         execute_rate = asset_loan_invoice_info["execute_rate"]
+        if repay_term_no:
+            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
+                                                                         loan_invoice_id=loan_invoice_id,
+                                                                         current_num=repay_term_no)
+        else:
+            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4','5') ORDER BY 'current_num'".format(
+                loan_invoice_id)
+            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
+        min_term = int(asset_repay_plan['current_num'])
+        self.log.demsg('当期最早未还期次: {}'.format(min_term))
         # 根据借据Id和期次获取还款计划
-        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, repay_term_no)
+        key3 = "loan_invoice_id = '{}' and current_num = '{}'".format(loan_invoice_id, min_term)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info(table="asset_repay_plan", key=key3)
 
         # 通知payload

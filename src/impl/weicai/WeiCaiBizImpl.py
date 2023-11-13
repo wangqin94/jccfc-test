@@ -5,8 +5,7 @@
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
-from src.impl.common.MysqlBizImpl import MysqlBizImpl
-from src.test_data.module_data import weicai
+from src.test_data.module_data import WeiCai
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
 from utils.Apollo import Apollo
@@ -24,7 +23,7 @@ class WeiCaiBizImpl(MysqlInit):
         self.MysqlBizImpl = MysqlBizImpl()
         self.apollo = Apollo()
         # 解析项目特性配置
-        self.cfg = weicai.weicai
+        self.cfg = WeiCai.WeiCai
         self.encrypt_flag = encrypt_flag
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
@@ -39,25 +38,13 @@ class WeiCaiBizImpl(MysqlInit):
         self.encrypt_url = self.host + self.cfg['encrypt']['interface'].format(self.merchantId)
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
 
-    def getRepayPlan(self, billDate, loanAmt, yearRate, term):
-        # 根据输入产品编号获取对应产品年利率
-        if self.productId == ProductIdEnum.HAIR.value:
-            repayPlan = yinLiuRepayPlanByAvgAmt(billDate=billDate, loanAmt=loanAmt,
-                                                yearRate=yearRate, term=term)
-        elif self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            repayPlan = yinLiuRepayPlanByAvgPrincipal(billDate=billDate, loanAmt=loanAmt,
-                                                      yearRate=yearRate, term=term, guaranteeAmt=0)
-        else:
-            raise Exception('产品编号输入错误：{}'.format(self.productId))
-        return repayPlan
-
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
         if data:
             base_data = data
         else:
             if person:
-                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.HAIR.value))
+                base_data = get_base_data(str(self.env) + ' -> ' + str(ProductEnum.WEICAI.value))
             else:
                 base_data = get_base_data_temp()
         return base_data
@@ -351,13 +338,14 @@ class WeiCaiBizImpl(MysqlInit):
         # body
         syncGuaranteePlan['loanInvoiceId'] = loanInvoiceId
         # 组装担保费计划
-        term = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
+        term = credit_loan_invoice['installment_num']
         guaranteePlans = []
-        for period in range(1, term + 1):
+        for period in range(1, term+2):
             guaranteePlan = {"period": period, "guaranteeAmt": guaranteeAmt}
             guaranteePlans.append(guaranteePlan)
+        # guaranteePlans[2]["period"] = 3
         syncGuaranteePlan['guaranteePlans'] = guaranteePlans
-
         # 更新 payload 字段值
         syncGuaranteePlan.update(kwargs)
         parser = DataUpdate(self.cfg['syncGuaranteePlan']['payload'], **syncGuaranteePlan)
@@ -419,7 +407,7 @@ class WeiCaiBizImpl(MysqlInit):
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         # 如果是贴息产品，担保费为0
-        repayGuaranteeFee = 0 if self.productId == ProductIdEnum.HAIR_DISCOUNT.value else repayGuaranteeFee
+        repayGuaranteeFee = repayGuaranteeFee
         # 构造还款参数
         repay_apply_data = dict()
         # head
@@ -427,10 +415,10 @@ class WeiCaiBizImpl(MysqlInit):
         repay_apply_data['requestTime'] = self.date
         repay_apply_data['merchantId'] = self.merchantId
         # body
+        repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
         repay_apply_data['loanInvoiceId'] = loanInvoiceId
         repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
-        repay_apply_data['repayScene'] = repay_scene
         repay_apply_data['repayType'] = repay_type
         if repayTerm:
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
@@ -479,7 +467,7 @@ class WeiCaiBizImpl(MysqlInit):
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days = '0' ORDER BY 'current_num'".format(
                 loanInvoiceId)
             currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm else 0  # 宽限期利息
+            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm and currentTerm['current_num'] != repayTerm else 0  # 宽限期利息
             repay_apply_data["repayInterest"] = round(repay_apply_data["repayInterest"] + currentTermInterest, 2)  # 总利息
             self.log.demsg("宽限期利息：{}".format(repay_apply_data["repayInterest"]))
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
@@ -517,6 +505,8 @@ class WeiCaiBizImpl(MysqlInit):
         # 线上还款
         if repay_scene == '01':
             repay_apply_data['repaymentAccountNo'] = self.data['bankid']
+            repay_apply_data['repaymentAccountName'] = self.data['name']
+            repay_apply_data['repaymentAccountPhone'] = self.data['telephone']
         # 线下还款、逾期还款
         if repay_scene == '02' or '05':
             repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings

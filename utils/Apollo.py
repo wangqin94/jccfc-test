@@ -10,7 +10,7 @@ import time
 
 import requests
 
-from config.TestEnvInfo import TEST_ENV_INFO
+from config.TestEnvInfo import TEST_ENV_INFO, hj, credit
 from config.globalConfig import API, apollo_headers, json_headers
 from utils import ReadConfig
 from utils.Enums import *
@@ -21,8 +21,6 @@ _readconfig = ReadConfig.Config()
 
 
 def getApolloEnv(env):
-    hj = ['hsit', 'huat', 'hdev', 'hqas', 'hpre']
-    credit = ['uat', 'rts', 'dev', 'sit', 'year']
     # apolloEnv = None
     try:
         if env in hj:
@@ -161,10 +159,10 @@ if __name__ == '__main__':
 
     # 设置放款mock时间
     # updateKeys['credit.loan.trade.date.mock'] = "true"
-    # updateKeys['credit.loan.date.mock'] = "2023-03-29"
+    # updateKeys['credit.loan.date.mock'] = "2023-08-04"
     # apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **updateKeys)
 
     # 配置还款mock时间
     updateKeys['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-    updateKeys['credit.mock.repay.date'] = "{} 12:00:00".format("2023-04-05")
+    updateKeys['credit.mock.repay.date'] = "{} 13:40:00".format("2023-10-09")
     apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **updateKeys)

@@ -15,30 +15,39 @@ class MyTestCase(unittest.TestCase):
         self.redis = Redis()
 
     """ 测试步骤 """
-    def test_loan(self):
-        jb = JieBeiCheckBizImpl(data=None)
+    def test_loan(self, data=None, creditAmt='5000000', loanAmt='5000000'):
+        """
+        授信、支用全流程
+        :param creditAmt: 授信金额
+        :param loanAmt: 支用金额
+        :return:
+        """
+        # flag: 0-授信支用全流程，1-仅支用
+        flag = 0
+        jb = JieBeiCheckBizImpl(data=data)
         jb_apply_file = creditFile(data=jb.data)
         jb_loanapply_file = loanApplyFile(data=jb.data)
-        jb_loandetail_file = loandetailFile(data=jb.data)
+        jb_loandetail_file = loandetailFile(data=jb_loanapply_file.data)
         self.third_loan_no = jb_loandetail_file.contract_no
-        # 初审
-        jb.datapreCs()
-        self.applyNo = jb.data['applyno']
-        # 检查初审结果
-        jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
-        # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客
-        jb.datapreFs(applyType='ADMIT_APPLY', tc_NoSource_ToPlatformOne='N')
-        # 检查复审结果
-        jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)
-        # 授信通知
-        jb.creditNotice(bizType='ADMIT_APPLY', creditAmt=5000000)
-        # 创建授信文件
-        jb_apply_file.start_creditFile()
-        # 执行授信对账文件处理任务
-        self.job.update_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
-        self.job.trigger_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB')
+        if flag == 0:
+            # 初审
+            jb.datapreCs()
+            self.applyNo = jb.data['applyno']
+            # 检查初审结果
+            jb.jiebei_check_feature_detail('jc_cs_result', self.applyNo)
+            # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客
+            jb.datapreFs(applyType='ADMIT_APPLY', creditAmt=creditAmt, tc_NoSource_ToPlatformOne='N')
+            # 检查复审结果
+            jb.jiebei_check_feature_detail('jc_fs_result', self.applyNo)
+            # 授信通知
+            jb.creditNotice(bizType='ADMIT_APPLY', creditAmt=creditAmt)
+            # 创建授信文件
+            jb_apply_file.start_creditFile()
+            # 执行授信对账文件处理任务
+            self.job.update_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
+            self.job.trigger_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB')
         # 创建支用文件
-        jb_loanapply_file.start_loanApplyFile()
+        jb_loanapply_file.start_loanApplyFile(loanAmt=loanAmt)
         time.sleep(3)
         # 执行创建支用单任务
         self.job.update_job('借呗支用文件（创建支用单）处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
@@ -46,11 +55,11 @@ class MyTestCase(unittest.TestCase):
         # 检查是否入三方待建账信息
         self.CheckBizImpl.check_loan_apply_status_with_expect('09', certificate_no=jb.data['cer_no'])
         # 创建放款合约+分期
-        jb_loandetail_file.start_loandetailFile()
+        jb_loandetail_file.start_loandetailFile(loanAmt=loanAmt)
         # 删除保存待放款redis
-        self.redis.del_key('000:OBJ:SAVE_THIRD_LOAN:{}'.format(datetime.datetime.now().strftime('%Y%m%d')))
+        self.redis.del_key('000:OBJ:SAVE_THIRD_LOAN:{}'.format(datetime.now().strftime('%Y%m%d')))
         # 创建放款失败+在途处理完成redis
-        self.redis.add_key('000:OBJ:PUSH_LOAN_TO_ASSET:{}'.format(datetime.datetime.now().strftime('%Y%m%d')))
+        self.redis.add_key('000:OBJ:PUSH_LOAN_TO_ASSET:{}'.format(datetime.now().strftime('%Y%m%d')))
         # 执行放款登记入库
         self.job.update_job('借呗step5-借呗放款登记入线下待放款表任务流(轮询)', group=13, executeBizDateType='TODAY')
         self.job.trigger_job('借呗step5-借呗放款登记入线下待放款表任务流(轮询)', group=13)

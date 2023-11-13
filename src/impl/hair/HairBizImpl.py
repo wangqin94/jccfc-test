@@ -34,7 +34,7 @@ class HairBizImpl(MysqlInit):
         # 初始化产品、商户、门店号
         self.productId = productId if productId else ProductIdEnum.HAIR_DISCOUNT.value
         self.merchantId = EnumMerchantId.HAIR.value
-        self.interestRate = self.getInterestRate()
+        self.interestRate = getInterestRate(self.productId)
         self.storeCode = 'NHairStore'  # 需保证测试环境有此storeCode门店
 
         # 初始化payload变量
@@ -42,16 +42,6 @@ class HairBizImpl(MysqlInit):
 
         self.encrypt_url = self.host + self.cfg['encrypt']['interface'].format(self.merchantId)
         self.decrypt_url = self.host + self.cfg['decrypt']['interface']
-
-    def getInterestRate(self):
-        # 根据输入产品编号获取对应产品年利率
-        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            interestRate = EnumProductYearRate.HAIR_DISCOUNT.value
-        elif self.productId == ProductIdEnum.HAIR.value:
-            interestRate = EnumProductYearRate.HAIR.value
-        else:
-            raise Exception('产品编号输入错误：{}'.format(self.productId))
-        return interestRate
 
     def getRepayPlan(self, billDate, loanAmt, yearRate, term):
         # 根据输入产品编号获取对应产品年利率
@@ -169,25 +159,8 @@ class HairBizImpl(MysqlInit):
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
-        date = str(get_before_day(1)).replace('-', '')
-        channel_loan_amount_num = self.MysqlBizImpl.select_channel_database_info('channel_loan_amount',
-                                                                                 product_id='G23E041',
-                                                                                 business_date=date
-                                                                                 )
-        if channel_loan_amount_num > 1:
-            self.MysqlBizImpl.delete_channel_database_info("channel_loan_amount", product_id='G23E041',
-                                                           business_date=date)
-            self.MysqlBizImpl.insert_channel_database_info("channel_loan_amount", product_id='G23E041',
-                                                           first_loan_amount='0.0000',
-                                                           second_loan_amount='0.0000', total_loan_amount='0.0000',
-                                                           first_balance='15900.0000', second_balance='0.0000'
-                                                           , total_balance='521000.0000', business_date=date, status=0)
-        elif channel_loan_amount_num == 0:
-            self.MysqlBizImpl.insert_channel_database_info("channel_loan_amount", product_id='G23E041',
-                                                           first_loan_amount='0.0000',
-                                                           second_loan_amount='0.0000', total_loan_amount='0.0000',
-                                                           first_balance='15900.0000', second_balance='0.0000'
-                                                           , total_balance='521000.0000', business_date=date, status=0)
+        # 初始化产品的放款金额
+        ComBizImpl().initChannelLoanAmountInfo(self.productId)
 
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
@@ -525,8 +498,8 @@ class HairBizImpl(MysqlInit):
             # 非贴息产品应收当期利息+宽限期期次利息， 贴息产品应收当前期利息
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days = '0' ORDER BY 'current_num'".format(
                 loanInvoiceId)
-            currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
-            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm else 0  # 宽限期利息
+            currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
+            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm and currentTerm['current_num'] != repayTerm else 0  # 宽限期利息
             repay_apply_data["repayInterest"] = round(repay_apply_data["repayInterest"] + currentTermInterest, 2)  # 总利息
             # 贴息产品，账单日贴息已入账，只出当前期利息
             if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
