@@ -1,3 +1,4 @@
+fpdf
 allure-pytest==2.9.45
 allure-python-commons==2.9.45
 appdirs==1.4.4

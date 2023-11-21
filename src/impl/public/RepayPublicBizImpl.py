@@ -49,10 +49,10 @@ class RepayPublicBizImpl(MysqlInit):
         apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
         self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
 
-        self.log.demsg('清除分片流水')
-        self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
-        self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
-        self.MysqlBizImpl.del_assert_repay_history_data(last_date)
+        # self.log.demsg('清除分片流水')
+        # self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_serial')
+        # self.MysqlBizImpl.delete_credit_database_info('credit_slice_batch_log')
+        # self.MysqlBizImpl.del_assert_repay_history_data(last_date)
 
         self.log.demsg("删除redis中资产账务时间 key=000:ACCT:SysInfo:BIGACCT、000:ACCT:AccountDate:BIGACCT")
         self.redis.del_assert_repay_keys()
@@ -60,15 +60,17 @@ class RepayPublicBizImpl(MysqlInit):
         self.log.demsg('新增资产卸数记录')
         self.MysqlBizImpl.get_asset_job_ctl_info(job_date=last_date)
 
-        self.log.demsg("执行摊销文件任务流")
-        self.job.update_job("摊销文件任务流", group=5, executeBizDateType='CUSTOMER', executeBizDate=last_date)
-        self.job.trigger_job("摊销文件任务流", group=5)
-        time.sleep(3)
+        self.MysqlBizImpl.update_acct_task_info(repay_date_format)
 
-        self.log.demsg("执行账务日终任务")
-        self.job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
-        self.job.trigger_job("资产日终任务流", group=6)
-        time.sleep(10)  # 等待任务执行
+        # self.log.demsg("执行摊销文件任务流")
+        # self.job.update_job("摊销文件任务流", group=5, executeBizDateType='CUSTOMER', executeBizDate=last_date)
+        # self.job.trigger_job("摊销文件任务流", group=5)
+        # time.sleep(3)
+
+        # self.log.demsg("执行账务日终任务")
+        # self.job.update_job("资产日终任务流", group=6, executeBizDateType='CUSTOMER', executeBizDate=last_date)
+        # self.job.trigger_job("资产日终任务流", group=6)
+        # time.sleep(10)  # 等待任务执行
 
     def pre_overdue_repay_data(self, productId, loan_date=None):
         """

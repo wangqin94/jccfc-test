@@ -24,7 +24,7 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
     """
 
     # data1 = json.dumps(payload)
-    _log.info("payload数据: {}".format(payload))
+    _log.info("payload数据: {}".format(json.dumps(payload,ensure_ascii=False)))
 
     if encrypt_flag:
         encrypt_payload = encrypt(encrypt_url, headers, payload)

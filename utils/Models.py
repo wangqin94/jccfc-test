@@ -6,25 +6,24 @@
 import base64
 import datetime as datetimes
 import hashlib
+import json
+import os
 import random
 import string
-import json
 import time
-import os
+from datetime import datetime
+from functools import wraps
+from inspect import getcallargs
 
 import demjson as demjson
 import requests
-from inspect import getcallargs
-from datetime import datetime
-from functools import wraps
+from dateutil.relativedelta import relativedelta
 
 from config.TestEnvInfo import TEST_ENV_INFO
 from utils.BankNo import BankNo
 from utils.GenName import get_name
 from utils.Identity import IdNumber
 from utils.Logger import MyLog
-
-from dateutil.relativedelta import relativedelta
 
 _log = MyLog.get_log()
 
@@ -82,6 +81,11 @@ def get_base_data(env, *project, back=20, age=None, bankName=None, **kwargs):
     data['bankid'] = BankNo().get_bank_card(bankName=bankName)[0]
     data['bankcode'] = BankNo().get_bank_card(bankName=bankName)[1]
 
+    if os.path.exists("person.py"):
+        pass
+    else:
+        file = open("person.py", "w")
+        file.close()
     # 读取文件行数，超过20行删除历史数据
     with open('person.py', "r", encoding='utf-8') as f:  # 打开文件
         back_data = f.readlines()  # 读取文件
@@ -404,8 +408,8 @@ class DataUpdate(object):
         if isinstance(data, dict):  # 使用isinstance检测数据类型，如果是字典
             if key in data.keys():  # 替换字典第一层中所有key与传参一致的key
                 data[key] = value
-                if self.unique:
-                    return data
+            if self.unique:
+                return data
             # # TODO:
             # # 遍历字典的所有子层级，将子层级赋值为变量chdict，
             # # 分别替换子层级第一层中所有key对应的value，

@@ -61,6 +61,27 @@ class MysqlBizImpl(MysqlInit):
         except Exception as err:
             self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
 
+    def get_asset_repay_plan(self, table='asset_repay_plan', key1='查询字段', key="查询条件", record=-1):
+
+        sql = "select {} from {}.{} where {};".format(key1, self.asset_database_name, table, key)
+
+        keys = key1.split(",")
+        # 获取查询内容
+
+        self.log.info(sql)
+        values = self.mysql_asset.select(sql)
+        try:
+            # 每条查询到的数据处理 [{表字段:内容值, ...}, {}]
+            if record == 999:
+                data = [dict(zip(keys, item)) for item in values]
+                self.log.info("执行sql查询：{} {}: query {} ".format(sql, data, len(data)))
+            else:
+                data = [dict(zip(keys, item)) for item in values][record]
+                self.log.info("执行sql查询:{} query last one data:{}".format(sql, data))
+            return data
+        except Exception as err:
+            self.log.warning("SQL查询{} {}: query 0 ".format(sql, err))
+
     def credit_apply_query(self, data):
         """ # 接口数据payload解密
             :return:                查询状态
@@ -346,6 +367,18 @@ class MysqlBizImpl(MysqlInit):
         sql = delete_sql_qurey_str(table, self.op_channel_database_name, **kwargs)
         self.mysql_op_channel.delete(sql)
 
+    def select_channel_database_info(self, table, *args, **kwargs):
+        """
+        查询op-channel数据库 数据
+        :param table: 查询表
+        :param args: 查询数据
+        :param kwargs: 条件
+        :return: 满足条件数据条数
+        """
+        sql = get_sql_qurey_str(table, *args, db=self.op_channel_database_name, **kwargs)
+        self.log.info(sql)
+        return len(self.mysql_op_channel.select(sql))
+
     def delete_asset_database_info(self, table, **kwargs):
         """
         删除asset数据库结构
@@ -401,6 +434,12 @@ class MysqlBizImpl(MysqlInit):
             self.mysql_asset.insert('asset_job_ctl', tenant_id='000', job_date=job_date, job_type=job_type,
                                     job_name='日终结束任务', job_order='999', job_status='1', create_time=curtime,
                                     update_time=curtime)
+
+    def update_acct_task_info(self,date):
+        sql = f"UPDATE  acct_task_info set account_date='{date}';"
+        self.mysql_bigacct.update(sql)
+        self.log.info("sql：更新成功 [{}]".format(sql))
+
 
     def get_loan_invoice_info(self, *args, record=-1, **kwargs):
 

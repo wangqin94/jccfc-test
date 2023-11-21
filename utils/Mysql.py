@@ -2,7 +2,9 @@
 """
 数据库类，连接，查询等方法
 """
+
 import pymysql
+
 from utils.Logger import MyLog
 
 _log = MyLog.get_log()
@@ -17,8 +19,11 @@ class Mysql(object):
         self.cursor = self.__mysql_cursor
 
     def __del__(self):
-        self.__mysql_cursor.close()
-        self.__mysql.close()
+        try:
+            self.__mysql_cursor.close()
+            self.__mysql.close()
+        except:
+            pass  # 链接已关闭无需 关闭 避免抛错影响日志展示
 
     def switch_cusor(self, obj=0):
         self.cursor = self.cursor_list[obj]
@@ -70,7 +75,8 @@ class Mysql(object):
             # 提交到数据库执行
             self.__mysql.commit()
         except Exception as e:
-            _log.info(e)
+            if isinstance(e, str):
+                _log.info(e)
         res_values = self.cursor.fetchall()
         return res_values
 

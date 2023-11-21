@@ -66,14 +66,15 @@ class EnumMerchantId(Enum):
     YIXIN = 'G23E06YIXN'
     FQLGRT = 'G23E09FNQL'
     JIRO = 'G23E08JIRO'
+    DIDI = 'G23E07DIDI'
 
 
 @unique
 class EnumCreditStatus(Enum):
     SUCCESS = '03'  # 成功
     TO_CREDIT = '02'  # 审批中
-    FAIL = '04'       # 失败
-    AUDITING = '00'    # 待审核
+    FAIL = '04'  # 失败
+    AUDITING = '00'  # 待审核
 
 
 @unique
@@ -88,6 +89,7 @@ class EnumLoanStatus(Enum):
     LOANING = '16'  # 放款中
     LOAN_AUDITING = '23'  # 放款审核中
     INITIALIZATION = '01'  # 初始化
+    TO_SIGN = '11'  # 待签约
 
 
 @unique
@@ -95,7 +97,7 @@ class EnumChannelRepayStatus(Enum):
     TO_REPAY = '01'  # 处理中
     SUCCESS = '03'  # 成功
     CHECK_FAIL = '02'  # 信贷校验失败
-    FAIL = '04'   # 资产校验失败
+    FAIL = '04'  # 资产校验失败
 
 
 @unique
@@ -104,11 +106,11 @@ class EnumChannelLoanCompensationStatus(Enum):
     WAIT = '1'  # 待处理
     MANUAL_CONFIRMATION = '2'  # 手动确认
     ACCOUNT_SUCCESS = '3'  # 已入账
-    CANCEL_WAIT = '4'   # 取消待处理
+    CANCEL_WAIT = '4'  # 取消待处理
     CANCEL_MANUAL_CONFIRMATION = '5'  # 取消手动处理
     ASSET_PROCESSING = '6'  # 资产入账处理中
     FAIL = '7'  # 入账失败
-    FAIL_WAIT_BACK = '8'   # 资金回退待处理
+    FAIL_WAIT_BACK = '8'  # 资金回退待处理
 
 
 @unique
@@ -116,7 +118,7 @@ class EnumCustomPaymentStatus(Enum):
     TO_REPAY = '01'  # 处理中
     SUCCESS = '03'  # 成功
     FAIL = '02'  # 信贷校验失败
-    TO_DO = '00'   # 待处理
+    TO_DO = '00'  # 待处理
 
 
 @unique
@@ -124,8 +126,8 @@ class EnumHjLoanDealStatus(Enum):
     INIT = '00'  # 待处理
     PROCESS = '01'  # 处理中
     VALIDATE_FAIL = '02'  # 校验失败
-    LOAN_SUCCESS = '03'   # 放款成功
-    LOAN_FAIL = '04'   # 放款失败
+    LOAN_SUCCESS = '03'  # 放款成功
+    LOAN_FAIL = '04'  # 放款失败
 
 
 @unique
@@ -133,8 +135,8 @@ class EnumHjRepayNoticeStatus(Enum):
     INIT = '00'  # 待处理
     PROCESS = '01'  # 处理中
     VALIDATE_FAIL = '02'  # 校验失败
-    REPAY_SUCCESS = '03'   # 放款成功
-    REPAY_FAIL = '04'   # 放款失败
+    REPAY_SUCCESS = '03'  # 放款成功
+    REPAY_FAIL = '04'  # 放款失败
 
 
 # @unique
