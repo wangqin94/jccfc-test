@@ -15,7 +15,7 @@ class MyTestCase(unittest.TestCase):
         self.redis = Redis()
 
     """ 测试步骤 """
-    def test_loan(self, data=None, creditAmt='5000000', loanAmt='5000000'):
+    def test_loan(self, data=data, creditAmt='5000000', loanAmt='3000000'):
         """
         授信、支用全流程
         :param creditAmt: 授信金额
@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
         :return:
         """
         # flag: 0-授信支用全流程，1-仅支用
-        flag = 0
+        flag = 1
         jb = JieBeiCheckBizImpl(data=data)
         jb_apply_file = creditFile(data=jb.data)
         jb_loanapply_file = loanApplyFile(data=jb.data)
@@ -61,8 +61,8 @@ class MyTestCase(unittest.TestCase):
         # 创建放款失败+在途处理完成redis
         self.redis.add_key('000:OBJ:PUSH_LOAN_TO_ASSET:{}'.format(datetime.now().strftime('%Y%m%d')))
         # 执行放款登记入库
-        self.job.update_job('借呗step5-借呗放款登记入线下待放款表任务流(轮询)', group=13, executeBizDateType='TODAY')
-        self.job.trigger_job('借呗step5-借呗放款登记入线下待放款表任务流(轮询)', group=13)
+        self.job.update_job('借呗step5-借呗放款登记入线下待放款表任务流', group=13, executeBizDateType='TODAY')
+        self.job.trigger_job('借呗step5-借呗放款登记入线下待放款表任务流', group=13)
         # 检查是否入三方待建账信息
         self.CheckBizImpl.check_third_wait_loan_status(third_loan_no=jb_loandetail_file.contract_no)
         # 执行任务流放款
