@@ -381,7 +381,7 @@ class HaLoBizImpl(MysqlInit):
         return response
 
     # 还款申请
-    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
+    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=1,
                     repayDate=None, paymentOrder=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致

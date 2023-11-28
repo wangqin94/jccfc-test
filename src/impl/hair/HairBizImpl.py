@@ -160,7 +160,7 @@ class HairBizImpl(MysqlInit):
         @return: response 接口响应参数 数据类型：json
         """
         # 初始化产品的放款金额
-        ComBizImpl().initChannelLoanAmountInfo(self.productId)
+        ComBizImpl().initChannelLoanAmountInfo(ProductIdEnum.HAIR_DISCOUNT.value)
 
         self.log.demsg('用户四要素信息: {}'.format(self.data))
         strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))

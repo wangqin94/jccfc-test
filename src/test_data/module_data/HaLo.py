@@ -36,7 +36,7 @@ HaLo = {
                 "payerBankCardNum": "",  # 付款方银行卡号
                 "payerBankCode": "0102",  # 付款方银行编号
                 "aggrementNum": "",  # 代扣协议号
-                "payChannel": "1010",  # 支付通道  固定传1010-宝付协议支付渠道
+                "payChannel": "1001",  # 支付通道  固定传1001-通联渠道
             }
         }
     },
