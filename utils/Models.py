@@ -408,8 +408,8 @@ class DataUpdate(object):
         if isinstance(data, dict):  # 使用isinstance检测数据类型，如果是字典
             if key in data.keys():  # 替换字典第一层中所有key与传参一致的key
                 data[key] = value
-            if self.unique:
-                return data
+                if self.unique:
+                    return data
             # # TODO:
             # # 遍历字典的所有子层级，将子层级赋值为变量chdict，
             # # 分别替换子层级第一层中所有key对应的value，

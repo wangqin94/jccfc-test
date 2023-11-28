@@ -13,6 +13,7 @@ def _init():  # 初始化
 def set_value(key, value):
     # 定义一个全局变量
     data[key] = value
+    return data
 
 
 def get_value(key):
