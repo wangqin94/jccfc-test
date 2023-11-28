@@ -21,4 +21,6 @@ TEST_ENV_INFO = 'hsit'
 # TEST_ENV_INFO = 'year'
 # TEST_ENV_INFO = 'dev'
 # TEST_ENV_INFO = 'sit'
+# TEST_ENV_INFO = 'hpet'
+# TEST_ENV_INFO = 'hyear'
 
