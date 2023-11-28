@@ -435,11 +435,10 @@ class MysqlBizImpl(MysqlInit):
                                     job_name='日终结束任务', job_order='999', job_status='1', create_time=curtime,
                                     update_time=curtime)
 
-    def update_acct_task_info(self,date):
+    def update_acct_task_info(self, date):
         sql = f"UPDATE  acct_task_info set account_date='{date}';"
         self.mysql_bigacct.update(sql)
         self.log.info("sql：更新成功 [{}]".format(sql))
-
 
     def get_loan_invoice_info(self, *args, record=-1, **kwargs):
 
