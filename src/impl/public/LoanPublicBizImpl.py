@@ -27,7 +27,7 @@ class LoanPublicBizImpl(MysqlInit):
         """
         self.log.demsg("更新loan_apply放款时间apply_time、loan_pay_time")
         loanDate = loanDate if loanDate else time.strftime('%Y-%m-%d', time.localtime())
-        self.MysqlBizImpl.update_credit_database_info('credit_loan_apply', attr="third_loan_invoice_id='{}'".format(
+        self.MysqlBizImpl.update_credit_database_info('credit_loan_apply', attr="thirdpart_apply_id='{}'".format(
             thirdLoanId), apply_time="{} 13:57:59".format(loanDate), loan_pay_time="{} 13:57:59".format(loanDate))
 
         self.log.demsg("更新credit_loan_invoice放款时间loan_pay_time")
