@@ -86,9 +86,10 @@ class Mysql(object):
             self.__mysql.rollback()
             raise e
 
-    def insert(self, table, **kwargs):
+    def insert(self, table, db=None, **kwargs):
         try:
             # 执行SQL语句
+            table = table if not db else '%s.%s' % (db, table)
             keys = ', '.join(kwargs.keys())
             values = ', '.join(['%s'] * len(kwargs))
             sql = 'INSERT INTO {table}({keys}) VALUES ({values})'.format(table=table, keys=keys, values=values)
