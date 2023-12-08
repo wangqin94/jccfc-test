@@ -154,8 +154,6 @@ class JiKeBizImpl(MysqlInit):
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
-        self.interestRate = getInterestRate(ProductIdEnum.JIKE.value)
-
         # 初始化payload变量
         self.active_payload = {}
 
@@ -282,7 +280,7 @@ class JiKeBizImpl(MysqlInit):
         # body
 
         credit_data['thirdApplyId'] = 'thirdApplyId' + strings
-        credit_data['interestRate'] = self.interestRate
+        credit_data['interestRate'] = getInterestRate(ProductIdEnum.JIKE.value)
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '2'  # 应传2
@@ -389,7 +387,7 @@ class JiKeBizImpl(MysqlInit):
 
         applyLoan_data['loanAmt'] = loanAmt
         applyLoan_data['loanTerm'] = loanTerm
-        applyLoan_data['interestRate'] = self.interestRate
+        applyLoan_data['interestRate'] = getInterestRate(ProductIdEnum.JIKE.value)
 
         # 用户信息
         applyLoan_data['idNo'] = self.data['cer_no']
@@ -404,7 +402,8 @@ class JiKeBizImpl(MysqlInit):
         # 还款计划
         # applyLoan_data['repaymentPlans'] = jike_loanByAvgAmt(loanAmt, loanTerm, year_rate_jc=9.7, year_rate_jk=rate, bill_date=firstRepayDate)
         applyLoan_data['repaymentPlans'] = yinLiuRepayPlanByAvgAmt(billDate=firstRepayDate, loanAmt=loanAmt,
-                                                                   yearRate=self.interestRate, term=loanTerm)
+                                                                   yearRate=getInterestRate(ProductIdEnum.JIKE.value),
+                                                                   term=loanTerm)
         # 更新 payload 字段值
         applyLoan_data.update(kwargs)
         parser = DataUpdate(self.cfg['loan_apply']['payload'], **applyLoan_data)
@@ -506,7 +505,7 @@ class JiKeBizImpl(MysqlInit):
         return response
 
     # 还款申请
-    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
+    def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=1,
                     repayDate=None, paymentOrder=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致

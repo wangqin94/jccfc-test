@@ -46,6 +46,8 @@ class LoanPublicBizImpl(MysqlInit):
         self.MysqlBizImpl.update_asset_database_info('asset_loan_invoice_info', attr="loan_invoice_id='{}'".format(
             loanInvoiceId), apply_loan_date=loanDateFormat)
 
+        return loanInvoiceId
+
     def updateLoanDateMock(self, date="2023-06-06", flag=True):
         """
         设置放款mock时间
@@ -59,4 +61,4 @@ class LoanPublicBizImpl(MysqlInit):
 
 if __name__ == '__main__':
     loanPublicBizImpl = LoanPublicBizImpl()
-    loanPublicBizImpl.updateLoanInfo(thirdLoanId='thirdApplyId16944238465703538', loanDate='2023-08-12')
+    loanPublicBizImpl.updateLoanInfo(thirdLoanId='thirdApplyId16944238465703538', loanDate='2024-05-01')

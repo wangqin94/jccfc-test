@@ -812,6 +812,57 @@ class HaLoBizImpl(MysqlInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
+    # H5还款申请payload
+    def payment(self, loan_invoice_id=None, repay_type='0', payment_type="5", repayTerm=None, **kwargs):
+        """
+        还款申请payload字段装填
+        注意：键名必须与接口原始数据的键名一致
+        @param repayTerm: 还款期次
+        @param loan_invoice_id: 借据号 默认不传根据身份证号获取
+        @param repay_type: 还款类型 0：按期还款； 1：提前结清
+        @param payment_type： 1 支付宝主动还款 5 银行卡主动还款
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
+        """
+        self.log.demsg('准备锦程H5还款申请报文...')
+        data = dict()
+        # head
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        requestSerialNo = 'SerialNo' + strings + "2"
+        data['requestSerialNo'] = requestSerialNo
+
+        # body
+        data['repayType'] = repay_type
+        if not loan_invoice_id:
+            # 根据用户名称查询借据信息
+            key1 = "user_name = '{}'".format(self.data['name'])
+            credit_loan_invoice = self.MysqlBizImpl.get_credit_data_info(table="credit_loan_invoice", key=key1)
+            loan_invoice_id = credit_loan_invoice["loan_invoice_id"]
+        data['loanInvoiceId'] = loan_invoice_id
+
+        data['paymentType'] = payment_type
+        data['appOrderNo'] = 'appOrderNo' + strings
+        if payment_type == "5":
+            data['idNo'] = self.data['cer_no']
+            data['bankAcctNo'] = self.data['bankid']
+            # data['bankAcctName'] = '{}_{}_1022'.format(self.data['name'], "SUCCESS")
+            data['bankAcctName'] = self.data['name']
+            data['phoneNum'] = self.data['telephone']
+
+        credit_offline_payment_apply = self.MysqlBizImpl.get_credit_database_info('credit_offline_payment_apply', invoice_id=loan_invoice_id, periods=repayTerm)
+        data['repayAmt'] = round(float(credit_offline_payment_apply['repay_total']) + float(credit_offline_payment_apply['other_cost']), 2)
+        data['paymentOrderNo'] = credit_offline_payment_apply['payment_order_no']
+        # 更新 payload 字段值
+        data.update(kwargs)
+        parser = DataUpdate(self.cfg['payment']['payload'], **data)
+        self.active_payload = parser.parser
+        self.active_payload["head"]["jcSystemEncry"] = computeMD5(requestSerialNo + self.active_payload["head"]["jcSystemCode"])
+
+        self.log.demsg('发起锦程H5还款申请...')
+        url = API['request_host_corp_api'].format(self.env) + self.cfg['payment']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
+        return response
+
 
 if __name__ == '__main__':
     s = yinLiuRepayPlanByAvgAmt(billDate='2023-03-18', loanAmt=10000, yearRate=9.5, term=12)

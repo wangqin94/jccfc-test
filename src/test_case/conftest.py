@@ -1,16 +1,15 @@
-import pytest
 import logging
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from typing import List
+
+import pytest
+
 from src.impl.common.CheckBizImpl import *
 from utils.JobCenter import *
 from utils.Redis import *
 
 
 def pytest_collection_modifyitems(
-    session: "Session", config: "Config", items: List["Item"]
+        session: "Session", config: "Config", items: List["Item"]
 ) -> None:
     print(items)
     # items.reverse()
