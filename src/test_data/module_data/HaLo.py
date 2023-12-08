@@ -587,4 +587,38 @@ HaLo = {
         'compensationOverdueFee': '',  # 代偿罚息
         'guaranteeMerchantId': '',  # 担保商户号
     },
+    # H5还款
+    'payment': {
+        'interface': '/api/v1/payment',
+        'payload': {
+            "head": {
+                "jcSystemEncry": "2582a6b723486da364ada1af2c00f115",
+                "jcSystemCode": "loan-web",
+                "tenantId": "000",
+                "channelNo": "21",
+                "requestSerialNo": "202=182714511036848",
+            },
+            "body": {
+                "loanInvoiceId": "000LI5538514397462145161272",  # 借据号
+                "channelNo": "6",  # 主动还款渠道
+                "repayType": "0",  # 还款方式 0-按期还款   1-提前还款
+                "paymentType": "5",  # 支付类型1-支付宝-主动还款 2-支付宝-代扣 3-微信-主动还款 4-微信-代扣 5-银行卡-主动还款 6-银行卡-代扣   7-云闪付-主动还款
+                "periods": "1",  # 还款期数 多期以,分隔
+                "repayAmt": 212.46,  # 还款金额
+                "appOrderNo": "",  # 还款订单流水号
+                "settleStatus": "0",  # 结清标识 EnumBool 0 未结清  1 结清
+                "payPlatformCode": "zhifubianhao",  # 支付平台编号
+                "aliPayViewUrl": "https://www.baidu.com/",  # 支付平台编号
+                "idNo": "451123198311190587",  # 身份证号（银行卡还款必须）
+                "phoneNum": "18908989867",  # 用户银行卡绑定手机号（银行卡还款必须）
+                "bankAcctName": "楚东进",  # 还款人姓名（银行卡还款必须）
+                "bankName": "0102",  # 银行编号（银行卡还款必须）
+                "bankAcctNo": "6212810833868379081",  # 还款人银行卡卡号（银行卡还款必须）
+                "deviceInfo": "设备信息1.21sxf",  # 设备信息（微信还款必须）
+                "wxPayViewUrl": "https://www.baidu.com/",  # 传值外网可以访问的地址（微信还款必须）
+                "createIp": "10.12.255.0",  # ip（微信还款必须）,
+                "paymentOrderNo": ""   # H5订单号 H5还款必传
+            }
+        }
+    },
 }
