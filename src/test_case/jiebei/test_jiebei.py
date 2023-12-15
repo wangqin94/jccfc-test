@@ -25,6 +25,7 @@ class TestCase(object):
         # 支用："featureCodes":["jc_loan_result","jc_loan_failCode","jc_loan_failReason"]    ⽀⽤bizActionType"LOAN_DECISION"
         # 提额："featureCodes":["jc_limit_up_result","jc_limit_up_failCode","jc_limit_up_failReason"]
         # 降额："featureCodes":["jc_limit_down_result","jc_limit_down_failCode","jc_limit_down_failReason"]
+        # 临额："featureCodes":["jc_tmp_amt_result","jc_tmp_amt_failCode","jc_tmp_amt_failReason"]
         if flag == 0:
             jb = JieBeiBizImpl(data=data)
             jb.feature(bizActionType='LOAN_DECISION',
@@ -35,27 +36,31 @@ class TestCase(object):
             jb = JieBeiBizImpl(data=None)
             jb.datapreCs()
 
-        # 复审数据准备 applyType:#授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY
+        # 复审数据准备 applyType:#授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY ；临额TMP_AMT_APPLY
         elif flag == 2:
             jb = JieBeiBizImpl(data=data)
-            jb.datapreFs(applyType='ADMIT_APPLY', creditAmt='5000000')
+            jb.datapreFs(applyType='DECREASE_AMT_APPLY', tmpAmtMax='', tmpAmtMin='')
 
         # 授信通知接口
-        # ADMIT_APPLY 授信申请 LOAN_APPLY 支用申请 ADJUST_AMT_APPLY 提额申请 DECREASE_AMT_APPLY 降额申请
+        # ADMIT_APPLY 授信申请 LOAN_APPLY 支用申请 ADJUST_AMT_APPLY 提额申请 DECREASE_AMT_APPLY 降额申请 TMP_AMT_APPLY临额申请
         # ADJUST_RATE_APPLY 提价申请 DECREASE_RATE_APPLY 降价
         elif flag == 3:
             jb = JieBeiBizImpl(data=data)
-            jb.creditNotice(bizType='ADMIT_APPLY', creditAmt='5000000', agreeFlag='Y')
+            jb.creditNotice(bizType='ADMIT_APPLY', creditAmt='5000000', tmpCreditAmt='', agreeFlag='Y')
 
         elif flag == 5:
             c = '浙江省杭州市⻄湖区学院路128号A1座12'.encode()
             a = base64.b64encode(c)
             print(a)
 
+        elif flag == 4:
+            jt = JieBeiBizImpl(data=data)
+            certifyFile = jt.pdf_to_base64("111.pdf")
+            jt.certificationSend(certifyFile=certifyFile)
+
     def postprocess(self):
         """ 后置条件处理 """
         pass
-
 
 if __name__ == '__main__':
     start_time = time.time()
