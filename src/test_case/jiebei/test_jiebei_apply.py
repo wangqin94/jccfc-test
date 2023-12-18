@@ -31,7 +31,7 @@ class MyTestCase(unittest.TestCase):
             if applyType == 'ADJUST_AMT_APPLY' or applyType == 'DECREASE_AMT_APPLY':
                 self.applyNo = "amtNo" + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
             elif applyType == 'TMP_AMT_APPLY':
-                self.applyNo = "tepAmtNo" + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+                self.applyNo = "tmpAmtNo" + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
         # 复审  tc_NoSource_ToPlatformOne Y-新客，N-老客  applyNo：调额申请号
         jb.datapreFs(applyType=applyType, creditAmt=creditAmt, tmpAmtMax=tmpAmtMax, tmpAmtMin=tmpAmtMin,applyNo=self.applyNo, tc_NoSource_ToPlatformOne='Y')
         if applyType == 'ADMIT_APPLY':
@@ -50,7 +50,7 @@ class MyTestCase(unittest.TestCase):
         jb.creditNotice(bizType=applyType, applyNo=self.applyNo, creditAmt=creditAmt,tmpCreditAmt='')
         # 创建授信文件
         jb_apply_file = creditFile(data=jb.data)
-        jb_apply_file.start_creditFile(apply_type=applyType, creditAmt=creditAmt, applyNo=self.applyNo)
+        jb_apply_file.start_creditFile(apply_type=applyType, creditAmt=creditAmt, applyNo=self.applyNo,tmpCreditAmt='')
         # 处理授信对账文件
         self.job.update_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB', executeBizDateType='TODAY')
         self.job.trigger_job('借呗授信对账文件处理任务', group=13, job_type='VIRTUAL_JOB')

@@ -93,11 +93,10 @@ class JieBeiBizImpl(EnvInit):
         datapreFs_data['suggestTmpAmtMin'] = tmpAmtMin
 
 
-
         if applyType == 'ADJUST_AMT_APPLY' or applyType == 'DECREASE_AMT_APPLY':
             datapreFs_data['applyNo'] = applyNo if applyNo else "amtNo" + str(int(round(time.time() * 1000)))
         elif applyType == 'TMP_AMT_APPLY':
-            datapreFs_data['applyNo'] = applyNo if applyNo else "tepAmtNo" + str(int(round(time.time() * 1000)))
+            datapreFs_data['applyNo'] = applyNo if applyNo else "tmpAmtNo" + str(int(round(time.time() * 1000)))
         else:
             datapreFs_data['applyNo'] = self.data['applyno']
 
