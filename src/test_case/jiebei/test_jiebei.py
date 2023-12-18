@@ -39,7 +39,7 @@ class TestCase(object):
         # 复审数据准备 applyType:#授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY ；临额TMP_AMT_APPLY
         elif flag == 2:
             jb = JieBeiBizImpl(data=data)
-            jb.datapreFs(applyType='DECREASE_AMT_APPLY', tmpAmtMax='', tmpAmtMin='')
+            jb.datapreFs(applyType='ADMIT_APPLY', tmpAmtMax=None, tmpAmtMin=None)
 
         # 授信通知接口
         # ADMIT_APPLY 授信申请 LOAN_APPLY 支用申请 ADJUST_AMT_APPLY 提额申请 DECREASE_AMT_APPLY 降额申请 TMP_AMT_APPLY临额申请

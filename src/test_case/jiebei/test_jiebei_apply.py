@@ -13,7 +13,7 @@ class MyTestCase(unittest.TestCase):
         self.job = JOB()
 
     """ 测试步骤 """
-    def test_apply(self, data=None, applyType='ADMIT_APPLY', creditAmt='5000000',tmpAmtMax='',tmpAmtMin=''):
+    def test_apply(self, data=None, applyType='ADMIT_APPLY', creditAmt='5000000',tmpAmtMax=None,tmpAmtMin=None):
         """
         授信或调额流程
         :param applyType: #授信 ADMIT_APPLY；提额 ADJUST_AMT_APPLY；降额 DECREASE_AMT_APPLY;临额TMP_AMT_APPLY
