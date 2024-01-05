@@ -34,6 +34,7 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
         response = decrypt(decrypt_url, headers, response.json())
     else:
         response = requests.post(url=url, headers=headers, json=payload)
+        # _log.info("响应报文: {}".format(payload))
         response = response.json()
         _log.info(f"响应报文：{response}")
     return response
