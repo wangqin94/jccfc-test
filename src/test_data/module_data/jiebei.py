@@ -54,17 +54,19 @@ jiebei = {
             "applyNo": "2022081100200000000100792S",
             "dataType": "JC_FS",
             "customParams": {
-                "applyType": "ADJUST_AMT_APPLY",  # 授信ADMIT_APPLY；提额ADJUST_AMT_APPLY；降额DECREASE_AMT_APPLY
+                "applyType": "ADJUST_AMT_APPLY",  # 授信ADMIT_APPLY；提额ADJUST_AMT_APPLY；降额DECREASE_AMT_APPLY;临额TMP_AMT_APPLY
                 "certType": "01",
                 "address": "{\"area\":\"浦东新区\",\"areaCode\":\"310115\",\"address\":\"5LiK5rW35LiK5rW35biC5rWm5Lic5paw5Yy65LiK5rW3LeS4iua1t+W4gi3mtabkuJzmlrDljLot6ZmG5a625Zi06KGX6YGT5oGS55Sf6ZO26KGM5aSn5Y6mMzXmpbzmgZLnlJ/pk7booYw=\",\"provCode\":\"310000\",\"city\":\"上海市\",\"cityCode\":\"310100\",\"prov\":\"上海市\"}",
                 "mobileNo": "13547359285",
                 "certNo": "34298719870021647X",
                 "bankCardInfo": "{\"cardType\":\"DC\",\"bankReservedMobileNo\":\"13173671201\",\"bankName\":\"招商银行\",\"cardNo\":\"123456789101110\"}",
-                "suggestAmtMax": "2000000",
-                "suggestRateMax": "0.00015",
                 "name": "张三",
+                "suggestAmtMax": "2000000",
                 "suggestAmtMin": "2000000",
+                "suggestRateMax": "0.00015",
                 "suggestRateMin": "0.00015",
+                "suggestTmpAmtMax": "4000000",
+                "suggestTmpAmtMin": "1000000",
                 "creditNo": "2022081100200000000100792S",
                 "certValidEndDate": "2029-12-02 11:12:00",
                 "tc_NoSource_ToPlatformOne": "N",  # Y就是一期的新客，N就是二转一的老客
@@ -94,12 +96,13 @@ jiebei = {
                 "certType": "01",  # 证件类型
                 "bizMode": "PLATFORM_1",
                 "bizType": "ADJUST_AMT_APPLY",
-                # ADMIT_APPLY授信申请 LOAN_APPLY支用申请 ADJUST_AMT_APPLY提额申请 DECREASE_AMT_APPLY降额申请 ADJUST_RATE_APPLY提价申请 DECREASE_RATE_APPLY降价申请
+                # ADMIT_APPLY授信申请 LOAN_APPLY支用申请 ADJUST_AMT_APPLY提额申请 DECREASE_AMT_APPLY降额申请 ADJUST_RATE_APPLY提价申请 DECREASE_RATE_APPLY降价申请 TMP_AMT_APPLY临额申请
                 "mobile": "",
                 "toPlatformOne": "",  # 授信场景时有值
                 "agreeFlag": "Y",  # 授信结果
                 "creditAmt": 5000000,  # 额度的单位是『分』,  授信/调额时有值
                 "creditRate": 0.0006,  # 利率单位是 『⽇利率』  授信/调价时有值
+                "tmpCreditAmt": 10000, # 审批临额
                 "creditRateLimit": 1,  # 授信利率上限 网商贷产品 且 授信通过时有值
                 "creditRateBottom": 2,  # 授信利率下限 网商贷产品 且 授信通过时有值
                 "unAdmReasons": "",  # 拒绝码   外部资产拒绝时有值
