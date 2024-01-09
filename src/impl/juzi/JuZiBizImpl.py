@@ -160,6 +160,8 @@ class JuZiBizImpl(MysqlInit):
         credit_data['applyAmount'] = applyAmount
         # 临时新增参数
         credit_data['orderType'] = '1'  # EnumOrderType 固定传1-取现
+        # 担保商户号
+        credit_data['guaranteeMerchantId'] = 'H24E02YNBC'
 
         # 用户信息
         credit_data['idNo'] = self.data['cer_no']
@@ -250,7 +252,7 @@ class JuZiBizImpl(MysqlInit):
         return response
 
     # 支用申请
-    def applyLoan(self, loanTerm=12, loanAmt=1000, thirdApplyId=None, loan_date=None, **kwargs):
+    def applyLoan(self, loanTerm=6, loanAmt=1000, thirdApplyId=None, loan_date=None, **kwargs):
         """ # 支用申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param loan_date: 放款时间，默认当前时间 eg:2022-01-01

@@ -93,11 +93,11 @@ JuZi = {
                 "thirdApplyTime": "",  # 客户三方申请时间  yyyyMMddHHmmss
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "orderType": "1",  # 订单类型  固定传1-取现
-                "goodsName": "美容贷",  # 商品名称  取现为：取现借款、分期购物为：商品名称
+                "goodsName": "装修",  # 商品名称  取现为：取现借款、分期购物为：商品名称
                 "userBankCardNo": "0102",  # 用户银行卡号
                 "bankCode": "0102",  # 银行编码
                 "reserveMobile": "",  # 银行预留手机号
-                "loanTerm": 12,  # 贷款期数
+                "loanTerm": 6,  # 贷款期数
                 "name": "",  # 借款人姓名
                 "idNo": "",  # 证件号码
                 "sex": "1",  # 性别  UNKNOWN("0", "未知的性别"),MALE("1", "男"),FEMALE("2", "女"),NOT_EXPLAINED("9", "未说明的性别");
@@ -142,7 +142,8 @@ JuZi = {
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
                 "familyMonthIncome": 2000,  # 家庭月收入  元
-                "liabilities": "0",  # EnumLiabilities，可传多个枚举，码值间以英文逗号“,”分隔；0-无贷款时，不支持多个枚举
+                # "liabilities": "0",  # EnumLiabilities，可传多个枚举，码值间以英文逗号“,”分隔；0-无贷款时，不支持多个枚举
+                "guaranteeMerchantId": "",
                 "contactRelationList": [
                     {
                         "contactName": "配偶姓名",  # 联系人姓名
@@ -240,7 +241,7 @@ JuZi = {
             "body": {
                 "thirdApplyId": "",  # 放款申请编号  与授信申请编号保持一致
                 "loanAmt": 1000,  # 借款金额
-                "loanTerm": 12,  # 贷款期数
+                "loanTerm": 6,  # 贷款期数
                 "name": "",  # 借款人姓名
                 "idNo": "",  # 证件号码
                 "mobileNo": "0102",  # 手机号码
