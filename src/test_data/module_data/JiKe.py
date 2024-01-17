@@ -106,7 +106,7 @@ JiKe = {
                 "education": "11",  # 学历 EnumEduLevel
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
-                "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
+                "idExpiryDate": "2019.05.30-2040.12.31",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
                 "idCardAddr": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证地址
                 "issuingAuth": "成都高新派出所",  # 发证机关
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
@@ -122,7 +122,7 @@ JiKe = {
                 "workAddrProvinceName": "四川省",  # 工作地址省份名称
                 "workAddrCityName": "成都市",  # 工作地址市级名称
                 "workAddrAreaName": "邛崃市",  # 工作地址区名称
-                "liveAddress": "新疆科技学院(东校区)",  # 工作详细地址
+                "liveAddress": "新疆科技学院(东校区)",  # 居住详细地址
                 "liveProvinceName": "新疆维吾尔自治区",  # 居住地址省份名称
                 "liveCityName": "巴音郭楞蒙古自治州",  # 居住地址市级名称
                 "liveAreaName": "库尔勒市",  # 居住地址区名称
@@ -141,33 +141,33 @@ JiKe = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "xdgl/jike/test/front.jpg",
-                        "fileName": "front.png"
+                        "fileUrl": "xdgl/jike/test/jk_front.jpg",
+                        "fileName": "jk_front.jpg"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "xdgl/jike/test/back.jpg",
-                        "fileName": "back.png"
+                        "fileUrl": "xdgl/jike/test/jk_back.jpg",
+                        "fileName": "jk_back.jpg"
                     },
                     {
                         "fileType": "3",  # 人脸
                         "fileUrl": "xdgl/jike/test/face.jpg",
-                        "fileName": "face.png"
+                        "fileName": "face.jpg"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "xdgl/jike/test/credit.pdf",
-                        "fileName": "credit.pdf"
+                        "fileUrl": "xdgl/jike/test/JK_个人征信查询.pdf",
+                        "fileName": "JK_个人征信查询.pdf"
                     },
                     {
                         "fileType": "6",
                         "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_non_student_202000000948071964.pdf"
+                        "fileName": "C20JIKEloancontract.pdf"
                     },
                     {
                         "fileType": "7",  # 三方查询授权书
-                        "fileUrl": "xdgl/jike/test/third.pdf",
-                        "fileName": "third.pdf"
+                        "fileUrl": "xdgl/jike/test/JK_三方数据查询.pdf",
+                        "fileName": "JK_三方数据查询.pdf"
                     },
                     {
                         "fileType": "10",
@@ -181,9 +181,25 @@ JiKe = {
                     },
                     {
                         "fileType": "17",  # 人脸识别查询授权书
-                        "fileUrl": "xdgl/jike/test/third.pdf",
-                        "fileName": "third.pdf"
+                        "fileUrl": "xdgl/jike/test/JK_人脸识别授权.pdf",
+                        "fileName": "JK_人脸识别授权.pdf"
+                    },
+                    {
+                        "fileType": "20",  # 委托代扣授权书--20
+                        "fileUrl": "xdgl/jike/test/JK_委托代扣授权书校验通过.pdf",
+                        "fileName": "JK_委托代扣授权书校验通过.pdf"
+                    },
+                    {
+                        "fileType": "21",  # 个人信息共享授权书--21
+                        "fileUrl": "xdgl/jike/test/JK_个人信息共享授权书校验通过.pdf",
+                        "fileName": "JK_个人信息共享授权书校验通过.pdf"
+                    },
+                    {
+                        "fileType": "22",  # 个人信息收集授权书--22
+                        "fileUrl": "xdgl/jike/test/JK_个人信息收集授权书校验通过.pdf",
+                        "fileName": "JK_个人信息收集授权书校验通过.pdf"
                     }
+
                 ],
                 "authenticationInfo": {
                     "appRegistraDate": "20210101 101010",  # App注册时间
@@ -356,7 +372,8 @@ JiKe = {
                 "tenantId": "000"
             },
             "body": {
-                "repayScene": "01",    # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
+                "repayScene": "01",
+                # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
                 "repayApplySerialNo": "6",  # 还款申请流水号 每笔还款申请流水号唯一，支付宝还款传支付宝扣款订单号
                 "thirdWithholdId": "",  # 三方代扣编号 线下还款、逾期还款通知：传机构代扣编号；支付宝还款通知：传支付宝扣款订单号；其他还款场景不传
                 "appAuthToken": "6",  # 支付宝授权令牌 支付宝还款通知必传
