@@ -106,7 +106,7 @@ JiRo = {
                 "degree": "0",  # 最高学位 EnumCreditDegree
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
-                "idExpiryDate": "1990.1.1-2053.06.25",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
+                "idExpiryDate": "2019.05.30-2040.04.01",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
                 "issuingAuth": "成都高新派出所",  # 发证机关
                 "idCardAddrAddress": "天府四街OCG写字楼A座",  # 身份证地址
                 "idCardAddrProvinceCode": "510000",  # 身份证地址省份代码
@@ -153,38 +153,53 @@ JiRo = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "xdgl/jike/test/front.jpg",
-                        "fileName": "front.png"
+                        "fileUrl": "upload/jiro/credit/jr_front.jpg",
+                        "fileName": "jr_front.png"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "xdgl/jike/test/back.jpg",
-                        "fileName": "back.png"
+                        "fileUrl": "upload/jiro/credit/jr_back.jpg",
+                        "fileName": "jr_back.png"
                     },
                     {
                         "fileType": "3",  # 人脸
-                        "fileUrl": "xdgl/jike/test/face.jpg",
+                        "fileUrl": "upload/jiro/credit/face.jpg",
                         "fileName": "face.png"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "xdgl/jike/test/credit.pdf",
-                        "fileName": "credit.pdf"
+                        "fileUrl": "upload/jiro/credit/JR_个人征信查询.pdf",
+                        "fileName": "JR_个人征信查询.pdf"
                     },
                     {
-                        "fileType": "6",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_non_student_202000000948071964.pdf"
+                        "fileType": "6",  # 借款合同
+                        "fileUrl": "upload/jiro/credit/C20JIKEloancontract.pdf",
+                        "fileName": "C20JIKEloancontract.pdf"
                     },
                     {
                         "fileType": "7",  # 三方查询授权书
-                        "fileUrl": "xdgl/jike/test/third.pdf",
-                        "fileName": "third.pdf"
+                        "fileUrl": "upload/jiro/credit/JR_三方数据查询.pdf",
+                        "fileName": "JR_三方数据查询.pdf"
                     },
                     {
-                        "fileType": "10",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "JC_third_auth_202000000948071964.pdf"
+                        "fileType": "9",
+                        "fileUrl": "upload/jiro/credit/C20JIKEloancontract.pdf",
+                        "fileName": "C20JIKEloancontract.pdf"
+                    },
+                    {
+                        "fileType": "20",
+                        "fileUrl": "upload/jiro/credit/JR_委托代扣授权书校验通过.pdf",
+                        "fileName": "JR_委托代扣授权书校验通过.pdf"
+                    },
+                    {
+                        "fileType": "21",
+                        "fileUrl": "upload/jiro/credit/JR_个人信息共享授权书校验通过.pdf",
+                        "fileName": "JR_个人信息共享授权书校验通过.pdf"
+                    },
+                    {
+                        "fileType": "22",
+                        "fileUrl": "upload/jiro/credit/JR_个人信息收集授权书校验通过.pdf",
+                        "fileName": "JR_个人信息收集授权书校验通过.pdf"
                     }
                 ],
             }
@@ -254,7 +269,7 @@ JiRo = {
                 "fileInfos": [
                     {
                         "fileType": "9",
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
+                        "fileUrl": "upload/jiro/credit/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
                     }
                 ],
@@ -377,7 +392,8 @@ JiRo = {
                 "tenantId": "000"
             },
             "body": {
-                "repayScene": "01",  # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
+                "repayScene": "01",
+                # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
                 "repayApplySerialNo": "6",  # 还款申请流水号 每笔还款申请流水号唯一，支付宝还款传支付宝扣款订单号
                 "thirdWithholdId": "",  # 三方代扣编号 线下还款、逾期还款通知：传机构代扣编号；支付宝还款通知：传支付宝扣款订单号；其他还款场景不传
                 "appAuthToken": "6",  # 支付宝授权令牌 支付宝还款通知必传
@@ -413,7 +429,6 @@ JiRo = {
             }
         }
     },
-
 
     # 附件补录
     'supplementAttachment': {
