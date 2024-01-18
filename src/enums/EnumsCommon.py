@@ -70,6 +70,7 @@ class EnumMerchantId(Enum):
     JIRO = 'G23E08JIRO'
     DIDI = 'G23E07DIDI'
     JUZI = 'G24E01JUZI'
+    JIKE = 'G22E02JIKE'
 
 
 @unique

@@ -106,7 +106,7 @@ JiKe = {
                 "education": "11",  # 学历 EnumEduLevel
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
-                "idExpiryDate": "2019.05.30-2040.12.31",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
+                "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
                 "idCardAddr": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证地址
                 "issuingAuth": "成都高新派出所",  # 发证机关
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
@@ -141,33 +141,33 @@ JiKe = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "xdgl/jike/test/jk_front.jpg",
-                        "fileName": "jk_front.jpg"
+                        "fileUrl": "xdgl/jike/test/front.jpg",
+                        "fileName": "front.png"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "xdgl/jike/test/jk_back.jpg",
-                        "fileName": "jk_back.jpg"
+                        "fileUrl": "xdgl/jike/test/back.jpg",
+                        "fileName": "back.png"
                     },
                     {
                         "fileType": "3",  # 人脸
                         "fileUrl": "xdgl/jike/test/face.jpg",
-                        "fileName": "face.jpg"
+                        "fileName": "face.png"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "xdgl/jike/test/JK_个人征信查询.pdf",
-                        "fileName": "JK_个人征信查询.pdf"
+                        "fileUrl": "xdgl/jike/test/credit_jike.pdf",
+                        "fileName": "credit.pdf"
                     },
                     {
                         "fileType": "6",
                         "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "C20JIKEloancontract.pdf"
+                        "fileName": "JC_non_student_202000000948071964.pdf"
                     },
                     {
                         "fileType": "7",  # 三方查询授权书
-                        "fileUrl": "xdgl/jike/test/JK_三方数据查询.pdf",
-                        "fileName": "JK_三方数据查询.pdf"
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     },
                     {
                         "fileType": "10",
@@ -342,6 +342,31 @@ JiKe = {
         }
     },
 
+    # 担保费同步
+    'syncGuaranteePlan': {
+        'interface': '/api/v1/yl/common/loan/syncGuaranteePlan',
+        'payload': {
+            "head": {
+                "merchantId": "G22E02JIKE",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
+                "flag": "",  # loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
+                "guaranteePlans": [
+                    {
+                        "period": 1,
+                        "guaranteeAmt": 10,
+                    }
+                ],  # 担保费计划列表
+
+            }
+        }
+    },
+
     # 借款合同查询
     'loanContract_query': {
         'interface': '/api/v1/yl/common/loan/queryLoanContract',
@@ -372,8 +397,7 @@ JiKe = {
                 "tenantId": "000"
             },
             "body": {
-                "repayScene": "01",
-                # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
+                "repayScene": "01",    # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
                 "repayApplySerialNo": "6",  # 还款申请流水号 每笔还款申请流水号唯一，支付宝还款传支付宝扣款订单号
                 "thirdWithholdId": "",  # 三方代扣编号 线下还款、逾期还款通知：传机构代扣编号；支付宝还款通知：传支付宝扣款订单号；其他还款场景不传
                 "appAuthToken": "6",  # 支付宝授权令牌 支付宝还款通知必传

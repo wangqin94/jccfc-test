@@ -36,7 +36,7 @@ HaLo = {
                 "payerBankCardNum": "",  # 付款方银行卡号
                 "payerBankCode": "0102",  # 付款方银行编号
                 "aggrementNum": "",  # 代扣协议号
-                "payChannel": "1001",  # 支付通道  固定传1001-通联渠道
+                "payChannel": "1001",  # 支付通道  1001-通联渠道 1010-宝付协议支付渠道
             }
         }
     },
@@ -64,82 +64,73 @@ HaLo = {
         'interface': '/api/v1/yl/common/credit/apply',
         'payload': {
             "head": {
-                "tenantId": "000",
+                "merchantId": "G23E01XIAX",
                 "channelNo": "01",
-                "requestSerialNo": "4932003855353766375",
-                "marketClue": "",
-                "deviceId": "",
-                "longitude": "",
-                "latitude": "",
-                "requestTime": "20240117081644",
-                "merchantId": "G23E03HALO",
-                "empNo": "",
-                "token": "",
-                "rebackUrl": "",
-                "notifyUrl": "",
-                "organId": ""
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
             },
             "body": {
-                "thirdApplyId": "4932003648819996302",
-                "thirdApplyTime": "2024-01-17",
-                "repayType": "1",
-                "orderType": "1",
-                "productId": "",
-                "goodsName": "",
-                "userBankCardNo": "6221882600078654841",
-                "bankCode": "0100",
-                "reserveMobile": "13114578599",
-                "loanTerm": 12,
-                "name": "商洪涛",
-                "idNo": "232700197109132010",
-                "sex": "1",
-                "mobileNo": "18724576299",
-                "education": "11",
-                # "degree": "",
-                "maritalStatus": "40",
-                "nation": "汉",
-                "idExpiryDate": "2022.01.20-2099.12.31",
-                "idExpiryStartDate": "",
-                "idExpiryEndDate": "",
-                "issuingAuth": "大兴安岭地区公安局",
-                "idCardAddr": "黑龙江省大兴安岭地区松岭区小扬气镇红星街群芳小区8号楼1单元302室",
-                "idCardAddrAddress": "",
-                "idCardAddrProvinceCode": "",
-                "idCardAddrProvinceName": "",
-                "idCardAddrCityCode": "",
-                "idCardAddrCityName": "",
-                "idCardAddrAreaCode": "",
-                "idCardAddrAreaName": "",
-                "loanPurpose": "3",
-                "compName": "黑龙江省济生源医药有限责任公司",
-                "compPhone": "",
-                "workTime": "",
-                "workStatus": "O",
-                "userOccupation": "3",
-                "duties": "A",
-                "companyNature": "A",
-                "industryCategory": "F",
-                "workAddrAddress": "",
-                "workAddrProvinceCode": "",
-                "workAddrProvinceName": "",
-                "workAddrCityCode": "",
-                "workAddrCityName": "",
-                "workAddrAreaCode": "",
-                "workAddrAreaName": "",
-                "liveAddress": "黑龙江省大兴安岭地区松岭区小扬气镇群芳小区8号楼1单元302室",
-                "liveProvinceCode": "230000",
-                "liveProvinceName": "黑龙江省",
-                "liveCityCode": "232700",
-                "liveCityName": "大兴安岭地区",
-                "liveAreaCode": "232700",
-                "liveAreaName": "松岭区",
-                "applyAmount": 1100,
-                "monthIncome": 15000,
-                "liabilities": "",
-                "familyMonthIncome": 15000,
-                "storeCode": "",
-                "goodsCategory1": "",
-                "goodsCategory2": "",
+                "thirdApplyId": "",  # 三方授信申请编号  与放款申请编号保持一致
+                "thirdApplyTime": "",  # 客户三方申请时间  yyyyMMddHHmmss
+                "repayType": "1",  # 还款方式  EnumRepayMethod
+                "orderType": "1",  # 订单类型  固定传1-取现
+                "goodsName": "美容贷",  # 商品名称  取现为：取现借款、分期购物为：商品名称
+                "interestRate": 23.4,  # 年化利率(百分比，比如 17.56 表示 17.56%)
+                "custInterestRate": 23.99,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
+                "userBankCardNo": "0102",  # 用户银行卡号
+                "bankCode": "0102",  # 银行编码
+                "reserveMobile": "",  # 银行预留手机号
+                "loanTerm": 12,  # 贷款期数
+                "name": "",  # 借款人姓名
+                "idNo": "",  # 证件号码
+                "sex": "1",  # 性别  UNKNOWN("0", "未知的性别"),MALE("1", "男"),FEMALE("2", "女"),NOT_EXPLAINED("9", "未说明的性别");
+                "mobileNo": "手机号码",  # 手机号码
+                "education": "11",  # 学历 EnumEduLevel
+                "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
+                "nation": "汉",  # 民族
+                "idExpiryDate": "1990.1.1-2053.06.25",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
+                "issuingAuth": "成都高新派出所",  # 发证机关
+                "idCardAddrAddress": "四川省成都市高新区天府四街OCG写字楼A座",  # 身份证地址
+                "idCardAddrProvinceCode": "510000",  # 身份证地址省份代码
+                "idCardAddrProvinceName": "四川省",  # 身份证地址省份名称
+                "idCardAddrCityCode": "510100",  # 身份证地址市级代码
+                "idCardAddrCityName": "成都市",  # 身份证地址市级名称
+                "idCardAddrAreaCode": "510107",  # 身份证地址区代码
+                "idCardAddrAreaName": "武侯区",  # 身份证地址区名称
+                "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
+                "compName": "单位名称",  # 单位名称
+                "compPhone": "13812345689",  # 单位电话
+                "workTime": 1000,  # 在现工作单位时间 单位：月
+                "workStatus": 'F',  # 工作状态 EnumWorkStatus
+                "userOccupation": "0",  # 职业 EnumVocationType
+                "duties": "A",  # 职务 EnumPost
+                "companyNature": "A",  # 单位性质 EnumUnitProperty
+                "industryCategory": "A",  # 行业类别 EnumIndustryType
+                "workAddrAddress": "北京市海淀医院",  # 工作详细地址
+                "workAddrProvinceName": "北京市",  # 工作地址省份名称
+                "workAddrProvinceCode": "110000",  # 工作地址省份代码
+                "workAddrCityName": "北京市",  # 工作地址市级名称
+                "workAddrCityCode": "110100",  # 工作地址市级代码
+                "workAddrAreaName": "海淀区",  # 工作地址区名称
+                "workAddrAreaCode": "110108",  # 工作地址区代码
+                "liveAddress": "北京市海淀医院",  # 工作详细地址
+                "liveProvinceName": "北京市",  # 居住地址省份名称
+                "liveProvinceCode": "110000",  # 居住地址省份代码
+                "liveCityName": "北京市",  # 居住地址市级名称
+                "liveCityCode": "110100",  # 居住地址市级代码
+                "liveAreaName": "海淀区",  # 居住地址区名称
+                "liveAreaCode": "110108",  # 居住地址区代码
+                # "liveAddress": "新疆科技学院(东校区)",  # 工作详细地址
+                # "liveProvinceName": "新疆维吾尔自治区",  # 居住地址省份名称
+                # "liveProvinceCode": "650000",  # 居住地址省份代码
+                # "liveCityName": "巴音郭楞蒙古自治州",  # 居住地址市级名称
+                # "liveCityCode": "652800",  # 居住地址市级代码
+                # "liveAreaName": "库尔勒市",  # 居住地址区名称
+                # "liveAreaCode": "652801",  # 居住地址区代码
+                "applyAmount": 1000,  # 申请金额 元
+                "monthIncome": 1000,  # 月收入  元
+                "familyMonthIncome": 2000,  # 家庭月收入  元
                 "contactRelationList": [
                     {
                         "contactName": "配偶姓名",  # 联系人姓名
@@ -150,53 +141,38 @@ HaLo = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "/upload/halo/credit/halo_front.jpg",
-                        "fileName": "halo_front.jpg"
+                        "fileUrl": "xdgl/jike/test/front.jpg",
+                        "fileName": "front.png"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "/upload/halo/credit/halo_back.jpg",
-                        "fileName": "halo_back.jpg"
+                        "fileUrl": "xdgl/jike/test/back.jpg",
+                        "fileName": "back.png"
                     },
                     {
                         "fileType": "3",  # 人脸
-                        "fileUrl": "/upload/halo/credit/face.jpg",
+                        "fileUrl": "xdgl/jike/test/face.jpg",
                         "fileName": "face.png"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "/upload/halo/credit/halo_个人征信查询.pdf",
-                        "fileName": "halo_个人征信查询.pdf"
+                        "fileUrl": "xdgl/jike/test/credit.pdf",
+                        "fileName": "credit.pdf"
                     },
                     {
                         "fileType": "7",  # 三方查询授权书
-                        "fileUrl": "/upload/halo/credit/halo_三方数据查询.pdf",
-                        "fileName": "halo_三方数据查询.pdf"
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     },
                     {
                         "fileType": "16",  # 学信网截图
-                        "fileUrl": "/upload/halo/credit/test.jpg",
+                        "fileUrl": "xdgl/jike/test/test.jpg",
                         "fileName": "test.jpg"
                     },
                     {
                         "fileType": "17",  # 人脸识别查询授权书
-                        "fileUrl": "/upload/halo/credit/halo_人脸识别授权.pdf",
-                        "fileName": "halo_人脸识别授权.pdf"
-                    },
-                    {
-                        "fileType": "20",  # 委托代扣授权书--20
-                        "fileUrl": "/upload/halo/credit/HALO_委托代扣授权书校验通过.pdf",
-                        "fileName": "HALO_委托代扣授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "21",  # 个人信息共享授权书--21
-                        "fileUrl": "/upload/halo/credit/HALO_个人信息共享授权书校验通过.pdf",
-                        "fileName": "HALO_个人信息共享授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "22",  # 个人信息收集授权书--22
-                        "fileUrl": "/upload/halo/credit/HALO_个人信息收集授权书校验通过.pdf",
-                        "fileName": "HALO_个人信息收集授权书校验通过.pdf"
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     }
                 ],
                 "authenticationInfo": {
@@ -270,7 +246,7 @@ HaLo = {
                 "fileInfos": [
                     {
                         "fileType": "9",
-                        "fileUrl": "/upload/halo/credit/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
                     }
                 ],
@@ -353,8 +329,7 @@ HaLo = {
                 "tenantId": "000"
             },
             "body": {
-                "repayScene": "01",
-                # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
+                "repayScene": "01",    # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
                 "repayApplySerialNo": "6",  # 还款申请流水号 每笔还款申请流水号唯一，支付宝还款传支付宝扣款订单号
                 "thirdWithholdId": "",  # 三方代扣编号 线下还款、逾期还款通知：传机构代扣编号；支付宝还款通知：传支付宝扣款订单号；其他还款场景不传
                 "appAuthToken": "6",  # 支付宝授权令牌 支付宝还款通知必传
@@ -634,15 +609,73 @@ HaLo = {
                 "settleStatus": "0",  # 结清标识 EnumBool 0 未结清  1 结清
                 "payPlatformCode": "zhifubianhao",  # 支付平台编号
                 "aliPayViewUrl": "https://www.baidu.com/",  # 支付平台编号
-                "idNo": "451123198311190587",  # 身份证号（银行卡还款必须）
-                "phoneNum": "18908989867",  # 用户银行卡绑定手机号（银行卡还款必须）
-                "bankAcctName": "楚东进",  # 还款人姓名（银行卡还款必须）
+                "idNo": "",  # 身份证号（银行卡还款必须）
+                "phoneNum": "",  # 用户银行卡绑定手机号（银行卡还款必须）
+                "bankAcctName": "",  # 还款人姓名（银行卡还款必须）
                 "bankName": "0102",  # 银行编号（银行卡还款必须）
-                "bankAcctNo": "6212810833868379081",  # 还款人银行卡卡号（银行卡还款必须）
+                "bankAcctNo": "",  # 还款人银行卡卡号（银行卡还款必须）
                 "deviceInfo": "设备信息1.21sxf",  # 设备信息（微信还款必须）
                 "wxPayViewUrl": "https://www.baidu.com/",  # 传值外网可以访问的地址（微信还款必须）
                 "createIp": "10.12.255.0",  # ip（微信还款必须）,
-                "paymentOrderNo": ""  # H5订单号 H5还款必传
+                "paymentOrderNo": "",   # H5订单号 H5还款必传
+                "userName": ""    # 借款人姓名
+            }
+        }
+    },
+    # H5还款订单状态查询
+    'queryRepaymentApply': {
+        'interface': '/api/v1/repayment/queryRepaymentApply',
+        'payload': {
+            "head": {
+                "jcSystemEncry": "2582a6b723486da364ada1af2c00f115",
+                "jcSystemCode": "loan-web",
+                "tenantId": "000",
+                "channelNo": "21",
+                "requestSerialNo": "202=182714511036848",
+            },
+            "body": {
+                "paymentOrderNo": "",  # H5订单号 H5还款必传
+            }
+        }
+    },
+
+    # 渠道线下还款申请
+    'repaymentApply': {
+        'interface': '/api/v1/yl/common/repay/repaymentApply',
+        'payload': {
+            "head": {
+                "merchantId": "G23E03HALO",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "invoiceId": "",  # 锦程借据号
+                "receiveTelephone": "",  # 客户接收短信手机号
+                "repayType": "",  # 还款类型 EnumTrialRepayType
+                "periods": 1,  # 期数
+                "otherCost": 1  # 保费
+            }
+        }
+    },
+
+    # 还款试算
+    'repayTrial': {
+        'interface': '/api/v1/yl/common/repay/repayTrial',
+        'payload': {
+            "head": {
+                "merchantId": "G23E03HALO",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "loanInvoiceId": "",  # 锦程借据号
+                "repayTerm": "",  # 还款期次
+                "repayDate": "",  # 还款时间
+                "repayType": 1  # 还款类型 EnumTrialRepayType
             }
         }
     },

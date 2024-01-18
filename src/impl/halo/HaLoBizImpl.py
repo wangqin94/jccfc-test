@@ -8,6 +8,7 @@ from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
+from src.impl.public.YinLiuBizImpl import YinLiuBizImpl
 from src.test_data.module_data import HaLo
 from utils.Apollo import Apollo
 from utils.FileHandle import Files
@@ -56,8 +57,10 @@ class HaLoBizImpl(MysqlInit):
         self.data = self.get_user_info(data=data, person=person)
         self.interestRate = getInterestRate(ProductIdEnum.HALO.value)
 
-        # 初始化产品
+        # 初始化商户
         self.merchantId = merchantId if merchantId else EnumMerchantId.HALO.value
+        # 初始化产品
+        self.productId = ProductIdEnum.HALO.value
         # 初始化payload变量
         self.active_payload = {}
 
@@ -404,67 +407,9 @@ class HaLoBizImpl(MysqlInit):
         repay_apply_data['requestTime'] = self.date
         repay_apply_data['merchantId'] = self.merchantId
         # body
-        repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
-        # repay_apply_data['repayApplySerialNo'] = "2022093022001425270501810521"  # 支付宝存量订单
-        repay_apply_data['loanInvoiceId'] = loanInvoiceId
-        repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
-        repay_apply_data['repaymentAccountNo'] = self.data['bankid']
-        repay_apply_data['repayScene'] = repay_scene
-        repay_apply_data['repayType'] = repay_type
-        if repayTerm:
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         current_num=repayTerm)
-        else:
-            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
-                loanInvoiceId)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-        self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
-        repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
-        # repay_apply_data['repayNum'] = 1
-        repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
-        repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
-        repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
-        repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
-
-        # 线下还款，担保费必须为0
-        if repay_scene == '02':  # 线下还款
-            repayGuaranteeFee = 0
-        repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        # 按期还款、提前当期
-        if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
-                                                    2)  # 总金额
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
-            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        # 提前结清
-        if repay_type == "2":
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-            days = get_day(asset_repay_plan["start_date"], repayDate)
-            # 如果当期已还款，提前还款利息应收0
-            repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
-            # repay_apply_data["repayInterest"] = 33.45
-            repay_apply_data["repayAmount"] = round(
-                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee, 2)  # 总金额
-            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        if repay_scene == '01':  # 线上还款
-            repay_apply_data['repaymentAccountNo'] = self.data['bankid']
-        if repay_scene == '02' or '05':  # 线下还款、逾期还款
-            repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
-        if repay_scene == '04':  # 支付宝还款
-            if not paymentOrder:
-                raise Exception("支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）")
-            repay_apply_data['thirdWithholdId'] = paymentOrder  # 支付宝存量订单
-            repay_apply_data['thirdRepayAccountType'] = "支付宝"
-            repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
-            apollo_data = dict()
-            apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
-                                                                             2)  # 总金额
-            self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
+        repay_apply_data = YinLiuBizImpl().repayApiBodyData(self.data, self.productId, loanInvoiceId, repay_scene,
+                                                            repay_type, repayTerm, repayGuaranteeFee, repayDate,
+                                                            paymentOrder, **kwargs)
 
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
@@ -820,7 +765,7 @@ class HaLoBizImpl(MysqlInit):
         @param repayTerm: 还款期次
         @param loan_invoice_id: 借据号 默认不传根据身份证号获取
         @param repay_type: 还款类型 0：按期还款； 1：提前结清
-        @param payment_type： 1 支付宝主动还款 5 银行卡主动还款
+        @param payment_type： 1 支付宝主动还款 5 银行卡主动还款 6 银行卡代扣
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
         """
@@ -842,25 +787,128 @@ class HaLoBizImpl(MysqlInit):
 
         data['paymentType'] = payment_type
         data['appOrderNo'] = 'appOrderNo' + strings
-        if payment_type == "5":
+        data['userName'] = self.data['name']
+        if payment_type == "5" or payment_type == "6":
             data['idNo'] = self.data['cer_no']
             data['bankAcctNo'] = self.data['bankid']
             # data['bankAcctName'] = '{}_{}_1022'.format(self.data['name'], "SUCCESS")
             data['bankAcctName'] = self.data['name']
             data['phoneNum'] = self.data['telephone']
 
-        credit_offline_payment_apply = self.MysqlBizImpl.get_credit_database_info('credit_offline_payment_apply', invoice_id=loan_invoice_id, periods=repayTerm)
-        data['repayAmt'] = round(float(credit_offline_payment_apply['repay_total']) + float(credit_offline_payment_apply['other_cost']), 2)
+        credit_offline_payment_apply = self.MysqlBizImpl.get_credit_database_info('credit_offline_payment_apply',
+                                                                                  invoice_id=loan_invoice_id,
+                                                                                  periods=repayTerm)
+        data['repayAmt'] = round(
+            float(credit_offline_payment_apply['repay_total']) + float(credit_offline_payment_apply['other_cost']), 2)
         data['paymentOrderNo'] = credit_offline_payment_apply['payment_order_no']
         # 更新 payload 字段值
         data.update(kwargs)
         parser = DataUpdate(self.cfg['payment']['payload'], **data)
         self.active_payload = parser.parser
-        self.active_payload["head"]["jcSystemEncry"] = computeMD5(requestSerialNo + self.active_payload["head"]["jcSystemCode"])
+        self.active_payload["head"]["jcSystemEncry"] = computeMD5(
+            requestSerialNo + self.active_payload["head"]["jcSystemCode"])
 
         self.log.demsg('发起锦程H5还款申请...')
         url = API['request_host_corp_api'].format(self.env) + self.cfg['payment']['interface']
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
+        return response
+
+    # H5还款订单查询申请
+    def queryRepaymentApply(self, paymentOrderNo, **kwargs):
+        """
+        H5还款订单查询申请payload字段装填
+        注意：键名必须与接口原始数据的键名一致
+        @param paymentOrderNo： 订单号
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json response 接口响应参数 数据类型：json
+        """
+        self.log.demsg('准备锦程H5还款申请报文...')
+        data = dict()
+        # head
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        requestSerialNo = 'SerialNo' + strings + "2"
+        data['requestSerialNo'] = requestSerialNo
+
+        # 更新 payload 字段值
+        data['paymentOrderNo'] = paymentOrderNo
+        data.update(kwargs)
+        parser = DataUpdate(self.cfg['payment']['payload'], **data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('发起锦程H5还款申请...')
+        url = API['request_host_corp_api'].format(self.env) + self.cfg['payment']['interface']
+        response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
+        return response
+
+    # 渠道线下还款申请
+    def offlineRepayApply(self, loanInvoiceId, repayType='1', repayTerm=1, repayGuaranteeFee=1, **kwargs):
+        """ # 还款申请payload字段装填
+        注意：键名必须与接口原始数据的键名一致
+        @param repayTerm: 还款期次，默认取当前借据最早未还期次
+        @param repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
+        @param loanInvoiceId: 借据号 必填
+        @param repayType： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        self.log.demsg('用户四要素信息: {}'.format(self.data))
+        repay_apply_data = dict()
+        # head
+        repay_apply_data['requestSerialNo'] = 'requestNo' + strings
+        repay_apply_data['requestTime'] = self.date
+        repay_apply_data['merchantId'] = self.merchantId
+        # body
+        repay_apply_data['receiveTelephone'] = self.data['telephone']
+        repay_apply_data['invoiceId'] = loanInvoiceId
+        repay_apply_data['repayType'] = repayType
+        repay_apply_data['periods'] = repayTerm
+        repay_apply_data['otherCost'] = repayGuaranteeFee
+
+        # 更新 payload 字段值
+        repay_apply_data.update(kwargs)
+        parser = DataUpdate(self.cfg['repaymentApply']['payload'], **repay_apply_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('发起线下还款请求...')
+        url = self.host + self.cfg['repaymentApply']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 还款实权
+    def repayTrial(self, loanInvoiceId, repayDate, repayType='1', repayTerm=1, **kwargs):
+        """ # 还款申请payload字段装填
+        注意：键名必须与接口原始数据的键名一致
+        @param repayTerm: 还款期次，默认取当前借据最早未还期次
+        @param loanInvoiceId: 借据号 必填
+        @param repayType： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
+        @param repayDate: 还款时间，默认当天 eg:'2022-08-01'
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        self.log.demsg('用户四要素信息: {}'.format(self.data))
+        repay_apply_data = dict()
+        # head
+        repay_apply_data['requestSerialNo'] = 'requestNo' + strings
+        repay_apply_data['requestTime'] = self.date
+        repay_apply_data['merchantId'] = self.merchantId
+        # body
+        repay_apply_data['loanInvoiceId'] = loanInvoiceId
+        repay_apply_data['repayType'] = repayType
+        repay_apply_data['repayTerm'] = repayTerm
+        repay_apply_data['repayDate'] = repayDate
+
+        # 更新 payload 字段值
+        repay_apply_data.update(kwargs)
+        parser = DataUpdate(self.cfg['repayTrial']['payload'], **repay_apply_data)
+        self.active_payload = parser.parser
+
+        self.log.demsg('发起还款试算请求...')
+        url = self.host + self.cfg['repayTrial']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
         return response
 
 

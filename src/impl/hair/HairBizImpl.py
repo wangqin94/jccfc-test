@@ -450,47 +450,56 @@ class HairBizImpl(MysqlInit):
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
 
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
+        # 当月计息天数
+        days = get_day(asset_repay_plan["start_date"], repayDate)
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
-        repay_apply_data["repayAmount"] = float(asset_repay_plan['pre_repay_amount'])  # 总金额
+        repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
         repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
         repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
         repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
         repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
-
-        # 如果是贴息产品，贴息还款计划表查询利息，并重新计算还款总金额
-        if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
-            # 贴息产品，查询贴息还款计划
-            asset_repay_plan_merchant_interest = self.MysqlBizImpl.get_asset_database_info(
-                'asset_repay_plan_merchant_interest',
-                loan_invoice_id=loanInvoiceId,
-                current_num=int(asset_repay_plan['current_num']))
-            repay_apply_data["repayInterest"] += float(asset_repay_plan_merchant_interest['left_repay_interest'])  # 利息
-            repay_apply_data["repayAmount"] = round(
-                float(asset_repay_plan_merchant_interest['left_repay_interest']) + repay_apply_data["repayAmount"],
-                2)  # 总金额
+        repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
+        repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
+                                                2)  # 总金额
 
         # 线下还款，担保费必须为0
         if repay_scene == '02':  # 线下还款
             repayGuaranteeFee = 0
-        repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        # 按期还款、提前当期
-        if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = round(repay_apply_data["repayAmount"] + repayGuaranteeFee, 2)  # 总金额
-            repay_apply_data["repayPrincipal"] = round(float(asset_repay_plan['pre_repay_principal']), 2)  # 本金
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
+            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
+                                                    2)  # 总金额
+
+        # 提前还当期、提前结清、宽限期提前结清按日计息
+        if repay_type in ("2", "7", "9"):
+            repay_apply_data['repayInterest'] = getDailyAccrueInterest(self.productId, days, asset_repay_plan[
+                'before_calc_principal'])  # 提前还当期、提前结清按日计息
+            self.log.info("当前月计息天数：{}天, 按日计提利息：{}".format(days, repay_apply_data['repayInterest']))
+            # 如果按日计提利息>大于资产还款计划整期应还利息 利息取整期应还利息
+            if self.productId == ProductIdEnum.HAIR.value and repay_apply_data['repayInterest'] > float(
+                    asset_repay_plan['left_repay_interest']):
+                repay_apply_data['repayInterest'] = float(asset_repay_plan['left_repay_interest'])
+            elif self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
+                # 如果是贴息产品，贴息还款计划表查询利息
+                asset_repay_plan_merchant_interest = self.MysqlBizImpl.get_asset_database_info(
+                    'asset_repay_plan_merchant_interest', loan_invoice_id=loanInvoiceId,
+                    current_num=int(asset_repay_plan['current_num']))
+                repayInterest = float(asset_repay_plan_merchant_interest['left_repay_interest'])  # 当期整期利息
+                if repay_apply_data['repayInterest'] > repayInterest:
+                    repay_apply_data['repayInterest'] = repayInterest
+            # 根据最新计提信息重算还款总额
+            repay_apply_data["repayAmount"] = round(
+                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
+                2)  # 总金额
 
         # 提前结清
-        days = get_day(asset_repay_plan["start_date"], repayDate)
         if repay_type == "2":
             repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
             # 如果当期已还款，提前还款利息应收0
             repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
-            # repay_apply_data["repayInterest"] = 33.45
+            # 根据最新本金、利息重算还款总额
             repay_apply_data["repayAmount"] = round(
                 repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
                 2)  # 总金额
-            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
 
         # 宽限期提前结清
         if repay_type == "9":
@@ -499,7 +508,8 @@ class HairBizImpl(MysqlInit):
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days = '0' ORDER BY 'current_num'".format(
                 loanInvoiceId)
             currentTerm = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm and currentTerm['current_num'] != repayTerm else 0  # 宽限期利息
+            currentTermInterest = float(currentTerm['pre_repay_interest']) if currentTerm and currentTerm[
+                'current_num'] != repayTerm else 0  # 宽限期利息
             repay_apply_data["repayInterest"] = round(repay_apply_data["repayInterest"] + currentTermInterest, 2)  # 总利息
             # 贴息产品，账单日贴息已入账，只出当前期利息
             if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
