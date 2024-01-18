@@ -36,7 +36,7 @@ HaLo = {
                 "payerBankCardNum": "",  # 付款方银行卡号
                 "payerBankCode": "0102",  # 付款方银行编号
                 "aggrementNum": "",  # 代扣协议号
-                "payChannel": "1001",  # 支付通道  固定传1001-通联渠道
+                "payChannel": "1001",  # 支付通道  1001-通联渠道 1010-宝付协议支付渠道
             }
         }
     },
@@ -609,15 +609,73 @@ HaLo = {
                 "settleStatus": "0",  # 结清标识 EnumBool 0 未结清  1 结清
                 "payPlatformCode": "zhifubianhao",  # 支付平台编号
                 "aliPayViewUrl": "https://www.baidu.com/",  # 支付平台编号
-                "idNo": "451123198311190587",  # 身份证号（银行卡还款必须）
-                "phoneNum": "18908989867",  # 用户银行卡绑定手机号（银行卡还款必须）
-                "bankAcctName": "楚东进",  # 还款人姓名（银行卡还款必须）
+                "idNo": "",  # 身份证号（银行卡还款必须）
+                "phoneNum": "",  # 用户银行卡绑定手机号（银行卡还款必须）
+                "bankAcctName": "",  # 还款人姓名（银行卡还款必须）
                 "bankName": "0102",  # 银行编号（银行卡还款必须）
-                "bankAcctNo": "6212810833868379081",  # 还款人银行卡卡号（银行卡还款必须）
+                "bankAcctNo": "",  # 还款人银行卡卡号（银行卡还款必须）
                 "deviceInfo": "设备信息1.21sxf",  # 设备信息（微信还款必须）
                 "wxPayViewUrl": "https://www.baidu.com/",  # 传值外网可以访问的地址（微信还款必须）
                 "createIp": "10.12.255.0",  # ip（微信还款必须）,
-                "paymentOrderNo": ""   # H5订单号 H5还款必传
+                "paymentOrderNo": "",   # H5订单号 H5还款必传
+                "userName": ""    # 借款人姓名
+            }
+        }
+    },
+    # H5还款订单状态查询
+    'queryRepaymentApply': {
+        'interface': '/api/v1/repayment/queryRepaymentApply',
+        'payload': {
+            "head": {
+                "jcSystemEncry": "2582a6b723486da364ada1af2c00f115",
+                "jcSystemCode": "loan-web",
+                "tenantId": "000",
+                "channelNo": "21",
+                "requestSerialNo": "202=182714511036848",
+            },
+            "body": {
+                "paymentOrderNo": "",  # H5订单号 H5还款必传
+            }
+        }
+    },
+
+    # 渠道线下还款申请
+    'repaymentApply': {
+        'interface': '/api/v1/yl/common/repay/repaymentApply',
+        'payload': {
+            "head": {
+                "merchantId": "G23E03HALO",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "invoiceId": "",  # 锦程借据号
+                "receiveTelephone": "",  # 客户接收短信手机号
+                "repayType": "",  # 还款类型 EnumTrialRepayType
+                "periods": 1,  # 期数
+                "otherCost": 1  # 保费
+            }
+        }
+    },
+
+    # 还款试算
+    'repayTrial': {
+        'interface': '/api/v1/yl/common/repay/repayTrial',
+        'payload': {
+            "head": {
+                "merchantId": "G23E03HALO",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "loanInvoiceId": "",  # 锦程借据号
+                "repayTerm": "",  # 还款期次
+                "repayDate": "",  # 还款时间
+                "repayType": 1  # 还款类型 EnumTrialRepayType
             }
         }
     },

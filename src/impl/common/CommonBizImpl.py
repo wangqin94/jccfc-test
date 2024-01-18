@@ -24,7 +24,7 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
     """
 
     # data1 = json.dumps(payload)
-    _log.info("payload数据: {}".format(json.dumps(payload,ensure_ascii=False)))
+    _log.info("payload数据: {}".format(json.dumps(payload, ensure_ascii=False)))
 
     if encrypt_flag:
         encrypt_payload = encrypt(encrypt_url, headers, payload)
@@ -119,9 +119,12 @@ def getDailyAccrueInterest(productId, days, leftAmt):
         product_product_param = MysqlBizImpl().get_base_database_info('product_product_param',
                                                                       product_id=productId,
                                                                       param_key='days_per_year')
+
         if product_product_param:
-            yearRate = product_product_param['param_value']  # 产品配置年利率
+            yearRate = product_product_param['param_value']  # 产品配置年基准天数
             daysRate = round(getInterestRate(productId) / float(yearRate) / 100, 6)  # 日利率
+            if days < 0:
+                raise AssertionError("计息天数{}<0，请核对测试数据".format(days))
             dailyAccrueInterest = float(leftAmt) * daysRate * days
             return round(dailyAccrueInterest, 2)
         else:

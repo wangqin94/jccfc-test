@@ -336,14 +336,25 @@ def face_mock():
     }
     return jsonify(faceMsg)
 
-delMsg = {
-    'code': 0,
-    'msg': 'delete success'
-}
+
+# 通过放款申请流水号判断是否是老核心的360借据
+@app.route('/bridge/cusIsOldLoan', methods=['GET', 'POST'])
+def cusIsOldLoan():
+    Msg = {
+        'code': "0000",
+        'msg': 'success',
+        'result': "Y"
+    }
+    return jsonify(Msg)
 
 
 @app.route('/mock/deleteMock', methods=['DELETE'])  # delete
 def delete_mock():
+    delMsg = {
+        'code': "0000",
+        'msg': 'success',
+        'result': "Y"
+    }
     return jsonify(delMsg)
 
 

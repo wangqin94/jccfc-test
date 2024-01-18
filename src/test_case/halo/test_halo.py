@@ -23,12 +23,12 @@ class TestCase(object):
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     @staticmethod
-    def process(flag=16):
+    def process(flag=20):
         """ 测试步骤 """
         # 绑卡
         merchantId = 'G23E03HALO'
         if flag == 0:
-            HaLo = HaLoBizImpl(merchantId, data=None)
+            HaLo = HaLoBizImpl(merchantId, data=data)
             HaLo.sharedWithholdingAgreement()
 
         # 绑卡查询
@@ -39,7 +39,7 @@ class TestCase(object):
         # 授信
         elif flag == 3:
             HaLo = HaLoBizImpl(merchantId, data=data)
-            HaLo.credit(applyAmount=10000)
+            HaLo.credit(applyAmount=1000)
 
         # 授信查询
         elif flag == 4:
@@ -112,6 +112,21 @@ class TestCase(object):
         elif flag == 17:
             HaLo = HaLoBizImpl(merchantId, data=data)
             HaLo.settlementCerDownload("488958292D324978AC873742067CC783")
+
+        # H5还款订单查询
+        elif flag == 18:
+            HaLo = HaLoBizImpl(merchantId, data=data)
+            HaLo.queryRepaymentApply("488958292D324978AC873742067CC783")
+
+        # 渠道线下还款申请
+        elif flag == 19:
+            HaLo = HaLoBizImpl(merchantId, data=data)
+            HaLo.offlineRepayApply(loanInvoiceId='000LI0002002451194721947024', repayType=2, repayTerm=1)
+
+        # 还款试算
+        elif flag == 20:
+            HaLo = HaLoBizImpl(merchantId, data=data)
+            HaLo.repayTrial(loanInvoiceId='000LI0002002451194722440007', repayType=2, repayTerm=1, repayDate='2024-02-07')
 
     def postprocess(self):
         """ 后置条件处理 """

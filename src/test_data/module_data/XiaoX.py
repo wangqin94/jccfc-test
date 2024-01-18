@@ -174,14 +174,14 @@ XiaoX = {
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "xdgl/xiax/test/C3-V01-20210826个人信用信息基础数据库查询使用授权书.pdf",
-                        "fileName": "C3-V01-20210826个人信用信息基础数据库查询使用授权书.pdf"
+                        "fileUrl": "xdgl/jike/test/credit.pdf",
+                        "fileName": "credit.pdf"
                     },
                     {
-                        "fileType": "7",  # 三方信息查询授权书
-                        "fileUrl": "xdgl/xiax/test/C27-V02-20220520个人信息查询使用授权书.pdf",
-                        "fileName": "C27-V02-20220520个人信息查询使用授权书.pdf"
-                    }
+                        "fileType": "7",  # 三方查询授权书
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
+                    },
                 ],
                 "authenticationInfo": {
                     "appRegistraDate": "20210101 101010",  # App注册时间

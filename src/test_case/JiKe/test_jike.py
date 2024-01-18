@@ -23,11 +23,11 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=11):
+    def process(self, flag=16):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            jike = JiKeBizImpl(data=None)
+            jike = JiKeBizImpl(data=data)
             jike.sharedWithholdingAgreement()
 
         # 绑卡查询
@@ -49,7 +49,7 @@ class TestCase(object):
         # 授信查询
         elif flag == 4:
             jike = JiKeBizImpl(data=data)
-            jike.queryCreditResult(thirdApplyId='thirdApplyId16654556161833516')
+            jike.queryCreditResult(thirdApplyId='thirdApplyId17017651015432692')
 
         # 借款申请
         elif flag == 5:
@@ -107,6 +107,12 @@ class TestCase(object):
             # jike.queryAccountResult("GoodsSerialNo16624470361285455", loanInvoiceId='000LI0001739049438658571059', term=2)
             # jike.queryAccountResult("GoodsSerialNo16624470361285455", term=2)
             jike.queryAccountResult(loanInvoiceId='000LI0001408714913972228005', term=2)
+
+        # 担保费同步
+        elif flag == 16:
+            jike = JiKeBizImpl(data=data)
+            # flag: 同步阶段标识 loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
+            jike.syncGuaranteePlan(loanInvoiceId="000LI0002281692788867167020", flag="repay", beginTerm=2, guaranteeAmt=0.02)
 
     def postprocess(self):
         """ 后置条件处理 """
