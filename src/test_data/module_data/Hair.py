@@ -149,7 +149,7 @@ Hair = {
                 "education": "11",  # 学历 EnumEduLevel
                 "maritalStatus": "20",  # 婚姻状态 EnumMarriageStatus，若已婚，则联系人需含配偶
                 "nation": "汉",  # 民族
-                "idExpiryDate": "1990.1.1-2029.01.23",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
+                "idExpiryDate": "2019.05.30-2040.09.30",  # 身份证有效期 1990.1.1-2099.12.31（长期传2099.12.31）
                 "idCardAddrAddress": "天府四街OCG写字楼A座",  # 身份证详细地址
                 "idCardAddrProvinceCode": "510000",  # 身份证地址省份代码
                 "idCardAddrProvinceName": "四川省",  # 身份证地址省份名称
@@ -224,6 +224,16 @@ Hair = {
                         "fileType": "17",  # 人脸识别查询授权书
                         "fileUrl": "xdgl/jike/test/third.pdf",
                         "fileName": "third.pdf"
+                    },
+                    {
+                        "fileType": "21",  # 个人信息共享授权书--21
+                        "fileUrl": "xdgl/jike/test/HAIR_个人信息共享授权书校验通过.pdf",
+                        "fileName": "HAIR_个人信息共享授权书校验通过.pdf"
+                    },
+                    {
+                        "fileType": "22",  # 个人信息收集授权书--22
+                        "fileUrl": "xdgl/jike/test/HAIR_个人信息收集授权书校验通过.pdf",
+                        "fileName": "HAIR_个人信息收集授权书校验通过.pdf"
                     }
                 ],
                 "authenticationInfo": {
@@ -290,7 +300,7 @@ Hair = {
                 "custInterestRate": 24.00,  # 对客实际利率 (百分比，比如 17.56 表示 17.56%)
                 "repayType": "1",  # 还款方式  EnumRepayMethod
                 "accountNo": "",  # 放款/还款银行卡号
-                "bankName": "工商银行",  # 还款银行名称
+                "bankName": "中国银行",  # 还款银行名称
                 "storeAccountNo": "门店银卡号",  # 门店银卡号
                 "storeBankName": "门店银行账户名称",  # 门店银行账户名称
                 "loanPurpose": "4",  # 贷款用途 EnumLoanPurpose
@@ -300,6 +310,11 @@ Hair = {
                         "fileType": "9",
                         "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
+                    },
+                    {
+                        "fileType": "20",  # 委托代扣授权书--20
+                        "fileUrl": "xdgl/jike/test/HAIR_委托代扣授权书校验通过.pdf",
+                        "fileName": "HAIR_委托代扣授权书校验通过.pdf"
                     }
                 ],
                 "repaymentPlans": [
@@ -406,7 +421,8 @@ Hair = {
                 "tenantId": "000"
             },
             "body": {
-                "repayScene": "01",    # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
+                "repayScene": "01",
+                # 还款场景 EnumRepayScene REPAY_ONLINE("01", "线上还款"),REPAY_OFFLINE("02", "线下还款"),ALIPAY_NOTICE（"04","支付宝还款通知"）OVERDUE_NOTICE（"05","逾期（代偿、回购后）还款通知"）
                 "repayApplySerialNo": "6",  # 还款申请流水号 每笔还款申请流水号唯一，支付宝还款传支付宝扣款订单号
                 "thirdWithholdId": "",  # 三方代扣编号 线下还款、逾期还款通知：传机构代扣编号；支付宝还款通知：传支付宝扣款订单号；其他还款场景不传
                 "appAuthToken": "6",  # 支付宝授权令牌 支付宝还款通知必传
