@@ -302,6 +302,7 @@ WeiCai = {
             },
             "body": {
                 "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
+                "flag": "",  # loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
                 "guaranteePlans": [
                     {
                         "period": 1,

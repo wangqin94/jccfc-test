@@ -6,8 +6,6 @@
 @Date    ：2021/9/9 15:55 
 """
 import sys
-
-from engine.EnvInit import EnvInit
 from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import *
 from src.impl.common.MysqlBizImpl import MysqlBizImpl

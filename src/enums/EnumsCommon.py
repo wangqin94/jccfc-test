@@ -67,6 +67,7 @@ class EnumMerchantId(Enum):
     FQLGRT = 'G23E09FNQL'
     JIRO = 'G23E08JIRO'
     DIDI = 'G23E07DIDI'
+    JIKE = 'G22E02JIKE'
 
 
 @unique

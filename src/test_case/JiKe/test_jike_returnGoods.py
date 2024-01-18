@@ -1,3 +1,4 @@
+import time
 import unittest
 import warnings
 
@@ -15,13 +16,15 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl = RepayPublicBizImpl()
 
     """ 测试步骤 """
-    def test_repay_apply(self, loanInvoiceId=None):
+    def test_repay_apply(self, loanInvoiceId=None, repayDate=None, repayTerm=2):
         """ 测试步骤 """
-        # loanInvoiceId = '000LI0002174662201688194001'
+        repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
+        # 还款环境配置--退货无法切日，只能当前时间发起退货
+        self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
         if not loanInvoiceId:
             credit_loan_invoice = self.jike.MysqlBizImpl.get_credit_database_info('credit_loan_invoice', certificate_no=data['cer_no'])
             loanInvoiceId = credit_loan_invoice['loan_invoice_id']
-        self.jike.returnGoods_apply(loanInvoiceId=loanInvoiceId, term=1, repayDate='2023-07-27')
+        self.jike.returnGoods_apply(loanInvoiceId=loanInvoiceId, term=repayTerm, repayDate=repayDate)
 
         # 自动入账
         self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")

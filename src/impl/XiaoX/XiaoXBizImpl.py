@@ -2,13 +2,15 @@
 # ------------------------------------------
 # 小象接口数据封装类
 # ------------------------------------------
+from dateutil.parser import parse
+
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
-from src.test_data.module_data import XiaoX
 from src.impl.common.CommonBizImpl import *
-from utils.FileHandle import Files
+from src.impl.public.YinLiuBizImpl import YinLiuBizImpl
+from src.test_data.module_data import XiaoX
 from utils.Apollo import Apollo
-from dateutil.parser import parse
+from utils.FileHandle import Files
 
 
 class XiaoXBizImpl(MysqlInit):
@@ -30,9 +32,9 @@ class XiaoXBizImpl(MysqlInit):
         self.data = self.get_user_info(data=data, person=person)
         self.interestRate = getInterestRate(ProductIdEnum.XIAOX.value)
 
-        # 初始化产品
-        self.merchantId = merchantId
-        # 初始化payload变量
+        # 初始化产品、商户
+        self.productId = ProductIdEnum.XIAOX.value
+        self.merchantId = EnumMerchantId.XIAOX.value if not merchantId else merchantId  # 初始化payload变量
         self.active_payload = {}
 
         self.encrypt_url = self.host + self.cfg['encrypt']['interface']
@@ -378,7 +380,7 @@ class XiaoXBizImpl(MysqlInit):
 
     # 还款申请
     def repay_apply(self, loanInvoiceId, repay_scene='01', repay_type='1', repayTerm=None, repayGuaranteeFee=10,
-                    repayDate=None, **kwargs):
+                    repayDate=None, paymentOrder=None, **kwargs):
         """ # 还款申请payload字段装填
         注意：键名必须与接口原始数据的键名一致
         @param repayTerm: 还款期次，默认取当前借据最早未还期次
@@ -386,7 +388,8 @@ class XiaoXBizImpl(MysqlInit):
         @param repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
         @param repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         @param loanInvoiceId: 借据号 必填
-        @param repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
+        @param repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期； 9 宽限期提前结清； 10 逾期提前结清
+        @param paymentOrder: 支付宝订单号，支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）
         @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         """
@@ -399,68 +402,10 @@ class XiaoXBizImpl(MysqlInit):
         repay_apply_data['requestTime'] = self.date
         repay_apply_data['merchantId'] = self.merchantId
         # body
-        repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
-        # repay_apply_data['repayApplySerialNo'] = "2022093022001425270501810521"  # 支付宝存量订单
-        repay_apply_data['loanInvoiceId'] = loanInvoiceId
-        repay_apply_data['repayScene'] = repay_scene
-        repay_apply_data['repayType'] = repay_type
-        if repayTerm:
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         current_num=repayTerm)
-        else:
-            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
-                loanInvoiceId)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key)
-        self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
-        repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
-        # repay_apply_data['repayNum'] = 1
-        repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
-        repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
-        repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
-        repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
+        repay_apply_data = YinLiuBizImpl().repayApiBodyData(self.data, self.productId, loanInvoiceId, repay_scene,
+                                                            repay_type, repayTerm, repayGuaranteeFee, repayDate,
+                                                            paymentOrder, **kwargs)
 
-        # 线下还款，担保费必须为0
-        if repay_scene == '02':  # 线下还款
-            repayGuaranteeFee = 0
-        repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        # 按期还款、提前当期
-        if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
-                                                    2)  # 总金额
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
-            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        # 提前结清
-        if repay_type == "2":
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-            days = get_day(asset_repay_plan["start_date"], repayDate)
-            # 如果当期已还款，提前还款利息应收0
-            repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
-            # repay_apply_data["repayInterest"] = 33.45
-            repay_apply_data["repayAmount"] = round(
-                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee, 2)  # 总金额
-            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        if repay_scene == '01':  # 线上还款
-            repay_apply_data['repaymentAccountNo'] = self.data['bankid']
-        if repay_scene == '02' or '05':  # 线下还款、逾期还款
-            repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
-        if repay_scene == '04':  # 支付宝还款
-            repay_apply_data['thirdWithholdId'] = "2022093022001425270501809997"  # 支付宝存量订单
-            repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
-            apollo_data = dict()
-            apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
-                                                                             2)  # 总金额
-            self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
-
-        # 配置还款mock时间
-        apollo_data = dict()
-        apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
-        apollo_data['credit.mock.repay.date'] = "{} 12:00:00".format(repayDate)
-        self.apollo.update_config(appId='loan2.1-public', namespace='JCXF.system', **apollo_data)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_apply']['payload'], **repay_apply_data)

@@ -58,7 +58,7 @@ FqlGrt = {
             "debitOpenAccountBank": "建设银行",
             "debitAccountNo": "6217591693558210853",
             "debitCnaps": "",
-            "insureId": "10022",
+            "insureId": "10022",  # 10022 鸿飞担保生产， 30591 鸿飞测试， 30281 湖南樽昊担保
             "interestRate": 7.5,
             "protocolId": "S202309210001",
             "extend": {},
@@ -254,7 +254,26 @@ FqlGrt = {
                     "withholdMerchants": 0,
                     "account": "8175000081750000",
                     "orgType": 2,
-                    "sepMerchCode": "81750000",
+                    "sepMerchCode": "83310000",  # 鸿飞： 83310000；  樽昊：84750000
+                    "sepBankId": "01000000",
+                    "detail": [
+                        {
+                            "from": 1,
+                            "amt": 3.56
+                        },
+                        {
+                            "from": 2,
+                            "amt": 0
+                        }
+                    ]
+                },
+                {
+                    "type": 2,
+                    "amt": 3.56,
+                    "withholdMerchants": 0,
+                    "account": "8175000081750000",
+                    "orgType": 2,
+                    "sepMerchCode": "84750000",  # 鸿飞： 83310000；  樽昊：84750000
                     "sepBankId": "01000000",
                     "detail": [
                         {

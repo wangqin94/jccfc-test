@@ -4,6 +4,7 @@
 # ------------------------------------------
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumsCommon import *
+from src.impl.public.YinLiuBizImpl import YinLiuBizImpl
 from src.test_data.module_data import JiKe
 from src.impl.common.CommonBizImpl import *
 from utils.FileHandle import Files
@@ -154,6 +155,10 @@ class JiKeBizImpl(MysqlInit):
         self.date = time.strftime('%Y%m%d%H%M%S', time.localtime())  # 当前时间
         self.times = str(int(round(time.time() * 1000)))  # 当前13位时间戳
         self.data = self.get_user_info(data=data, person=person)
+
+        # 初始化产品、商户
+        self.productId = ProductIdEnum.JIKE.value
+        self.merchantId = EnumMerchantId.JIKE.value
         # 初始化payload变量
         self.active_payload = {}
 
@@ -527,67 +532,9 @@ class JiKeBizImpl(MysqlInit):
         repay_apply_data['requestSerialNo'] = 'requestNo' + strings
         repay_apply_data['requestTime'] = self.date
         # body
-        repay_apply_data['repayApplySerialNo'] = 'repayNo' + strings
-        # repay_apply_data['repayApplySerialNo'] = "2022093022001425270501810521"  # 支付宝存量订单
-        repay_apply_data['loanInvoiceId'] = loanInvoiceId
-        repay_apply_data['thirdRepayTime'] = self.date  # 客户实际还款时间
-        repay_apply_data['repaymentAccountNo'] = self.data['bankid']
-        repay_apply_data['repayScene'] = repay_scene
-        repay_apply_data['repayType'] = repay_type
-        if repayTerm:
-            asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
-                                                                         loan_invoice_id=loanInvoiceId,
-                                                                         current_num=repayTerm)
-        else:
-            key = "loan_invoice_id = '{}' and repay_plan_status in ('1','2','4', '5') ORDER BY 'current_num'".format(
-                loanInvoiceId)
-            asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
-        self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
-        repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
-        # repay_apply_data['repayNum'] = 1
-        repay_apply_data["repayInterest"] = float(asset_repay_plan['pre_repay_interest'])  # 利息
-        repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
-        repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
-        repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
-
-        # 线下还款，担保费必须为0
-        if repay_scene == '02':  # 线下还款
-            repayGuaranteeFee = 0
-        repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        # 按期还款、提前当期
-        if repay_type == "1" or "7":
-            repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
-                                                    2)  # 总金额
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['pre_repay_principal'])  # 本金
-            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        # 提前结清
-        if repay_type == "2":
-            repay_apply_data["repayPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-            days = get_day(asset_repay_plan["start_date"], repayDate)
-            # 如果当期已还款，提前还款利息应收0
-            repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
-            # repay_apply_data["repayInterest"] = 33.45
-            repay_apply_data["repayAmount"] = round(
-                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee, 2)  # 总金额
-            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-
-        if repay_scene == '01':  # 线上还款
-            repay_apply_data['repaymentAccountNo'] = self.data['bankid']
-        if repay_scene == '02' or '05':  # 线下还款、逾期还款
-            repay_apply_data['thirdWithholdId'] = 'thirdWithholdId' + strings
-        if repay_scene == '04':  # 支付宝还款
-            if not paymentOrder:
-                raise Exception("支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）")
-            repay_apply_data['thirdWithholdId'] = paymentOrder  # 支付宝存量订单
-            repay_apply_data['thirdRepayAccountType'] = "支付宝"
-            repay_apply_data['appAuthToken'] = 'appAuthToken' + strings
-            apollo_data = dict()
-            apollo_data['hj.payment.alipay.order.query.switch'] = "1"
-            apollo_data['hj.payment.alipay.order.query.tradeAmount'] = round(repay_apply_data["repayAmount"] * 100,
-                                                                             2)  # 总金额
-            self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
+        repay_apply_data = YinLiuBizImpl().repayApiBodyData(self.data, self.productId, loanInvoiceId, repay_scene,
+                                                            repay_type, repayTerm, repayGuaranteeFee, repayDate,
+                                                            paymentOrder, **kwargs)
 
         # 配置还款mock时间
         apollo_data = dict()
@@ -663,7 +610,7 @@ class JiKeBizImpl(MysqlInit):
         if days <= 0:
             returnGoods_apply_data["returnGoodsInterest"] = 0
 
-        # 计算退货应收利息， 放款7日内退货不收罚息
+        # 计算退货应收利息， 放款7日内退货不收利息
         credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
                                                                          loan_invoice_id=loanInvoiceId)
         loanDate = str(credit_loan_invoice['loan_pay_time']).split()[0]
@@ -679,7 +626,11 @@ class JiKeBizImpl(MysqlInit):
                                                                          loan_invoice_id=loanInvoiceId,
                                                                          repay_plan_status='1',
                                                                          current_num=term)
-            dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
+
+            accrueInterest = getDailyAccrueInterest(self.productId, days, asset_repay_plan[
+                'before_calc_principal'])  # 提前还当期、提前结清按日计息
+            self.log.info("当前月计息天数：{}天, 按日计提利息：{}".format(days, accrueInterest))
+            dangqi_interest = accrueInterest  # 当期利息
             # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
             key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3) ORDER BY 'current_num'".format(
                 loanInvoiceId)
@@ -871,6 +822,50 @@ class JiKeBizImpl(MysqlInit):
 
         self.log.demsg('代偿结果查询...')
         url = self.host + self.cfg['queryAccountResult']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 担保费同步
+    def syncGuaranteePlan(self, loanInvoiceId, flag="loan", beginTerm=1, guaranteeAmt=10, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param beginTerm: 开始同步还款期次
+        @param flag: 同步阶段标识 loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
+        @param guaranteeAmt: 每期担保费
+        @param loanInvoiceId: 锦程借据号
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        syncGuaranteePlan = dict()
+        # head
+        syncGuaranteePlan['requestSerialNo'] = 'requestNo' + strings + "_7000"
+        syncGuaranteePlan['requestTime'] = self.date
+        syncGuaranteePlan['merchantId'] = self.merchantId
+
+        # body
+        syncGuaranteePlan['loanInvoiceId'] = loanInvoiceId
+        syncGuaranteePlan['flag'] = flag
+        # 组装担保费计划
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
+        term = credit_loan_invoice['installment_num']
+        guaranteePlans = []
+        if flag == 'loan':
+            for period in range(1, term + 1):
+                guaranteePlan = {"period": period, "guaranteeAmt": guaranteeAmt}
+                guaranteePlans.append(guaranteePlan)
+        elif flag == 'repay':
+            guaranteePlan = {"period": beginTerm, "guaranteeAmt": guaranteeAmt}
+            guaranteePlans.append(guaranteePlan)
+        syncGuaranteePlan['guaranteePlans'] = guaranteePlans
+        # 更新 payload 字段值
+        syncGuaranteePlan.update(kwargs)
+        parser = DataUpdate(self.cfg['syncGuaranteePlan']['payload'], **syncGuaranteePlan)
+        self.active_payload = parser.parser
+
+        self.log.demsg('担保费同步...')
+        url = self.host + self.cfg['syncGuaranteePlan']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
