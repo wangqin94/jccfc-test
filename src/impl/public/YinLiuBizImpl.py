@@ -25,7 +25,7 @@ class YinLiuBizImpl(EnvInit):
 
     def repayApiBodyData(self, data, productId, loanInvoiceId, repayScene='01', repayType='1', repayTerm=None,
                          repayGuaranteeFee=1.11,
-                         repayDate=None, paymentOrder=None, **kwargs):
+                         repayDate=None, paymentOrder=None):
         """
         封装统一还款请求body
         @param productId: 产品id
@@ -37,7 +37,6 @@ class YinLiuBizImpl(EnvInit):
         @param repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
         @param repayDate: 还款时间，默认当天 eg:'2022-08-01'
         @param paymentOrder: 支付宝订单号，支付宝还款需手动输入（查询支付系统payment_channel_order.PAY_TRANSACTION_ID）
-        @param kwargs: 需要临时装填的字段以及值 eg: key=value
         @return: response 接口响应参数 数据类型：json
         @return:
         """
@@ -167,8 +166,6 @@ class YinLiuBizImpl(EnvInit):
                                                                              2)  # 总金额
             self.apollo.update_config(appId='loan2.1-jcxf-convert', namespace='000', **apollo_data)
 
-        # 更新输入参数
-        repay_apply_data.update(kwargs)
         return repay_apply_data
 
 

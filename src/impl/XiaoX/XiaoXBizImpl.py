@@ -402,10 +402,10 @@ class XiaoXBizImpl(MysqlInit):
         repay_apply_data['requestTime'] = self.date
         repay_apply_data['merchantId'] = self.merchantId
         # body
-        repay_apply_data = YinLiuBizImpl().repayApiBodyData(self.data, self.productId, loanInvoiceId, repay_scene,
-                                                            repay_type, repayTerm, repayGuaranteeFee, repayDate,
-                                                            paymentOrder, **kwargs)
-
+        bodyData = YinLiuBizImpl().repayApiBodyData(self.data, self.productId, loanInvoiceId, repay_scene,
+                                                    repay_type, repayTerm, repayGuaranteeFee, repayDate,
+                                                    paymentOrder)
+        repay_apply_data.update(bodyData)
         # 更新 payload 字段值
         repay_apply_data.update(kwargs)
         parser = DataUpdate(self.cfg['repay_apply']['payload'], **repay_apply_data)

@@ -532,10 +532,11 @@ class JiKeBizImpl(MysqlInit):
         repay_apply_data['requestSerialNo'] = 'requestNo' + strings
         repay_apply_data['requestTime'] = self.date
         # body
-        repay_apply_data = YinLiuBizImpl().repayApiBodyData(self.data, self.productId, loanInvoiceId, repay_scene,
-                                                            repay_type, repayTerm, repayGuaranteeFee, repayDate,
-                                                            paymentOrder, **kwargs)
+        bodyData = YinLiuBizImpl().repayApiBodyData(self.data, self.productId, loanInvoiceId, repay_scene,
+                                                    repay_type, repayTerm, repayGuaranteeFee, repayDate,
+                                                    paymentOrder)
 
+        repay_apply_data.update(bodyData)
         # 配置还款mock时间
         apollo_data = dict()
         apollo_data['credit.mock.repay.trade.date'] = "true"  # credit.mock.repay.trade.date
