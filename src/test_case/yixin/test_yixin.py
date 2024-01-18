@@ -131,6 +131,12 @@ class TestCase(object):
             yixin = YiXinBizImpl(data=data)
             yixin.repayTrial(loanInvoiceId='', repayTerm='', repayType='', repayDate=None)
 
+        # 担保费同步
+        elif flag == 20:
+            yixin = YiXinBizImpl(data=data)
+            # flag: 同步阶段标识 loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
+            yixin.syncGuaranteePlan(loanInvoiceId="000LI0002281692788867167020", flag="repay", beginTerm=2, guaranteeAmt=0.02)
+
     def postprocess(self):
         """ 后置条件处理 """
         pass

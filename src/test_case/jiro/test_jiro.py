@@ -131,6 +131,12 @@ class TestCase(object):
             jiro = JiRoBizImpl(data=data)
             jiro.repayTrial(loanInvoiceId='', repayTerm='', repayType='', repayDate=None)
 
+        # 担保费同步
+        elif flag == 20:
+            jiro = JiRoBizImpl(data=data)
+            # flag: 同步阶段标识 loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
+            jiro.syncGuaranteePlan(loanInvoiceId="000LI0002281692788867167020", flag="repay", beginTerm=2, guaranteeAmt=0.02)
+
     def postprocess(self):
         """ 后置条件处理 """
         pass

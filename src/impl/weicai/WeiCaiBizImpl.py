@@ -343,13 +343,15 @@ class WeiCaiBizImpl(MysqlInit):
         syncGuaranteePlan['loanInvoiceId'] = loanInvoiceId
         syncGuaranteePlan['flag'] = flag
         # 组装担保费计划
-        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice",
-                                                                         loan_invoice_id=loanInvoiceId)
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice", loan_invoice_id=loanInvoiceId)
         term = credit_loan_invoice['installment_num']
         guaranteePlans = []
-        beginTerm = 1 if flag == 'loan' else beginTerm
-        for period in range(beginTerm, term + 1):
-            guaranteePlan = {"period": period, "guaranteeAmt": guaranteeAmt}
+        if flag == 'loan':
+            for period in range(1, term + 1):
+                guaranteePlan = {"period": period, "guaranteeAmt": guaranteeAmt}
+                guaranteePlans.append(guaranteePlan)
+        elif flag == 'repay':
+            guaranteePlan = {"period": beginTerm, "guaranteeAmt": guaranteeAmt}
             guaranteePlans.append(guaranteePlan)
         syncGuaranteePlan['guaranteePlans'] = guaranteePlans
         # 更新 payload 字段值
