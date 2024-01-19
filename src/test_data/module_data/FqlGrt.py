@@ -139,6 +139,8 @@ FqlGrt = {
             "debitOpenAccountBank": "建设银行",
             "debitAccountNo": "6217591693558210853",
             "debitCnaps": "",
+            "repayBankName": "建设银行",
+            "repayBankNo": "6217591693558210853",
             "extend": {}
         }
     },
