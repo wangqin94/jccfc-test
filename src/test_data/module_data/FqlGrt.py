@@ -64,40 +64,51 @@ FqlGrt = {
             "extend": {},
             "uploadInfo": [
                 {
-                    "fileType": "1",
+                    "fileType": "1",  # 身份证正面
                     "filePath": "/upload/credit",
                     "fileName": "idcard_front_1123071816044097130384.jpg"
                 },
                 {
-                    "fileType": "2",
+                    "fileType": "2",  # 身份证反面
                     "filePath": "/upload/credit",
                     "fileName": "idcard_back_1123071816044097130384.jpg"
                 },
                 {
-                    "fileType": "3",
+                    "fileType": "3",  # 人脸识别照
                     "filePath": "/upload/credit",
                     "fileName": "face_distinguish_1123071816044097130384.jpg"
                 },
                 {
-                    "fileType": "4",
+                    "fileType": "4",  # 征信查询授权书
                     "filePath": "/upload/credit",
                     "fileName": "JC_userauth_1123071816044097130384.pdf"
                 },
                 {
-                    "fileType": "5",
+                    "fileType": "5",  # 借款合同
                     "filePath": "/upload/credit",
                     "fileName": "JC_userinfo_1123071816044097130384.pdf"
                 },
                 {
-                    "fileType": "6",
+                    "fileType": "6",  # 非学生承诺函
                     "filePath": "/upload/credit",
                     "fileName": "JC_non_student_1123071816044097130384.pdf"
                 },
                 {
-                    "fileType": "7",
+                    "fileType": "7",  # 三方信息查询授权书
                     "filePath": "/upload/credit",
                     "fileName": "JC_face_identify_authorization_1123071816044097130384.pdf"
-                }
+                },
+                {
+                    "fileType": "8",  # 个人信息共享授权书
+                    "filePath": "/upload/credit",
+                    "fileName": "JC_face_identify_authorization_1123071816044097130384.pdf"
+                },
+                {
+                    "fileType": "9",  # 个人信息收集授权书
+                    "filePath": "/upload/credit",
+                    "fileName": "JC_face_identify_authorization_1123071816044097130384.pdf"
+                },
+
             ]
         }
     },
