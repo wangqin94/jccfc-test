@@ -154,54 +154,54 @@ YiXin = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "/upload/yixin/credit/yx_front.jpg",
-                        "fileName": "yx_front.jpg"
+                        "fileUrl": "xdgl/jike/test/front.jpg",
+                        "fileName": "front.jpg"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "/upload/yixin/credit/yx_back.jpg",
-                        "fileName": "yx_back.jpg"
+                        "fileUrl": "xdgl/jike/test/back.jpg",
+                        "fileName": "back.jpg"
                     },
                     {
                         "fileType": "3",  # 人脸
-                        "fileUrl": "/upload/yixin/credit/face.jpg",
+                        "fileUrl": "xdgl/jike/test/face.jpg",
                         "fileName": "face.jpg"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "/upload/yixin/credit/YX_个人征信查询.pdf",
-                        "fileName": "YX_个人征信查询.pdf"
+                        "fileUrl": "xdgl/jike/test/credit.pdf",
+                        "fileName": "credit.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "/upload/yixin/credit/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_non_student_202000000948071964.pdf"
                     },
                     {
                         "fileType": "7",  # 三方查询授权书
-                        "fileUrl": "/upload/yixin/credit/YX_三方数据查询.pdf",
-                        "fileName": "YX_三方数据查询.pdf"
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     },
                     {
                         "fileType": "10",
-                        "fileUrl": "/upload/yixin/credit/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
-                    },
-                    {
-                        "fileType": "20",  # 委托代扣授权书--20
-                        "fileUrl": "/upload/yixin/credit/YX_委托代扣授权书校验通过.pdf",
-                        "fileName": "YX_委托代扣授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "21",  # 个人信息共享授权书--21
-                        "fileUrl": "/upload/yixin/credit/YX_个人信息共享授权书校验通过.pdf",
-                        "fileName": "YX_个人信息共享授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "22",  # 个人信息收集授权书--22
-                        "fileUrl": "/upload/yixin/credit/YX_个人信息收集授权书校验通过.pdf",
-                        "fileName": "YX_个人信息收集授权书校验通过.pdf"
                     }
+                    # {
+                    #     "fileType": "20",  # 委托代扣授权书--20
+                    #     "fileUrl": "/upload/yixin/credit/YX_委托代扣授权书校验通过.pdf",
+                    #     "fileName": "YX_委托代扣授权书校验通过.pdf"
+                    # },
+                    # {
+                    #     "fileType": "21",  # 个人信息共享授权书--21
+                    #     "fileUrl": "/upload/yixin/credit/YX_个人信息共享授权书校验通过.pdf",
+                    #     "fileName": "YX_个人信息共享授权书校验通过.pdf"
+                    # },
+                    # {
+                    #     "fileType": "22",  # 个人信息收集授权书--22
+                    #     "fileUrl": "/upload/yixin/credit/YX_个人信息收集授权书校验通过.pdf",
+                    #     "fileName": "YX_个人信息收集授权书校验通过.pdf"
+                    # }
                 ],
             }
         }

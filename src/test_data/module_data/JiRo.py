@@ -153,54 +153,54 @@ JiRo = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "upload/jiro/credit/jr_front.jpg",
-                        "fileName": "jr_front.png"
+                        "fileUrl": "xdgl/jike/test/front.jpg",
+                        "fileName": "front.png"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "upload/jiro/credit/jr_back.jpg",
-                        "fileName": "jr_back.png"
+                        "fileUrl": "xdgl/jike/test/back.jpg",
+                        "fileName": "back.png"
                     },
                     {
                         "fileType": "3",  # 人脸
-                        "fileUrl": "upload/jiro/credit/face.jpg",
+                        "fileUrl": "xdgl/jike/test/face.jpg",
                         "fileName": "face.png"
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "upload/jiro/credit/JR_个人征信查询.pdf",
-                        "fileName": "JR_个人征信查询.pdf"
+                        "fileUrl": "xdgl/jike/test/credit.pdf",
+                        "fileName": "credit.pdf"
                     },
                     {
                         "fileType": "6",  # 借款合同
-                        "fileUrl": "upload/jiro/credit/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
                     },
                     {
                         "fileType": "7",  # 三方查询授权书
-                        "fileUrl": "upload/jiro/credit/JR_三方数据查询.pdf",
-                        "fileName": "JR_三方数据查询.pdf"
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     },
                     {
                         "fileType": "9",
-                        "fileUrl": "upload/jiro/credit/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
-                    },
-                    {
-                        "fileType": "20",
-                        "fileUrl": "upload/jiro/credit/JR_委托代扣授权书校验通过.pdf",
-                        "fileName": "JR_委托代扣授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "21",
-                        "fileUrl": "upload/jiro/credit/JR_个人信息共享授权书校验通过.pdf",
-                        "fileName": "JR_个人信息共享授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "22",
-                        "fileUrl": "upload/jiro/credit/JR_个人信息收集授权书校验通过.pdf",
-                        "fileName": "JR_个人信息收集授权书校验通过.pdf"
                     }
+                    # {
+                    #     "fileType": "20",
+                    #     "fileUrl": "upload/jiro/credit/JR_委托代扣授权书校验通过.pdf",
+                    #     "fileName": "JR_委托代扣授权书校验通过.pdf"
+                    # },
+                    # {
+                    #     "fileType": "21",
+                    #     "fileUrl": "upload/jiro/credit/JR_个人信息共享授权书校验通过.pdf",
+                    #     "fileName": "JR_个人信息共享授权书校验通过.pdf"
+                    # },
+                    # {
+                    #     "fileType": "22",
+                    #     "fileUrl": "upload/jiro/credit/JR_个人信息收集授权书校验通过.pdf",
+                    #     "fileName": "JR_个人信息收集授权书校验通过.pdf"
+                    # }
                 ],
             }
         }

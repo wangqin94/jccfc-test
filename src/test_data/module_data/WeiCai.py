@@ -126,13 +126,13 @@ WeiCai = {
                 "fileInfos": [
                     {
                         "fileType": "1",  # 身份证正面
-                        "fileUrl": "xdgl/jike/test/wc_front.jpg",
-                        "fileName": "wc_front.jpg"
+                        "fileUrl": "xdgl/jike/test/front.jpg",
+                        "fileName": "front.jpg"
                     },
                     {
                         "fileType": "2",  # 身份证反面
-                        "fileUrl": "xdgl/jike/test/wc_back.jpg",
-                        "fileName": "wc_back.jpg"
+                        "fileUrl": "xdgl/jike/test/back.jpg",
+                        "fileName": "back.jpg"
                     },
                     {
                         "fileType": "3",  # 人脸
@@ -141,8 +141,8 @@ WeiCai = {
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "xdgl/jike/test/WC_个人征信查询.pdf",
-                        "fileName": "WC_个人征信查询.pdf"
+                        "fileUrl": "xdgl/jike/test/credit.pdf",
+                        "fileName": "credit.pdf"
                     },
                     {
                         "fileType": "6",
@@ -151,29 +151,29 @@ WeiCai = {
                     },
                     {
                         "fileType": "7",  # 三方查询授权书
-                        "fileUrl": "xdgl/jike/test/WC_三方数据查询.pdf",
-                        "fileName": "WC_三方数据查询.pdf"
+                        "fileUrl": "xdgl/jike/test/third.pdf",
+                        "fileName": "third.pdf"
                     },
                     {
                         "fileType": "10",
                         "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "JC_third_auth_202000000948071964.pdf"
-                    },
-                    {
-                        "fileType": "20",  # 委托代扣授权书--20
-                        "fileUrl": "xdgl/jike/test/WC_委托代扣授权书校验通过.pdf",
-                        "fileName": "WC_委托代扣授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "21",  # 个人信息共享授权书--21
-                        "fileUrl": "xdgl/jike/test/WC_个人信息共享授权书校验通过.pdf",
-                        "fileName": "WC_个人信息共享授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "22",  # 个人信息收集授权书--22
-                        "fileUrl": "xdgl/jike/test/WC_个人信息收集授权书校验通过.pdf",
-                        "fileName": "WC_个人信息收集授权书校验通过.pdf"
                     }
+                    # {
+                    #     "fileType": "20",  # 委托代扣授权书--20
+                    #     "fileUrl": "xdgl/jike/test/WC_委托代扣授权书校验通过.pdf",
+                    #     "fileName": "WC_委托代扣授权书校验通过.pdf"
+                    # },
+                    # {
+                    #     "fileType": "21",  # 个人信息共享授权书--21
+                    #     "fileUrl": "xdgl/jike/test/WC_个人信息共享授权书校验通过.pdf",
+                    #     "fileName": "WC_个人信息共享授权书校验通过.pdf"
+                    # },
+                    # {
+                    #     "fileType": "22",  # 个人信息收集授权书--22
+                    #     "fileUrl": "xdgl/jike/test/WC_个人信息收集授权书校验通过.pdf",
+                    #     "fileName": "WC_个人信息收集授权书校验通过.pdf"
+                    # }
                 ],
                 "authenticationInfo": {
                     "appRegistraDate": "20210101 101010",  # App注册时间

@@ -224,17 +224,17 @@ Hair = {
                         "fileType": "17",  # 人脸识别查询授权书
                         "fileUrl": "xdgl/jike/test/third.pdf",
                         "fileName": "third.pdf"
-                    },
-                    {
-                        "fileType": "21",  # 个人信息共享授权书--21
-                        "fileUrl": "xdgl/jike/test/HAIR_个人信息共享授权书校验通过.pdf",
-                        "fileName": "HAIR_个人信息共享授权书校验通过.pdf"
-                    },
-                    {
-                        "fileType": "22",  # 个人信息收集授权书--22
-                        "fileUrl": "xdgl/jike/test/HAIR_个人信息收集授权书校验通过.pdf",
-                        "fileName": "HAIR_个人信息收集授权书校验通过.pdf"
                     }
+                    # {
+                    #     "fileType": "21",  # 人脸识别查询授权书
+                    #     "fileUrl": "xdgl/jike/test/third.pdf",
+                    #     "fileName": "third.pdf"
+                    # },
+                    # {
+                    #     "fileType": "22",  # 人脸识别查询授权书
+                    #     "fileUrl": "xdgl/jike/test/third.pdf",
+                    #     "fileName": "third.pdf"
+                    # }
                 ],
                 "authenticationInfo": {
                     "appRegistraDate": "20210101 101010",  # App注册时间
@@ -310,12 +310,12 @@ Hair = {
                         "fileType": "9",
                         "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
-                    },
-                    {
-                        "fileType": "20",  # 委托代扣授权书--20
-                        "fileUrl": "xdgl/jike/test/HAIR_委托代扣授权书校验通过.pdf",
-                        "fileName": "HAIR_委托代扣授权书校验通过.pdf"
                     }
+                    # {
+                    #     "fileType": "20",
+                    #     "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
+                    #     "fileName": "C20JIKEloancontract.pdf"
+                    # }
                 ],
                 "repaymentPlans": [
                     {
