@@ -31,7 +31,7 @@ class LoanPublicBizImpl(MysqlInit):
             thirdLoanId), apply_time="{} 13:57:59".format(loanDate), loan_pay_time="{} 13:57:59".format(loanDate))
 
         self.log.demsg("更新credit_loan_invoice放款时间loan_pay_time")
-        loanApplyInfo = self.MysqlBizImpl.get_loan_apply_info(third_loan_invoice_id=thirdLoanId)
+        loanApplyInfo = self.MysqlBizImpl.get_loan_apply_info(thirdpart_apply_id=thirdLoanId)
         self.MysqlBizImpl.update_credit_database_info('credit_loan_invoice',
                                                       attr="loan_apply_id='{}'".format(loanApplyInfo['loan_apply_id']),
                                                       loan_pay_time="{} 13:57:59".format(loanDate))
