@@ -114,6 +114,7 @@ class FqlGrtBizImpl(MysqlInit):
         if int(orderType) == 3:
             loan_data['debitAccountName'] = self.data['name']
             loan_data['debitAccountNo'] = self.data['bankid']
+            loan_data['repayBankNo'] = self.data['bankid']
         else:
             sql = "select account_name,branch_name,account,union_bank_id from user_financial_instrument_info " \
                   "where resource_id in (select resource_id from user_role_resource_relation where user_id = '{}') " \
@@ -123,6 +124,7 @@ class FqlGrtBizImpl(MysqlInit):
             loan_data['debitOpenAccountBank'] = bank_info[0][1]
             loan_data['debitAccountNo'] = bank_info[0][2]
             loan_data['debitCnaps'] = bank_info[0][3]
+            loan_data['repayBankNo'] = self.data['bankid']
 
         # 更新 payload 字段值
         loan_data.update(kwargs)
