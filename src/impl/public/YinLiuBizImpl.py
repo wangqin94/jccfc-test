@@ -74,7 +74,7 @@ class YinLiuBizImpl(EnvInit):
         hj_advance_repay_rule_switch = MysqlBizImpl().get_base_database_info('product_product_param',
                                                                              product_id=productId,
                                                                              param_key='hj_advance_repay_rule_switch')
-        advance_repay_switch = hj_advance_repay_rule_switch['param_value']
+        advance_repay_switch = hj_advance_repay_rule_switch['param_value'] if hj_advance_repay_rule_switch else 0
         # 提前还款开关
         advance_repay_profit_type = MysqlBizImpl().get_base_database_info('product_product_param',
                                                                           product_id=productId,
