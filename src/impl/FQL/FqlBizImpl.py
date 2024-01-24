@@ -145,8 +145,14 @@ class FqlBizImpl(EnvInit):
         loan_data['sourceCode'] = self.sourceCode
         loan_data['name'] = self.data['name']
         loan_data['mobileNo'] = self.data['telephone']
+        loan_data['debitAccountName'] = self.data['name']
         loan_data['debitAccountNo'] = self.data['bankid']
         loan_data['loanTerm'] = loanTerm
+        loan_data['userName'] = self.data['name']
+        loan_data['cardNo'] = self.data['bankid']
+        loan_data['bankType'] = self.data['bankcode']
+        loan_data['idNo'] = self.data['cer_no']
+        loan_data['phoneNo'] = self.data['telephone']
 
         date = self.times.split()[0]
         firstRepayDate, day = loan_and_period_date_parser(date_str=date, period=int(loanTerm), flag=False,
