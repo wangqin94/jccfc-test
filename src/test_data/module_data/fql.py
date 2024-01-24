@@ -104,37 +104,52 @@ fql = {
                 "fileInfos": [
                     {
                         "fileType": "1",
-                        "fileUrl": "xdgl/fql/yw/20230724/idcard_front.jpg",
+                        "fileUrl": "xdgl/fql/yw/idcard_front.jpg",
                         "fileName": "idcard_front.jpg"
                     },
                     {
                         "fileType": "2",
-                        "fileUrl": "xdgl/fql/yw/20230724/idcard_back.jpg",
+                        "fileUrl": "xdgl/fql/yw/idcard_back.jpg",
                         "fileName": "idcard_back.jpg"
                     },
                     {
                         "fileType": "3",
-                        "fileUrl": "xdgl/fql/yw/20230724/face_distinguish.jpg",
+                        "fileUrl": "xdgl/fql/yw/face_distinguish.jpg",
                         "fileName": "face_distinguish.jpg"
                     },
                     {
                         "fileType": "4",
-                        "fileUrl": "xdgl/fql/yw/20230724/JC_userauth.pdf",
+                        "fileUrl": "xdgl/fql/yw/JC_userauth.pdf",
                         "fileName": "JC_userauth.pdf"
                     },
                     {
                         "fileType": "6",
-                        "fileUrl": "xdgl/fql/yw/20230724/JC_non_student.pdf",
+                        "fileUrl": "xdgl/fql/yw/JC_non_student.pdf",
                         "fileName": "JC_non_student.pdf"
                     },
                     {
                         "fileType": "7",
-                        "fileUrl": "xdgl/fql/yw/20230724/JC_third_auth.pdf",
+                        "fileUrl": "xdgl/fql/yw/JC_third_auth.pdf",
                         "fileName": "JC_third_auth.pdf"
                     },
                     {
                         "fileType": "8",
-                        "fileUrl": "xdgl/fql/yw/20230724/JC_face_identify_authorization.pdf",
+                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
+                        "fileName": "JC_face_identify_authorization.pdf"
+                    },
+                    {
+                        "fileType": "9",
+                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
+                        "fileName": "JC_face_identify_authorization.pdf"
+                    },
+                    {
+                        "fileType": "10",
+                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
+                        "fileName": "JC_face_identify_authorization.pdf"
+                    },
+                    {
+                        "fileType": "11",
+                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
                         "fileName": "JC_face_identify_authorization.pdf"
                     }
 
@@ -194,7 +209,17 @@ fql = {
                 "debitAccountName": "蓝安峰",
                 "debitOpenAccountBank": "中国银行",
                 "debitAccountNo": "6212268611367176969",
-                "debitOpenAccountBankCode": "121"
+                "debitOpenAccountBankCode": "121",
+                "bindCardInfo": {
+                    "userName": "蓝安峰",
+                    "cardNo": "6212268611367176969",
+                    "bankType": "0104",
+                    "bankName": "中国银行",
+                    "idType": "1",  # 身份证类型,枚举(目前1、身份证)100:身份证号码 110:港澳通行证120: 护照
+                    "idNo": "2019071623402451332",
+                    "phoneNo": "16100007381"
+                },
+                "signNum": "S00202307060001"
             }
         }
     },
