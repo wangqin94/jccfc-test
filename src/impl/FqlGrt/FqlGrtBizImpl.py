@@ -462,14 +462,14 @@ class FqlGrtBizImpl(MysqlInit):
         withhold_payload['sepOutInfo'][0]['amt'] = round(withholdAmt, 2)
         withhold_payload['sepOutInfo'][0]['account'] = self.data['bankid']
         # 更新分账信息
-        loanInvoiceNumber = len(detail_list)
-        rpyGuaranteeAmt = rpyGuaranteeAmt*loanInvoiceNumber
+        # loanInvoiceNumber = len(detail_list)
+        # rpyGuaranteeAmt = rpyGuaranteeAmt*loanInvoiceNumber
         withhold_payload['sepInInfo'][0]['amt'] = round(withholdAmt - rpyGuaranteeAmt, 2)
         withhold_payload['sepInInfo'][0]['detail'][0]['amt'] = round(withholdAmt - rpyGuaranteeAmt, 2)
-        withhold_payload['sepInInfo'][1]['amt'] = round(rpyGuaranteeAmt/loanInvoiceNumber, 2)
-        withhold_payload['sepInInfo'][1]['detail'][0]['amt'] = round(rpyGuaranteeAmt/loanInvoiceNumber, 2)
-        withhold_payload['sepInInfo'][2]['amt'] = rpyGuaranteeAmt - round(rpyGuaranteeAmt/loanInvoiceNumber, 2)
-        withhold_payload['sepInInfo'][2]['detail'][0]['amt'] = rpyGuaranteeAmt - round(rpyGuaranteeAmt/loanInvoiceNumber, 2)
+        withhold_payload['sepInInfo'][1]['amt'] = rpyGuaranteeAmt
+        withhold_payload['sepInInfo'][1]['detail'][0]['amt'] = rpyGuaranteeAmt
+        # withhold_payload['sepInInfo'][2]['amt'] = rpyGuaranteeAmt - round(rpyGuaranteeAmt/loanInvoiceNumber, 2)
+        # withhold_payload['sepInInfo'][2]['detail'][0]['amt'] = rpyGuaranteeAmt - round(rpyGuaranteeAmt/loanInvoiceNumber, 2)
 
         withhold_data1 = dict()
         withhold_data1.update(kwargs)
