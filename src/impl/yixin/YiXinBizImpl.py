@@ -69,6 +69,7 @@ class YiXinBizImpl(MysqlInit):
         getCardRealNameMessage['mobileNo'] = self.data['telephone']
         getCardRealNameMessage['payerBankCardNum'] = self.data['bankid']
         getCardRealNameMessage['payerPhoneNum'] = self.data['telephone']
+        getCardRealNameMessage['payerBankCode'] = self.data['bankcode']
 
         # 更新 payload 字段值
         getCardRealNameMessage.update(kwargs)

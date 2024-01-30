@@ -23,7 +23,7 @@ class TestCase(object):
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     @staticmethod
-    def process(flag=3):
+    def process(flag=99):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
@@ -37,9 +37,14 @@ class TestCase(object):
 
         # 确认绑卡
         elif flag == 99:
-            jiro = JiRoBizImpl(data=data)
-            res = jiro.getCardRealNameMessage(payerBankCardNum='6216701676429127322').get('body')
+            jiro = JiRoBizImpl(data=None)
+            res = jiro.getCardRealNameMessage().get('body')
             jiro.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
+
+        # 协议共享
+        if flag == 101:
+            jiro = JiRoBizImpl(data=data)
+            jiro.sharedWithholdingAgreement()
 
         # 绑卡查询
         elif flag == 2:

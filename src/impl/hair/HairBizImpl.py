@@ -2,8 +2,6 @@
 # ------------------------------------------
 # 百度接口数据封装类
 # ------------------------------------------
-from dateutil.parser import parse
-
 from engine.MysqlInit import MysqlInit
 from src.enums.EnumYinLiu import EnumRepayType
 from src.enums.EnumsCommon import *
@@ -653,16 +651,15 @@ class HairBizImpl(MysqlInit):
             loanInvoiceId)
         asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
         returnGoods_apply_data["returnGoodsPrincipal"] = float(asset_repay_plan['before_calc_principal'])  # 本金
-
-        # 计算退货应收利息， 放款10日内退货不收罚息
-        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
-                                                                         loan_invoice_id=loanInvoiceId)
-        loanDate = str(credit_loan_invoice['loan_pay_time']).split()[0]
-        # loanDate = datetime.strptime(loanDate, '%Y-%m-%d').date()
-        # date = datetime.strptime(date, '%Y-%m-%d').date()
-        loanDate = parse(loanDate)
-        repayDateFormat = parse(repayDate)
-        if 10 >= int((repayDateFormat - loanDate).days):
+        days = get_day(asset_repay_plan["start_date"], repayDate)
+        #
+        # credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info('credit_loan_invoice',
+        #                                                                  loan_invoice_id=loanInvoiceId)
+        # loanDate = str(credit_loan_invoice['loan_pay_time']).split()[0]
+        # loanDate = parse(loanDate)
+        # repayDateFormat = parse(repayDate)
+        # 计算退货应收利息， 放款10日内退货不收利息;如果当期已还款，提前还款利息应收0
+        if 10 >= days:
             returnGoods_apply_data['returnGoodsInterest'] = 0
             returnGoods_apply_data['returnGoodsOverdueFee'] = 0
         else:
@@ -672,7 +669,15 @@ class HairBizImpl(MysqlInit):
                 asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
                                                                              loan_invoice_id=loanInvoiceId,
                                                                              current_num=term)
-                dangqi_interest = float(asset_repay_plan['left_repay_interest'])  # 当期利息
+                # 计算当期利息
+                days = get_day(asset_repay_plan["start_date"], repayDate)
+                dangqi_interest = getDailyAccrueInterest(self.productId, days, asset_repay_plan[
+                    'before_calc_principal'])  # 提前还当期、提前结清按日计息
+                self.log.info("当前月计息天数：{}天, 按日计提利息：{}".format(days, dangqi_interest))
+                # 如果按日计提利息>大于资产还款计划整期应还利息 利息取整期应还利息
+                if dangqi_interest > float(asset_repay_plan['left_repay_interest']):
+                    dangqi_interest = float(asset_repay_plan['left_repay_interest'])
+
                 # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
                 key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3,4) ORDER BY 'current_num'".format(
                     loanInvoiceId)
@@ -718,8 +723,14 @@ class HairBizImpl(MysqlInit):
                 asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan',
                                                                              loan_invoice_id=loanInvoiceId,
                                                                              current_num=term)
-                dangqi_interest = float(asset_repay_plan['pre_repay_interest'])  # 当期利息
-                self.log.demsg("当期利息：{}".format(dangqi_interest))
+                # 计算当期利息
+                days = get_day(asset_repay_plan["start_date"], repayDate)
+                dangqi_interest = getDailyAccrueInterest(self.productId, days, asset_repay_plan[
+                    'before_calc_principal'])  # 提前还当期、提前结清按日计息
+                self.log.info("当前月计息天数：{}天, 按日计提利息：{}".format(days, dangqi_interest))
+                # 如果按日计提利息>大于资产还款计划整期应还利息 利息取整期应还利息
+                if dangqi_interest > float(asset_repay_plan['left_repay_interest']):
+                    dangqi_interest = float(asset_repay_plan['left_repay_interest'])
                 # 宽限期借据=应收当期利息+宽限期期次利息，账单日前只收当期利息
                 key = "loan_invoice_id = '{}' and repay_plan_status = '1' and overdue_days in (1,2,3,4) ORDER BY 'current_num'".format(
                     loanInvoiceId)
@@ -748,12 +759,6 @@ class HairBizImpl(MysqlInit):
                 # 罚息、费用
                 returnGoods_apply_data['returnGoodsOverdueFee'] = pre_repay_overdue_fee  # 罚息
                 returnGoods_apply_data['returnGoodsFee'] = left_repay_fee  # 费用
-
-        # 当期已还款，利息0
-        days = get_day(asset_repay_plan["start_date"], repayDate)
-        # 如果当期已还款，提前还款利息应收0
-        if days <= 0:
-            returnGoods_apply_data["returnGoodsInterest"] = 0
         # 更新退货mock时间
         apollo_data = dict()
         apollo_data['yinliu.return.goods.trade.date.mock'] = "true"

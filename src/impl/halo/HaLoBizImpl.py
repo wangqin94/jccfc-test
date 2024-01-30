@@ -97,6 +97,7 @@ class HaLoBizImpl(MysqlInit):
         sharedWithholdingAgreement['payer'] = self.data['name']
         sharedWithholdingAgreement['mobileNo'] = self.data['telephone']
         sharedWithholdingAgreement['payerBankCardNum'] = self.data['bankid']
+        sharedWithholdingAgreement['payerBankCode'] = self.data['bankcode']
         sharedWithholdingAgreement['payerPhoneNum'] = self.data['telephone']
         sharedWithholdingAgreement['agreementTime'] = self.date
 

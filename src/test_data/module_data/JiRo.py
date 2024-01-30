@@ -17,6 +17,29 @@ JiRo = {
     'decrypt': {
         'interface': '/api/v1/yinliu/secret/thirdDecryptData',
     },
+    # 协议共享申请接口
+    'sharedWithholdingAgreement': {
+        'interface': '/api/v1/yl/common/sharedWithholdingAgreement',
+        'payload': {
+            "head": {
+                "merchantId": "G22E02JIKE",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "payer": "QH",  # 付款方姓名
+                "mobileNo": "",  # 注册手机号
+                "payerPhoneNum": "",  # 付款方银行卡预留手机号
+                "payerIdNum": "",  # 付款方身份证号
+                "payerBankCardNum": "",  # 付款方银行卡号
+                "payerBankCode": "0102",  # 付款方银行编号
+                "aggrementNum": "",  # 代扣协议号
+                "payChannel": "1035",  # 支付通道1035  极融宝付
+            }
+        }
+    },
     # 代扣签约申请接口
     'getCardRealNameMessage': {
         'interface': '/api/v1/yl/common/getCardRealNameMessage',
@@ -35,6 +58,7 @@ JiRo = {
                 "payerIdNum": "",  # 付款方身份证号
                 "payerBankCardNum": "",  # 付款方银行卡号
                 "payerBankCode": "0102",  # 付款方银行编号
+                "paymentChannel": None,  # EnumPaymentChannel：1014-京东协议代扣渠道、1035-极融宝付
             }
         }
     },
@@ -269,7 +293,7 @@ JiRo = {
                 "fileInfos": [
                     {
                         "fileType": "9",
-                        "fileUrl": "upload/jiro/credit/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
                     }
                 ],
@@ -411,6 +435,7 @@ JiRo = {
                 "repayFee": 0,  # 还款总费用
                 "repayOverdueFee": 0,  # 还款总罚息
                 "repayCompoundInterest": 0,  # 还款总复利
+                "paymentChannel": '1035'  # EnumPaymentChannel：1014-京东协议代扣渠道、1035-极融宝付，不传时，由锦程路由客户已绑卡且支持分账的通道
             }
         }
     },
