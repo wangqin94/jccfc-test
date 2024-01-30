@@ -139,18 +139,18 @@ fql = {
                     },
                     {
                         "fileType": "9",  # 个人信息共享授权书
-                        "fileUrl": "xdgl/fql/yw/FQL_个人信息共享授权书校验通过.pdf",
-                        "fileName": "FQL_个人信息共享授权书校验通过.pdf"
+                        "fileUrl": "xdgl/fql/yw/JC_cust_info_share_authorization.pdf",
+                        "fileName": "JC_cust_info_share_authorization.pdf"
                     },
                     {
                         "fileType": "10",  # 个人信息收集授权书
-                        "fileUrl": "xdgl/fql/yw/FQL_个人信息收集授权书校验通过.pdf",
-                        "fileName": "FQL_个人信息收集授权书校验通过.pdf"
+                        "fileUrl": "xdgl/fql/yw/JC_cust_info_gather_authorization.pdf",
+                        "fileName": "JC_cust_info_gather_authorization.pdf"
                     },
                     {
                         "fileType": "11",  # 委托代扣授权书
-                        "fileUrl": "xdgl/fql/yw/FQL_委托代扣授权书校验通过.pdf",
-                        "fileName": "FQL_委托代扣授权书校验通过.pdf"
+                        "fileUrl": "xdgl/fql/yw/JC_delegated_withhold_authorization.pdf",
+                        "fileName": "JC_delegated_withhold_authorization.pdf"
                     }
 
                 ]
