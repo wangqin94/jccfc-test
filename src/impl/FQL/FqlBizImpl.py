@@ -47,10 +47,12 @@ class FqlBizImpl(EnvInit):
     def get_user_info(self, data=None, person=True):
         # 获取四要素信息
         if data:
+            data['applyId'] = 'applyId' + str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
             base_data = data
         else:
             if person:
-                base_data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQL.value), 'applyId')
+                base_data = data if data else get_base_data(str(self.env) + ' -> ' + str(ProductEnum.FQL.value),
+                                                            'applyId')
             else:
                 base_data = get_base_data_temp('applyId')
         return base_data
@@ -153,6 +155,7 @@ class FqlBizImpl(EnvInit):
         loan_data['bankType'] = self.data['bankcode']
         loan_data['idNo'] = self.data['cer_no']
         loan_data['phoneNo'] = self.data['telephone']
+        loan_data['repayBankNo'] = self.data['bankid']
 
         date = self.times.split()[0]
         firstRepayDate, day = loan_and_period_date_parser(date_str=date, period=int(loanTerm), flag=False,
@@ -329,7 +332,6 @@ class FqlBizImpl(EnvInit):
         # body
         payment_data['withholdSerialNo'] = "wsn" + self.strings
 
-
         # bindardinfo
         payment_data['userName'] = self.data['name']
         payment_data['phoneNo'] = self.data['telephone']
@@ -374,7 +376,7 @@ class FqlBizImpl(EnvInit):
             else:
                 # 计算提前结清利息:剩余还款本金*（实际还款时间-本期开始时间）*日利率
                 days = get_day(asset_repay_plan["start_date"], repay_date)
-                day_rate = round(execute_rate/(100 * 360), 6)
+                day_rate = round(execute_rate / (100 * 360), 6)
                 paid_prin_amt = asset_repay_plan["before_calc_principal"] * days * day_rate
                 payment_data['rpyFeeAmt'] = float('{:.2f}'.format(paid_prin_amt))  # 利息
 

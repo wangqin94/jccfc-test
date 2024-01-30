@@ -138,19 +138,19 @@ fql = {
                         "fileName": "JC_face_identify_authorization.pdf"
                     },
                     {
-                        "fileType": "9",
-                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
-                        "fileName": "JC_face_identify_authorization.pdf"
+                        "fileType": "9",  # 个人信息共享授权书
+                        "fileUrl": "xdgl/fql/yw/FQL_个人信息共享授权书校验通过.pdf",
+                        "fileName": "FQL_个人信息共享授权书校验通过.pdf"
                     },
                     {
-                        "fileType": "10",
-                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
-                        "fileName": "JC_face_identify_authorization.pdf"
+                        "fileType": "10",  # 个人信息收集授权书
+                        "fileUrl": "xdgl/fql/yw/FQL_个人信息收集授权书校验通过.pdf",
+                        "fileName": "FQL_个人信息收集授权书校验通过.pdf"
                     },
                     {
-                        "fileType": "11",
-                        "fileUrl": "xdgl/fql/yw/JC_face_identify_authorization.pdf",
-                        "fileName": "JC_face_identify_authorization.pdf"
+                        "fileType": "11",  # 委托代扣授权书
+                        "fileUrl": "xdgl/fql/yw/FQL_委托代扣授权书校验通过.pdf",
+                        "fileName": "FQL_委托代扣授权书校验通过.pdf"
                     }
 
                 ]
@@ -206,15 +206,16 @@ fql = {
                 "mobileNo": "16100007381",
                 "orderType": "2",  # 1、取现 2、赊销（分期购物）-- 3、信用卡还款 4、账单分期 5、微信、银联消费资产（二类户资产）
                 "repayType": "1",
-                "debitAccountName": "蓝安峰",
+                "debitAccountName": "罗恨山",
                 "debitOpenAccountBank": "中国银行",
                 "debitAccountNo": "6212268611367176969",
                 "debitOpenAccountBankCode": "121",
+                "repayBankName": "工商银行",
+                "repayBankNo": "6217591706494673933",
                 "bindCardInfo": {
                     "userName": "蓝安峰",
-                    "cardNo": "6212268611367176969",
+                    "cardNo": "6217591706494673933",
                     "bankType": "0104",
-                    "bankName": "中国银行",
                     "idType": "1",  # 身份证类型,枚举(目前1、身份证)100:身份证号码 110:港澳通行证120: 护照
                     "idNo": "2019071623402451332",
                     "phoneNo": "16100007381"
