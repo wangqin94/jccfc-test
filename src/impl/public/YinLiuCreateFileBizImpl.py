@@ -155,7 +155,6 @@ class YinLiuRepayFile(EnvInit):
         temple['loan_date'] = str(creditLoanInvoiceInfo['loan_pay_time']).split()[0].replace('-', '')
         # 根据借据Id和期次获取资产侧还款计划
         asset_repay_plan = self.getAssetRepayPlan(loanInvoiceId, termNo)
-        temple['repay_amt'] = str(asset_repay_plan["left_repay_amount"])  # 总金额
         temple['compensationPrincipal'] = str(asset_repay_plan["left_repay_principal"])  # 本金
         temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
         temple['loanBalance'] = str(asset_repay_plan["before_calc_principal"])  # 在贷余额
@@ -165,14 +164,33 @@ class YinLiuRepayFile(EnvInit):
         temple['business_no'] = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))  # 流水号
         temple['current_period'] = str(termNo)  # 期次
         temple['handler_status'] = "0"  # 是否贴息
+        # 如果是贴息产品，查询贴息还款计划表
         if self.productId == ProductIdEnum.HAIR_DISCOUNT.value:
             temple['handler_status'] = "1"
             self.log.demsg("贴息产品,利息查asset_repay_plan_merchant_interest表")
             asset_repay_plan = self.MysqlBizImpl.get_asset_database_info('asset_repay_plan_merchant_interest',
                                                                          loan_invoice_id=loanInvoiceId,
                                                                          current_num=termNo)
+        # 利息计算，如果当期状态已逾期，收取整期利息；如果还款时间在账单期内，按日计息；如果不在账单期内，利息为0
+        days = get_day(asset_repay_plan["start_date"], self.repayDate)
+        # 如果当期状态已逾期，收取整期利息
+        if asset_repay_plan['repay_plan_status'] == EnumAssetRepayPlanStatus.OVERDUE.value:
             temple['compensationInterest'] = str(asset_repay_plan["left_repay_interest"])  # 利息
-            temple['repay_amt'] = round(float(temple['repay_amt']) + float(temple['compensationInterest']), 2)
+        # 如果还款时间在账单期内，按日计息
+        elif 0 < days <= int(asset_repay_plan['profit_days']):
+            temple['compensationInterest'] = getDailyAccrueInterest(self.productId, days, temple['loanBalance'])  # 提前还当期、提前结清按日计息
+            self.log.info("当前月计息天数：{}天, 按日计提利息：{}".format(days, temple['compensationInterest']))
+            # 如果按日计提利息>大于资产还款计划整期应还利息 利息取整期应还利息
+            if temple['compensationInterest'] > float(asset_repay_plan['left_repay_interest']):
+                temple['compensationInterest'] = float(asset_repay_plan['left_repay_interest'])
+        # 如果不在账单期内，利息为0
+        else:
+            temple['compensationInterest'] = 0
+        # 重算还款金额
+        temple['repay_amt'] = round(
+            float(temple['compensationPrincipal']) + float(temple['compensationInterest']) + float(
+                temple['compensationOverdueFee']) + float(temple['compensationFee']), 2)
+
         return temple
 
     # 理赔文件内容
@@ -354,8 +372,7 @@ class YinLiuRepayFile(EnvInit):
                 creditBuyBackData['repay_amt'] = float(creditBuyBackData['paid_prin_amt']) + creditBuyBackData[
                     'paid_int_amt']
             # 获取回购当期已计提利息---宜信、极融宽限期4天
-            elif termNo == int(self.repayTermNo) and days > 4 and self.productId in (
-                    ProductIdEnum.YIXIN.value, ProductIdEnum.JIRO.value):
+            elif termNo == int(self.repayTermNo) and days > 4:
                 self.log.info("当前逾期天数：{}天, 超过宽限期，T+5利息按日计提".format(days))
                 creditBuyBackData['paid_int_amt'] = getDailyAccrueInterest(self.productId, days, creditBuyBackData[
                     'left_repay_amt'])  # T+5利息按日计提
