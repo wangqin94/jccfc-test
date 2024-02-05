@@ -25,7 +25,7 @@ class TestCase(object):
         pass
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
-    def process(self, flag=7, merchantId='G23E02XIAX'):
+    def process(self, flag=99, merchantId='G23E01XIAX'):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
@@ -40,7 +40,7 @@ class TestCase(object):
         # 确认绑卡
         elif flag == 99:
             XiaoX = XiaoXBizImpl(merchantId, data=data)
-            res = XiaoX.getCardRealNameMessage(payerBankCardNum='6216701676429127322').get('body')
+            res = XiaoX.getCardRealNameMessage().get('body')
             XiaoX.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # 绑卡查询
@@ -50,7 +50,7 @@ class TestCase(object):
 
         # 授信
         elif flag == 3:
-            XiaoX = XiaoXBizImpl(merchantId, data=None)
+            XiaoX = XiaoXBizImpl(merchantId, data=data)
             XiaoX.credit(applyAmount=1000, loanTerm=3)
 
         # 授信查询
