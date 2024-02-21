@@ -452,6 +452,51 @@ class HaLoBizImpl(MysqlInit):
                                      encrypt_flag=self.encrypt_flag)
         return response
 
+    # 担保费同步
+    def syncGuaranteePlan(self, loanInvoiceId, flag="loan", beginTerm=1, guaranteeAmt=10, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param beginTerm: 开始同步还款期次
+        @param flag: 同步阶段标识 loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
+        @param guaranteeAmt: 每期担保费
+        @param loanInvoiceId: 锦程借据号
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        syncGuaranteePlan = dict()
+        # head
+        syncGuaranteePlan['requestSerialNo'] = 'requestNo' + strings + "_7000"
+        syncGuaranteePlan['requestTime'] = self.date
+        syncGuaranteePlan['merchantId'] = self.merchantId
+
+        # body
+        syncGuaranteePlan['loanInvoiceId'] = loanInvoiceId
+        syncGuaranteePlan['flag'] = flag
+        # 组装担保费计划
+        credit_loan_invoice = self.MysqlBizImpl.get_credit_database_info("credit_loan_invoice",
+                                                                         loan_invoice_id=loanInvoiceId)
+        term = credit_loan_invoice['installment_num']
+        guaranteePlans = []
+        if flag == 'loan':
+            for period in range(1, term + 1):
+                guaranteePlan = {"period": period, "guaranteeAmt": guaranteeAmt}
+                guaranteePlans.append(guaranteePlan)
+        elif flag == 'repay':
+            guaranteePlan = {"period": beginTerm, "guaranteeAmt": guaranteeAmt}
+            guaranteePlans.append(guaranteePlan)
+        syncGuaranteePlan['guaranteePlans'] = guaranteePlans
+        # 更新 payload 字段值
+        syncGuaranteePlan.update(kwargs)
+        parser = DataUpdate(self.cfg['syncGuaranteePlan']['payload'], **syncGuaranteePlan)
+        self.active_payload = parser.parser
+
+        self.log.demsg('担保费同步...')
+        url = self.host + self.cfg['syncGuaranteePlan']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
     # 退货申请
     def returnGoods_apply(self, loanInvoiceId, term, repayDate, **kwargs):
         """
