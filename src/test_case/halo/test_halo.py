@@ -23,7 +23,7 @@ class TestCase(object):
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     @staticmethod
-    def process(flag=20):
+    def process(flag=21):
         """ 测试步骤 """
         # 绑卡
         merchantId = 'G23E03HALO'
@@ -129,7 +129,7 @@ class TestCase(object):
             HaLo.repayTrial(loanInvoiceId='000LI0002002451194722440007', repayType=2, repayTerm=1, repayDate='2024-02-07')
 
         # 担保费同步
-        elif flag == 20:
+        elif flag == 21:
             HaLo = HaLoBizImpl(data=data)
             # flag: 同步阶段标识 loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
             HaLo.syncGuaranteePlan(loanInvoiceId="000LI0002281692788867167020", flag="repay", beginTerm=2,
