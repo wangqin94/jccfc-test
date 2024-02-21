@@ -10,7 +10,7 @@ class MyTestCase(unittest.TestCase):
     """ 预置条件处理 """
     def setUp(self):
         warnings.simplefilter('ignore', ResourceWarning)
-        self.merchantId = 'G23E02XIAX'
+        self.merchantId = 'G23E01XIAX'
         self.XiaoX = XiaoXBizImpl(self.merchantId, data=data)
 
     """ 测试步骤 """

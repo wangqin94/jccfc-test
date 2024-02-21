@@ -730,6 +730,17 @@ def get_bill_day(loan_date=None):
     return bill_data
 
 
+def round45r(number, digits=0):
+    int_len = len(str(int(abs(number))))
+    signal_ = 1 if number >= 0 else -1
+    err_place = 16 - int_len - 1
+    if err_place > 0:
+        err_ = 10**-err_place
+        return round(number + err_ * signal_, digits)
+    else:
+        raise NotImplemented   # 受到float表示精度的限制！
+
+
 if __name__ == "__main__":
     # img_path = os.path.join(project_dir(), r'src\\test_data\\testFile\\idCardFile\\cqid2.png')
     # r = get_base64_from_img(img_path)

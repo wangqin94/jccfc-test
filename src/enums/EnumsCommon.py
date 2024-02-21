@@ -175,5 +175,16 @@ class EnumAppName(Enum):
     OP_CHANNEL = 'op_channel'  # op_channel应用
 
 
+@unique
+class EnumAssetRepayPlanStatus(Enum):
+    UNREPAY = '1'  # 待还款
+    PART_REPAY = '2'  # 部分还款
+    REPAY = '3'  # 已还款
+    OVERDUE = '4'  # 逾期
+    OVERDUE_PART_REPAY = '5'  # 逾期部分还款
+    OVERDUE_REPAY = '6'  # 逾期已还款
+    SETTLE = '7'  # 已结清
+
+
 if __name__ == "__main__":
     print(ProductEnum.BAIDU.value)

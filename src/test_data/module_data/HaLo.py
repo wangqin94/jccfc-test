@@ -270,7 +270,7 @@ HaLo = {
                 "fileInfos": [
                     {
                         "fileType": "9",
-                        "fileUrl": "/upload/halo/credit/C20JIKEloancontract.pdf",
+                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
                         "fileName": "C20JIKEloancontract.pdf"
                     }
                 ],
