@@ -98,7 +98,7 @@ HaLo = {
                 # "degree": "",
                 "maritalStatus": "40",
                 "nation": "汉",
-                "idExpiryDate": "2022.01.20-2099.12.31",
+                "idExpiryDate": "2013.01.01-2099.12.31",
                 "idExpiryStartDate": "",
                 "idExpiryEndDate": "",
                 "issuingAuth": "大兴安岭地区公安局",
@@ -165,13 +165,13 @@ HaLo = {
                     },
                     {
                         "fileType": "4",  # 征信查询授权书
-                        "fileUrl": "xdgl/jike/test/credit.pdf",
-                        "fileName": "credit.pdf"
+                        "fileUrl": "xdgl/jike/test/halo_个人征信查询.pdf",
+                        "fileName": "halo_个人征信查询.pdf"
                     },
                     {
                         "fileType": "7",  # 三方查询授权书
-                        "fileUrl": "xdgl/jike/test/third.pdf",
-                        "fileName": "third.pdf"
+                        "fileUrl": "xdgl/jike/test/halo_三方数据查询.pdf",
+                        "fileName": "halo_三方数据查询.pdf"
                     },
                     {
                         "fileType": "16",  # 学信网截图
@@ -180,8 +180,8 @@ HaLo = {
                     },
                     {
                         "fileType": "17",  # 人脸识别查询授权书
-                        "fileUrl": "xdgl/jike/test/C20JIKEloancontract.pdf",
-                        "fileName": "C20JIKEloancontract.pdf"
+                        "fileUrl": "xdgl/jike/test/halo_人脸识别授权.pdf",
+                        "fileName": "halo_人脸识别授权.pdf"
                     }
                     # {
                     #     "fileType": "20",  # 委托代扣授权书--20
@@ -646,4 +646,28 @@ HaLo = {
             }
         }
     },
+    # 担保费同步
+    'syncGuaranteePlan': {
+        'interface': '/api/v1/yl/common/loan/syncGuaranteePlan',
+        'payload': {
+            "head": {
+                "merchantId": "G22E02JIKE",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "loanInvoiceId": "",  # 资金方放款编号 放款成功后返回的资金方借据编号
+                "flag": "",  # loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
+                "guaranteePlans": [
+                    {
+                        "period": 1,
+                        "guaranteeAmt": 10,
+                    }
+                ],  # 担保费计划列表
+
+            }
+        }
+    }
 }
