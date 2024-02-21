@@ -6,7 +6,6 @@ import os
 import time
 from multiprocessing import Process
 from src.impl.halo.HaLoBizImpl import HaLoBizImpl
-
 if not os.path.exists('person.py'):
     open('person.py', 'w')
 from person import *
@@ -24,7 +23,7 @@ class TestCase(object):
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     @staticmethod
-    def process(flag=21):
+    def process(flag=20):
         """ 测试步骤 """
         # 绑卡
         merchantId = 'G23E03HALO'
@@ -127,15 +126,7 @@ class TestCase(object):
         # 还款试算
         elif flag == 20:
             HaLo = HaLoBizImpl(merchantId, data=data)
-            HaLo.repayTrial(loanInvoiceId='000LI0002002451194722440007', repayType=2, repayTerm=1,
-                            repayDate='2024-02-07')
-
-        # 担保费同步
-        elif flag == 21:
-            HaLo = HaLoBizImpl(data=data)
-            # flag: 同步阶段标识 loan-放款阶段（只可同步一次）、repay-还款阶段（提前还当期后，同步后续期次保费）
-            HaLo.syncGuaranteePlan(loanInvoiceId="000LI0001195890696886561078", flag="repay", beginTerm=2,
-                                   guaranteeAmt=1.58)
+            HaLo.repayTrial(loanInvoiceId='000LI0002002451194722440007', repayType=2, repayTerm=1, repayDate='2024-02-07')
 
     def postprocess(self):
         """ 后置条件处理 """
