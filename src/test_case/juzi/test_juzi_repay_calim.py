@@ -7,6 +7,7 @@ from src.enums.EnumsCommon import ProductIdEnum
 from src.impl.public.YinLiuCreateFileBizImpl import YinLiuRepayFile
 from src.impl.public.RepayPublicBizImpl import RepayPublicBizImpl
 from src.test_case.juzi.person import data
+from src.impl.juzi.JuZiBizImpl import JuZiBizImpl
 
 
 class MyTestCase(unittest.TestCase):
@@ -15,9 +16,10 @@ class MyTestCase(unittest.TestCase):
     def setUp(self):
         warnings.simplefilter('ignore', ResourceWarning)
         self.repayPublicBizImpl = RepayPublicBizImpl()
+        self.JuZiBizImpl = JuZiBizImpl(data=data)
 
     """ 测试步骤 """
-    def test_repay_apply(self, productId=ProductIdEnum.JUZI.value, repayDate='2023-09-20'):
+    def test_repay_apply(self, productId=ProductIdEnum.JUZI.value, repayDate='2024-02-10'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
@@ -29,7 +31,10 @@ class MyTestCase(unittest.TestCase):
 
         self.repayPublicBizImpl.job.update_job('【引流】代偿文件分片任务流', group=13, executeBizDateType='CUSTOMER', executeBizDate=repayDate.replace('-', ''))
         self.repayPublicBizImpl.job.trigger_job('【引流】代偿文件分片任务流', group=13)
-        time.sleep(3)
+        time.sleep(10)
+
+        # # 代偿确认
+        # self.JuZiBizImpl.compensationConfirm(loanInvoiceId="")
 
         # 自动入账
         self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")

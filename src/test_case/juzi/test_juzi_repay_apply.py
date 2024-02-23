@@ -17,20 +17,20 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl = RepayPublicBizImpl()
         self.juziCheckBizImpl = JuZiCheckBizImpl(data=data)
 
-    def test_repay_apply(self, repayDate="2024-01-05"):
+    def test_repay_apply(self, repayDate="2024-02-22"):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         # 还款环境配置
         self.repayPublicBizImpl.pre_repay_config(repayDate=repayDate)
 
-        HaLo = JuZiBizImpl(data=data)
-        credit_loan_invoice = HaLo.MysqlBizImpl.get_credit_database_info('credit_loan_invoice', certificate_no=data['cer_no'])
+        juzi = JuZiBizImpl(data=data)
+        credit_loan_invoice = juzi.MysqlBizImpl.get_credit_database_info('credit_loan_invoice', certificate_no=data['cer_no'])
         # repayGuaranteeFee: 担保费， 0<担保费<24红线-利息
         # repay_scene: 还款场景 EnumRepayScene ("01", "线上还款"),("02", "线下还款"),（"04","支付宝还款通知"）（"05","逾期（代偿、回购后）还款通知"）
         # loanInvoiceId: 借据号 必填
         # repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
-        self.repayRes = HaLo.repay_apply(repay_scene='01', repay_type='7', loanInvoiceId=credit_loan_invoice['loan_invoice_id'], repayDate=repayDate, paymentOrder='2022072222001425270501778318')  # 按期还款
-        # self.repayRes = HaLo.repay_apply(repay_scene='01', repay_type='2', repayTerm=3, loanInvoiceId='000LI0001861095229792373070', repayGuaranteeFee=10, repayDate=repayDate)  # 按期还款
+        self.repayRes = juzi.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId=credit_loan_invoice['loan_invoice_id'], repayDate=repayDate, paymentOrder='2024020822001480301436509991')  # 按期还款
+        # self.repayRes = HaLo.repay_apply(repay_scene='05', repay_type='4', repayTerm=1, loanInvoiceId='000LI0001441081788467522174', repayGuaranteeFee=0, repayDate=repayDate)  # 按期还款
 
         self.assertEqual(StatusCodeEnum.SUCCESS.code, self.repayRes['head']['returnCode'], '还款接口层失败')
 

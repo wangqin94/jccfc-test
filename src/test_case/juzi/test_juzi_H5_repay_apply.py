@@ -19,7 +19,7 @@ class MyTestCase(unittest.TestCase):
         # self.JuZiCheckBizImpl = JuZiCheckBizImpl(merchantId=None, data=data)
 
     """ 测试步骤 """
-    def test_repay_apply(self, repayDate="2023-12-27"):
+    def test_repay_apply(self, repayDate="2023-06-10"):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
         # 还款环境配置
@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
         JuZi = JuZiBizImpl(data=data)
         # repayType：0 按期还款；1 提前结清
         # paymentType： 1 支付宝主动还款 5 银行卡主动还款
-        self.repayRes = JuZi.payment(loan_invoice_id='000LI0001818557874075455011', paymentType='5', repayType="0", repayTerm="1")  # 按期还款
+        self.repayRes = JuZi.payment(loan_invoice_id='000LI0001312335848820098052', paymentType='5', repayType="0", repayTerm="1")  # 按期还款
 
         self.assertEqual(StatusCodeEnum.SUCCESS.code, self.repayRes['head']['returnCode'], '还款接口层失败')
 

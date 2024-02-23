@@ -32,7 +32,7 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_apply(self, loan_date='2023-12-20'):
+    def test_apply(self, loan_date='2024-01-22'):
         """ 测试步骤 """
 
         juzi = JuZiBizImpl(data=self.data)

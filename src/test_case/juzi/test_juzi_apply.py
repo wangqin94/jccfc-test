@@ -3,10 +3,10 @@ import warnings
 
 from src.impl.common.CheckBizImpl import *
 from src.impl.juzi.JuZiBizImpl import JuZiBizImpl
+from src.test_case.juzi.person import data
 
 
 class MyTestCase(unittest.TestCase):
-    """ 预置条件处理 """
     """ 预置条件处理 """
 
     def setUp(self):
@@ -20,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         juzi = JuZiBizImpl(data=None)
 
         # 发起授信申请
-        self.thirdApplyId = juzi.credit(applyAmount=1000, loanTerm=6)['body']['thirdApplyId']
+        self.thirdApplyId = juzi.credit(applyAmount=1000, loanTerm=3)['body']['thirdApplyId']
 
     """ 后置条件处理 """
 

@@ -23,22 +23,22 @@ class TestCase(object):
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     @staticmethod
-    def process(flag=20):
+    def process(flag=22):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
-            juzi = JuZiBizImpl(data=data)
+            juzi = JuZiBizImpl(data=None)
             juzi.getCardRealNameMessage()
 
         # 确认绑卡
         elif flag == 1:
             juzi = JuZiBizImpl(data=data)
-            juzi.bindCardRealName(tradeSerialNo='000DEF2023020700000022')
+            juzi.bindCardRealName(tradeSerialNo='000DEF2024011000000093')
 
         # 确认绑卡
         elif flag == 99:
             juzi = JuZiBizImpl(data=data)
-            res = juzi.getCardRealNameMessage(payerBankCardNum='6216701676429127322').get('body')
+            res = juzi.getCardRealNameMessage(payerBankCardNum='6217591706079495561').get('body')
             juzi.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # 绑卡查询
@@ -54,12 +54,12 @@ class TestCase(object):
         # 授信查询
         elif flag == 4:
             juzi = JuZiBizImpl(data=data)
-            juzi.queryCreditResult(thirdApplyId='thirdApplyId16654556161833516')
+            juzi.queryCreditResult(thirdApplyId='YXH2024012214203100962708414')
 
         # 借款申请
         elif flag == 5:
             juzi = JuZiBizImpl(data=data)
-            juzi.applyLoan(loanAmt=15000, loanTerm=12, thirdApplyId='thirdApplyId16938966556343764')
+            juzi.applyLoan(loanAmt=1300, loanTerm=3, thirdApplyId='thirdApplyId17055652115014072')
 
         # 借款查询
         elif flag == 6:
@@ -104,22 +104,22 @@ class TestCase(object):
         # 授信额度取消
         elif flag == 14:
             juzi = JuZiBizImpl(data=data)
-            juzi.cancelCreditLine("thirdApplyId16618478194785960")
+            juzi.cancelCreditLine("thirdApplyId17053887503056410", reason="测是取消额度")
 
         # 代偿结果查询
         elif flag == 15:
             juzi = JuZiBizImpl(data=data)
-            juzi.queryAccountResult(loanInvoiceId='000LI0001408714913972228005', term=2)
+            juzi.queryAccountResult(loanInvoiceId='000LI0001441081788467522174', term=2)
 
         # 结清证明申请
         elif flag == 16:
             juzi = JuZiBizImpl(data=data)
-            juzi.applySettlementCer("thirdApplyId16917188971617615")
+            juzi.applySettlementCer("thirdApplyId17061622981523740")
 
         # 结清证明下载
         elif flag == 17:
             juzi = JuZiBizImpl(data=data)
-            juzi.settlementCerDownload("488958292D324978AC873742067CC783")
+            juzi.settlementCerDownload("D0F63662C83048A0912537C2BF3F217C")
 
         # 还款计划试算
         elif flag == 18:
@@ -135,7 +135,17 @@ class TestCase(object):
         # 担保费同步
         elif flag == 20:
             juzi = JuZiBizImpl(data=data)
-            juzi.syncGuaranteePlan(loanInvoiceId='000LI0002056430342803012103', flag="repay")
+            juzi.syncGuaranteePlan(loanInvoiceId='000LI0001313126122804738015', flag="repay");
+
+        # 代偿确认
+        elif flag == 21:
+            juzi = JuZiBizImpl(data=data)
+            juzi.compensationConfirm(compensationNo="000DEF2024020200000022")
+
+        # 查询老核心担保公司在贷余额
+        elif flag == 22:
+            juzi = JuZiBizImpl(data=data)
+            juzi.guaranteeLoanBalance()
 
     def postprocess(self):
         """ 后置条件处理 """

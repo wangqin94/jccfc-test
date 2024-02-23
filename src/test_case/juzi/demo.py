@@ -1,3 +1,3 @@
-from src.impl.jiro.JiRoBizImpl import JiRoBizImpl
+from src.impl.juzi.JuZiBizImpl  import JuZiBizImpl
 
-JiRoBizImpl()
+JuZiBizImpl()

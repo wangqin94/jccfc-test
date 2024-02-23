@@ -17,7 +17,7 @@ class MyTestCase(unittest.TestCase):
         self.repayPublicBizImpl = RepayPublicBizImpl()
 
     """ 测试步骤 """
-    def test_repay_apply(self, productId=ProductIdEnum.JUZI.value, repayDate='2023-10-13'):
+    def test_repay_apply(self, productId=ProductIdEnum.JUZI.value, repayDate='2024-05-10'):
         """ 测试步骤 """
         repayDate = repayDate if repayDate else time.strftime('%Y-%m-%d', time.localtime())
 
@@ -32,7 +32,7 @@ class MyTestCase(unittest.TestCase):
         time.sleep(3)
 
         # 自动入账
-        self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
+        # self.repayPublicBizImpl.job.trigger_job_byId("751800549099302912")
         # 输入指定借据号
         # self.repayRes = json.loads(HaLo.repay_apply(repay_scene='01', repay_type='1', loanInvoiceId="").get('body'))  # 按期还款
 
