@@ -63,6 +63,11 @@ class YinLiuBizImpl(EnvInit):
         asset_ext_fee_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan_ext_fee', ext_key, record=0)
         asset_repayGuaranteeFee = float(asset_ext_fee_plan['pre_insurance_fee'])
         self.log.info('获取的资产的最大保费为{}'.format(asset_repayGuaranteeFee))
+        # 如果传入保费则取传入的保费，否则取计算的保费
+        if repayGuaranteeFee is not None or repayGuaranteeFee == 0:
+            repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee
+        else:
+            repay_apply_data["repayGuaranteeFee"] = asset_repayGuaranteeFee
         # 当月计息天数
         days = get_day(asset_repay_plan["start_date"], repayDate)
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
@@ -71,8 +76,8 @@ class YinLiuBizImpl(EnvInit):
         repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
         repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
         repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
-        # repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-        repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + asset_repayGuaranteeFee,
+        # repay_apply_data["repayGuaranteeFee"] = asset_repayGuaranteeFee  # 0<担保费<24红线-利息
+        repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repay_apply_data["repayGuaranteeFee"],
                                                 2)  # 总金额
 
         # 提前还款开关,如果开关打开按日计息，关闭状态需要查提前还款后记息方式（1：按天，2：按期）
@@ -100,12 +105,6 @@ class YinLiuBizImpl(EnvInit):
                 # 如果按日计算保费>大于资产还款计划整期最大保费 保费取整期最大保费
                 if repay_apply_data["repayGuaranteeFee"] > float(asset_ext_fee_plan['pre_insurance_fee']):
                     repay_apply_data["repayGuaranteeFee"] = float(asset_ext_fee_plan['pre_insurance_fee'])
-
-                # 如果传入保费则取传入的保费，否则取计算的保费
-                if repayGuaranteeFee:
-                    repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee
-                else:
-                    repay_apply_data["repayGuaranteeFee"] = repay_apply_data["repayGuaranteeFee"]
 
                 self.log.info("当前月计息天数：{}天, 按日计提保费：{}".format(days, repay_apply_data["repayGuaranteeFee"]))
 
