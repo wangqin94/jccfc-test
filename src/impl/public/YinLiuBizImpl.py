@@ -64,7 +64,7 @@ class YinLiuBizImpl(EnvInit):
         asset_repayGuaranteeFee = float(asset_ext_fee_plan['pre_insurance_fee'])
         self.log.info('获取的资产的最大保费为{}'.format(asset_repayGuaranteeFee))
         # 如果传入保费则取传入的保费，否则取计算的保费
-        if repayGuaranteeFee is not None or repayGuaranteeFee == 0:
+        if repayGuaranteeFee or repayGuaranteeFee == 0:
             repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee
         else:
             repay_apply_data["repayGuaranteeFee"] = asset_repayGuaranteeFee
