@@ -24,7 +24,7 @@ class YinLiuBizImpl(EnvInit):
         self.MysqlBizImpl = MysqlBizImpl()
 
     def repayApiBodyData(self, data, productId, loanInvoiceId, repayScene='01', repayType='1', repayTerm=None,
-                         repayGuaranteeFee=1.11,
+                         repayGuaranteeFee=None,
                          repayDate=None, paymentOrder=None):
         """
         封装统一还款请求body
@@ -58,6 +58,11 @@ class YinLiuBizImpl(EnvInit):
             asset_repay_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan', key, record=0)
             repayTerm = asset_repay_plan['current_num']
         self.log.demsg('当期最早未还期次{}'.format(asset_repay_plan['current_num']))
+        # 获取资产还款的保费
+        ext_key = "loan_invoice_id = '{}' and  current_num = {}".format(loanInvoiceId, repayTerm)
+        asset_ext_fee_plan = self.MysqlBizImpl.get_asset_data_info('asset_repay_plan_ext_fee', ext_key, record=0)
+        asset_repayGuaranteeFee = float(asset_ext_fee_plan['pre_insurance_fee'])
+        self.log.info('获取的资产的最大保费为{}'.format(asset_repayGuaranteeFee))
         # 当月计息天数
         days = get_day(asset_repay_plan["start_date"], repayDate)
         repay_apply_data['repayNum'] = int(asset_repay_plan['current_num'])
@@ -66,8 +71,8 @@ class YinLiuBizImpl(EnvInit):
         repay_apply_data["repayFee"] = float(asset_repay_plan['pre_repay_fee'])  # 费用
         repay_apply_data["repayOverdueFee"] = float(asset_repay_plan['pre_repay_overdue_fee'])  # 逾期罚息
         repay_apply_data["repayCompoundInterest"] = float(asset_repay_plan['pre_repay_compound_interest'])  # 手续费
-        repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
-        repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + repayGuaranteeFee,
+        # repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee  # 0<担保费<24红线-利息
+        repay_apply_data["repayAmount"] = round(float(asset_repay_plan['pre_repay_amount']) + asset_repayGuaranteeFee,
                                                 2)  # 总金额
 
         # 提前还款开关,如果开关打开按日计息，关闭状态需要查提前还款后记息方式（1：按天，2：按期）
@@ -80,18 +85,33 @@ class YinLiuBizImpl(EnvInit):
                                                                           product_id=productId,
                                                                           param_key='advance_repay_profit_type')
         advance_repay_profit_type = advance_repay_profit_type['param_value']
-        # 提前还当期、提前结清、宽限期提前结清按日计息
+        # 提前还当期、提前结清、宽限期提前结清按日计息和计算保费
         if repayType in ("2", "7", "9"):
             if advance_repay_switch == '1' or (advance_repay_switch == '0' and advance_repay_profit_type == '1'):
                 repay_apply_data['repayInterest'] = getDailyAccrueInterest(productId, days, asset_repay_plan[
                     'before_calc_principal'])  # 提前还当期、提前结清按日计息
+                repay_apply_data["repayGuaranteeFee"] = round(round(asset_repayGuaranteeFee / 30, 4) * days, 2)
                 self.log.info("当前月计息天数：{}天, 按日计提利息：{}".format(days, repay_apply_data['repayInterest']))
+
                 # 如果按日计提利息>大于资产还款计划整期应还利息 利息取整期应还利息
                 if repay_apply_data['repayInterest'] > float(asset_repay_plan['left_repay_interest']):
                     repay_apply_data['repayInterest'] = float(asset_repay_plan['left_repay_interest'])
+
+                # 如果按日计算保费>大于资产还款计划整期最大保费 保费取整期最大保费
+                if repay_apply_data["repayGuaranteeFee"] > float(asset_ext_fee_plan['pre_insurance_fee']):
+                    repay_apply_data["repayGuaranteeFee"] = float(asset_ext_fee_plan['pre_insurance_fee'])
+
+                # 如果传入保费则取传入的保费，否则取计算的保费
+                if repayGuaranteeFee:
+                    repay_apply_data["repayGuaranteeFee"] = repayGuaranteeFee
+                else:
+                    repay_apply_data["repayGuaranteeFee"] = repay_apply_data["repayGuaranteeFee"]
+
+                self.log.info("当前月计息天数：{}天, 按日计提保费：{}".format(days, repay_apply_data["repayGuaranteeFee"]))
+
                 # 根据最新计提信息重算还款总额
                 repay_apply_data["repayAmount"] = round(
-                    repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
+                    repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repay_apply_data["repayGuaranteeFee"],
                     2)  # 总金额
 
         # 提前结清
@@ -101,7 +121,7 @@ class YinLiuBizImpl(EnvInit):
             repay_apply_data["repayInterest"] = repay_apply_data["repayInterest"] if days > 0 else 0
             # 根据最新本金、利息重算还款总额
             repay_apply_data["repayAmount"] = round(
-                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repayGuaranteeFee,
+                repay_apply_data["repayPrincipal"] + repay_apply_data["repayInterest"] + repay_apply_data["repayGuaranteeFee"],
                 2)  # 总金额
 
         # 宽限期提前结清
