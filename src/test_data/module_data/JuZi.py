@@ -575,6 +575,26 @@ JuZi = {
             }
         }
     },
+    # 代偿确认
+    'compensationConfirm': {
+        'interface': '/api/v1/yl/common/compensationConfirm',
+        'payload': {
+            "head": {
+                "merchantId": "G24E01JUZI",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "confirmList": [
+                    {
+                    "compensationNo":""  # 代偿、回购清单内的流水号
+                }
+                ]
+            }
+        }
+    },
 
     # 极融理赔文件 键值对字典数据模板
     "jiRoClaimTemple": {

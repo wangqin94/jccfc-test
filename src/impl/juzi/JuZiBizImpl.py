@@ -854,6 +854,36 @@ class JuZiBizImpl(MysqlInit):
         response = post_with_encrypt(url, self.active_payload, encrypt_flag=False)
         return response
 
+    # 代偿确认
+    def compensationConfirm(self, compensationNo, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        compensationConfirm_data = dict()
+        # head
+        compensationConfirm_data['requestSerialNo'] = 'requestNo' + strings + "_1400"
+        compensationConfirm_data['requestTime'] = self.date
+        compensationConfirm_data['merchantId'] = self.merchantId
+
+        # body
+        compensationNo_list = []
+        compensationNo_dict = {}
+        compensationNo_dict["compensationNo"] = compensationNo
+        compensationNo_list.append(compensationNo_dict)
+        compensationConfirm_data['confirmList'] = compensationNo_list
+
+        # 更新 payload 字段值
+        compensationConfirm_data.update(kwargs)
+        self.log.info(compensationConfirm_data)
+        parser = DataUpdate(self.cfg['compensationConfirm']['payload'], **compensationConfirm_data)
+        self.active_payload = parser.parser
+        url = self.host + self.cfg['compensationConfirm']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
 
 if __name__ == '__main__':
     pass

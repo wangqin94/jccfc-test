@@ -23,7 +23,7 @@ class TestCase(object):
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     @staticmethod
-    def process(flag=22):
+    def process(flag=21):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
@@ -130,7 +130,7 @@ class TestCase(object):
         elif flag == 19:
             juzi = JuZiBizImpl(data=data)
             # repay_type： 还款类型 1 按期还款； 2 提前结清； 7 提前还当期
-            juzi.repayTrial(loanInvoiceId='000LI0002056086745417942061', repayTerm='1', repayType='2', repayDate='2023-12-01')
+            juzi.repayTrial(loanInvoiceId='000LI0001730562584252754067', repayTerm='1', repayType='2', repayDate='2024-02-12')
 
         # 担保费同步
         elif flag == 20:
@@ -140,12 +140,7 @@ class TestCase(object):
         # 代偿确认
         elif flag == 21:
             juzi = JuZiBizImpl(data=data)
-            juzi.compensationConfirm(compensationNo="000DEF2024020200000022")
-
-        # 查询老核心担保公司在贷余额
-        elif flag == 22:
-            juzi = JuZiBizImpl(data=data)
-            juzi.guaranteeLoanBalance()
+            juzi.compensationConfirm(compensationNo="000DEF2024022700184440")
 
     def postprocess(self):
         """ 后置条件处理 """
