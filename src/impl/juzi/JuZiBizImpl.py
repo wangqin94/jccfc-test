@@ -53,6 +53,40 @@ class JuZiBizImpl(MysqlInit):
         return base_data
 
     # 发起代扣协议申请
+    def sharedWithholdingAgreement(self, **kwargs):
+        """
+        注意：键名必须与接口原始数据的键名一致
+        @param kwargs: 需要临时装填的字段以及值 eg: key=value
+        @return: response 接口响应参数 数据类型：json
+        """
+        strings = str(int(round(time.time() * 1000))) + str(random.randint(0, 9999))
+        sharedWithholdingAgreement = dict()
+        # head
+        sharedWithholdingAgreement['requestSerialNo'] = 'requestNo' + strings + "_1000"
+        sharedWithholdingAgreement['requestTime'] = self.date
+        sharedWithholdingAgreement['merchantId'] = self.merchantId
+        # body
+        sharedWithholdingAgreement['aggrementNum'] = 'aggrementNum' + strings
+        sharedWithholdingAgreement['payerIdNum'] = self.data['cer_no']
+        sharedWithholdingAgreement['payer'] = self.data['name']
+        sharedWithholdingAgreement['mobileNo'] = self.data['telephone']
+        sharedWithholdingAgreement['payerBankCardNum'] = self.data['bankid']
+        sharedWithholdingAgreement['payerBankCode'] = self.data['bankcode']
+        sharedWithholdingAgreement['payerPhoneNum'] = self.data['telephone']
+        sharedWithholdingAgreement['agreementTime'] = self.date
+
+        # 更新 payload 字段值
+        sharedWithholdingAgreement.update(kwargs)
+        parser = DataUpdate(self.cfg['sharedWithholdingAgreement']['payload'], **sharedWithholdingAgreement)
+        self.active_payload = parser.parser
+
+        self.log.demsg('发起绑卡请求...')
+        url = self.host + self.cfg['sharedWithholdingAgreement']['interface']
+        response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag)
+        return response
+
+    # 发起代扣协议申请
     def getCardRealNameMessage(self, **kwargs):
         """
         注意：键名必须与接口原始数据的键名一致

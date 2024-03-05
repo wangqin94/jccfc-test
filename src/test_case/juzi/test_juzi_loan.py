@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
         # 初始化日志引擎模块
         self.env = TEST_ENV_INFO
         self.data = get_base_data(str(self.env))
-        # self.data = {'name': '司寇凌旋', 'cer_no': '513029199908296494', 'telephone': '17409672134', 'bankid': '6217591694077788908', 'bankcode': '0104', 'applyId': 'applyId16940777877378505'}
+        # self.data = {'name': '蔡徐坤', 'cer_no': '513231198111064950', 'telephone': '13998645372', 'bankid': '6217851709103885570', 'bankcode': '0104'}  # hqas -> juzi
         self.log = MyLog.get_log()
         self.job = JOB()
         self.CheckBizImpl = CheckBizImpl()
@@ -32,14 +32,15 @@ class MyTestCase(unittest.TestCase):
 
     """ 测试步骤 """
 
-    def test_apply(self, loan_date='2024-01-22'):
+    def test_apply(self, loan_date='2024-01-04'):
         """ 测试步骤 """
 
         juzi = JuZiBizImpl(data=self.data)
         # 绑卡签约
-        res = juzi.getCardRealNameMessage().get('body')
-        juzi.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
+        # res = juzi.getCardRealNameMessage().get('body')
+        # juzi.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
         # amount = random.randrange(1000, 2000, 100)
+        juzi.sharedWithholdingAgreement()
         amount = 1000
 
         self.loan_date = loan_date if loan_date else time.strftime('%Y-%m-%d', time.localtime())

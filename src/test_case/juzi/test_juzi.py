@@ -23,7 +23,7 @@ class TestCase(object):
 
     # # [0: 绑卡&短信验证, 1: 撞库, 2: 绑卡申请, 3: 授信]
     @staticmethod
-    def process(flag=21):
+    def process(flag=101):
         """ 测试步骤 """
         # 绑卡
         if flag == 0:
@@ -35,10 +35,15 @@ class TestCase(object):
             juzi = JuZiBizImpl(data=data)
             juzi.bindCardRealName(tradeSerialNo='000DEF2024011000000093')
 
+        # 协议共享
+        if flag == 101:
+            juzi = JuZiBizImpl(data=data)
+            juzi.sharedWithholdingAgreement()
+
         # 确认绑卡
         elif flag == 99:
             juzi = JuZiBizImpl(data=data)
-            res = juzi.getCardRealNameMessage(payerBankCardNum='6217591706079495561').get('body')
+            res = juzi.getCardRealNameMessage(payerBankCardNum='6217851709103885570').get('body')
             juzi.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # 绑卡查询
@@ -59,7 +64,7 @@ class TestCase(object):
         # 借款申请
         elif flag == 5:
             juzi = JuZiBizImpl(data=data)
-            juzi.applyLoan(loanAmt=1300, loanTerm=3, thirdApplyId='thirdApplyId17055652115014072')
+            juzi.applyLoan(loanAmt=11000, loanTerm=6, thirdApplyId='thirdApplyId17091067497529264')
 
         # 借款查询
         elif flag == 6:
@@ -140,7 +145,7 @@ class TestCase(object):
         # 代偿确认
         elif flag == 21:
             juzi = JuZiBizImpl(data=data)
-            juzi.compensationConfirm(compensationNo="000DEF2024022700184440")
+            juzi.compensationConfirm(compensationNo="000DEF2024022700184445")
 
     def postprocess(self):
         """ 后置条件处理 """

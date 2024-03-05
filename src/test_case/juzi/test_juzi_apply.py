@@ -18,9 +18,11 @@ class MyTestCase(unittest.TestCase):
     def test_apply(self):
         """ 测试步骤 """
         juzi = JuZiBizImpl(data=None)
-
+        # 绑卡签约
+        res = juzi.getCardRealNameMessage().get('body')
+        juzi.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
         # 发起授信申请
-        self.thirdApplyId = juzi.credit(applyAmount=1000, loanTerm=3)['body']['thirdApplyId']
+        self.thirdApplyId = juzi.credit(applyAmount=11000, loanTerm=6)['body']['thirdApplyId']
 
     """ 后置条件处理 """
 

@@ -17,6 +17,29 @@ JuZi = {
     'decrypt': {
         'interface': '/api/v1/yinliu/secret/thirdDecryptData',
     },
+    # 协议共享申请接口
+    'sharedWithholdingAgreement': {
+        'interface': '/api/v1/yl/common/sharedWithholdingAgreement',
+        'payload': {
+            "head": {
+                "merchantId": "G22E02JIKE",
+                "channelNo": "01",
+                "requestSerialNo": "cqrn20210415155213618",
+                "requestTime": "2020-08-28 17:16:41",
+                "tenantId": "000"
+            },
+            "body": {
+                "payer": "QH",  # 付款方姓名
+                "mobileNo": "",  # 注册手机号
+                "payerPhoneNum": "",  # 付款方银行卡预留手机号
+                "payerIdNum": "",  # 付款方身份证号
+                "payerBankCardNum": "",  # 付款方银行卡号
+                "payerBankCode": "0102",  # 付款方银行编号
+                "aggrementNum": "",  # 代扣协议号
+                "payChannel": "1001",  # 支付通道1035  极融宝付
+            }
+        }
+    },
     # 代扣签约申请接口
     'getCardRealNameMessage': {
         'interface': '/api/v1/yl/common/getCardRealNameMessage',
@@ -34,7 +57,9 @@ JuZi = {
                 "payerPhoneNum": "",  # 付款方银行卡预留手机号
                 "payerIdNum": "",  # 付款方身份证号
                 "payerBankCardNum": "",  # 付款方银行卡号
-                "payerBankCode": "0102",  # 付款方银行编号
+                "payerBankCode": "",  # 付款方银行编号
+                "paymentChannel": "1001",  # 支付通道
+                "aggrementNum":""
             }
         }
     },
@@ -125,20 +150,20 @@ JuZi = {
                 "duties": "A",  # 职务 EnumPost
                 "companyNature": "A",  # 单位性质 EnumUnitProperty
                 "industryCategory": "A",  # 行业类别 EnumIndustryType
-                "workAddrAddress": "北京市海淀医院",  # 工作详细地址
-                "workAddrProvinceName": "北京市",  # 工作地址省份名称
-                "workAddrProvinceCode": "110000",  # 工作地址省份代码
-                "workAddrCityName": "北京市",  # 工作地址市级名称
-                "workAddrCityCode": "110100",  # 工作地址市级代码
-                "workAddrAreaName": "海淀区",  # 工作地址区名称
-                "workAddrAreaCode": "110108",  # 工作地址区代码
-                "liveAddress": "北京市海淀医院",  # 工作详细地址
-                "liveProvinceName": "北京市",  # 居住地址省份名称
-                "liveProvinceCode": "110000",  # 居住地址省份代码
-                "liveCityName": "北京市",  # 居住地址市级名称
-                "liveCityCode": "110100",  # 居住地址市级代码
-                "liveAreaName": "海淀区",  # 居住地址区名称
-                "liveAreaCode": "110108",  # 居住地址区代码
+                "workAddrAddress": "金融街119号",  # 工作详细地址
+                "workAddrProvinceName": "安徽省",  # 工作地址省份名称
+                "workAddrProvinceCode": "",  # 工作地址省份代码
+                "workAddrCityName": "合肥市",  # 工作地址市级名称
+                "workAddrCityCode": "",  # 工作地址市级代码
+                "workAddrAreaName": "蜀山区",  # 工作地址区名称
+                "workAddrAreaCode": "",  # 工作地址区代码
+                "liveAddress": "金融街119号",  # 工作详细地址
+                "liveProvinceName": "安徽省",  # 居住地址省份名称
+                "liveProvinceCode": "",  # 居住地址省份代码
+                "liveCityName": "合肥市",  # 居住地址市级名称
+                "liveCityCode": "",  # 居住地址市级代码
+                "liveAreaName": "蜀山区",  # 居住地址区名称
+                "liveAreaCode": "",  # 居住地址区代码
                 "applyAmount": 1000,  # 申请金额 元
                 "monthIncome": 1000,  # 月收入  元
                 "familyMonthIncome": 2000,  # 家庭月收入  元
