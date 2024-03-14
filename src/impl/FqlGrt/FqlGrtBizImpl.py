@@ -80,7 +80,7 @@ class FqlGrtBizImpl(MysqlInit):
         url = self.host + self.cfg['credit']['interface']
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
-        response = response['bizContent']
+        # response = response['bizContent']
         self.log.info("解析后报文：{}".format(response))
         return response
 
