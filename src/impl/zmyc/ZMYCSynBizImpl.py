@@ -8,17 +8,17 @@
 from src.impl.public.LoanPublicBizImpl import LoanPublicBizImpl
 from utils.Apollo import *
 from src.impl.common.CheckBizImpl import CheckBizImpl
-from src.impl.juzi.JuZiBizImpl import JuZiBizImpl
-from src.impl.juzi.JuZiCheckBizImpl import JuZiCheckBizImpl
+from src.impl.zmyc.ZMYCBizImpl import ZMYCBizImpl
+from src.impl.zmyc.ZMYCCheckBizImpl import ZMYCCheckBizImpl
 from utils.Models import *
 
 
-class JuZiSynBizImpl(JuZiBizImpl):
+class ZMYCSynBizImpl(ZMYCBizImpl):
     def __init__(self, data=None, person=False):
         super().__init__(data=data, person=person)
 
         self.CheckBizImpl = CheckBizImpl()
-        self.juziCheckBizImpl = JuZiCheckBizImpl(self.productId, self.data)
+        self.zmycCheckBizImpl = ZMYCCheckBizImpl(self.productId, self.data)
 
     # 准备借款数据
     def preLoanApply(self, bill_date=None, term=12):
@@ -29,9 +29,9 @@ class JuZiSynBizImpl(JuZiBizImpl):
         @return:
         """
         # 绑卡
-        juzi = JuZiBizImpl(data=None)
-        res = juzi.getCardRealNameMessage().get('body')
-        juzi.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
+        zmyc = ZMYCBizImpl(data=None)
+        res = zmyc.getCardRealNameMessage().get('body')
+        zmyc.bindCardRealName(userId=res['userId'], tradeSerialNo=res['tradeSerialNo'])
 
         # ocr配置默认不校验 (1：不验证，0：验证)
         apollo_data = dict()
@@ -44,7 +44,7 @@ class JuZiSynBizImpl(JuZiBizImpl):
         # 数据库陈校验授信结果是否符合预期
         self.CheckBizImpl.check_credit_apply_status(thirdpart_apply_id=thirdApplyId)
         # 接口层校验授信结果是否符合预期
-        self.juziCheckBizImpl.juzi_check_credit_apply_status(thirdApplyId)
+        self.zmycCheckBizImpl.ZMYC_check_credit_apply_status(thirdApplyId)
 
         # 发起支用申请  loan_date: 放款时间，默认当前时间 eg:2022-01-01
         loanDate = time.strftime('%Y-%m-%d', time.localtime())
@@ -53,7 +53,7 @@ class JuZiSynBizImpl(JuZiBizImpl):
         # 数据库陈校验授信结果是否符合预期
         self.CheckBizImpl.check_loan_apply_status(thirdpart_apply_id=thirdApplyId)
         # 接口层校验授信结果是否符合预期
-        self.juziCheckBizImpl.juzi_check_loan_apply_status(thirdApplyId)
+        self.zmycCheckBizImpl.ZMYC_check_loan_apply_status(thirdApplyId)
 
         # 更新放款时间
         loanPublicBizImpl = LoanPublicBizImpl()
@@ -66,5 +66,5 @@ class JuZiSynBizImpl(JuZiBizImpl):
 
 
 if __name__ == "__main__":
-    juziBizImpl = JuZiSynBizImpl()
-    juziBizImpl.preLoanApply(bill_date="2023-05-24")
+    zmycBizImpl = ZMYCSynBizImpl()
+    zmycBizImpl.preLoanApply(bill_date="2023-05-24")

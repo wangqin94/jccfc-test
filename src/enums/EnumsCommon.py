@@ -27,6 +27,7 @@ class ProductEnum(Enum):
     FQLGRT = 'fql_grt'
     JIRO = 'jiro'
     JUZI = 'juzi'
+    ZMYC = 'ZMYC'
 
 
 @unique
@@ -49,6 +50,7 @@ class ProductIdEnum(Enum):
     FQLGRT = 'G23E091'
     JIRO = 'G23E081'
     JUZI = 'G24E011'
+    ZMYC = 'G24E031'
 
 
 class EnumProductYearRate(Enum):
@@ -71,6 +73,7 @@ class EnumMerchantId(Enum):
     DIDI = 'G23E07DIDI'
     JUZI = 'G24E01JUZI'
     JIKE = 'G22E02JIKE'
+    ZMYC = 'G24E03ZMYC'
 
 
 @unique
