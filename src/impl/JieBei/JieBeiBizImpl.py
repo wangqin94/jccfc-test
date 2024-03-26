@@ -4,6 +4,7 @@ from src.enums.EnumsCommon import *
 from src.impl.common.CommonBizImpl import post_with_encrypt
 from src.impl.common.MysqlBizImpl import MysqlBizImpl
 from src.test_data.module_data import jiebei
+from utils.JsonToXml import dictToXml
 from utils.Models import *
 
 
@@ -41,6 +42,7 @@ class JieBeiBizImpl(EnvInit):
         if bizActionType == 'LOAN_DECISION':
             feature_data['userName'] = self.data['name']
             feature_data['certNo'] = self.data['cer_no']
+            feature_data['ID_CARD'] = self.data['cer_no']
             feature_data['bizActionType'] = 'LOAN_DECISION'
             feature_data['creditNo'] = self.data['applyno']
             feature_data['applyNo'] = "loanNo" + str(int(round(time.time() * 1000)))
@@ -73,11 +75,12 @@ class JieBeiBizImpl(EnvInit):
 
         self.log.demsg('初审接口...')
         url = self.host + self.cfg['datapreCs']['interface']
+        print(url)
         response = post_with_encrypt(url, self.active_payload, self.encrypt_url, self.decrypt_url,
                                      encrypt_flag=self.encrypt_flag)
         return response
 
-    def datapreFs(self, applyType, creditAmt='2000000', creditRate='0.00060', tmpAmtMax=None, tmpAmtMin=None, applyNo=None, **kwargs):
+    def datapreFs(self, applyType, creditAmt='6000000', creditRate='0.00060', tmpAmtMax=None, tmpAmtMin=None, applyNo=None, **kwargs):
         datapreFs_data = dict()
         #
         datapreFs_data['name'] = self.data['name']
@@ -138,4 +141,30 @@ class JieBeiBizImpl(EnvInit):
         with open(pdf_path, "rb") as pdf_file:
             encoded_string = base64.b64encode(pdf_file.read()).decode('utf-8')
         return encoded_string
+
+    def queryContract(self,contractType,**kwargs):
+        queryContract_data = dict()
+
+        queryContract_data['name'] = self.data['name']
+        queryContract_data['certNo'] = self.data['cer_no']
+        queryContract_data['requestNo'] = 'requestNo17103177345281'
+        queryContract_data['reqMsgId'] = '17103177345282'
+        queryContract_data['contractType'] = contractType
+        if contractType == "apply":
+            queryContract_data['applyNo'] = self.data['applyno']
+        elif contractType == "loan_acknowledgement":
+            queryContract_data['applyNo'] = self.data['loanNo']
+        # 更新 payload 字段值
+        queryContract_data.update(kwargs)
+        parser = DataUpdate(self.cfg['queryContract']['payload'], unique=False, **queryContract_data)
+        self.active_payload = parser.parser
+        xml = dictToXml(self.active_payload)
+
+        self.log.demsg('签章合同查询接口...')
+        url = self.host + self.cfg['queryContract']['interface']
+        response = post_with_encrypt(url, xml,self.encrypt_url, self.decrypt_url,
+                                     encrypt_flag=self.encrypt_flag,  requests_type='xml')
+        return response
+
+
 

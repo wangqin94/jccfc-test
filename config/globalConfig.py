@@ -19,7 +19,16 @@ API = {
 }
 
 headers = {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json;",
+    "Cache-Control": "no-cache",
+    "Rpc-Hsjry-Request": "ask=934&answer=921&serialNo=123456789&idemSerialNo=2019071580720413122&serviceScene=11&transDateTime=2018-11-07 09:49:06&tenantId=000&channelNo=01",
+    "Rpc-Hsjry-User-Request": "authId=abcde&token=fghijk&operatorId=admin&organId=000ORG00000000006&&operatorName=a",
+    "Accept": "*/*",
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"
+}
+
+headers_xml = {
+    "Content-Type": "application/xml",
     "Cache-Control": "no-cache",
     "Rpc-Hsjry-Request": "ask=934&answer=921&serialNo=123456789&idemSerialNo=2019071580720413122&serviceScene=11&transDateTime=2018-11-07 09:49:06&tenantId=000&channelNo=01",
     "Rpc-Hsjry-User-Request": "authId=abcde&token=fghijk&operatorId=admin&organId=000ORG00000000006&&operatorName=a",

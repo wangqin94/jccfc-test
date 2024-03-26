@@ -12,7 +12,7 @@ from utils.Models import *
 _log = MyLog.get_log()
 
 
-def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decrypt_url', encrypt_flag=True):
+def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decrypt_url', encrypt_flag=True, requests_type='json'):
     """
 
     @param url: 接口请求地址
@@ -24,19 +24,23 @@ def post_with_encrypt(url, payload, encrypt_url='encrypt_url', decrypt_url='decr
     """
 
     # data1 = json.dumps(payload)
-    _log.info("payload数据: {}".format(json.dumps(payload, ensure_ascii=False)))
-
-    if encrypt_flag:
-        encrypt_payload = encrypt(encrypt_url, headers, payload)
-        _log.info("请求地址: {}".format(url))
-        response = requests.post(url=url, headers=headers, json=encrypt_payload)
-        _log.info("响应密文: {}".format(response.json()))
-        response = decrypt(decrypt_url, headers, response.json())
+   # _log.info("payload数据: {}".format(json.dumps(payload, ensure_ascii=False)))
+    if requests_type == 'xml':
+        response = requests.post(url=url, headers=headers_xml, data=payload)
+        # response = response.json()
+        _log.info(f"响应报文XML：{response.text}")
     else:
-        response = requests.post(url=url, headers=headers, json=payload)
-        # _log.info("响应报文: {}".format(payload))
-        response = response.json()
-        _log.info(f"响应报文：{response}")
+        if encrypt_flag:
+            encrypt_payload = encrypt(encrypt_url, headers, payload)
+            _log.info("请求地址: {}".format(url))
+            response = requests.post(url=url, headers=headers, json=encrypt_payload)
+            _log.info("响应密文: {}".format(response.json()))
+            response = decrypt(decrypt_url, headers, response.json())
+        else:
+            response = requests.post(url=url, headers=headers, json=payload)
+            # _log.info("响应报文: {}".format(payload))
+            response = response.json()
+            _log.info(f"响应报文：{response}")
     return response
 
 

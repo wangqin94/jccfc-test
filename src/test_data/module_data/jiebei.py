@@ -6,11 +6,11 @@ jiebei = {
             "applyNo": "",  # 业务单号   是
             "featureCodes": ["jc_loan_result", "jc_loan_failCode", "jc_loan_failReason"],  # 特征编码列表      是
             "appCode": "TIANCHENG",  # 请求来源默认“TIANCHENG”     是
-            # "idInfo": {
-            #     "USER_ID": "1111",
-            #     "BIZ_NO": "1111",
-            #     "ID_CARD": "1111"
-            #     },                   #     否
+            "idInfo": {
+                "USER_ID": "1111",
+                "BIZ_NO": "1111",
+                "ID_CARD": "2345"
+                },                   #     否
             "bizActionType": "",  # 申请类型，只区分支用场景  申请类型，⽀⽤“LOAN_DECISION”  JC_CS  JC_FS
             "extra": {
                 "externalUrl": "http://127.0.0.1:8080/featureservice/fetch_feature",  # 特征取数地址
@@ -19,7 +19,7 @@ jiebei = {
                     "userName": "",  # 客户姓名
                     "certNo": "",  # 证件号码
                     "loanUse": "1",  # 贷款用途   1 2 3 4 5 6
-                    "encashAmt": "100000",  # 放款金额
+                    "encashAmt": "5000000",  # 放款金额
                     "dayRate": "0.0006",  # 贷款日利率，借呗业务有值
                     "creditNo": ""  # 授信编号
                 }
@@ -115,6 +115,36 @@ jiebei = {
             "sign": "123"  # 签名结果
         }
 
+    },
+    #签署合同查询
+    "queryContract": {
+        "interface": "/api/v1/antjb/contractTransfer/apply",
+        "payload": {
+            "request":{
+                "head": {
+                    "version": "1.0.0",
+                    "appId": "ALIPAY",
+                    "function": "ant.institution.contract.query",
+                    "reqTime": "20231011150954",
+                    "reqTimeZone": "UTC+8",
+                    "reqMsgId": "",
+                    "reserve": "",
+                    "signType": "RSA",
+                    "inputCharset": "UTF-8"
+                },
+                "body": {
+                    "name": "",
+                    "certType": "IDENTITY_CARD",  # 身份类型
+                    "certNo": "",
+                    "contractType": "apply",  # apply   loan_acknowledgement
+                    "applyNo": "",
+                    "businessLine": "JIE_BEI",
+                    "requestNo": ""
+                }
+            },
+            "signature":"aq486R+EoU8SQIPB4OfEfa7wUQHwlFf5ChYC/0Cj7awnA0VqCi4IM6F8JtR4wO7RejFne210xqss0npqDJNdl4R0FgG/OliKk31oehizhyV68lHm1/OaUyhAA7VvHEjwwTRuysLiHecj14wbcq2jL+hJb16V7IPHVThonS2iDd/JJjPHiaFf3lOEYhaiI1RuSo3PccWVTzJBZFlEfubpD4LURS7mrlpDSTWSKnCEFNoVhALS3lctRY6Ypc+jQSd+tqJHvf7UucTqZ18Yna6INa28rdBgP6inB+YUHYdUJjHRhA6cJmbuMF4HwXGGtBJwGSJiamsSGKuj8k6Y7DIpiQ=="
+
+        }
     }
 
 }
